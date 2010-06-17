@@ -25,20 +25,37 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
+
+/*
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ */
+
 package sandbox;
 
 import static net.jcores.CoreKeeper.$;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.jcores.cores.CoreObject;
 import net.jcores.cores.CoreString;
 import net.jcores.extensions.serialization.CoreSerializer;
 import net.jcores.interfaces.functions.F0;
 import net.jcores.interfaces.functions.F1;
-import net.jcores.interfaces.functions.F1Int2Int;
-import net.jcores.interfaces.functions.F1Int2Object;
-import net.jcores.interfaces.functions.F1Object2Int;
 import sandbox.dummys.F0Impl;
 import sandbox.extensions.ExtensionCore;
 
@@ -51,21 +68,6 @@ public class APIv3 {
      * @throws InterruptedException 
      */
     public static void main(String[] args) throws InterruptedException {
-        String[] split = "ajslkd,a asj dlasd ad aosidasoidua sdiuza odiuazs odiuasz doiuasz oiasz oisazdoidzizdzzd zd zd dzd".split(" ");
-        String s = $(split).map(new F1Object2Int<String>() {
-            public int f(String i) {
-                return i.length();
-            }
-        }).map(new F1Int2Int() {
-            public int f(int i) {
-                return i * i;
-            }
-        }).map(new F1Int2Object<Integer>() {
-            public Integer f(int i) {
-                return Integer.valueOf(i - 1);
-            }
-        }).get(0).getClass().getCanonicalName();
-        System.out.println(s);
 
         int size = $("hello", null, "world").compact().size();
         System.out.println(size);
@@ -74,7 +76,7 @@ public class APIv3 {
 
         $("Hello world").log();
 
-        final CoreString lines = $("test.txt").file().text().split("\n");
+        final CoreString lines = $("test.txt").file().text().split("\n").filter("asd");
         CoreString filter = lines.filter("asd");
         System.out.println(filter.file());
 
@@ -87,29 +89,54 @@ public class APIv3 {
             }
         }).as(CoreObject.class);//.print();
 
-        F0 f[] = new F0[] { new F0Impl(), new F0Impl(), new F0Impl()};
+        F0 f[] = new F0[] { new F0Impl(), new F0Impl(), new F0Impl() };
         $(f).each(F0.class).f();
-        
+
         $(f).as(ExtensionCore.class).yoyo();
         $(f).as(CoreSerializer.class).store("test.xml");
         System.out.println($("test.xml").as(CoreSerializer.class).load().size());
-        
 
         $(F0.class).implementor(F0Impl.class);
-        for(int i = 0; i< 100000; i++) {
+        for (int i = 0; i < 100000; i++) {
             F0 spawn = $(F0.class).spawn();
-            if(i%1000 == 0) {
+            if (i % 1000 == 0) {
                 size = $(F0.class).spawned().size();
                 //System.out.println(size);
             }
         }
-               
+
         CoreString c1 = $($(f).list()).as(CoreString.class);
-        CoreString c2 = $($("hello", "world").list()).as(CoreString.class);        
+        CoreString c2 = $($("hello", "world").list()).as(CoreString.class);
         System.out.println(c1.size());
         System.out.println(c2.size());
         System.out.println($("hello").call("toUpperCase").get(0));
-                
+
+        System.out.println("---");
+        CoreObject<String> expand = $("", "", "").map(new F1<String, String[]>() {
+            public String[] f(String x) {
+                return new String[] { "Hello", "owlrd" };
+            }
+        }).expand(String.class).as(CoreString.class);
+        System.out.println(expand.size());
+
+        CoreString e2 = $("", "", "").map(new F1<String, List<String>>() {
+            public List<String> f(String x) {
+                ArrayList<String> arrayList = new ArrayList<String>();
+                arrayList.add("X");
+                arrayList.add("y");
+                arrayList.add("z");
+                return arrayList;
+            }
+        }).expand(String.class).as(CoreString.class);
+        String join = e2.join(" ");
+        System.out.println("'" + join + "'");
+
+        $("debug1.txt", "debug2.txt").file().delete().append(join);
+
+        //System.out.println(array[0]);
+
+        System.out.println("---");
+
         $.report();
     }
 }

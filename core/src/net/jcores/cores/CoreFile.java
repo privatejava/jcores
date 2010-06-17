@@ -27,10 +27,15 @@
  */
 package net.jcores.cores;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
 
 import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F1;
+import net.jcores.options.MessageType;
 import net.jcores.utils.io.FileUtils;
 
 /**
@@ -58,13 +63,49 @@ public class CoreFile extends CoreObject<File> {
             }
         }).array());
     }
+    
+    /**
+     * Deletes the given objects, recursively.
+     * 
+     * @return .
+     */
+    public CoreFile delete() {
+
+        map(new F1<File, Object>() {
+            public Object f(File x) {
+                // TODO: Care for directories
+                x.delete();
+                return null;
+            }
+        });
+        
+        return this;
+    }
 
     /**
      * Appends the object.toString() to the given files 
      * 
      * @param object
+     * 
+     * @return . 
      */
-    public void append(Object object) {
-        //
+    public CoreFile append(Object object) {
+        final String string = object.toString();
+
+        map(new F1<File, Object>() {
+            public Object f(File x) {
+                try {
+                    PrintWriter printWriter = new PrintWriter(new BufferedOutputStream(new FileOutputStream(x, true)));
+                    printWriter.append(string);
+                    printWriter.close();
+                } catch (FileNotFoundException e) {
+                    CoreFile.this.commonCore.report(MessageType.EXCEPTION, e.getLocalizedMessage());
+                }
+                
+                return null;
+            }
+        });
+        
+        return this;
     }
 }

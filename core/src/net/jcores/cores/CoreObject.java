@@ -34,6 +34,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import net.jcores.CommonCore;
@@ -123,22 +124,21 @@ public class CoreObject<T> extends Core {
 
                 constructor = (Constructor<C>) c;
             }
-            
 
             Object newT[] = null;
             Class<? extends Object[]> requestedType = null;
-            
+
             // Try to convert our array. If that fails, create an empty one ...
             try {
                 requestedType = (Class<? extends Object[]>) constructor.getParameterTypes()[1];
                 newT = Arrays.copyOf(this.t, this.t.length, requestedType);
-            } catch(ArrayStoreException e) {
+            } catch (ArrayStoreException e) {
                 this.commonCore.report(MessageType.EXCEPTION, "Unable to convert our array " + this.t + " to the requested type " + requestedType + ". Returning empty core.");
                 newT = (Object[]) Array.newInstance(requestedType.getComponentType(), 0);
             }
-            
+
             return constructor.newInstance(this.commonCore, newT);
-            
+
             // NOTE: We do not swallow all execptions, becasue as() is a bit special and we cannot return
             // anyhting that would still be usable.
         } catch (SecurityException e) {
@@ -171,12 +171,12 @@ public class CoreObject<T> extends Core {
     public CoreObject<Object> call(final String string, final Object... params) {
         final int len = params == null ? 0 : params.length;
         final Class<?>[] types = new Class[len];
-        
+
         // Convert classes.
-        for (int i=0; i<len; i++) {
+        for (int i = 0; i < len; i++) {
             types[i] = params[i].getClass();
         }
-        
+
         return new CoreObject<Object>(this.commonCore, map(new F1<T, Object>() {
             public Object f(T x) {
                 try {
@@ -193,7 +193,7 @@ public class CoreObject<T> extends Core {
                 } catch (InvocationTargetException e) {
                     CoreObject.this.commonCore.report(MessageType.EXCEPTION, "InvocationTargetException for " + x + " (method was " + string + ")");
                 }
-                
+
                 return null;
             }
         }).array());
@@ -321,10 +321,10 @@ public class CoreObject<T> extends Core {
     @SuppressWarnings("unchecked")
     public <N> N[] array(Class<N> in) {
         N[] n = (N[]) Array.newInstance(in, 0);
-        
-        if(this.t != null)
+
+        if (this.t != null)
             return (N[]) Arrays.copyOf(this.t, this.t.length, n.getClass());
-        
+
         return (N[]) Array.newInstance(in, 0);
     }
 
@@ -487,7 +487,6 @@ public class CoreObject<T> extends Core {
         return new CoreObject<T>(this.commonCore, type, stack);
     }
 
-    
     /**
      * Reduces the given object (multithreaded version) 
      * 
@@ -496,12 +495,10 @@ public class CoreObject<T> extends Core {
      * @return .
      */
     public CoreObject<T> fold(final F2ReduceObjects<T> f, Option... options) {
-       // TODO
+        // TODO
         return null;
     }
 
-    
-    
     /**
      * Returns a compacted object whose underlaying array does not 
      * contain null anymore .
@@ -523,5 +520,74 @@ public class CoreObject<T> extends Core {
         }
 
         return new CoreObject<T>(this.commonCore, Arrays.copyOf(tmp, dst));
+    }
+
+    /**
+     * Expands contained arrays to a single array.  
+     * 
+     * @param <N>
+     * @param class1
+     * @return .
+     */
+    @SuppressWarnings("unchecked")
+    public <N> CoreObject<N> expand(Class<N> class1) {
+        int length = 0;
+        
+        if(this.t == null) return new CoreObject<N>(this.commonCore, class1, null);
+
+        // Compute overall size 
+        for (T x : this.t) {
+            if (x == null) continue;
+            
+            // Is it a collection?
+            if (x instanceof Collection<?>) {
+                length += ((Collection<?>) x).size();
+                continue;
+            }
+            
+            // An array?
+            try {
+                length += Array.getLength(x);
+                continue;
+            } catch(IllegalArgumentException e) {
+                //
+            }
+            
+            // A single object?!
+            length++;
+        }
+        
+        // Generate array
+        N[] n = (N[]) Array.newInstance(class1, length);
+        int offset = 0;
+
+        // Copy to array 
+        for (T x : this.t) {
+            if (x == null) continue;
+            
+            // Is it a collection?
+            if (x instanceof Collection<?>) {
+                Object[] array = ((Collection<?>) x).toArray();
+                System.arraycopy(array, 0, n, offset, array.length);
+                offset += array.length;
+                continue;
+            }
+            
+            // An array?
+            try {
+                int size = Array.getLength(x);
+                System.arraycopy(x, 0, n, offset, size);
+                offset += size;
+                continue;
+            } catch(IndexOutOfBoundsException e) {
+                e.printStackTrace();
+            }  catch(ArrayStoreException e) {
+                //
+            }
+            
+            Array.set(n, offset, x);
+        }
+
+        return new CoreObject<N>(this.commonCore, n);
     }
 }

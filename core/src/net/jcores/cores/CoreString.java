@@ -28,7 +28,6 @@
 package net.jcores.cores;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
@@ -89,6 +88,29 @@ public class CoreString extends CoreObject<String> {
     }
 
     /**
+     * Joins with empty joiner.
+     * 
+     * @return .
+     */
+    public String join() {
+        return join("");
+    }
+
+    /**
+     * Joins all strings to a single string.
+     * @param joiner 
+     * @return .
+     */
+    public String join(final String joiner) {
+        // TODO: Improve this by using a StringBuilder ... 
+        return reduce(new F2ReduceObjects<String>() {
+            public String f(String stack, String next) {
+                return stack + joiner + next;
+            }
+        }).get(0);
+    }
+
+    /**
      * Splits all string using the splitter.
      * 
      * @param splitter 
@@ -96,18 +118,11 @@ public class CoreString extends CoreObject<String> {
      * @return .
      */
     public CoreString split(final String splitter) {
-        return new CoreString(this.commonCore, map(new F1<String, List<String>>() {
+        return map(new F1<String, List<String>>() {
             public List<String> f(String x) {
                 return Arrays.asList(x.split(splitter));
             }
-        }).reduce(new F2ReduceObjects<List<String>>() {
-            public List<String> f(List<String> x, List<String> y) {
-                ArrayList<String> rval = new ArrayList<String>();
-                rval.addAll(x);
-                rval.addAll(y);
-                return rval;
-            }
-        }).get(new ArrayList<String>()).toArray(new String[0]));
+        }).expand(String.class).as(CoreString.class);
     }
 
     /**
