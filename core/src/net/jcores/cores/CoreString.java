@@ -156,4 +156,21 @@ public class CoreString extends CoreObject<String> {
             }
         });
     }
+
+    /**
+     * Replaces some pattern with <code>with</code> 
+     * 
+     * @param pattern
+     * @param with
+     * @return .
+     */
+    public CoreString replace(final String pattern, final String with) {
+        final Pattern p = Pattern.compile(pattern);
+        
+        return new CoreString(this.commonCore, map(new F1<String, String>() {
+            public String f(String x) {
+                return p.matcher(x).replaceAll(with);
+            }
+        }).array());
+    }
 }

@@ -495,8 +495,8 @@ public class CoreObject<T> extends Core {
      * @return .
      */
     public CoreObject<T> fold(final F2ReduceObjects<T> f, Option... options) {
-        // TODO
-        return null;
+        // TODO: Parallelize this
+        return reduce(f, options);
     }
 
     /**
@@ -589,5 +589,19 @@ public class CoreObject<T> extends Core {
         }
 
         return new CoreObject<N>(this.commonCore, n);
+    }
+    
+    
+    /**
+     * Converts all elements to strings.
+     * 
+     * @return .
+     */
+    public CoreString string() {
+        return map(new F1<T, String>() {
+            public String f(T x) {
+                return x.toString();
+            }
+        }).as(CoreString.class);
     }
 }
