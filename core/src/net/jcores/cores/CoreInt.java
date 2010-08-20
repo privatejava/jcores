@@ -139,6 +139,6 @@ public class CoreInt extends Core {
 
         map(mapper, options);
 
-        return new CoreObject(this.commonCore, (R[]) mapper.getTargetArray());
+        return new CoreObject<R>(this.commonCore, (R[]) mapper.getTargetArray());
     }
 }

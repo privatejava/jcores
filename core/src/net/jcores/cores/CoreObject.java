@@ -107,7 +107,7 @@ public class CoreObject<T> extends Core {
      * @param clazz
      * @return .
      */
-    @SuppressWarnings( { "unchecked", "null" })
+    @SuppressWarnings({ "unchecked", "null" })
     public <C extends Core> C as(Class<C> clazz) {
         try {
             final Constructor<?>[] constructors = clazz.getConstructors();
@@ -409,7 +409,7 @@ public class CoreObject<T> extends Core {
         map(mapper, options);
 
         // ... and return result.
-        return new CoreObject(this.commonCore, (R[]) mapper.getTargetArray());
+        return new CoreObject<R>(this.commonCore, (R[]) mapper.getTargetArray());
     }
 
     /**
@@ -488,7 +488,7 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Reduces the given object (multithreaded version) 
+     * Reduces the given object (multithreaded version). 
      * 
      * @param f
      * @param options
@@ -532,31 +532,31 @@ public class CoreObject<T> extends Core {
     @SuppressWarnings("unchecked")
     public <N> CoreObject<N> expand(Class<N> class1) {
         int length = 0;
-        
-        if(this.t == null) return new CoreObject<N>(this.commonCore, class1, null);
+
+        if (this.t == null) return new CoreObject<N>(this.commonCore, class1, null);
 
         // Compute overall size 
         for (T x : this.t) {
             if (x == null) continue;
-            
+
             // Is it a collection?
             if (x instanceof Collection<?>) {
                 length += ((Collection<?>) x).size();
                 continue;
             }
-            
+
             // An array?
             try {
                 length += Array.getLength(x);
                 continue;
-            } catch(IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 //
             }
-            
+
             // A single object?!
             length++;
         }
-        
+
         // Generate array
         N[] n = (N[]) Array.newInstance(class1, length);
         int offset = 0;
@@ -564,7 +564,7 @@ public class CoreObject<T> extends Core {
         // Copy to array 
         for (T x : this.t) {
             if (x == null) continue;
-            
+
             // Is it a collection?
             if (x instanceof Collection<?>) {
                 Object[] array = ((Collection<?>) x).toArray();
@@ -572,26 +572,43 @@ public class CoreObject<T> extends Core {
                 offset += array.length;
                 continue;
             }
-            
+
             // An array?
             try {
                 int size = Array.getLength(x);
                 System.arraycopy(x, 0, n, offset, size);
                 offset += size;
                 continue;
-            } catch(IndexOutOfBoundsException e) {
+            } catch (IndexOutOfBoundsException e) {
                 e.printStackTrace();
-            }  catch(ArrayStoreException e) {
+            } catch (ArrayStoreException e) {
                 //
             }
-            
+
             Array.set(n, offset, x);
         }
 
         return new CoreObject<N>(this.commonCore, n);
     }
-    
-    
+
+    /**
+     * Casts all elements to the given type or sets them null if they are not castable.
+     * 
+     * @param <N>
+     * @param target
+     * @return R
+     */
+    public <N> CoreObject<N> cast(final Class<N> target) {
+        return map(new F1<T, N>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public N f(T x) {
+                if (target.isAssignableFrom(x.getClass())) return (N) x;
+                return null;
+            }
+        }, new OptionMapType(target));
+    }
+
     /**
      * Converts all elements to strings.
      * 

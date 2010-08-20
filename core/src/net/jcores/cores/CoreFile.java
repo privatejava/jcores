@@ -81,6 +81,16 @@ public class CoreFile extends CoreObject<File> {
         
         return this;
     }
+    
+    
+    /**
+     * Lists the contents of the subdirectories. 
+     * 
+     * @return .
+     */
+    public CoreFile dir() {
+        return null;
+    }    
 
     /**
      * Appends the object.toString() to the given files 
