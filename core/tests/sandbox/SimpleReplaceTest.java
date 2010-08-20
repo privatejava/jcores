@@ -28,9 +28,10 @@
 package sandbox;
 
 import static net.jcores.CoreKeeper.$;
+import net.jcores.cores.CoreString;
 
 public class SimpleReplaceTest {
     public static void main(String[] args) {
-        $("Hello <a href='world'>World</a>").replace("W(or)ld", "$1");
+        $("Hello <a href='world'>World</a>").replace("W(or)ld", "$1").split(" ").slice(-2, -3).as(CoreString.class).print();
     }
 }

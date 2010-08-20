@@ -360,8 +360,43 @@ public class CoreObject<T> extends Core {
      * @return .
      */
     public T get(int i) {
-        if (this.t == null || i >= this.t.length) return null;
-        return this.t[i];
+        final int offset = indexToOffset(i);
+
+        if (this.t == null || offset < 0) return null;
+
+        return this.t[offset];
+    }
+
+    /**
+     * Returns a slice of this core.
+     * 
+     * @param start
+     * @param length If length is positive it is treated as length, if negative as a starting position from the end (-1 == last position)
+     * @return .
+     */
+    public CoreObject<T> slice(final int start, final int length) {
+        final int i = indexToOffset(start);
+        final int l = length > 0 ? length : indexToOffset(length) - i + 1;
+
+        return new CoreObject<T>(this.commonCore, Arrays.copyOfRange(this.t, i, i + l));
+    }
+
+    /**
+     * Converts an index to an offset.
+     * 
+     * @param index
+     * @return
+     */
+    protected final int indexToOffset(int index) {
+        if (index >= this.t.length) return -1;
+
+        // We also support negative indices. 
+        if (index < 0) {
+            if (-index > this.t.length) return -1;
+            return this.t.length + index;
+        }
+
+        return index;
     }
 
     /**
