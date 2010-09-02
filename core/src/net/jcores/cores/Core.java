@@ -36,6 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import net.jcores.CommonCore;
 import net.jcores.options.Option;
+import net.jcores.utils.Folder;
 import net.jcores.utils.Mapper;
 
 /**
@@ -137,9 +138,99 @@ public abstract class Core {
 
     /**
      * Starts a parallel folding process.
+     * 
+     * @param folder
+     * @param options
      */
-    protected void folder() {
-        //
+    protected void fold(final Folder folder, final Option... options) {
+        final int size = folder.size();
+
+        // Quick pass for the probably most common events
+        if (size <= 1) return;
+        if (size == 2) {
+            folder.handle(0, 1, 0);
+            return;
+        }
+
+        final int NUM_THREADS = Runtime.getRuntime().availableProcessors();
+
+        // Indicates which level (in the folding hierarchy) we are and where the next thread should
+        // proceed
+        final AtomicInteger baseCount = new AtomicInteger();
+        final AtomicInteger level = new AtomicInteger();
+
+        // Synchronizes threads 
+        final CyclicBarrier levelbarrier = new CyclicBarrier(NUM_THREADS);
+        final CyclicBarrier barrier = new CyclicBarrier(NUM_THREADS + 1);
+
+        final Runnable runner = new Runnable() {
+            public void run() {
+                int lvl = level.get();
+                int dist = (int) Math.pow(2, lvl);
+
+                // Process as long as the jump size exceeds the length of our array
+                // (each level the jump size will be increased)
+                while (dist < size) {
+                    final int upperBound = size - dist;
+
+                    int i = baseCount.getAndAdd(2) * dist;
+                    int j = i + dist;
+
+                    // For each level; proceed until we reach the righter bound
+                    while (j <= upperBound) {
+                        folder.handle(i, j, i);
+
+                        i = baseCount.getAndAdd(2) * dist;
+                        j = i + dist;
+                    }
+
+                    // Check if we were the node processing the last element and if there was a single 
+                    // element left over. In that case, process both these elements again
+                    if (i <= upperBound && i > 0) {
+                        int left = i - (int) Math.pow(2, lvl + 1);
+                        folder.handle(left, i, left);
+                    }
+
+                    // Signal finish
+                    try {
+                        levelbarrier.await();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (BrokenBarrierException e) {
+                        e.printStackTrace();
+                    }
+
+                    // Increase the level afterwards. If we were the one who changed the level,
+                    // we also change the baseCount back to 0
+                    if (level.compareAndSet(lvl, lvl + 1)) {
+                        baseCount.set(0);
+                    }
+
+                    // And get new parameters
+                    lvl = level.get();
+                    dist = (int) Math.pow(2, lvl);
+                }
+
+                try {
+                    barrier.await();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (BrokenBarrierException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        this.commonCore.execute(runner, NUM_THREADS);
+
+        // Wait for all threads to finish ...
+        try {
+            barrier.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (BrokenBarrierException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

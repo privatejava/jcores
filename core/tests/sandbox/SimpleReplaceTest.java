@@ -32,6 +32,10 @@ import net.jcores.cores.CoreString;
 
 public class SimpleReplaceTest {
     public static void main(String[] args) {
+        // int lvl = level.get() - 1;
+        // int i = baseCount.get() * ((2 << lvl) - 1);
+        
+        System.out.println(2 << -1);
         $("Hello <a href='world'>World</a>").replace("W(or)ld", "$1").split(" ").slice(-2, -3).as(CoreString.class).print();
     }
 }

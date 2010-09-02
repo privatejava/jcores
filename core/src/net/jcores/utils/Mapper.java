@@ -27,24 +27,12 @@
  */
 package net.jcores.utils;
 
-import java.util.concurrent.atomic.AtomicReference;
-
 /**
  * Used by the cores when calling the inner core's mapping function.
  * 
  * @author rb
  */
-public abstract class Mapper {
-    /** If set the return array will be created automatically */
-    protected final Class<?> returnType;
-
-    /** Size of the return array. */
-    protected final int size;
-
-    /** Contains the return array. */
-    @SuppressWarnings("unchecked")
-    protected final AtomicReference array = new AtomicReference();
-
+public abstract class Mapper extends Handler {
     /**
      * Creates an empty mapper with the given size.
      * 
@@ -61,53 +49,15 @@ public abstract class Mapper {
      * @param size
      */
     public Mapper(Class<?> class1, int size) {
-        this.returnType = class1;
-        this.size = size;
+        super(class1, size);
     }
 
     /**
-     * Return the size of the array. 
+     * Overwrite this method and handle element number i. 
      * 
-     * @return .
-     */
-    public int size() {
-        return this.size;
-    }
-
-    /**
-     * Overwrite this method and handle element number i.
+     * This method is called highly parallelized. 
      * 
      * @param i
      */
     public abstract void handle(int i);
-
-    /**
-     * Get the resulting array.
-     * 
-     * @return .
-     */
-    public Object getTargetArray() {
-        return this.array.get();
-    }
-
-    /**
-     * Returns the return array type.
-     * 
-     * @return .
-     */
-    public Class<?> getReturnType() {
-        return this.returnType;
-    }
-
-    /**
-     * Tries to update the array and returns the most recent result. 
-     * 
-     * @param object
-     * @return .
-     */
-    @SuppressWarnings("unchecked")
-    public Object updateArray(Object object) {
-        this.array.compareAndSet(null, object);
-        return this.array.get();
-    }
 }

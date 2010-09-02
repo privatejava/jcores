@@ -34,9 +34,9 @@ package net.jcores.interfaces.functions;
  */
 public interface F2ReduceObjects<X> {
     /**
-     * @param stack
-     * @param next 
+     * @param left
+     * @param right 
      * @return .
      */
-    public X f(X stack, X next);
+    public X f(X left, X right);
 }

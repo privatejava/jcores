@@ -47,6 +47,7 @@ import net.jcores.managers.ManagerStatistics;
 import net.jcores.options.MessageType;
 import net.jcores.options.Option;
 import net.jcores.options.OptionMapType;
+import net.jcores.utils.Folder;
 import net.jcores.utils.Mapper;
 import net.jcores.utils.lang.ObjectUtils;
 
@@ -243,18 +244,14 @@ public class CoreObject<T> extends Core {
         }
 
         // Get only assignable classes of our collection
-        final CoreObject<T> filtered = filter(new F1Object2Bool<T>() {
-            public boolean f(T i) {
-                return c.isAssignableFrom(i.getClass());
-            }
-        });
+        final CoreObject<X> filtered = cast(c);
 
         // Provide an invocation handler
         return (X) ObjectUtils.getProxy(new InvocationHandler() {
             public Object invoke(Object proxy, final Method method, final Object[] args)
                                                                                         throws Throwable {
-                filtered.map(new F1<T, Object>() {
-                    public Object f(T x) {
+                filtered.map(new F1<X, Object>() {
+                    public Object f(X x) {
 
                         try {
                             method.invoke(x, args);
@@ -273,16 +270,6 @@ public class CoreObject<T> extends Core {
                 return null;
             }
         }, c);
-    }
-
-    /**
-     * Tries to send each object the given message .
-     * 
-     * @param string
-     * @param object
-     */
-    public void send(String string, Object object) {
-        // 
     }
 
     /**
@@ -313,6 +300,7 @@ public class CoreObject<T> extends Core {
 
     /**
      * Return our content as an array.
+     * 
      * @param in 
      * @param <N> 
      * 
@@ -424,18 +412,23 @@ public class CoreObject<T> extends Core {
         final Mapper mapper = new Mapper(mapType, size()) {
             @Override
             public void handle(int i) {
+                // Get our target-array (if it is already there)
                 R[] a = (R[]) this.array.get();
 
+                // Get the in-value from the source-array
                 final T in = CoreObject.this.t[i];
 
+                // Convert
                 if (in == null) return;
                 final R out = f.f(in);
                 if (out == null) return;
 
+                // If we haven't had an in-array, create it now, according to the return type
                 if (a == null) {
                     a = (R[]) updateArray(Array.newInstance(out.getClass(), this.size));
                 }
 
+                // Eventually set the out value
                 a[i] = out;
             }
         };
@@ -525,13 +518,52 @@ public class CoreObject<T> extends Core {
     /**
      * Reduces the given object (multithreaded version). 
      * 
+     * NOTE: At present, reduce() is much faster for simple operations, as it involves much 
+     * less synchronization overhead. Right now, only use fold for very complex operations.  
+     * 
      * @param f
      * @param options
      * @return .
      */
+    @SuppressWarnings("unchecked")
     public CoreObject<T> fold(final F2ReduceObjects<T> f, Option... options) {
-        // TODO: Parallelize this
-        return reduce(f, options);
+
+        // In case we only have zero or one elements, don't do anything
+        if (size() <= 1) return this;
+
+        final Folder folder = new Folder(null, size()) {
+            @Override
+            public void handle(int i, int j, int destination) {
+                // Get our target-array (if it is already there)
+                T[] a = (T[]) this.array.get();
+
+                // Get the in-value from the source-array
+                final T ii = a[i];
+                final T jj = a[j];
+
+                if (ii == null && jj == null) return;
+                if (ii == null && jj != null) {
+                    a[destination] = jj;
+                    return;
+                }
+
+                if (ii != null && jj == null) {
+                    a[destination] = ii;
+                    return;
+                }
+
+                a[destination] = f.f(ii, jj);
+            }
+        };
+
+        // Update the target array and fold ...
+        folder.updateArray(Arrays.copyOf(this.t, size()));
+
+        // Now do fold ...
+        fold(folder, options);
+
+        // ... and return result.
+        return new CoreObject<T>(this.commonCore, Arrays.copyOf((T[]) folder.getTargetArray(), 1));
     }
 
     /**

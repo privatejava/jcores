@@ -1,5 +1,5 @@
 /*
- * Thread.java
+ * Mapper.java
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
@@ -25,12 +25,39 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.annotations;
+package net.jcores.utils;
 
 /**
+ * Used by the cores when calling the inner core's mapping function.
+ * 
  * @author rb
- *
  */
-public @interface Thread {
-    //
+public abstract class Folder extends Handler {
+    /**
+     * Creates an empty mapper with the given size.
+     * 
+     * @param size
+     */
+    public Folder(int size) {
+        this(null, size);
+    }
+
+    /**
+     * Creates a mapper with an existing return array of the given size.
+     * 
+     * @param class1
+     * @param size
+     */
+    public Folder(Class<?> class1, int size) {
+        super(class1, size);
+    }
+
+    /**
+     * Overwrite this method and handle element number i.
+     * 
+     * @param i
+     * @param j
+     * @param destination 
+     */
+    public abstract void handle(int i, int j, int destination);
 }

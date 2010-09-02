@@ -1,5 +1,5 @@
 /*
- * Thread.java
+ * Handler.java
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
@@ -25,12 +25,74 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.annotations;
+package net.jcores.utils;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
+ * Handles parallel tasks.
+ * 
  * @author rb
- *
  */
-public @interface Thread {
-    //
+public class Handler {
+    /** If set the return array will be created automatically */
+    protected final Class<?> returnType;
+
+    /** Size of the return array. */
+    protected final int size;
+
+    /** Contains the return array. */
+    @SuppressWarnings("rawtypes")
+    protected final AtomicReference array = new AtomicReference();
+
+    /**
+     * Creates a mapper with an existing return array of the given size.
+     * 
+     * @param class1
+     * @param size
+     */
+    public Handler(Class<?> class1, int size) {
+        this.returnType = class1;
+        this.size = size;
+    }
+
+    /**
+     * Return the size of the array. 
+     * 
+     * @return .
+     */
+    public int size() {
+        return this.size;
+    }
+
+    /**
+     * Get the resulting array.
+     * 
+     * @return .
+     */
+    public Object getTargetArray() {
+        return this.array.get();
+    }
+
+    /**
+     * Returns the return array type.
+     * 
+     * @return .
+     */
+    public Class<?> getReturnType() {
+        return this.returnType;
+    }
+
+    /**
+     * Tries to update the array and returns the most recent result. 
+     * 
+     * @param object
+     * @return .
+     */
+    @SuppressWarnings("unchecked")
+    public Object updateArray(Object object) {
+        this.array.compareAndSet(null, object);
+        return this.array.get();
+    }
+
 }

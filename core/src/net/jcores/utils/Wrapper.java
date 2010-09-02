@@ -40,7 +40,7 @@ public class Wrapper {
 
     /**
      * Returns a CoreObject based on the given collection with the array type. 
-     * @param list 
+     * @param collection 
      * @param <T> 
      *    
      * @param type 
@@ -48,9 +48,9 @@ public class Wrapper {
      * @return .
      */
     @SuppressWarnings("unchecked")
-    public static <T> T[] convert(Collection<?> list, Class<T> type) {
-        if(list == null) return (T[]) Array.newInstance(Object.class, 0);
-        return list.toArray((T[]) Array.newInstance(type, 0));
+    public static <T> T[] convert(Collection<?> collection, Class<T> type) {
+        if (collection == null) return (T[]) Array.newInstance(Object.class, 0);
+        return collection.toArray((T[]) Array.newInstance(type, 0));
     }
 
     /**
@@ -65,14 +65,15 @@ public class Wrapper {
      * @return .
      */
     @SuppressWarnings("unchecked")
-    public static <T, Y> Y[] convert(Collection<T> list, F1<T, Y> converter, Class<Y> mapType) {
+    public static <T, Y> Y[] convert(Collection<T> list, F1<T, Y> converter,
+                                     Class<Y> mapType) {
 
         // TODO: Parallelize me! 
         // TODO: Make me work without size 
         final Object[] converted = (Object[]) Array.newInstance(mapType == null ? Object.class : mapType, list.size());
 
         int i = 0;
-        
+
         for (T x : list) {
             converted[i++] = converter.f(x);
         }

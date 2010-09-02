@@ -1,5 +1,5 @@
 /*
- * Thread.java
+ * SimpleSpeedTests.java
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
@@ -25,12 +25,53 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.annotations;
+package sandbox;
+
+import static net.jcores.CoreKeeper.$;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import net.jcores.interfaces.functions.F2ReduceObjects;
 
 /**
  * @author rb
- *
  */
-public @interface Thread {
-    //
+public class SimpleFolderTest {
+    /**
+     * @param args
+     */
+    @SuppressWarnings("boxing")
+    public static void main(String[] args) {
+        List<Integer> ints = new ArrayList<Integer>();
+        for (int i = 0; i < 10000; i++) {
+            ints.add(i);
+            //ints.add(1);
+        }
+
+        long t1 = System.nanoTime();
+        Integer i1 = $(ints).fold(new F2ReduceObjects<Integer>() {
+            @Override
+            public Integer f(Integer stack, Integer next) {
+                return Math.max(stack, next);
+            }
+        }).get(0);
+        long t2 = System.nanoTime();
+
+        long t3 = System.nanoTime();
+        Integer i2 = $(ints).reduce(new F2ReduceObjects<Integer>() {
+            @Override
+            public Integer f(Integer stack, Integer next) {
+                return Math.max(stack, next);
+            }
+        }).get(0);
+        long t4 = System.nanoTime();
+
+        System.out.println((t2 - t1) / 1000);
+        System.out.println((t4 - t3) / 1000);
+        System.out.println();
+        System.out.println(i1);
+        System.out.println(i2);
+
+    }
 }

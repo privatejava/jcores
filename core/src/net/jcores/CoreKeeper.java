@@ -41,7 +41,7 @@ import net.jcores.options.OptionMapType;
 import net.jcores.utils.Wrapper;
 
 /**
- * Keeps the common core and contains Johnnys($) for all our cores. If you wanna see your own core 
+ * Keeps the common core and contains Johnnys($) for all our cores. If you want to see your own core 
  * in here (or if you have any recommendations for new cores) send a mail to Ralf (rb@xeoh.net).   
  * 
  * @author Ralf Biedert
@@ -156,7 +156,7 @@ public class CoreKeeper {
                 mapType = ((OptionMapType) option).getType();
             }
         }
-        
+
         return new CoreObject<Y>($, (Y[]) Wrapper.convert(t, converter, (Class<Y>) mapType));
     }
 }

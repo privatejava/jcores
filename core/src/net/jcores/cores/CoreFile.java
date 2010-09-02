@@ -63,14 +63,13 @@ public class CoreFile extends CoreObject<File> {
             }
         }).array());
     }
-    
+
     /**
      * Deletes the given objects, recursively.
      * 
      * @return .
      */
     public CoreFile delete() {
-
         map(new F1<File, Object>() {
             public Object f(File x) {
                 // TODO: Care for directories
@@ -78,11 +77,10 @@ public class CoreFile extends CoreObject<File> {
                 return null;
             }
         });
-        
+
         return this;
     }
-    
-    
+
     /**
      * Lists the contents of the subdirectories. 
      * 
@@ -90,7 +88,7 @@ public class CoreFile extends CoreObject<File> {
      */
     public CoreFile dir() {
         return null;
-    }    
+    }
 
     /**
      * Appends the object.toString() to the given files 
@@ -111,11 +109,11 @@ public class CoreFile extends CoreObject<File> {
                 } catch (FileNotFoundException e) {
                     CoreFile.this.commonCore.report(MessageType.EXCEPTION, e.getLocalizedMessage());
                 }
-                
+
                 return null;
             }
         });
-        
+
         return this;
     }
 }
