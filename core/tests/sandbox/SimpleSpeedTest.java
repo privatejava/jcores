@@ -41,6 +41,8 @@ import net.jcores.cores.CoreClass;
 import net.jcores.interfaces.functions.F0;
 import net.jcores.interfaces.functions.F1;
 import net.jcores.interfaces.functions.F1Int2Int;
+import net.jcores.interfaces.functions.F2DeltaObjects;
+import net.jcores.interfaces.functions.F2ReduceObjects;
 import sandbox.dummys.F0Impl;
 
 /**
@@ -54,6 +56,7 @@ public class SimpleSpeedTest {
     /**
      * @param args
      */
+    @SuppressWarnings("boxing")
     public static void main(String[] args) {
         final int size = 100000;
         final String strings[] = constructStrings(size);
@@ -62,12 +65,17 @@ public class SimpleSpeedTest {
         final Collection<String> r = new ConcurrentLinkedQueue<String>();
         final Collection<String> r2 = new ArrayList<String>(size);
         final List<Object> o1 = new ArrayList<Object>();
+        final List<Integer> intobjs = new ArrayList<Integer>();
 
         final int[] ints = constructInts(size);
         final long[] longs = constructLongs(size);
 
         final int[] res = new int[size];
         final long[] resl = new long[size];
+
+        for (int i = 0; i < size; i++) {
+            intobjs.add(i);
+        }
 
         System.out.println();
         System.out.println("--- Array and Collections ---");
@@ -76,25 +84,25 @@ public class SimpleSpeedTest {
                 c1.toArray(new String[0]);
             }
 
-        }, 10));
+        }, 10) + "µs");
         System.out.println(benchmark(new F0() { // 9460
             public void f() {
                 c1.toArray();
             }
 
-        }, 10));
+        }, 10) + "µs");
         System.out.println(benchmark(new F0() { // 62650
             public void f() {
                 c2.toArray();
             }
 
-        }, 10));
+        }, 10) + "µs");
         System.out.println(benchmark(new F0() { // 181898
             public void f() {
                 c2.toArray(new String[0]);
             }
 
-        }, 10));
+        }, 10) + "µs");
         System.out.println(benchmark(new F0() { // 84118
             public void f() {
                 for (int i = 0; i < size; i++) {
@@ -102,7 +110,7 @@ public class SimpleSpeedTest {
                 }
             }
 
-        }, 10));
+        }, 10) + "µs");
         System.out.println(benchmark(new F0() { // 80942
             public void f() {
                 for (int i = 0; i < size; i++) {
@@ -110,7 +118,7 @@ public class SimpleSpeedTest {
                 }
             }
 
-        }, 10));
+        }, 10) + "µs");
         r.clear();
         System.out.println(benchmark(new F0() { // 89496
             public void f() {
@@ -118,7 +126,7 @@ public class SimpleSpeedTest {
                     r2.add(s.toLowerCase());
                 }
             }
-        }, 10));
+        }, 10) + "µs");
         System.out.println(benchmark(new F0() { // 87272
             public void f() {
                 int i = 0;
@@ -126,7 +134,7 @@ public class SimpleSpeedTest {
                     strings[i++] = s.toLowerCase();
                 }
             }
-        }, 10));
+        }, 10) + "µs");
         r.clear();
         System.out.println(benchmark(new F0() { // 413666
             public void f() {
@@ -134,7 +142,7 @@ public class SimpleSpeedTest {
                     r.add(s.toLowerCase());
                 }
             }
-        }, 10));
+        }, 10) + "µs");
         r.clear();
         System.out.println(benchmark(new F0() { // 413666
             public void f() {
@@ -142,7 +150,7 @@ public class SimpleSpeedTest {
                     r.add(s.toLowerCase());
                 }
             }
-        }, 10));
+        }, 10) + "µs");
 
         System.out.println();
         System.out.println("--- Object Creation ---");
@@ -156,19 +164,15 @@ public class SimpleSpeedTest {
                 for (int i = 0; i < size; i++)
                     o1.add($2.spawn());
             }
-        }, 10));
+        }, 10) + "µs");
         o1.clear();
         System.out.println(benchmark(new F0() { // 2277 
             public void f() {
                 for (int i = 0; i < size; i++)
                     o1.add(new F0Impl());
             }
-        }, 10));
+        }, 10) + "µs");
 
-        
-        
-        
-        
         final AtomicInteger ress = new AtomicInteger();
         System.out.println();
         System.out.println("--- $() usage ---");
@@ -180,7 +184,7 @@ public class SimpleSpeedTest {
                 ress.addAndGet(cnt);
             }
 
-        }, 10));
+        }, 10) + "µs");
         System.out.println(benchmark(new F0() { // 3034
             public void f() {
                 int cnt = 0;
@@ -190,7 +194,7 @@ public class SimpleSpeedTest {
                 ress.addAndGet(cnt);
             }
 
-        }, 10));
+        }, 10) + "µs");
         System.out.println(benchmark(new F0() { // 227518
             public void f() {
                 int cnt = 0;
@@ -198,7 +202,7 @@ public class SimpleSpeedTest {
                     cnt += $(getOrNotList()).size();
                 ress.addAndGet(cnt);
             }
-        }, 10));
+        }, 10) + "µs");
         System.out.println(benchmark(new F0() { // 133315
             public void f() {
                 int cnt = 0;
@@ -209,7 +213,7 @@ public class SimpleSpeedTest {
                 ress.addAndGet(cnt);
             }
 
-        }, 10));
+        }, 10) + "µs");
         System.out.println(benchmark(new F0() { // 3857
             public void f() {
                 Object o = new Object();
@@ -218,7 +222,7 @@ public class SimpleSpeedTest {
                     cnt += $(o).size();
                 ress.addAndGet(cnt);
             }
-        }, 10));
+        }, 10) + "µs");
         System.out.println(benchmark(new F0() { // 30
             public void f() {
                 Object o = new Object();
@@ -229,29 +233,28 @@ public class SimpleSpeedTest {
                 ress.addAndGet(cnt);
             }
 
-        }, 10));
+        }, 10) + "µs");
         System.out.println(benchmark(new F0() { // 10409 // 839
             public void f() {
                 int cnt = 0;
-                Object o = new Object(); 
+                Object o = new Object();
                 for (int i = 0; i < size; i++) {
                     cnt += new Object().equals(o) ? 1 : 0;
                 }
                 ress.addAndGet(cnt);
             }
 
-        }, 10));
+        }, 10) + "µs");
         System.out.println(benchmark(new F0() { // 12071 // 2782
             public void f() {
                 int cnt = 0;
-                Object o = new Object(); 
+                Object o = new Object();
                 for (int i = 0; i < size; i++) {
                     cnt += $(o).equals(o) ? 1 : 0;
                 }
                 ress.addAndGet(cnt);
             }
-        }, 10));
-        
+        }, 10) + "µs");
 
         System.out.println();
         System.out.println("--- Iteration over Created ---");
@@ -259,19 +262,19 @@ public class SimpleSpeedTest {
             public void f() {
                 $(F0Impl.class).spawned().each(F0.class).f();
             }
-        }, 10));
+        }, 10) + "µs");
         System.out.println(benchmark(new F0() {
             public void f() { // 7450
                 for (Object f0 : o1) {
                     ((F0Impl) f0).f();
                 }
             }
-        }, 10));
+        }, 10) + "µs");
         System.out.println(benchmark(new F0() {
             public void f() { // 118806
                 $(o1).each(F0.class).f();
             }
-        }, 10));
+        }, 10) + "µs");
         System.out.println(benchmark(new F0() {
             public void f() { // 26346
                 $(o1).map(new F1() {
@@ -281,12 +284,12 @@ public class SimpleSpeedTest {
                     }
                 });
             }
-        }, 10));
+        }, 10) + "µs");
         System.out.println(benchmark(new F0() {
             public void f() { // 11012
                 $(o1);
             }
-        }, 10));
+        }, 10) + "µs");
 
         /*
          * Removed, the ___map was the first version of map without the mapper, was ~10-20% faster but only
@@ -300,7 +303,7 @@ public class SimpleSpeedTest {
                     }
                 });
             }
-        }, 10);
+        }, 10) + "µs";
          */
         long b1 = benchmark(new F0() {
             public void f() {
@@ -356,6 +359,49 @@ public class SimpleSpeedTest {
         System.out.println(b3);
         System.out.println(b4);
         System.out.println(b6);
+
+        System.out.println();
+        System.out.println("--- Fancy Stuff ---");
+        System.out.println(benchmark(new F0() {
+            public void f() {
+                $(intobjs).fold(new F2ReduceObjects<Integer>() {
+                    @Override
+                    public Integer f(Integer stack, Integer next) {
+                        return stack + next;
+                    }
+                }).get(0);
+            }
+        }, 10) + "µs");
+        System.out.println(benchmark(new F0() {
+            public void f() {
+                $(intobjs).reduce(new F2ReduceObjects<Integer>() {
+                    @Override
+                    public Integer f(Integer stack, Integer next) {
+                        return stack + next;
+                    }
+                }).get(0);
+            }
+        }, 10) + "µs");
+        System.out.println(benchmark(new F0() {
+            public void f() {
+
+                $(intobjs).staple(0, new F2ReduceObjects<Integer>() {
+                    public Integer f(Integer left, Integer right) {
+                        return left + right;
+                    }
+                });
+
+            }
+        }, 10) + "µs");
+        System.out.println(benchmark(new F0() {
+            public void f() {
+                $(intobjs).delta(new F2DeltaObjects<Integer, Integer>() {
+                    public Integer f(Integer left, Integer right) {
+                        return right - left;
+                    }
+                }).size();
+            }
+        }, 10) + "µs");
     }
 
     private static String[] constructStrings(int size) {

@@ -75,7 +75,7 @@ public abstract class Core {
         final int size = mapper.size();
 
         // Quick pass for the probably most common events
-        if (size == 0) return;
+        if (size <= 0) return;
         if (size == 1) {
             mapper.handle(0);
             return;

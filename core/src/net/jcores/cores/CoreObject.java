@@ -35,6 +35,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 import net.jcores.CommonCore;
@@ -42,6 +43,7 @@ import net.jcores.interfaces.functions.F0;
 import net.jcores.interfaces.functions.F1;
 import net.jcores.interfaces.functions.F1Object2Bool;
 import net.jcores.interfaces.functions.F1Object2Int;
+import net.jcores.interfaces.functions.F2DeltaObjects;
 import net.jcores.interfaces.functions.F2ReduceObjects;
 import net.jcores.managers.ManagerStatistics;
 import net.jcores.options.MessageType;
@@ -49,6 +51,7 @@ import net.jcores.options.Option;
 import net.jcores.options.OptionMapType;
 import net.jcores.utils.Folder;
 import net.jcores.utils.Mapper;
+import net.jcores.utils.Staple;
 import net.jcores.utils.lang.ObjectUtils;
 
 /**
@@ -60,22 +63,6 @@ public class CoreObject<T> extends Core {
 
     /** The array we work on. */
     protected final T[] t;
-
-    /**
-     * Creates the core object for the given collection.
-     * 
-     * @param supercore 
-     * @param t
-     */
-    public CoreObject(CommonCore supercore, T... t) {
-        super(supercore);
-
-        this.t = t;
-
-        // DELETEME: Testing if it makes sense to use assertions to provide switchable
-        // logging and performance measuring. 
-        assert this.commonCore.manager(ManagerStatistics.class).hashCode() != 0;
-    }
 
     /**
      * Creates the core object for the given collection.
@@ -96,6 +83,40 @@ public class CoreObject<T> extends Core {
         } else {
             this.t = (T[]) new Object[0];
         }
+    }
+
+    /**
+     * Creates the core object for the given collection.
+     * 
+     * @param supercore 
+     * @param t
+     */
+    public CoreObject(CommonCore supercore, T... t) {
+        super(supercore);
+
+        this.t = t;
+
+        // DELETEME: Testing if it makes sense to use assertions to provide switchable
+        // logging and performance measuring. 
+        assert this.commonCore.manager(ManagerStatistics.class).hashCode() != 0;
+    }
+
+    /**
+     * Return our content as an array.
+     * 
+     * @param in 
+     * @param <N> 
+     * 
+     * @return .
+     */
+    @SuppressWarnings("unchecked")
+    public <N> N[] array(Class<N> in) {
+        N[] n = (N[]) Array.newInstance(in, 0);
+
+        if (this.t != null)
+            return (N[]) Arrays.copyOf(this.t, this.t.length, n.getClass());
+
+        return (N[]) Array.newInstance(in, 0);
     }
 
     /**
@@ -201,30 +222,101 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * If all elements are present, execute f0.
+     * Casts all elements to the given type or sets them null if they are not castable.
      * 
-     * @param f0 S>
+     * @param <N>
+     * @param target
+     * @return R
      */
-    public void ifAll(F0 f0) {
-        if (hasAll()) f0.f();
+    public <N> CoreObject<N> cast(final Class<N> target) {
+        return map(new F1<T, N>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public N f(T x) {
+                if (target.isAssignableFrom(x.getClass())) return (N) x;
+                return null;
+            }
+        }, new OptionMapType(target));
     }
 
     /**
-     * Checks if all elements are not null.
+     * Returns a compacted object whose underlaying array does not 
+     * contain null anymore .
      * 
-     * @return .
+     * @return . 
      */
-    public boolean hasAll() {
-        return size() == compact().size();
+    public CoreObject<T> compact() {
+        // No size == no fun.
+        if (size() == 0) return new CoreObject<T>(this.commonCore, this.t);
+
+        final T[] tmp = Arrays.copyOf(this.t, this.t.length);
+        int dst = 0;
+
+        // Now process our array
+        for (int i = 0; i < this.t.length; i++) {
+            if (this.t[i] == null) continue;
+
+            tmp[dst++] = this.t[i];
+        }
+
+        return new CoreObject<T>(this.commonCore, Arrays.copyOf(tmp, dst));
     }
 
     /**
-     * Checks if the element has any element.
+     * Returns a core of length size() - 1 consisting of the results of the delta function.
+     *  
+     * @param delta
+     * @param <R> 
+     * @param options 
      * 
-     * @return .
+     * @return . 
      */
-    public boolean hasAny() {
-        return compact().size() > 0;
+    @SuppressWarnings("unchecked")
+    public <R> CoreObject<R> delta(final F2DeltaObjects<T, R> delta, Option... options) {
+
+        Class<?> mapType = null;
+
+        // Check options if we have a map type.
+        for (Option option : options) {
+            if (option instanceof OptionMapType) {
+                mapType = ((OptionMapType) option).getType();
+            }
+        }
+
+        // Create mapper
+        final Mapper mapper = new Mapper(mapType, size() - 1) {
+            @Override
+            public void handle(int i) {
+                // Get our target-array (if it is already there)
+                R[] a = (R[]) this.array.get();
+
+                // Get the in-value from the source-array
+                final T ii = CoreObject.this.t[i];
+                final T jj = CoreObject.this.t[i + 1];
+
+                // Convert
+                if (ii == null || jj == null) return;
+
+                final R out = delta.f(ii, jj);
+
+                if (out == null) return;
+
+                // If we haven't had an in-array, create it now, according to the return type
+                if (a == null) {
+                    a = (R[]) updateArray(Array.newInstance(out.getClass(), this.size));
+                }
+
+                // Eventually set the out value
+                a[i] = out;
+            }
+        };
+
+        // Map ...
+        map(mapper, options);
+
+        // ... and return result.
+        return new CoreObject<R>(this.commonCore, (R[]) mapper.getTargetArray());
+
     }
 
     /**
@@ -273,71 +365,158 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns the wrapped collection as a list
+     * Expands contained arrays to a single array.  
      * 
-     * @return .
-     */
-    public List<T> list() {
-        if (this.t == null) return new ArrayList<T>();
-        return Arrays.asList(this.t);
-    }
-
-    /**
-     * Return our content as an array. 
-     * 
-     * NOTE: Calling this method is not safe, as sometimes arrays of type Object[] can be returned 
-     * (especially in the case of empty cores) which are not mappable to more specific arrays. E.g:
-     * 
-     * String[] strings = emptystringcore.array()
-     * 
-     * This is due to the case that empty cores do not know of what type they really are.
-     * 
-     * @return .
-     */
-    protected T[] array() {
-        return this.t;
-    }
-
-    /**
-     * Return our content as an array.
-     * 
-     * @param in 
-     * @param <N> 
-     * 
+     * @param <N>
+     * @param class1
      * @return .
      */
     @SuppressWarnings("unchecked")
-    public <N> N[] array(Class<N> in) {
-        N[] n = (N[]) Array.newInstance(in, 0);
+    public <N> CoreObject<N> expand(Class<N> class1) {
+        int length = 0;
 
-        if (this.t != null)
-            return (N[]) Arrays.copyOf(this.t, this.t.length, n.getClass());
+        if (this.t == null) return new CoreObject<N>(this.commonCore, class1, null);
 
-        return (N[]) Array.newInstance(in, 0);
+        // Compute overall size 
+        for (T x : this.t) {
+            if (x == null) continue;
+
+            // Is it a collection?
+            if (x instanceof Collection<?>) {
+                length += ((Collection<?>) x).size();
+                continue;
+            }
+
+            // An array?
+            try {
+                length += Array.getLength(x);
+                continue;
+            } catch (IllegalArgumentException e) {
+                //
+            }
+
+            // A single object?!
+            length++;
+        }
+
+        // Generate array
+        N[] n = (N[]) Array.newInstance(class1, length);
+        int offset = 0;
+
+        // Copy to array 
+        for (T x : this.t) {
+            if (x == null) continue;
+
+            // Is it a collection?
+            if (x instanceof Collection<?>) {
+                Object[] array = ((Collection<?>) x).toArray();
+                System.arraycopy(array, 0, n, offset, array.length);
+                offset += array.length;
+                continue;
+            }
+
+            // An array?
+            try {
+                int size = Array.getLength(x);
+                System.arraycopy(x, 0, n, offset, size);
+                offset += size;
+                continue;
+            } catch (IndexOutOfBoundsException e) {
+                e.printStackTrace();
+            } catch (ArrayStoreException e) {
+                //
+            }
+
+            Array.set(n, offset, x);
+        }
+
+        return new CoreObject<N>(this.commonCore, n);
     }
 
     /**
-     * Returns how many items are in this core. 
+     * Filters the object using the given function. A compacted array will be returned that
+     * contains only values for which f returned true.
      * 
-     * @return .
+     * @param f If f returns true the object is kept. 
+     * @param options
+     * 
+     * @return . 
      */
-    @Override
-    public int size() {
-        if (this.t == null) return 0;
-        return this.t.length;
+    public CoreObject<T> filter(final F1Object2Bool<T> f, Option... options) {
+        CoreObject<T> rval = map(new F1<T, T>() {
+            public T f(T x) {
+                if (f.f(x)) return x;
+                return null;
+            }
+        });
+
+        return rval.compact();
     }
 
     /**
-     * Returns the first element, or, if there is none, return dflt.
+     * Reduces the given object (multithreaded version). 
      * 
-     * @param dflt
+     * NOTE: At present, reduce() is much faster for simple operations, as it involves much 
+     * less synchronization overhead. Right now, only use fold for very complex operations.  
+     * 
+     * @param f
+     * @param options
      * @return .
      */
-    public T get(T dflt) {
-        final T rval = get(0);
+    @SuppressWarnings("unchecked")
+    public CoreObject<T> fold(final F2ReduceObjects<T> f, Option... options) {
 
-        if (rval == null) return dflt;
-        return rval;
+        // In case we only have zero or one elements, don't do anything
+        if (size() <= 1) return this;
+
+        final Folder folder = new Folder(null, size()) {
+            @Override
+            public void handle(int i, int j, int destination) {
+                // Get our target-array (if it is already there)
+                T[] a = (T[]) this.array.get();
+
+                // Get the in-value from the source-array
+                final T ii = a[i];
+                final T jj = a[j];
+
+                if (ii == null && jj == null) return;
+                if (ii == null && jj != null) {
+                    a[destination] = jj;
+                    return;
+                }
+
+                if (ii != null && jj == null) {
+                    a[destination] = ii;
+                    return;
+                }
+
+                a[destination] = f.f(ii, jj);
+            }
+        };
+
+        // Update the target array and fold ...
+        folder.updateArray(Arrays.copyOf(this.t, size()));
+
+        // Now do fold ...
+        fold(folder, options);
+
+        // ... and return result.
+        return new CoreObject<T>(this.commonCore, Arrays.copyOf((T[]) folder.getTargetArray(), 1));
+    }
+
+    /**
+     * Return the an element at the the relative position
+     * 
+     * @param percent 0 == first element, 1 == last element. 
+     * 
+     * @return .
+     */
+    public T get(double percent) {
+        if (Double.isNaN(percent)) return null;
+        if (percent < 0) return null;
+        if (percent > 1) return null;
+
+        return this.t[(int) (percent * this.t.length)];
     }
 
     /**
@@ -356,35 +535,53 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns a slice of this core.
+     * Returns the first element, or, if there is none, return dflt.
      * 
-     * @param start
-     * @param length If length is positive it is treated as length, if negative as a starting position from the end (-1 == last position)
+     * @param dflt
      * @return .
      */
-    public CoreObject<T> slice(final int start, final int length) {
-        final int i = indexToOffset(start);
-        final int l = length > 0 ? length : indexToOffset(length) - i + 1;
+    public T get(T dflt) {
+        final T rval = get(0);
 
-        return new CoreObject<T>(this.commonCore, Arrays.copyOfRange(this.t, i, i + l));
+        if (rval == null) return dflt;
+        return rval;
     }
 
     /**
-     * Converts an index to an offset.
+     * Checks if all elements are not null.
      * 
-     * @param index
-     * @return
+     * @return .
      */
-    protected final int indexToOffset(int index) {
-        if (index >= this.t.length) return -1;
+    public boolean hasAll() {
+        return size() == compact().size();
+    }
 
-        // We also support negative indices. 
-        if (index < 0) {
-            if (-index > this.t.length) return -1;
-            return this.t.length + index;
-        }
+    /**
+     * Checks if the element has any element.
+     * 
+     * @return .
+     */
+    public boolean hasAny() {
+        return compact().size() > 0;
+    }
 
-        return index;
+    /**
+     * If all elements are present, execute f0.
+     * 
+     * @param f0 S>
+     */
+    public void ifAll(F0 f0) {
+        if (hasAll()) f0.f();
+    }
+
+    /**
+     * Returns the wrapped collection as a list
+     * 
+     * @return .
+     */
+    public List<T> list() {
+        if (this.t == null) return new ArrayList<T>();
+        return Arrays.asList(this.t);
     }
 
     /**
@@ -463,26 +660,6 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Filters the object using the given function. A compacted array will be returned that
-     * contains only values for which f returned true.
-     * 
-     * @param f If f returns true the object is kept. 
-     * @param options
-     * 
-     * @return . 
-     */
-    public CoreObject<T> filter(final F1Object2Bool<T> f, Option... options) {
-        CoreObject<T> rval = map(new F1<T, T>() {
-            public T f(T x) {
-                if (f.f(x)) return x;
-                return null;
-            }
-        });
-
-        return rval.compact();
-    }
-
-    /**
      * Reduces the given object (single thread version) 
      * 
      * @param f
@@ -516,164 +693,66 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Reduces the given object (multithreaded version). 
+     * Returns how many items are in this core. 
      * 
-     * NOTE: At present, reduce() is much faster for simple operations, as it involves much 
-     * less synchronization overhead. Right now, only use fold for very complex operations.  
-     * 
-     * @param f
-     * @param options
      * @return .
      */
-    @SuppressWarnings("unchecked")
-    public CoreObject<T> fold(final F2ReduceObjects<T> f, Option... options) {
-
-        // In case we only have zero or one elements, don't do anything
-        if (size() <= 1) return this;
-
-        final Folder folder = new Folder(null, size()) {
-            @Override
-            public void handle(int i, int j, int destination) {
-                // Get our target-array (if it is already there)
-                T[] a = (T[]) this.array.get();
-
-                // Get the in-value from the source-array
-                final T ii = a[i];
-                final T jj = a[j];
-
-                if (ii == null && jj == null) return;
-                if (ii == null && jj != null) {
-                    a[destination] = jj;
-                    return;
-                }
-
-                if (ii != null && jj == null) {
-                    a[destination] = ii;
-                    return;
-                }
-
-                a[destination] = f.f(ii, jj);
-            }
-        };
-
-        // Update the target array and fold ...
-        folder.updateArray(Arrays.copyOf(this.t, size()));
-
-        // Now do fold ...
-        fold(folder, options);
-
-        // ... and return result.
-        return new CoreObject<T>(this.commonCore, Arrays.copyOf((T[]) folder.getTargetArray(), 1));
+    @Override
+    public int size() {
+        if (this.t == null) return 0;
+        return this.t.length;
     }
 
     /**
-     * Returns a compacted object whose underlaying array does not 
-     * contain null anymore .
+     * Returns a slice of this core.
      * 
-     * @return . 
+     * @param start
+     * @param length If length is positive it is treated as length, if negative as a starting position from the end (-1 == last position)
+     * @return .
      */
-    public CoreObject<T> compact() {
-        // No size == no fun.
-        if (size() == 0) return new CoreObject<T>(this.commonCore, this.t);
+    public CoreObject<T> slice(final int start, final int length) {
+        final int i = indexToOffset(start);
+        final int l = length > 0 ? length : indexToOffset(length) - i + 1;
 
-        final T[] tmp = Arrays.copyOf(this.t, this.t.length);
-        int dst = 0;
+        return new CoreObject<T>(this.commonCore, Arrays.copyOfRange(this.t, i, i + l));
+    }
 
-        // Now process our array
+    /**
+     * Returns a new, sorted core.
+     * 
+     * @param c
+     * @return .
+     */
+    public CoreObject<T> sort(Comparator<T> c) {
+        final T[] copyOf = Arrays.copyOf(this.t, size());
+        Arrays.sort(copyOf, c);
+
+        return new CoreObject<T>(this.commonCore, copyOf);
+    }
+
+    /**
+     * Assists computing the average of a number of elements.
+     * 
+     * @param neutralElement The initial element
+     * @param sumAndNext A reduce function. Left will be the current sum, right will 
+     * be the next element.
+     * 
+     * @return An Average object, with the current sum and the size. 
+     */
+    public Staple<T> staple(T neutralElement, F2ReduceObjects<T> sumAndNext) {
+
+        int count = 0;
+        T sum = neutralElement;
+
         for (int i = 0; i < this.t.length; i++) {
             if (this.t[i] == null) continue;
 
-            tmp[dst++] = this.t[i];
+            sum = sumAndNext.f(sum, this.t[i]);
+
+            count++;
         }
 
-        return new CoreObject<T>(this.commonCore, Arrays.copyOf(tmp, dst));
-    }
-
-    /**
-     * Expands contained arrays to a single array.  
-     * 
-     * @param <N>
-     * @param class1
-     * @return .
-     */
-    @SuppressWarnings("unchecked")
-    public <N> CoreObject<N> expand(Class<N> class1) {
-        int length = 0;
-
-        if (this.t == null) return new CoreObject<N>(this.commonCore, class1, null);
-
-        // Compute overall size 
-        for (T x : this.t) {
-            if (x == null) continue;
-
-            // Is it a collection?
-            if (x instanceof Collection<?>) {
-                length += ((Collection<?>) x).size();
-                continue;
-            }
-
-            // An array?
-            try {
-                length += Array.getLength(x);
-                continue;
-            } catch (IllegalArgumentException e) {
-                //
-            }
-
-            // A single object?!
-            length++;
-        }
-
-        // Generate array
-        N[] n = (N[]) Array.newInstance(class1, length);
-        int offset = 0;
-
-        // Copy to array 
-        for (T x : this.t) {
-            if (x == null) continue;
-
-            // Is it a collection?
-            if (x instanceof Collection<?>) {
-                Object[] array = ((Collection<?>) x).toArray();
-                System.arraycopy(array, 0, n, offset, array.length);
-                offset += array.length;
-                continue;
-            }
-
-            // An array?
-            try {
-                int size = Array.getLength(x);
-                System.arraycopy(x, 0, n, offset, size);
-                offset += size;
-                continue;
-            } catch (IndexOutOfBoundsException e) {
-                e.printStackTrace();
-            } catch (ArrayStoreException e) {
-                //
-            }
-
-            Array.set(n, offset, x);
-        }
-
-        return new CoreObject<N>(this.commonCore, n);
-    }
-
-    /**
-     * Casts all elements to the given type or sets them null if they are not castable.
-     * 
-     * @param <N>
-     * @param target
-     * @return R
-     */
-    public <N> CoreObject<N> cast(final Class<N> target) {
-        return map(new F1<T, N>() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public N f(T x) {
-                if (target.isAssignableFrom(x.getClass())) return (N) x;
-                return null;
-            }
-        }, new OptionMapType(target));
+        return new Staple<T>(sum, count);
     }
 
     /**
@@ -687,5 +766,39 @@ public class CoreObject<T> extends Core {
                 return x.toString();
             }
         }).as(CoreString.class);
+    }
+
+    /**
+     * Return our content as an array. 
+     * 
+     * NOTE: Calling this method is not safe, as sometimes arrays of type Object[] can be returned 
+     * (especially in the case of empty cores) which are not mappable to more specific arrays. E.g:
+     * 
+     * String[] strings = emptystringcore.array()
+     * 
+     * This is due to the case that empty cores do not know of what type they really are.
+     * 
+     * @return .
+     */
+    protected T[] array() {
+        return this.t;
+    }
+
+    /**
+     * Converts an index to an offset.
+     * 
+     * @param index
+     * @return
+     */
+    protected final int indexToOffset(int index) {
+        if (index >= this.t.length) return -1;
+
+        // We also support negative indices. 
+        if (index < 0) {
+            if (-index > this.t.length) return -1;
+            return this.t.length + index;
+        }
+
+        return index;
     }
 }

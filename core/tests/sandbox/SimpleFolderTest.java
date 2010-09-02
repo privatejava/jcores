@@ -32,7 +32,9 @@ import static net.jcores.CoreKeeper.$;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.jcores.interfaces.functions.F2DeltaObjects;
 import net.jcores.interfaces.functions.F2ReduceObjects;
+import net.jcores.utils.Staple;
 
 /**
  * @author rb
@@ -53,7 +55,7 @@ public class SimpleFolderTest {
         Integer i1 = $(ints).fold(new F2ReduceObjects<Integer>() {
             @Override
             public Integer f(Integer stack, Integer next) {
-                return Math.max(stack, next);
+                return stack + next;
             }
         }).get(0);
         long t2 = System.nanoTime();
@@ -62,7 +64,7 @@ public class SimpleFolderTest {
         Integer i2 = $(ints).reduce(new F2ReduceObjects<Integer>() {
             @Override
             public Integer f(Integer stack, Integer next) {
-                return Math.max(stack, next);
+                return stack + next;
             }
         }).get(0);
         long t4 = System.nanoTime();
@@ -72,6 +74,21 @@ public class SimpleFolderTest {
         System.out.println();
         System.out.println(i1);
         System.out.println(i2);
+
+        final Staple<Integer> staple = $(ints).staple(0, new F2ReduceObjects<Integer>() {
+            public Integer f(Integer left, Integer right) {
+                return left + right;
+            }
+        });
+
+        System.out.println(staple.staple() / staple.size());
+
+        Integer integer = $(ints).delta(new F2DeltaObjects<Integer, Integer>() {
+            public Integer f(Integer left, Integer right) {
+                return right - left;
+            }
+        }).size();
+        System.out.println(integer);
 
     }
 }
