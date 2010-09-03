@@ -434,6 +434,23 @@ public class CoreObject<T> extends Core {
     }
 
     /**
+     * Returns a new core with all null elements set to fillValue.
+     * 
+     * @param fillValue 
+     * 
+     * @return . 
+     */
+    public CoreObject<T> fill(T fillValue) {
+        final T[] copy = Arrays.copyOf(this.t, size());
+
+        for (int i = 0; i < copy.length; i++) {
+            copy[i] = copy[i] == null ? fillValue : copy[i];
+        }
+
+        return new CoreObject<T>(this.commonCore, copy);
+    }
+
+    /**
      * Filters the object using the given function. A compacted array will be returned that
      * contains only values for which f returned true.
      * 
@@ -535,16 +552,26 @@ public class CoreObject<T> extends Core {
     }
 
     /**
+     * Return the ith element or dflt if the element does not exist..
+     * 
+     * @param i
+     * @param dflt 
+     * 
+     * @return .
+     */
+    public T get(int i, T dflt) {
+        final T rval = get(i);
+        return rval == null ? dflt : rval;
+    }
+
+    /**
      * Returns the first element, or, if there is none, return dflt.
      * 
      * @param dflt
      * @return .
      */
     public T get(T dflt) {
-        final T rval = get(0);
-
-        if (rval == null) return dflt;
-        return rval;
+        return get(0, dflt);
     }
 
     /**
@@ -794,7 +821,7 @@ public class CoreObject<T> extends Core {
      */
     protected final int indexToOffset(int index) {
         final int size = size();
-        
+
         if (index >= size) return -1;
 
         // We also support negative indices. 
