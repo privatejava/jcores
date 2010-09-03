@@ -441,6 +441,8 @@ public class CoreObject<T> extends Core {
      * @return . 
      */
     public CoreObject<T> fill(T fillValue) {
+        if (this.t == null) return this;
+
         final T[] copy = Arrays.copyOf(this.t, size());
 
         for (int i = 0; i < copy.length; i++) {
@@ -738,6 +740,8 @@ public class CoreObject<T> extends Core {
      * @return .
      */
     public CoreObject<T> slice(final int start, final int length) {
+        if (this.t == null) return this;
+
         final int i = indexToOffset(start);
         final int l = length > 0 ? length : indexToOffset(length) - i + 1;
 
@@ -751,6 +755,8 @@ public class CoreObject<T> extends Core {
      * @return .
      */
     public CoreObject<T> sort(Comparator<T> c) {
+        if (this.t == null) return this;
+
         final T[] copyOf = Arrays.copyOf(this.t, size());
         Arrays.sort(copyOf, c);
 
