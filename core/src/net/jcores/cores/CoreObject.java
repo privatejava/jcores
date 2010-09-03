@@ -153,7 +153,7 @@ public class CoreObject<T> extends Core {
             // Try to convert our array. If that fails, create an empty one ...
             try {
                 requestedType = (Class<? extends Object[]>) constructor.getParameterTypes()[1];
-                newT = Arrays.copyOf(this.t, this.t.length, requestedType);
+                newT = Arrays.copyOf(this.t, size(), requestedType);
             } catch (ArrayStoreException e) {
                 this.commonCore.report(MessageType.EXCEPTION, "Unable to convert our array " + this.t + " to the requested type " + requestedType + ". Returning empty core.");
                 newT = (Object[]) Array.newInstance(requestedType.getComponentType(), 0);
@@ -516,7 +516,7 @@ public class CoreObject<T> extends Core {
         if (percent < 0) return null;
         if (percent > 1) return null;
 
-        return this.t[(int) (percent * this.t.length)];
+        return this.t[(int) (percent * size())];
     }
 
     /**
@@ -646,7 +646,7 @@ public class CoreObject<T> extends Core {
      * @return The mapped elements in a stable order   
      */
     public CoreInt map(final F1Object2Int<T> f, Option... options) {
-        final Mapper mapper = new Mapper(int.class, this.t.length) {
+        final Mapper mapper = new Mapper(int.class, size()) {
             @Override
             public void handle(int i) {
                 int[] a = (int[]) this.array.get();
@@ -740,11 +740,13 @@ public class CoreObject<T> extends Core {
      * @return An Average object, with the current sum and the size. 
      */
     public Staple<T> staple(T neutralElement, F2ReduceObjects<T> sumAndNext) {
+        final int size = size();
+        if (size == 0) return new Staple<T>(neutralElement, 1);
 
         int count = 0;
         T sum = neutralElement;
 
-        for (int i = 0; i < this.t.length; i++) {
+        for (int i = 0; i < size; i++) {
             if (this.t[i] == null) continue;
 
             sum = sumAndNext.f(sum, this.t[i]);
@@ -791,12 +793,14 @@ public class CoreObject<T> extends Core {
      * @return
      */
     protected final int indexToOffset(int index) {
-        if (index >= this.t.length) return -1;
+        final int size = size();
+        
+        if (index >= size) return -1;
 
         // We also support negative indices. 
         if (index < 0) {
-            if (-index > this.t.length) return -1;
-            return this.t.length + index;
+            if (-index > size) return -1;
+            return size + index;
         }
 
         return index;
