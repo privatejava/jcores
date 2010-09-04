@@ -263,6 +263,21 @@ public class CoreObject<T> extends Core {
     }
 
     /**
+     * Returns true if this core contains the given object.
+     * 
+     * @param object
+     *  
+     * @return True if the object is there, false if not. 
+     */
+    public boolean contains(final T object) {
+        for (int i = 0; i < size(); i++) {
+            if (this.t[i] != null && this.t[i].equals(object)) return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Returns a core of length size() - 1 consisting of the results of the delta function.
      *  
      * @param delta
@@ -365,10 +380,10 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Expands contained arrays to a single array.  
+     * Expands contained arrays to a single array of the given type.  
      * 
      * @param <N>
-     * @param class1
+     * @param class1 The class elements of the core should be.
      * @return .
      */
     @SuppressWarnings("unchecked")
@@ -427,6 +442,7 @@ public class CoreObject<T> extends Core {
                 //
             }
 
+            // A single element?
             Array.set(n, offset, x);
         }
 
@@ -801,6 +817,36 @@ public class CoreObject<T> extends Core {
                 return x.toString();
             }
         }).as(CoreString.class);
+    }
+
+    /**
+     * Returns a core containing only unique objects.
+     * 
+     * @return .
+     */
+    public CoreObject<T> unique() {
+        if (size() == 0) return this;
+
+        final T[] copy = Arrays.copyOf(this.t, size());
+
+        // Now check for each element
+        for (int i = 1; i < copy.length; i++) {
+            // If it is null, no nothing
+            if (copy[i] == null) continue;
+
+            // Check each previous element
+            for (int j = 0; j < i; j++) {
+                // If the current element is equal to a previous element,
+                // this element can be nulled
+                if (copy[i].equals(copy[j])) {
+                    copy[i] = null;
+                    break;
+                }
+            }
+        }
+
+        // Return the new, unique core.
+        return new CoreObject<T>(this.commonCore, copy).compact();
     }
 
     /**

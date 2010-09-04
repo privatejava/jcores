@@ -1,5 +1,5 @@
 /*
- * SimpleSpeedTests.java
+ * OptionDummy.java
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
@@ -25,32 +25,11 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package sandbox;
-
-import static net.jcores.CoreKeeper.$;
-import net.jcores.cores.CoreString;
+package net.jcores.options;
 
 /**
  * @author rb
- *
  */
-public class SimpleReplaceTest {
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
-        /*
-        $("/Users/rb/Desktop/Webcam Images").file().dir().map(new F1<File, Boolean>() {
-            @Override
-            public Boolean f(File x) {
-                long lastModified = x.lastModified();
-                //System.out.println(lastModified);
-                x.renameTo(new File("/Users/rb/Desktop/x/" + lastModified + ".jpg"));
-                return Boolean.FALSE;
-            }
-        });
-        */
-
-        $("hello", "world", "how", null, "world").unique().as(CoreString.class).print();
-    }
+public class OptionListDirectories extends Option {
+    //
 }

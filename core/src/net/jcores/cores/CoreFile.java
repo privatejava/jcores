@@ -27,15 +27,21 @@
  */
 package net.jcores.cores;
 
+import static net.jcores.CoreKeeper.$;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F1;
 import net.jcores.options.MessageType;
+import net.jcores.options.Option;
 import net.jcores.utils.io.FileUtils;
 
 /**
@@ -83,11 +89,50 @@ public class CoreFile extends CoreObject<File> {
 
     /**
      * Lists the contents of the subdirectories. 
+     * @param options 
      * 
      * @return .
      */
-    public CoreFile dir() {
-        return null;
+    public CoreFile dir(Option ... options) {
+        
+        final boolean listDirs = $(options).contains(Option.LIST_DIRECTORIES);  
+        
+        return map(new F1<File, File[]>() {
+            @Override
+            public File[] f(File x) {
+                final List<File> rval = new ArrayList<File>();
+
+                // Get top level files ...
+                List<File> next = new ArrayList<File>();
+                File[] listed = x.listFiles();
+                next.addAll(Arrays.asList(listed));
+
+                while (next.size() > 0) {
+                    listed = next.toArray(new File[0]);
+
+                    next.clear();
+
+                    for (File file : listed) {
+                        if (!file.isDirectory()) {
+                            rval.add(file);
+                            continue;
+                        }
+                        
+                        if(listDirs) {
+                            rval.add(file);
+                        }
+
+                        File[] listFiles = file.listFiles();
+                        
+                        if (listFiles == null) continue;
+                        
+                        next.addAll(Arrays.asList(listFiles));
+                    }
+                }
+
+                return rval.toArray(new File[0]);
+            }
+        }).expand(File.class).unique().as(CoreFile.class);
     }
 
     /**

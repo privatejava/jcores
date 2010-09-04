@@ -30,27 +30,12 @@ package sandbox;
 import static net.jcores.CoreKeeper.$;
 import net.jcores.cores.CoreString;
 
-/**
- * @author rb
- *
- */
-public class SimpleReplaceTest {
-    /**
-     * @param args
-     */
+public class Renamer {
     public static void main(String[] args) {
-        /*
-        $("/Users/rb/Desktop/Webcam Images").file().dir().map(new F1<File, Boolean>() {
-            @Override
-            public Boolean f(File x) {
-                long lastModified = x.lastModified();
-                //System.out.println(lastModified);
-                x.renameTo(new File("/Users/rb/Desktop/x/" + lastModified + ".jpg"));
-                return Boolean.FALSE;
-            }
-        });
-        */
-
-        $("hello", "world", "how", null, "world").unique().as(CoreString.class).print();
+        // int lvl = level.get() - 1;
+        // int i = baseCount.get() * ((2 << lvl) - 1);
+        $("/var/").file().dir().string().print();
+        System.out.println(2 << -1);
+        $("Hello <a href='world'>World</a>").replace("W(or)ld", "$1").split(" ").slice(-2, -3).as(CoreString.class).print();
     }
 }

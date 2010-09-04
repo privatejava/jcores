@@ -35,6 +35,9 @@ public class Option {
     /** */
     public final static OptionDummy DUMMY = new OptionDummy();
 
+    /** If CoreFile.dir() should list directory entries as well */
+    public final static OptionListDirectories LIST_DIRECTORIES = new OptionListDirectories();
+
     /**
      * Nothing to see here.
      * 
