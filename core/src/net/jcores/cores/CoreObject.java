@@ -55,6 +55,8 @@ import net.jcores.utils.Staple;
 import net.jcores.utils.lang.ObjectUtils;
 
 /**
+ * A core that wraps a number of objects. 
+ * 
  * @author Ralf Biedert
  * 
  * @param <T> 
@@ -102,7 +104,7 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Return our content as an array.
+     * Returns the core's content as an array of the given type.
      * 
      * @param in 
      * @param <N> 
@@ -161,7 +163,7 @@ public class CoreObject<T> extends Core {
 
             return constructor.newInstance(this.commonCore, newT);
 
-            // NOTE: We do not swallow all execptions, becasue as() is a bit special and we cannot return
+            // NOTE: We do not swallow all execptions, because as() is a bit special and we cannot return
             // anyhting that would still be usable.
         } catch (SecurityException e) {
             e.printStackTrace();
@@ -182,7 +184,7 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Performs a generic call on each element of this core.
+     * Performs a generic call on each element of this core. 
      * 
      * @param string
      * @param params
@@ -240,14 +242,14 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns a compacted object whose underlaying array does not 
-     * contain null anymore .
+     * Returns a compacted object whose underlying array does not 
+     * contain null anymore. 
      * 
      * @return . 
      */
     public CoreObject<T> compact() {
         // No size == no fun.
-        if (size() == 0) return new CoreObject<T>(this.commonCore, this.t);
+        if (size() == 0) return this;
 
         final T[] tmp = Arrays.copyOf(this.t, this.t.length);
         int dst = 0;

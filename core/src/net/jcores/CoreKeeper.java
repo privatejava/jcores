@@ -27,10 +27,15 @@
  */
 package net.jcores;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.concurrent.locks.Lock;
 
+import net.jcores.cores.CoreByte;
 import net.jcores.cores.CoreClass;
+import net.jcores.cores.CoreFile;
+import net.jcores.cores.CoreInputStream;
 import net.jcores.cores.CoreInt;
 import net.jcores.cores.CoreLock;
 import net.jcores.cores.CoreObject;
@@ -75,6 +80,19 @@ public class CoreKeeper {
     }
 
     /**
+     * Wraps the given ints (experimental!!!)
+     * 
+     * Not really deprecated, but not ready for use.
+     * 
+     * @param object
+     * @return .
+     */
+    @Deprecated
+    public static CoreByte $(byte... object) {
+        return new CoreByte($, object);
+    }
+
+    /**
      * Use of this method is not recommended!
      * 
      * @param <T>
@@ -116,6 +134,26 @@ public class CoreKeeper {
      */
     public static CoreLock $(Lock... o) {
         return new CoreLock($, o);
+    }
+
+    /**
+     * File core.
+     * 
+     * @param o
+     * @return .
+     */
+    public static CoreFile $(File... o) {
+        return new CoreFile($, o);
+    }
+
+    /**
+     * InputStream core.
+     * 
+     * @param o
+     * @return .
+     */
+    public static CoreInputStream $(InputStream... o) {
+        return new CoreInputStream($, o);
     }
 
     /**

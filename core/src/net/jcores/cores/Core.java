@@ -81,6 +81,14 @@ public abstract class Core {
             return;
         }
 
+        // TODO: Test-convert the first item and measure time. If time and size are above a 
+        // certain threshold, parallelize, otherwise map sequentially
+        
+        // Now find the first element and measure how long the conversion takes
+        for (int i = 0; i < size; i++) {
+            
+        }
+
         // TODO: Get proper value for step size (same problem, see below)
         final int STEP_SIZE = Math.max(size() / 10, 1);
         final int NUM_THREADS = Runtime.getRuntime().availableProcessors();
@@ -105,6 +113,7 @@ public abstract class Core {
                 while (lower < size) {
                     final int max = Math.min(lower + STEP_SIZE, size);
 
+                    System.nanoTime();
                     // Pass over all elements
                     for (int i = lower; i < max; i++) {
                         mapper.handle(i);

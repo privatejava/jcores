@@ -29,10 +29,13 @@ package net.jcores.cores;
 
 import static net.jcores.CoreKeeper.$;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -76,10 +79,23 @@ public class CoreFile extends CoreObject<File> {
      * @return .
      */
     public CoreFile delete() {
-        map(new F1<File, Object>() {
-            public Object f(File x) {
-                // TODO: Care for directories
+        map(new F1<File, Void>() {
+            public Void f(File x) {
+                int lastSize = Integer.MAX_VALUE;
+                List<File> list = $(x).dir(Option.LIST_DIRECTORIES).list();
+
+                while (list.size() < lastSize) {
+                    lastSize = list.size();
+
+                    for (File file : list) {
+                        file.delete();
+                    }
+
+                    list = $(x).dir(Option.LIST_DIRECTORIES).list();
+                }
+
                 x.delete();
+
                 return null;
             }
         });
@@ -88,15 +104,34 @@ public class CoreFile extends CoreObject<File> {
     }
 
     /**
+     * Deletes the given objects, recursively.
+     * 
+     * @return .
+     */
+    public CoreInputStream streams() {
+        return map(new F1<File, InputStream>() {
+            public InputStream f(File x) {
+                try {
+                    return new BufferedInputStream(new FileInputStream(x));
+                } catch (FileNotFoundException e) {
+                    //
+                }
+                return null;
+            }
+        }).as(CoreInputStream.class);
+    }
+
+    /**
      * Lists the contents of the subdirectories. 
+     * 
      * @param options 
      * 
      * @return .
      */
-    public CoreFile dir(Option ... options) {
-        
-        final boolean listDirs = $(options).contains(Option.LIST_DIRECTORIES);  
-        
+    public CoreFile dir(Option... options) {
+
+        final boolean listDirs = $(options).contains(Option.LIST_DIRECTORIES);
+
         return map(new F1<File, File[]>() {
             @Override
             public File[] f(File x) {
@@ -117,15 +152,15 @@ public class CoreFile extends CoreObject<File> {
                             rval.add(file);
                             continue;
                         }
-                        
-                        if(listDirs) {
+
+                        if (listDirs) {
                             rval.add(file);
                         }
 
                         File[] listFiles = file.listFiles();
-                        
+
                         if (listFiles == null) continue;
-                        
+
                         next.addAll(Arrays.asList(listFiles));
                     }
                 }
