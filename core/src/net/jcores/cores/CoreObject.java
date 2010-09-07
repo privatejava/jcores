@@ -331,8 +331,16 @@ public class CoreObject<T> extends Core {
         // Map ...
         map(mapper, options);
 
+        // In case we don't have a return array (which happens when the mapper never returned something
+        // sensible), we create a simple object array of our size, so that the core's size stays
+        // consistent.
+        R rval[] = (R[]) mapper.getTargetArray();
+        if (rval == null) {
+            rval = (R[]) Array.newInstance(Object.class, Math.max(0, size() - 1));
+        }
+
         // ... and return result.
-        return new CoreObject<R>(this.commonCore, (R[]) mapper.getTargetArray());
+        return new CoreObject<R>(this.commonCore, rval);
 
     }
 
@@ -680,8 +688,16 @@ public class CoreObject<T> extends Core {
         // Map ...
         map(mapper, options);
 
+        // In case we don't have a return array (which happens when the mapper never returned something
+        // sensible), we create a simple object array of our size, so that the core's size stays
+        // consistent.
+        R rval[] = (R[]) mapper.getTargetArray();
+        if (rval == null) {
+            rval = (R[]) Array.newInstance(Object.class, size());
+        }
+
         // ... and return result.
-        return new CoreObject<R>(this.commonCore, (R[]) mapper.getTargetArray());
+        return new CoreObject<R>(this.commonCore, rval);
     }
 
     /**
