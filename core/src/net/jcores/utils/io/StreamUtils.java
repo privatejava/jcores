@@ -29,14 +29,19 @@ package net.jcores.utils.io;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import net.jcores.CommonCore;
+import net.jcores.options.MessageType;
 
 /**
  * @author Ralf Biedert
@@ -106,5 +111,31 @@ public class StreamUtils {
         }
 
         zipFile.close();
+    }
+
+    /**
+     * Reads the content of file as text.
+     * 
+     * @param cc 
+     * @param is
+     * @return .
+     */
+    public static String readText(CommonCore cc, InputStream is) {
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+            StringBuilder sb = new StringBuilder();
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+                sb.append("\n");
+            }
+
+            return sb.toString();
+        } catch (IOException e) {
+            cc.report(MessageType.EXCEPTION, "Error reading from stream " + is);
+        }
+
+        return null;
     }
 }

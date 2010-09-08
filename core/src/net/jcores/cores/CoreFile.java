@@ -108,7 +108,7 @@ public class CoreFile extends CoreObject<File> {
      * 
      * @return .
      */
-    public CoreInputStream streams() {
+    public CoreInputStream input() {
         return map(new F1<File, InputStream>() {
             public InputStream f(File x) {
                 try {

@@ -35,7 +35,9 @@ import net.jcores.interfaces.functions.F1;
 import net.jcores.utils.io.StreamUtils;
 
 /**
- * @author rb
+ * Wraps an input stream.
+ * 
+ * @author Ralf Biedert
  */
 public class CoreInputStream extends CoreObject<InputStream> {
 
@@ -64,5 +66,18 @@ public class CoreInputStream extends CoreObject<InputStream> {
                 return null;
             }
         });
+    }
+
+    /**
+     * Returns all lines of all files joint.
+     * 
+     * @return .
+     */
+    public CoreString text() {
+        return new CoreString(this.commonCore, map(new F1<InputStream, String>() {
+            public String f(final InputStream x) {
+                return StreamUtils.readText(CoreInputStream.this.commonCore, x);
+            }
+        }).array());
     }
 }

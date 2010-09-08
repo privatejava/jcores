@@ -30,8 +30,9 @@ package net.jcores.cores;
 import net.jcores.CommonCore;
 
 /**
- * @author rb
- *
+ * Just a test
+ * 
+ * @author Ralf Biedert
  */
 public class CoreByte extends Core {
 

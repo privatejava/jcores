@@ -40,14 +40,16 @@ import net.jcores.managers.ManagerClass;
 import net.jcores.options.MessageType;
 
 /**
- * @author rb
+ * Wraps class objects, usually only one.
+ * 
+ * @author Ralf Biedert
  *
  * @param <T>
  */
 public class CoreClass<T> extends CoreObject<Class<T>> {
 
     protected final ManagerClass manager;
-    
+
     protected final Map<Class<?>[], Constructor<T>> constructors = new HashMap<Class<?>[], Constructor<T>>();
 
     /**
@@ -69,22 +71,22 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
      */
     @SuppressWarnings("unchecked")
     public T spawn(Object... args) {
-        
+
         if (size() > 1)
             this.commonCore.report(MessageType.MISUSE, "spawn() should not be used on cores with more than one class!");
 
         // Get the class we operate on 
-        Class<T> request = get(null); if (request == null) return null;
+        Class<T> request = get(null);
+        if (request == null) return null;
         Class<T> toSpawn = request;
 
-        
         // TODO: Selection of implementor could need some improvement
-        if(request.isInterface()) {
+        if (request.isInterface()) {
             toSpawn = (Class<T>) this.manager.getImplementors(request)[0];
         }
-        
+
         // Quick pass for most common option
-        if(args == null || args.length == 0) {
+        if (args == null || args.length == 0) {
             try {
                 return this.manager.registerObject(request, toSpawn.newInstance());
             } catch (InstantiationException e) {
@@ -96,26 +98,27 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
 
         // Get constructor types ...
         Class<?>[] types = $(args).map(new F1<Object, Class<?>>() {
-            public Class<?> f(Object x) { return x.getClass(); }
+            public Class<?> f(Object x) {
+                return x.getClass();
+            }
         }).array(Class.class);
 
-        
         try {
             Constructor<T> constructor = null;
 
             // Get constructor from cache ... (try to)
             synchronized (this.constructors) {
-                constructor = this.constructors.get(types); 
-                
+                constructor = this.constructors.get(types);
+
                 // Put a new constructor if it wasn't cached before
-                if(constructor == null) {
+                if (constructor == null) {
                     constructor = toSpawn.getConstructor(types);
                     this.constructors.put(types, constructor);
                 }
             }
 
             return this.manager.registerObject(request, constructor.newInstance(args));
-            
+
             // NOTE: We do not swallow all execptions silently, becasue spawn() is a bit special and 
             // we cannot return anything that would still be usable.
         } catch (SecurityException e) {
@@ -148,8 +151,9 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
             this.commonCore.report(MessageType.MISUSE, "implementor() should not be used on cores with more than one class!");
 
         // Get the class we operate on 
-        final Class<T> clazz = get(null); if (clazz == null) return; 
-        
+        final Class<T> clazz = get(null);
+        if (clazz == null) return;
+
         this.manager.registerImplementor(clazz, implemenetor);
     }
 
@@ -159,7 +163,8 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
      */
     @SuppressWarnings("unchecked")
     public CoreObject<T> spawned() {
-        if(get(null) == null) return new CoreObject<T>(this.commonCore, (T[]) new Object[0]);
+        if (get(null) == null)
+            return new CoreObject<T>(this.commonCore, (T[]) new Object[0]);
         return new CoreObject<T>($, this.manager.getAllObjectsFor(get(0)));
     }
 }

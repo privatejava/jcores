@@ -33,7 +33,9 @@ import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F0;
 
 /**
- * @author rb
+ * Wraps locks.
+ * 
+ * @author Ralf Biedert
  */
 public class CoreLock extends CoreObject<Lock> {
 
@@ -46,8 +48,11 @@ public class CoreLock extends CoreObject<Lock> {
     }
 
     /**
+     * This method is just a concept study to see if it makes sense.
+     * 
      * @param f
      */
+    @Deprecated
     public void locked(F0 f) {
         Lock lock = get(0);
 
