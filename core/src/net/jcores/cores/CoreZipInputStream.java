@@ -29,6 +29,7 @@ package net.jcores.cores;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.zip.ZipInputStream;
 
 import net.jcores.CommonCore;
@@ -40,13 +41,13 @@ import net.jcores.utils.io.StreamUtils;
  * 
  * @author Ralf Biedert
  */
-public class CoreInputStream extends CoreObject<InputStream> {
+public class CoreZipInputStream extends CoreObject<ZipInputStream> {
 
     /**
      * @param supercore
      * @param t
      */
-    public CoreInputStream(CommonCore supercore, InputStream... t) {
+    public CoreZipInputStream(CommonCore supercore, ZipInputStream... t) {
         super(supercore, t);
     }
 
@@ -56,9 +57,9 @@ public class CoreInputStream extends CoreObject<InputStream> {
      * @param destination
      */
     public void unzip(final String destination) {
-        map(new F1<InputStream, Void>() {
+        map(new F1<ZipInputStream, Void>() {
             @Override
-            public Void f(InputStream x) {
+            public Void f(ZipInputStream x) {
                 try {
                     StreamUtils.doUnzip(x, destination);
                 } catch (IOException e) {
@@ -70,28 +71,44 @@ public class CoreInputStream extends CoreObject<InputStream> {
     }
 
     /**
-     * Deletes the given objects, recursively.
+     * Lists all entries within all ZIP files.
      * 
      * @return .
      */
-    public CoreZipInputStream zipstream() {
-        return map(new F1<InputStream, ZipInputStream>() {
-            public ZipInputStream f(InputStream x) {
-                return new ZipInputStream(x);
+    public CoreString dir() {
+        return map(new F1<ZipInputStream, List<String>>() {
+            @Override
+            public List<String> f(ZipInputStream x) {
+                try {
+                    return StreamUtils.list(x);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return null;
             }
-        }).as(CoreZipInputStream.class);
+        }).expand(String.class).as(CoreString.class);
     }
 
     /**
-     * Returns all lines of all files joint.
+     * Returns an input stream for the given ZIP-file-entry. 
      * 
-     * @return .
+     * NOTE: This only uses the first element within the core, if there is any.
+     * 
+     * @param path
+     * 
+     * @return The opened input stream for the given zip entry
      */
-    public CoreString text() {
-        return new CoreString(this.commonCore, map(new F1<InputStream, String>() {
-            public String f(final InputStream x) {
-                return StreamUtils.readText(CoreInputStream.this.commonCore, x);
-            }
-        }).array());
+    public InputStream get(String path) {
+        final ZipInputStream zipInputStream = get(0);
+
+        if (zipInputStream == null) return null;
+
+        try {
+            return StreamUtils.getInputStream(zipInputStream, path);
+        } catch (IOException e) {
+            // 
+        }
+
+        return null;
     }
 }

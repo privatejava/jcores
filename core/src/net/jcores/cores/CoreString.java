@@ -102,10 +102,13 @@ public class CoreString extends CoreObject<String> {
      * @return .
      */
     public String join(final String joiner) {
-        // TODO: Improve this by using a StringBuilder ... 
         return reduce(new F2ReduceObjects<String>() {
             public String f(String stack, String next) {
-                return stack + joiner + next;
+                final StringBuilder sb = new StringBuilder();
+                sb.append(stack);
+                sb.append(joiner);
+                sb.append(next);
+                return sb.toString();
             }
         }).get(0);
     }
@@ -166,7 +169,7 @@ public class CoreString extends CoreObject<String> {
      */
     public CoreString replace(final String pattern, final String with) {
         final Pattern p = Pattern.compile(pattern);
-        
+
         return new CoreString(this.commonCore, map(new F1<String, String>() {
             public String f(String x) {
                 return p.matcher(x).replaceAll(with);

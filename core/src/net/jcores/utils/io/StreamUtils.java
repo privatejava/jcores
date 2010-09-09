@@ -138,4 +138,51 @@ public class StreamUtils {
 
         return null;
     }
+
+    /**
+     * Returns an input stream for the requested path.
+     * 
+     * @param zipFile
+     * @param path
+     * @return .
+     * @throws IOException
+     */
+    public static InputStream getInputStream(ZipInputStream zipFile, String path)
+                                                                                 throws IOException {
+        ZipEntry nextEntry = zipFile.getNextEntry();
+
+        // Process each entry
+        while (nextEntry != null) {
+            // grab a zip file entry
+            final String currentEntry = nextEntry.getName();
+
+            if (!currentEntry.equals(path)) {
+                nextEntry = zipFile.getNextEntry();
+                continue;
+            }
+
+            return new BufferedInputStream(zipFile);
+        }
+        return null;
+    }
+
+    /**
+     * Lists all element within the given stream.
+     * 
+     * @param zipFile
+     * @return .
+     * @throws IOException 
+     */
+    public static List<String> list(ZipInputStream zipFile) throws IOException {
+        final List<String> rval = new ArrayList<String>();
+        ZipEntry nextEntry = zipFile.getNextEntry();
+
+        // Process each entry
+        while (nextEntry != null) {
+            rval.add(nextEntry.getName());
+            nextEntry = zipFile.getNextEntry();
+        }
+
+        return rval;
+    }
 }
