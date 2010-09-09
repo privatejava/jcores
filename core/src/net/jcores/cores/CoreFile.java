@@ -140,6 +140,9 @@ public class CoreFile extends CoreObject<File> {
                 // Get top level files ...
                 List<File> next = new ArrayList<File>();
                 File[] listed = x.listFiles();
+                
+                if (listed == null) return null;
+                
                 next.addAll(Arrays.asList(listed));
 
                 while (next.size() > 0) {
