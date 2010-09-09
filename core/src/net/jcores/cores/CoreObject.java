@@ -280,6 +280,28 @@ public class CoreObject<T> extends Core {
     }
 
     /**
+     * Prints a debug output.
+     * 
+     * @return this again. 
+     */
+    public CoreObject<T> debug() {
+        String inner = "null";
+
+        int ctr = 0;
+        if (this.t != null) {
+            for (int i = 0; i < this.t.length; i++) {
+                if (this.t[i] != null) ctr++;
+            }
+
+            inner = "" + ctr;
+        }
+
+        System.out.println("@(" + getClass().getSimpleName() + "; outerSize:" + size() + "; innerSize:" + inner + ")");
+
+        return this;
+    }
+
+    /**
      * Returns a core of length size() - 1 consisting of the results of the delta function.
      *  
      * @param delta

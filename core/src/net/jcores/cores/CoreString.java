@@ -102,6 +102,7 @@ public class CoreString extends CoreObject<String> {
      * @return .
      */
     public String join(final String joiner) {
+        if (size() == 0) return "";
         return reduce(new F2ReduceObjects<String>() {
             public String f(String stack, String next) {
                 final StringBuilder sb = new StringBuilder();
