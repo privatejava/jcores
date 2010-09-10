@@ -92,6 +92,6 @@ public class CoreInputStream extends CoreObject<InputStream> {
             public String f(final InputStream x) {
                 return StreamUtils.readText(CoreInputStream.this.commonCore, x);
             }
-        }).array());
+        }).array(String.class));
     }
 }

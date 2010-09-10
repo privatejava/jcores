@@ -220,7 +220,7 @@ public class CoreObject<T> extends Core {
 
                 return null;
             }
-        }).array());
+        }).array(Object.class));
     }
 
     /**
@@ -901,7 +901,8 @@ public class CoreObject<T> extends Core {
      * 
      * @return .
      */
-    protected T[] array() {
+    @Deprecated
+    protected T[] _array() {
         return this.t;
     }
 

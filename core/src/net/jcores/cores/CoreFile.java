@@ -70,7 +70,7 @@ public class CoreFile extends CoreObject<File> {
             public String f(final File x) {
                 return FileUtils.readText(CoreFile.this.commonCore, x);
             }
-        }).array());
+        }).array(String.class));
     }
 
     /**

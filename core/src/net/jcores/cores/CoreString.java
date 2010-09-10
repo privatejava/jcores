@@ -65,7 +65,7 @@ public class CoreString extends CoreObject<String> {
             public File f(String x) {
                 return new File(x);
             }
-        }).array());
+        }).array(File.class));
     }
 
     /**
@@ -84,7 +84,7 @@ public class CoreString extends CoreObject<String> {
                 final Matcher matcher = p.matcher(x);
                 return matcher.matches();
             }
-        }, options).array());
+        }, options).array(String.class));
     }
 
     /**
@@ -136,6 +136,7 @@ public class CoreString extends CoreObject<String> {
         if (size() == 0) return;
 
         for (String s : this.t) {
+            if (s == null) continue;
             System.out.println(s);
         }
     }
@@ -175,6 +176,6 @@ public class CoreString extends CoreObject<String> {
             public String f(String x) {
                 return p.matcher(x).replaceAll(with);
             }
-        }).array());
+        }).array(String.class));
     }
 }
