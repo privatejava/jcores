@@ -32,7 +32,6 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.concurrent.locks.Lock;
 
-import net.jcores.cores.CoreByte;
 import net.jcores.cores.CoreClass;
 import net.jcores.cores.CoreFile;
 import net.jcores.cores.CoreInputStream;
@@ -46,9 +45,13 @@ import net.jcores.options.OptionMapType;
 import net.jcores.utils.Wrapper;
 
 /**
- * Keeps the common core and contains Johnnys($) for all our cores. If you want to see your own core 
- * in here (or if you have any recommendations for new cores) send a mail to Ralf (rb@xeoh.net).   
+ * Keeps the common core and contains Johnnys($) for all our cores. This class is the main 
+ * entry point into jCores.<br/><br/>
  * 
+ * If you want to see your own core in here (or if you have any recommendations for new cores) 
+ * contact us in the forum.    
+ * 
+ * @since 1.0
  * @author Ralf Biedert
  */
 public class CoreKeeper {
@@ -56,23 +59,26 @@ public class CoreKeeper {
     public final static CommonCore $ = new CommonCore();
 
     /**
-     * Wraps the given object.
+     * Wraps the given object(s) and returns a parameterized CoreObject. This 
+     * is also the default method being used when wrapping <i>unknown</i> objects for 
+     * which no special core has been defined in here.  
      * 
-     * @param <T>
-     * @param object
-     * @return .
+     * @param <T> Type of the object and returned core. 
+     * @param object A single object or object array to wrap.
+     * @return A CoreObject wrapping the set of objects.
      */
     public static <T extends Object> CoreObject<T> $(T... object) {
         return new CoreObject<T>($, object);
     }
 
     /**
-     * Wraps the given ints (experimental!!!)
+     * Wraps the given integers.<br/><br/>
      * 
-     * Not really deprecated, but not ready for use.
+     * Please note that this functionality is EXPERIMENTAL and might be 
+     * removed in the future.
      * 
-     * @param object
-     * @return .
+     * @param object A single int or int array to wrap. 
+     * @return A CoreInt wrapping the given integers.
      */
     @Deprecated
     public static CoreInt $(int... object) {
@@ -80,109 +86,90 @@ public class CoreKeeper {
     }
 
     /**
-     * Wraps the given ints (experimental!!!)
+     * Wraps number of classes and returns a new ClassCore. In most cases
+     * only a single class should be wrapped. 
      * 
-     * Not really deprecated, but not ready for use.
-     * 
-     * @param object
-     * @return .
+     * @param <T> Parameter of the classes' type. 
+     * @param clsses The classes to wrap. 
+     * @return  A CoreClass wrapping the given classes.
      */
     @Deprecated
-    public static CoreByte $(byte... object) {
-        return new CoreByte($, object);
+    public static <T> CoreClass<T> $(Class<T>... clsses) {
+        return new CoreClass<T>($, clsses);
     }
 
     /**
-     * Use of this method is not recommended!
+     * Wraps number of strings and returns a new CoreString.  
      * 
-     * @param <T>
-     * @param o
-     * @return .
+     * @param object The Strings to wrap. 
+     * @return  A CoreString wrapping the given strings.
      */
-    @Deprecated
-    public static <T> CoreClass<T> $(Class<T>... o) {
-        return new CoreClass<T>($, o);
+    public static CoreString $(String... object) {
+        return new CoreString($, object);
     }
 
     /**
-     * Creates a class core.
+     * Wraps number of Locks and returns a new CoreLock.
      * 
-     * @param <T>
-     * @param o
-     * @return .
+     * @param object The Locks to wrap. 
+     * @return  A CoreLock wrapping the given Locks.
      */
-    @SuppressWarnings("unchecked")
-    public static <T> CoreClass<T> $(Class<T> o) {
-        return new CoreClass<T>($, o);
+    public static CoreLock $(Lock... object) {
+        return new CoreLock($, object);
     }
 
     /**
-     * String cores.
+     * Wraps number of Files and returns a new CoreFile.
      * 
-     * @param o
-     * @return .
+     * @param object The Files to wrap. 
+     * @return A CoreFile wrapping the given Locks.
      */
-    public static CoreString $(String... o) {
-        return new CoreString($, o);
+    public static CoreFile $(File... object) {
+        return new CoreFile($, object);
     }
 
     /**
-     * Lock core.
+     * Wraps number of InputStreams and returns a new CoreInputStream.
      * 
-     * @param o
-     * @return .
+     * @param object  The InputStreams to wrap.
+     * @return A CoreInputStream wrapping the given Locks.
      */
-    public static CoreLock $(Lock... o) {
-        return new CoreLock($, o);
+    public static CoreInputStream $(InputStream... object) {
+        return new CoreInputStream($, object);
     }
 
     /**
-     * File core.
+     * Wraps a generic Collection objects. Please note that the Collection is 
+     * transformed into an array, so for performance reasons usage of this 
+     * wrapper should be minimized. Also note that this function always returns
+     * a parameterized, but vanilla CoreObject, which has to be cast using 
+     * <code>.as()</code> again.      
      * 
-     * @param o
-     * @return .
-     */
-    public static CoreFile $(File... o) {
-        return new CoreFile($, o);
-    }
-
-    /**
-     * InputStream core.
+     * @param collection The collection to transform and wrap.
+     * @param <T> Type of the collection.
      * 
-     * @param o
-     * @return .
-     */
-    public static CoreInputStream $(InputStream... o) {
-        return new CoreInputStream($, o);
-    }
-
-    /**
-     * Wraps the given collection.
-     * 
-     * @param t 
-     * @param <T> 
-     * 
-     * @return .
+     * @return A CoreObject of the given type wrapping a converted array of the collection.
      */
     @SuppressWarnings("unchecked")
-    public static <T> CoreObject<T> $(Collection<T> t) {
-        return new CoreObject<T>($, (T[]) Wrapper.convert(t, Object.class));
+    public static <T> CoreObject<T> $(Collection<T> collection) {
+        return new CoreObject<T>($, (T[]) Wrapper.convert(collection, Object.class));
     }
 
     /**
-     * Wraps the given collection.
+     * Converts and wraps the given collection. Except that this method first converts
+     * each element, this method equals <code>$(Collection<T> collection)</code>.
      * 
-     * @param <Y> 
-     * @param <T> 
+     * @param <Y> The source type prior to conversion. 
+     * @param <T> The target type after conversion.
      * 
-     * @param t 
-     * @param converter 
-     * @param options 
+     * @param collection The collection to convert and wrap.
+     * @param converter The converter.
+     * @param options Relevant options: <code>OptionMapType</code>.
      * 
-     * @return .
+     * @return A CoreObject of the given type wrapping a converted array of the collection.
      */
     @SuppressWarnings({ "unchecked", "cast" })
-    public static <Y, T> CoreObject<Y> $(Collection<T> t, F1<T, Y> converter,
+    public static <Y, T> CoreObject<Y> $(Collection<T> collection, F1<T, Y> converter,
                                          Option... options) {
 
         // Destination type we use.
@@ -195,6 +182,6 @@ public class CoreKeeper {
             }
         }
 
-        return new CoreObject<Y>($, (Y[]) Wrapper.convert(t, converter, (Class<Y>) mapType));
+        return new CoreObject<Y>($, (Y[]) Wrapper.convert(collection, converter, (Class<Y>) mapType));
     }
 }

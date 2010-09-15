@@ -37,26 +37,32 @@ import net.jcores.interfaces.functions.F1;
 import net.jcores.utils.io.StreamUtils;
 
 /**
- * Wraps an input stream.
+ * Wraps a number of ZipInputStreams and exposes some convenience functions.  
  * 
  * @author Ralf Biedert
+ * @since 1.0
  */
 public class CoreZipInputStream extends CoreObject<ZipInputStream> {
 
     /**
-     * @param supercore
-     * @param t
+     * Creates an ZipInputStream core. 
+     * 
+     * @param supercore The common core. 
+     * @param objects The strings to wrap.
      */
-    public CoreZipInputStream(CommonCore supercore, ZipInputStream... t) {
-        super(supercore, t);
+    public CoreZipInputStream(CommonCore supercore, ZipInputStream... objects) {
+        super(supercore, objects);
     }
 
     /**
-     * Unzips to the given directory.
+     * Unzips all enclosed streams to the given directory. Usually only called with a single enclosed object. <br/><br/>
      * 
-     * @param destination
+     * Multi-threaded.<br/><br/>
+     * 
+     * @param destination The destination to unzip the given files to. All necessary directories will be created.
+     * @return Return <code>this</code>.
      */
-    public void unzip(final String destination) {
+    public CoreZipInputStream unzip(final String destination) {
         map(new F1<ZipInputStream, Void>() {
             @Override
             public Void f(ZipInputStream x) {
@@ -68,12 +74,17 @@ public class CoreZipInputStream extends CoreObject<ZipInputStream> {
                 return null;
             }
         });
+
+        return this;
     }
 
     /**
-     * Lists all entries within all ZIP files.
+     * Lists all entries within all ZIP files. Usually only called with a single enclosed 
+     * element.<br/><br/>
      * 
-     * @return .
+     * Multi-threaded.<br/><br/>
+     * 
+     * @return A CoreString, enclosing a list of all entries is returned. 
      */
     public CoreString dir() {
         return map(new F1<ZipInputStream, List<String>>() {
@@ -90,13 +101,14 @@ public class CoreZipInputStream extends CoreObject<ZipInputStream> {
     }
 
     /**
-     * Returns an input stream for the given ZIP-file-entry. 
+     * Returns an input stream for the given ZIP-file-entry. This only uses the first element 
+     * within the core, if there is any.<br/><br/>
      * 
-     * NOTE: This only uses the first element within the core, if there is any.
+     * Single-threaded, size-of-one.<br/><br/>
+
+     * @param path The zip-entry-path to obtain.
      * 
-     * @param path
-     * 
-     * @return The opened input stream for the given zip entry
+     * @return The opened InputStream for the given zip entry, or null if nothing was found.
      */
     public InputStream get(String path) {
         final ZipInputStream zipInputStream = get(0);

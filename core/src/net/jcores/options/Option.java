@@ -28,30 +28,20 @@
 package net.jcores.options;
 
 /**
- * @author rb
- *
+ * Contains all available options. 
+ * 
+ * @since 1.0
+ * @author Ralf Biedert
  */
 public class Option {
-    /** */
-    public final static OptionDummy DUMMY = new OptionDummy();
 
     /** If CoreFile.dir() should list directory entries as well */
     public final static OptionListDirectories LIST_DIRECTORIES = new OptionListDirectories();
 
-    /**
-     * Nothing to see here.
-     * 
-     * @param i
-     * @return .
-     */
-    public final static OptionDummy TEST(int i) {
-        return new OptionDummy();
-    }
-
     /** Specifies that the map result should be of type. Useful if map returns various types.
      *  
-     * @param type 
-     * @return . 
+     * @param type Class to use. 
+     * @return An option of the given type.
      */
     public final static OptionMapType MAP_TYPE(Class<?> type) {
         return new OptionMapType(type);

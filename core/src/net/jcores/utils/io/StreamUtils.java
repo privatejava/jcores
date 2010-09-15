@@ -60,7 +60,7 @@ public class StreamUtils {
         final List<String> zipFiles = new ArrayList<String>();
         final File unzipDestinationDirectory = new File(destinationDirectory);
 
-        unzipDestinationDirectory.mkdir();
+        unzipDestinationDirectory.mkdirs();
 
         final ZipInputStream zipFile = new ZipInputStream(inputStream);
 

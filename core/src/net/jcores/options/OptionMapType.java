@@ -28,7 +28,9 @@
 package net.jcores.options;
 
 /**
- * @author rb
+ * Specifies a specific type was requested.
+ * 
+ * @author Ralf Biedert
  */
 public class OptionMapType extends Option {
     private final Class<?> type;

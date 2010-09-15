@@ -28,11 +28,14 @@
 package net.jcores.interfaces.functions;
 
 /**
- * @author rb 
- * */
+ * A constant function.
+ * 
+ * @since 1.0
+ * @author Ralf Biedert 
+ */
 public interface F0 {
     /**
-     * 
+     * Override this method.
      */
     public void f();
 }

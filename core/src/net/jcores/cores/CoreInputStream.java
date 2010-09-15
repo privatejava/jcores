@@ -36,24 +36,31 @@ import net.jcores.interfaces.functions.F1;
 import net.jcores.utils.io.StreamUtils;
 
 /**
- * Wraps an input stream.
+ * Wraps an input stream and exposes some convenience functions.  
  * 
+ * @since 1.0
  * @author Ralf Biedert
  */
 public class CoreInputStream extends CoreObject<InputStream> {
 
     /**
-     * @param supercore
-     * @param t
+     * Creates an input stream core. 
+     * 
+     * @param supercore The common core. 
+     * @param objects The input stream to wrap.
      */
-    public CoreInputStream(CommonCore supercore, InputStream... t) {
-        super(supercore, t);
+    public CoreInputStream(CommonCore supercore, InputStream... objects) {
+        super(supercore, objects);
     }
 
     /**
-     * Unzips to the given directory.
+     * Treats the given input streams as <code>ZipInputStreams</code> and tries to unzip them to 
+     * the given directory, creating sub directories as necessary. This is a shorthand notation 
+     * for <code>zipstream().unzip()</code><br/><br/>
      * 
-     * @param destination
+     * Multi-threaded.<br/><br/>
+     * 
+     * @param destination The destination to write to.
      */
     public void unzip(final String destination) {
         map(new F1<InputStream, Void>() {
@@ -70,9 +77,11 @@ public class CoreInputStream extends CoreObject<InputStream> {
     }
 
     /**
-     * Deletes the given objects, recursively.
+     * Converts the given input streams to zip streams.<br/><br/>
      * 
-     * @return .
+     * Multi-threaded.<br/><br/>
+     * 
+     * @return A CoreZipInputStream. 
      */
     public CoreZipInputStream zipstream() {
         return map(new F1<InputStream, ZipInputStream>() {
@@ -83,9 +92,12 @@ public class CoreInputStream extends CoreObject<InputStream> {
     }
 
     /**
-     * Returns all lines of all files joint.
+     * Returns all lines of all files joint. A core will be returned in which each 
+     * entry is a String containing the specific file's content.<br/><br/>
      * 
-     * @return .
+     * Multi-threaded.<br/><br/>
+     * 
+     * @return A CoreString containing all contained text.
      */
     public CoreString text() {
         return new CoreString(this.commonCore, map(new F1<InputStream, String>() {

@@ -40,34 +40,44 @@ import net.jcores.managers.ManagerClass;
 import net.jcores.options.MessageType;
 
 /**
- * Wraps class objects, usually only one.
+ * Wraps class objects, usually only one, and exposes some convenience functions 
+ * on them. 
  * 
  * @author Ralf Biedert
- *
- * @param <T>
+ * @since 1.0
+ * @param <T> Type of the classes' objects. 
  */
 public class CoreClass<T> extends CoreObject<Class<T>> {
-
+    /** Our class manager */
     protected final ManagerClass manager;
 
+    /** All known constructors. */
     protected final Map<Class<?>[], Constructor<T>> constructors = new HashMap<Class<?>[], Constructor<T>>();
 
     /**
-     * @param supercore
-     * @param t
+     * Creates a new CoreClass.
+     * 
+     * @param supercore CommonCore to use.
+     * @param clazzes Classes to wrap.
      */
-    public CoreClass(CommonCore supercore, Class<T>... t) {
-        super(supercore, t);
+    public CoreClass(CommonCore supercore, Class<T>... clazzes) {
+        super(supercore, clazzes);
 
         this.manager = supercore.manager(ManagerClass.class);
     }
 
     /**
-     * Spawns the cored class with the given objects as args.
+     * Spawns the cored class with the given objects as args. This function will only 
+     * operate on the core's first entry (get(0)). If the wrapped class is an interface,
+     * the last implementor registered with <code>implementor()</code> will be spawned.
+     * <br/><br/>
+     * Single-threaded, size-of-one.<br/><br/>
      * 
-     * @param args
+     * Note that this function is still under development.
+     * 
+     * @param args Arguments to pass to the constructor. 
      *  
-     * @return .
+     * @return The newly created object, or null if no object could be created.
      */
     @SuppressWarnings("unchecked")
     public T spawn(Object... args) {
@@ -142,9 +152,11 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
     }
 
     /**
-     * Registers an implementor 
+     * Registers an implementor for the currently wrapped interface.<br> <br/>
      * 
-     * @param implemenetor
+     * Single-threaded, size-of-one.<br/><br/>
+     * 
+     * @param implemenetor A class implementing the interface enclosed in get(0).
      */
     public void implementor(Class<?> implemenetor) {
         if (size() > 1)
@@ -158,8 +170,11 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
     }
 
     /**
-     * Returns all objects that have been spawned of this type.
-     * @return .
+     * Returns all objects that have been spawned of this type.<br/><br/>
+     * 
+     * Single-threaded, size-of-one.<br/><br/>
+     * 
+     * @return A core object with all classes jCores has spawned (using <code>spawn()</code>) of the enclosed class (get(0)).
      */
     @SuppressWarnings("unchecked")
     public CoreObject<T> spawned() {

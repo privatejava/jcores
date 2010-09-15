@@ -43,6 +43,7 @@ import net.jcores.options.Option;
 /**
  * Manager for classes.
  * 
+ * @since 1.0
  * @author Ralf Biedert
  */
 public class ManagerClass extends Manager {
@@ -52,7 +53,7 @@ public class ManagerClass extends Manager {
     class Container {
         /** Weak references */
         Collection<WeakReference<?>> references = new ConcurrentLinkedQueue<WeakReference<?>>();
-        
+
         /** Our queue (TODO: needed? we have to traverse all elements anyway) */
         ReferenceQueue<?> queue = new ReferenceQueue<Object>();
     }
@@ -62,75 +63,80 @@ public class ManagerClass extends Manager {
 
     /** Maps interfaces to classes */
     private final ConcurrentMap<Class<?>, Class<?>> implementors = new ConcurrentHashMap<Class<?>, Class<?>>();
-    
+
     /**
-     * @param <T>
-     * @param clazz
-     * @param object
-     * @return .
+     * Registers a given object.
+     * 
+     * @param <T> Type of the object.
+     * @param clazz Object's class.
+     * @param object Object to register.
+     * @return Return the object.
      */
     public <T> T registerObject(Class<T> clazz, T object) {
         Container container = null;
 
         if (!this.objects.containsKey(clazz)) {
             this.objects.putIfAbsent(clazz, new Container());
-        } 
-  
+        }
+
         container = this.objects.get(clazz);
         container.references.add(new WeakReference<T>(object));
-        
+
         return object;
     }
-    
+
     /**
-     * @param <T>
-     * @param clazz
-     * @param implementor
-     */
-    public <T> void registerImplementor(Class<?> clazz, Class<?> implementor) {
-        this.implementors.put(clazz, implementor);
-    }
-    
-    /**
-     * @param <T>
-     * @param clazz
-     * @return .
-     */
-    public <T> Class<?>[] getImplementors(Class<T> clazz) {
-        Class<?> class1 = this.implementors.get(clazz);
-        if(class1 == null) return new Class[0];
-        return new Class[] {class1};
-    }
-    
-    
-    /**
-     * Returns all objects alive for clazz
+     * Registers an implementor (class implementing the given interface).
      * 
-     * @param <T>
-     * @param clazz
-     * @return .
+     * @param <T> Type. 
+     * @param iface The interface.
+     * @param implementor Class implementing the given interface.
+     */
+    public <T> void registerImplementor(Class<?> iface, Class<?> implementor) {
+        this.implementors.put(iface, implementor);
+    }
+
+    /**
+     * Returns all implementors for the given interface.
+     * 
+     * @param <T> Type.
+     * @param iface Interface to request.
+     * @return Array of all implementors.
+     */
+    public <T> Class<?>[] getImplementors(Class<T> iface) {
+        Class<?> class1 = this.implementors.get(iface);
+        if (class1 == null) return new Class[0];
+        return new Class[] { class1 };
+    }
+
+    /**
+     * Returns all objects alive for clazz.
+     * 
+     * @param <T> Type.
+     * @param clazz Requested class.
+     * @return Array of all objects.
      */
     @SuppressWarnings("unchecked")
     public <T> T[] getAllObjectsFor(Class<T> clazz) {
         final Container container = this.objects.get(clazz);
-        
-        if(container == null) return (T[]) new Object[0];
-        
+
+        if (container == null) return (T[]) new Object[0];
+
         final Collection<WeakReference<?>> collection = container.references;
 
         CoreObject<T> convert = $(collection, new F1<WeakReference<?>, T>() {
             public T f(WeakReference<?> x) {
                 Object object = x.get();
-                
+
                 // Check if the object is still there ...
-                if(object == null) {
+                if (object == null) {
                     collection.remove(x);
                 }
-                
+
                 return (T) object;
             }
         }, Option.MAP_TYPE(clazz));
 
-        return convert.compact().array(clazz);       
+        return convert.compact().array(clazz);
     }
 }

@@ -27,10 +27,10 @@
  */
 package net.jcores.managers;
 
-
 /**
- * Manager for classes.
+ * Manager for statistics.
  * 
+ * @since 1.0
  * @author Ralf Biedert
  */
 public class ManagerStatistics extends Manager {

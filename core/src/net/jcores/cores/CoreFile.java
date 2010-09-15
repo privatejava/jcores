@@ -48,22 +48,31 @@ import net.jcores.options.Option;
 import net.jcores.utils.io.FileUtils;
 
 /**
- * @author rb
+ * Wraps a number of files and exposes some convenience functions.  
+ * 
+ * @author Ralf Biedert
+ * @since 1.0
  */
 public class CoreFile extends CoreObject<File> {
 
     /**
-     * @param supercore
-     * @param t
+     * Creates a file core. 
+     * 
+     * @param supercore The common core. 
+     * @param files The files to wrap.
      */
-    public CoreFile(CommonCore supercore, File... t) {
-        super(supercore, t);
+    public CoreFile(CommonCore supercore, File... files) {
+        super(supercore, files);
     }
 
     /**
-     * Returns all lines of all files joint.
+     * Returns all lines of all files joint. A core will be returned in which each 
+     * entry is a String containing the specific file's content. This is a shorthand notation 
+     * for <code>inputstream().text()</code><br/><br/>
      * 
-     * @return .
+     * Multi-threaded.<br/><br/>
+     * 
+     * @return A CoreString object containing the files' contents. 
      */
     public CoreString text() {
         return new CoreString(this.commonCore, map(new F1<File, String>() {
@@ -74,9 +83,12 @@ public class CoreFile extends CoreObject<File> {
     }
 
     /**
-     * Deletes the given objects, recursively.
+     * Deletes the given file objects, recursively. Also deletes directories. Unless the 
+     * files or directories are write protected or locked they should be gone afterwards.<br/><br/>
+     *
+     * Multi-threaded.<br/><br/>
      * 
-     * @return .
+     * @return The same core file object (<code>this</code>).
      */
     public CoreFile delete() {
         map(new F1<File, Void>() {
@@ -104,9 +116,12 @@ public class CoreFile extends CoreObject<File> {
     }
 
     /**
-     * Deletes the given objects, recursively.
+     * Opens the given file objects as input streams. File stream which could not be opened 
+     * will be returned as null.<br/><br/> 
      * 
-     * @return .
+     * Multi-threaded.<br/><br/>
+     * 
+     * @return A CoreInputStream with the opened files. 
      */
     public CoreInputStream input() {
         return map(new F1<File, InputStream>() {
@@ -122,11 +137,14 @@ public class CoreFile extends CoreObject<File> {
     }
 
     /**
-     * Lists the contents of the subdirectories. 
+     * Lists the contents of all sub directories. A CoreFile with all found files 
+     * in all sub directories is returned.<br/><br/>
      * 
-     * @param options 
+     * Multi-threaded.<br/><br/>
      * 
-     * @return .
+     * @param options Relevant options: <code>OptionListDirectories</code>.
+     * 
+     * @return A CoreFile with all found files (and, if selected, directories).
      */
     public CoreFile dir(Option... options) {
 
@@ -174,11 +192,14 @@ public class CoreFile extends CoreObject<File> {
     }
 
     /**
-     * Appends the object.toString() to the given files 
+     * Appends the object.toString() to all given files. Usually only called with a single 
+     * enclosed file object. <br/><br/>
      * 
-     * @param object
+     * Multi-threaded.<br/><br/>
      * 
-     * @return . 
+     * @param object The object to write to all enclosed files.
+     * 
+     * @return The same core file object (<code>this</code>).
      */
     public CoreFile append(Object object) {
         if (object == null) return this;

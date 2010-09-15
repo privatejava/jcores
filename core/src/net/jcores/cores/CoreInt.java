@@ -36,8 +36,9 @@ import net.jcores.options.Option;
 import net.jcores.utils.Mapper;
 
 /**
- * @author rb
- *
+ * Please ignore this class.
+ * 
+ * @author Ralf Biedert
  */
 public class CoreInt extends Core {
 

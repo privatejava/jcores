@@ -40,13 +40,16 @@ import net.jcores.utils.Folder;
 import net.jcores.utils.Mapper;
 
 /**
- * The inner core.  
+ * The abstract base class of all cores. Contains commonly used methods and variables. In general 
+ * you should not need to bother with this class, as in most cases you will extend CoreObject for 
+ * your own cores, not this class.  
  * 
+ * @since 1.0
  * @author Ralf Biedert
  */
 public abstract class Core {
 
-    /** Our parent */
+    /** Our 'parent' core. */
     final protected CommonCore commonCore;
 
     /**
@@ -59,17 +62,17 @@ public abstract class Core {
     }
 
     /**
-     * Returns the size of enclosed elements
+     * Returns the size of enclosed elements, counting null elements.
      *  
-     * @return
+     * @return The number of element slots this core encloses.
      */
-    abstract int size();
+    public abstract int size();
 
     /**
      * Starts a new parallel mapping process. 
      * 
-     * @param mapper
-     * @param options
+     * @param mapper The mapper to use. 
+     * @param options Relevant options: <code>OptionMapType</code>.
      */
     protected void map(final Mapper mapper, final Option... options) {
         final int size = mapper.size();
@@ -87,6 +90,8 @@ public abstract class Core {
         // Now find the first element and measure how long the conversion takes
         // for (int i = 0; i < size; i++) { }
 
+        // TODO: Also measure how long thread creation takes (once)
+        // TODO: Then decide if we should parallelize or execute directly. 
         // TODO: Get proper value for step size (same problem, see below)
         final int STEP_SIZE = Math.max(size() / 10, 1);
         final int NUM_THREADS = Runtime.getRuntime().availableProcessors();
@@ -144,10 +149,10 @@ public abstract class Core {
     }
 
     /**
-     * Starts a parallel folding process.
+     * Starts a parallel folding process.  
      * 
-     * @param folder
-     * @param options
+     * @param folder The folder to use.
+     * @param options Relevant options: <code>OptionMapType</code>.
      */
     protected void fold(final Folder folder, final Option... options) {
         final int size = folder.size();
@@ -241,11 +246,13 @@ public abstract class Core {
     }
 
     /**
-     * Sends a request to the developers requesting a feature with the given name.
+     * Sends a request to the developers requesting a feature with the given name. The request will 
+     * be sent to a server and collected. Information of the enclosed objects and the feature request
+     * string will be transmitted as well.  
      * 
-     * @param functionName
+     * @param functionName Call this function for example like this $(myobjects).featurerequest(".compress() -- Should compress the given objects."); 
      */
-    public void requestFeature(String functionName) {
+    public void featurerequest(String functionName) {
         $("Request logged.").log();
     }
 }

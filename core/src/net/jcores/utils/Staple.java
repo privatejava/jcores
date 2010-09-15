@@ -28,9 +28,11 @@
 package net.jcores.utils;
 
 /**
+ * A staple of the given type. See <code>CoreObject.staple()</code>.
+ * 
  * @author Ralf Biedert
  *
- * @param <T>
+ * @param <T> Type of stapled object.
  */
 public class Staple<T> {
 
@@ -41,8 +43,10 @@ public class Staple<T> {
     private final T t;
 
     /**
-     * @param t
-     * @param size
+     * Creates a new staple.
+     * 
+     * @param t Stapled value.
+     * @param size Number of elements that contributed.
      */
     public Staple(T t, int size) {
         this.t = t;
@@ -50,14 +54,18 @@ public class Staple<T> {
     }
 
     /**
-     * @return the size
+     * Returns the size.
+     * 
+     * @return The size.
      */
     public int size() {
         return this.size;
     }
 
     /**
-     * @return the t
+     * Staple value.
+     * 
+     * @return Value.
      */
     public T staple() {
         return this.t;

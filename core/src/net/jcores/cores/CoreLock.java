@@ -33,26 +33,31 @@ import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F0;
 
 /**
- * Wraps locks.
+ * Wraps a number of Locks and exposes some convenience functions.   
  * 
  * @author Ralf Biedert
+ * @since 1.0
  */
 public class CoreLock extends CoreObject<Lock> {
 
     /**
-     * @param supercore
-     * @param t
+     * Wraps a number of locks.
+     * 
+     * @param supercore The shared CommonCore. 
+     * @param objects The locks to wrap.
      */
-    public CoreLock(CommonCore supercore, Lock... t) {
-        super(supercore, t);
+    public CoreLock(CommonCore supercore, Lock... objects) {
+        super(supercore, objects);
     }
 
     /**
-     * This method is just a concept study to see if it makes sense.
+     * Executes the given function as soon as the lock is ready and fail-safely unlocks 
+     * the lock afterwards<br/><br/>
      * 
-     * @param f
+     * Single-threaded, size-of-one.<br/><br/>
+     * 
+     * @param f The function to execute when the lock is ready.
      */
-    @Deprecated
     public void locked(F0 f) {
         Lock lock = get(0);
 

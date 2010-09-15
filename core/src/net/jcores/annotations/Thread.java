@@ -28,8 +28,10 @@
 package net.jcores.annotations;
 
 /**
- * @author rb
- *
+ * Ignore me, still playground.  
+ * 
+ * @deprecated
+ * @author Ralf Biedert
  */
 public @interface Thread {
     //

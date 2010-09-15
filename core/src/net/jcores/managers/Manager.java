@@ -28,7 +28,11 @@
 package net.jcores.managers;
 
 /**
+ * Base class of each manager. Managers are shared amongst all instances of a given core 
+ * to exchange information. Only needed if you develop cores.
+ * 
  * @author Ralf Biedert
+ * @since 1.0
  */
 public class Manager {
     // Each manager should keep it mind that it might be called in a highly multithreaded way ... 

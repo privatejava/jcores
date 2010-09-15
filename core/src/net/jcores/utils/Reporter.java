@@ -30,7 +30,7 @@ package net.jcores.utils;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- * Manages and keeps internal trouble records.
+ * Manages and keeps internal trouble records. You do not need this.
  * 
  * @author Ralf Biedert
  */

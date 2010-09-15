@@ -28,9 +28,9 @@
 package net.jcores.utils;
 
 /**
- * Used by the cores when calling the inner core's mapping function.
+ * Used by the cores when calling the inner core's mapping function. You do not need this.
  * 
- * @author rb
+ * @author Ralf Biedert
  */
 public abstract class Folder extends Handler {
     /**

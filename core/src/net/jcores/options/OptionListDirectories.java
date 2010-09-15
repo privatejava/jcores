@@ -28,7 +28,9 @@
 package net.jcores.options;
 
 /**
- * @author rb
+ * Specifies directories should be returned as well.
+ * 
+ * @author Ralf Biedert
  */
 public class OptionListDirectories extends Option {
     //

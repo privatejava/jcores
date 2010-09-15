@@ -41,24 +41,29 @@ import net.jcores.interfaces.functions.F2ReduceObjects;
 import net.jcores.options.Option;
 
 /**
+ * Wraps a number of String and exposes some convenience functions.  
  * 
  * @author Ralf Biedert
+ * @since 1.0
  */
 public class CoreString extends CoreObject<String> {
 
     /**
-     * @param supercore
-     *  
-     * @param t
+     * Creates an string core. 
+     * 
+     * @param supercore The common core. 
+     * @param objects The strings to wrap.
      */
-    public CoreString(CommonCore supercore, String... t) {
-        super(supercore, t);
+    public CoreString(CommonCore supercore, String... objects) {
+        super(supercore, objects);
     }
 
     /**
-     * Returns the corresponding files.
+     * Treats all strings as filenames and returns the corresponding files. <br/><br/>
      * 
-     * @return .
+     * Multi-threaded.<br/><br/>
+     * 
+     * @return A CoreFile object with all enclosed files.
      */
     public CoreFile file() {
         return new CoreFile(this.commonCore, map(new F1<String, File>() {
@@ -69,12 +74,14 @@ public class CoreString extends CoreObject<String> {
     }
 
     /**
-     * Filters the object using the given function. 
+     * Filters all strings using the given regular expression. <br/><br/>
      * 
-     * @param regex 
-     * @param options
+     * Multi-threaded.<br/><br/>
      * 
-     * @return . 
+     * @param regex The regular expression to use.
+     * @param options Currently none used.
+     * 
+     * @return A CoreString containing a filtered subset of our elements. 
      */
     public CoreString filter(final String regex, Option... options) {
         final Pattern p = Pattern.compile(regex);
@@ -88,18 +95,23 @@ public class CoreString extends CoreObject<String> {
     }
 
     /**
-     * Joins with empty joiner.
+     * Joins all string with an empty ("") joiner. <br/><br/>
      * 
-     * @return .
+     * Single-threaded.<br/><br/>
+     * 
+     * @return The joined string, or "" if there was nothing to do.
      */
     public String join() {
         return join("");
     }
 
     /**
-     * Joins all strings to a single string.
-     * @param joiner 
-     * @return .
+     * Joins all strings to a single string.<br/><br/>
+     * 
+     * Single-threaded.<br/><br/>
+     * 
+     * @param joiner String used to join. 
+     * @return The joined result or "" of there was nothing to do.
      */
     public String join(final String joiner) {
         if (size() == 0) return "";
@@ -115,11 +127,13 @@ public class CoreString extends CoreObject<String> {
     }
 
     /**
-     * Splits all string using the splitter.
+     * Splits all string using the splitter, returning an <code>expanded()</code> core.<br/><br/>
      * 
-     * @param splitter 
+     * Multi-threaded.<br/><br/>
      * 
-     * @return .
+     * @param splitter A regular expression used to split the given strings. 
+     * 
+     * @return A an expanded CoreString with all split tokens. 
      */
     public CoreString split(final String splitter) {
         return map(new F1<String, List<String>>() {
@@ -130,7 +144,9 @@ public class CoreString extends CoreObject<String> {
     }
 
     /**
-     * Prints our strings.
+     * Prints all strings to the console.<br/><br/>
+     * 
+     * Single-threaded.<br/><br/>
      */
     public void print() {
         if (size() == 0) return;
@@ -142,16 +158,20 @@ public class CoreString extends CoreObject<String> {
     }
 
     /**
-     * Logs the given string to the system log. 
+     * Logs the enclosed strings with a default level.<br/><br/>
+     * 
+     * Single-threaded.<br/><br/>
      */
     public void log() {
         log(Level.INFO);
     }
 
     /**
-     * Logs the given string to the system log using the given level
+     * Logs the given string using the given level.<br/><br/>
+     * 
+     * Single-threaded.<br/><br/>
      *  
-     * @param level  
+     * @param level Logging level to use.
      */
     public void log(final Level level) {
         map(new F1<String, Object>() {
@@ -163,11 +183,13 @@ public class CoreString extends CoreObject<String> {
     }
 
     /**
-     * Replaces some pattern with <code>with</code> 
+     * Replaces some pattern with a replacement.<br/><br/>
      * 
-     * @param pattern
-     * @param with
-     * @return .
+     * Multi-threaded.<br/><br/>
+     * 
+     * @param pattern The pattern to search for.
+     * @param with The replacement.
+     * @return A CoreString with all patterns replaced.
      */
     public CoreString replace(final String pattern, final String with) {
         final Pattern p = Pattern.compile(pattern);

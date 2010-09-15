@@ -33,8 +33,9 @@ import java.util.Collection;
 import net.jcores.interfaces.functions.F1;
 
 /**
- * @author rb
- *
+ * Wraps a number of collections to arrays. You do not need this.
+ * 
+ * @author Ralf Biedert
  */
 public class Wrapper {
 

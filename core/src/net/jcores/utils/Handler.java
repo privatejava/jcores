@@ -30,7 +30,7 @@ package net.jcores.utils;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Handles parallel tasks.
+ * Handles parallel tasks. You do not need this.
  * 
  * @author rb
  */

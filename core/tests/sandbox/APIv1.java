@@ -33,7 +33,6 @@ import java.util.List;
 
 import net.jcores.interfaces.functions.F0;
 import net.jcores.interfaces.functions.F1;
-import net.jcores.options.Option;
 import sandbox.dummys.F0Impl;
 
 /**
@@ -64,7 +63,7 @@ public class APIv1 {
             public String f(String x) {
                 return x.toLowerCase();
             }
-        }, Option.DUMMY, Option.TEST(3));
+        });
 
         
         $(spawn, object).ifAll(new F0() {

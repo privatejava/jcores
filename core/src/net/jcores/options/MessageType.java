@@ -36,7 +36,7 @@ package net.jcores.options;
 public enum MessageType {
     /** Specifies messages that deal with using the library in 'wrong' ways. */
     MISUSE,
-    
+
     /** Specifies messages that deal performance issues. */
     PERFORMANCE,
 

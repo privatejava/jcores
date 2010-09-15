@@ -42,10 +42,15 @@ import net.jcores.options.MessageType;
 import net.jcores.utils.Reporter;
 
 /**
+ * The common core is a singleton object shared by (thus common to) all created
+ * core instances. It mainly contains helper and utility methods and takes care 
+ * of the managers.<br/><br/> 
+ * 
  * Methods and object commonly required by the other cores. All methods in here are (and must be!) 
  * thread safe. 
  * 
  * @author Ralf Biedert
+ * @since 1.0
  */
 public class CommonCore {
 
@@ -80,10 +85,11 @@ public class CommonCore {
     }
 
     /**
-     * Executes the given runnable count times.
+     * Executes the given runnable count times. Call this method with your 
+     * given workers and a number of threads (usually number of CPUs).
      * 
-     * @param r
-     * @param count 
+     * @param r The runnable to execute. 
+     * @param count Number of threads to spawn.
      */
     public void execute(Runnable r, int count) {
         for (int i = 0; i < count; i++)
@@ -91,37 +97,37 @@ public class CommonCore {
     }
 
     /**
-     * Sets a manager.
+     * Sets a manager of a given type.
      * 
-     * @param <T>
-     *  
-     * @param type
-     * @param m
-     * @return . 
+     * @param <T> Manager's type.
+     * @param clazz Manager's class.
+     * @param manager The actual manager to put.
+     * @return Return the manager that was already in the list, if there was one, or the current manager which was also set.
      */
     @SuppressWarnings("unchecked")
-    public <T extends Manager> T manager(Class<T> type, T m) {
-        this.managers.putIfAbsent(type, m);
-        return (T) this.managers.get(type);
+    public <T extends Manager> T manager(Class<T> clazz, T manager) {
+        this.managers.putIfAbsent(clazz, manager);
+        return (T) this.managers.get(clazz);
     }
 
     /**
-     * Gets a manager
+     * Returns a manager of the given type.
      * 
-     * @param <T>
-     * @param type 
-     * @return .
+     * @param <T> Manager's type.
+     * @param clazz Manager's class.
+     * @return Returns the currently set manager.
      */
     @SuppressWarnings("unchecked")
-    public <T extends Manager> T manager(Class<T> type) {
-        return (T) this.managers.get(type);
+    public <T extends Manager> T manager(Class<T> clazz) {
+        return (T) this.managers.get(clazz);
     }
 
     /**
-     * Logs the given string to a logger. 
+     * Logs the given string. This method might, but is not required, to use the official Java logging 
+     * facilities. 
      * 
-     * @param string
-     * @param level
+     * @param string The string to log.
+     * @param level Log level to use.
      */
     public void log(String string, Level level) {
         this.logger.log(level, string);
@@ -132,15 +138,15 @@ public class CommonCore {
      * internal error and problem reporting and use log() for user requested 
      * logging.
      * 
-     * @param type 
-     * @param problem
+     * @param type Type of the message.
+     * @param problem Problem description.
      */
     public void report(MessageType type, String problem) {
         this.reporter.record(problem);
     }
 
     /**
-     * Prints all problem reports. 
+     * Prints all known problem reports to the console. 
      */
     public void report() {
         this.reporter.printRecords();
