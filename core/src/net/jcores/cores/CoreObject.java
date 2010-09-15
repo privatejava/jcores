@@ -608,7 +608,7 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Return the an element at the the relative position<br/><br/>
+     * Return the an element at the the relative position.<br/><br/>
      * 
      * Single-threaded. <br/><br/>
      * 

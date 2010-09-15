@@ -45,11 +45,13 @@ import net.jcores.options.OptionMapType;
 import net.jcores.utils.Wrapper;
 
 /**
- * Keeps the common core and contains Johnnys($) for all our cores. This class is the main 
- * entry point into jCores.<br/><br/>
+ * Keeps the common core and contains Johnnys(<code>$</code>) for all our cores. This class is the main 
+ * entry point into jCores. You should use these functions as static imports. See 
+ * <a href="http://code.google.com/p/jcores/wiki/EclipseIntegration">the Eclipse Integration Guide</a> on how 
+ * to make your life much more simple.<br/><br/>
  * 
  * If you want to see your own core in here (or if you have any recommendations for new cores) 
- * contact us in the forum.    
+ * contact us in <a href="http://groups.google.com/group/jcores">the forum</a>.    
  * 
  * @since 1.0
  * @author Ralf Biedert
