@@ -1,5 +1,5 @@
 /**
- * Starting point containing the CoreKeeper.  
+ * Top level package containing the CoreKeeper.  
  *
  * @since 1.0
  */

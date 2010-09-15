@@ -95,7 +95,6 @@ public class CoreKeeper {
      * @param clsses The classes to wrap. 
      * @return  A CoreClass wrapping the given classes.
      */
-    @Deprecated
     public static <T> CoreClass<T> $(Class<T>... clsses) {
         return new CoreClass<T>($, clsses);
     }
