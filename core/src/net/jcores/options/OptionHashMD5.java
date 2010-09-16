@@ -1,5 +1,5 @@
 /*
- * TaskSolver.java
+ * OptionDummy.java
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
@@ -25,42 +25,18 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package benchmarks.model;
-
-import net.jcores.interfaces.functions.F1;
+package net.jcores.options;
 
 /**
+ * Specifies hash() should generate a MD5
+ * 
  * @author Ralf Biedert
- * @param <T> 
- *
  */
-public class TaskSolver<T> {
-    /** */
-    private F1<T, Object> f;
-    
-    /** */
-    private String name;
-
+public class OptionHashMD5 extends OptionHash {
     /**
-     * @param name
-     * @param f
+     * Creates a new hash option.
      */
-    public TaskSolver(String name, F1<T, Object> f) {
-        this.f = f;
-        this.name = name;
-    }
-
-    /**
-     * @return .
-     */
-    public F1<T, Object> f() {
-        return this.f;
-    }
-    
-    /**
-     * @return .
-     */
-    public String name() {
-        return this.name;
+    protected OptionHashMD5() {
+        super("MD5");
     }
 }

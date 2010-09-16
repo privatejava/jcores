@@ -1,5 +1,5 @@
 /*
- * TaskSolver.java
+ * SimpleSpeedTests.java
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
@@ -25,42 +25,27 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package benchmarks.model;
+package sandbox;
 
-import net.jcores.interfaces.functions.F1;
+import static net.jcores.CoreKeeper.$;
+
+import java.io.IOException;
+import java.util.Random;
 
 /**
- * @author Ralf Biedert
- * @param <T> 
+ * @author rb
  *
  */
-public class TaskSolver<T> {
-    /** */
-    private F1<T, Object> f;
-    
-    /** */
-    private String name;
+public class SimpleURI {
+
+    static Random rnd = new Random();
 
     /**
-     * @param name
-     * @param f
+     * @param args
+     * @throws IOException 
      */
-    public TaskSolver(String name, F1<T, Object> f) {
-        this.f = f;
-        this.name = name;
+    public static void main(String[] args) throws IOException {
+        $("http://jcores.net/index.html").uri().download().input().hash().print();
     }
 
-    /**
-     * @return .
-     */
-    public F1<T, Object> f() {
-        return this.f;
-    }
-    
-    /**
-     * @return .
-     */
-    public String name() {
-        return this.name;
-    }
 }

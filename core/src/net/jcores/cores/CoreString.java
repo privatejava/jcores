@@ -28,6 +28,7 @@
 package net.jcores.cores;
 
 import java.io.File;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
@@ -199,5 +200,24 @@ public class CoreString extends CoreObject<String> {
                 return p.matcher(x).replaceAll(with);
             }
         }).array(String.class));
+    }
+
+    /**
+     * Creates URIs for all enclosed Strings.<br/><br/>
+     * 
+     * Multi-threaded.<br/><br/>
+     * 
+     * @return A CoreURI object with URIs for all enclosed strings.
+     */
+    public CoreURI uri() {
+        return new CoreURI(this.commonCore, map(new F1<String, URI>() {
+            public URI f(String x) {
+                try {
+                    return new URI(x);
+                } catch (Exception e) {
+                    return null;
+                }
+            }
+        }).array(URI.class));
     }
 }

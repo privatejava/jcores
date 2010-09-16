@@ -35,8 +35,15 @@ package net.jcores.options;
  */
 public class Option {
 
+    /** We don't allow for user-created options S*/
+    protected Option() { /* */
+    }
+
     /** If CoreFile.dir() should list directory entries as well */
     public final static OptionListDirectories LIST_DIRECTORIES = new OptionListDirectories();
+
+    /** Hash method to use (MD5) */
+    public final static OptionHashMD5 HASH_MD5 = new OptionHashMD5();
 
     /** Specifies that the map result should be of type. Useful if map returns various types.
      *  

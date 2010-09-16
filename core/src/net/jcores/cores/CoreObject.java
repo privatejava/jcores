@@ -387,7 +387,7 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns a single object that, if any of it's functions is executed, the corresponding function is 
+     * Returns a single object that, if any of its functions is executed, the corresponding function is 
      * executed on all enclosed elements. Only works if <code>c</code> is an interface and only on
      * enclosed elements implementing <code>c</code>. From a performance perspective this method only 
      * makes sense if the requested operation is complex, as on simple methods the reflection costs will
@@ -613,7 +613,7 @@ public class CoreObject<T> extends Core {
      * Single-threaded. <br/><br/>
      * 
      * @param percent 0.0 returns the first element, 1.0 the last element, 0.5 returns the element in the 
-     * middle, and so on. <br/><br/>
+     * middle, and so on. 
 
      * @return The value at the requested position, or null if there is none.
      */
@@ -623,6 +623,26 @@ public class CoreObject<T> extends Core {
         if (percent > 1) return null;
 
         return this.t[(int) (percent * size())];
+    }
+
+    /**
+     * Returns the first element that is an instance of the requested type. 
+     * 
+     * Single-threaded. Heavyweight.<br/><br/>
+     * 
+     * @param <X> Subtype to request. 
+     * @param request A subclass of our type to request.
+     * @param dflt The value to return when no class was found.
+
+     * @return The first object that is assignable to request, or dflt if there was no such element. 
+     */
+    @SuppressWarnings("unchecked")
+    public <X extends T> X get(Class<X> request, X dflt) {
+        for (int i = 0; i < size(); i++) {
+            if (this.t[i] != null && request.isAssignableFrom(this.t[i].getClass()))
+                return (X) this.t[i];
+        }
+        return dflt;
     }
 
     /**
@@ -806,12 +826,27 @@ public class CoreObject<T> extends Core {
     }
 
     /**
+     * Reduces a randomly selected object, including null values.<br/><br/>
+     *    
+     * Single-threaded.<br/><br/>
+     * 
+     * @return A randomly selected object from this core. 
+     */
+    public T random() {
+        final int size = size();
+        
+        if(size == 0) return null;
+        
+        return this.t[this.commonCore.random().nextInt(size)];
+    }
+
+    /**
      * Reduces the given object, single-threaded version. In contrast to fold() the 
      * order in which two element might be reduced is well defined from left to right. You should
      * use <code>reduce()</code> for simple operations and <code>fold()</code> for very 
      * complex operations.<br/><br/>
      *    
-     * Single-threaded. .<br/><br/>
+     * Single-threaded.<br/><br/>
      * 
      * @param f The reduce function. Takes two elements, returns one.
      * @param options Relevant options: <code>OptionMapType</code>.

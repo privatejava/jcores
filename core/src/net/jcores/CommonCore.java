@@ -27,6 +27,7 @@
  */
 package net.jcores;
 
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
@@ -66,6 +67,10 @@ public class CommonCore {
     /** All managers we have */
     private final ConcurrentMap<Class<? extends Manager>, Manager> managers = new ConcurrentHashMap<Class<? extends Manager>, Manager>();
 
+    /** Random variable */
+    private final Random random = new Random();
+
+    
     /**
      * Constructs the common core. 
      */
@@ -150,5 +155,14 @@ public class CommonCore {
      */
     public void report() {
         this.reporter.printRecords();
+    }
+    
+    /**
+     * Returns our random object.
+     * 
+     * @return The initialized random object.
+     */
+    public Random random() {
+        return this.random;
     }
 }

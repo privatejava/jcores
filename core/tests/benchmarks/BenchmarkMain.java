@@ -63,7 +63,7 @@ public class BenchmarkMain {
                 for (Object object : solvers) {
                     final TaskSolver<Object> solver = (TaskSolver<Object>) object;
                     final Object d = data != null ? data.getData() : null;
-                    final F1<Object, Void> f = solver.f();
+                    final F1<Object, Object> f = solver.f();
 
                     System.out.print("    " + solver.name() + ": ");
 

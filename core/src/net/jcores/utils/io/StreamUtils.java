@@ -31,10 +31,13 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -184,5 +187,92 @@ public class StreamUtils {
         }
 
         return rval;
+    }
+
+    /**
+     * Hashes the given input stream.
+     * 
+     * @param fis Input stream to use.
+     * @param method Method to use.
+     * @return A string with the hash.
+     */
+    @SuppressWarnings("boxing")
+    public static String generateHash(InputStream fis, String method) {
+        // Try to generate hash
+        try {
+            final MessageDigest digest = java.security.MessageDigest.getInstance(method);
+
+            // Read Data
+            final byte[] data = new byte[1024 * 1024];
+            int avail = fis.available();
+
+            // Update hash
+            while (avail > 0) {
+                avail = Math.min(avail, data.length);
+
+                fis.read(data, 0, avail);
+
+                digest.update(data, 0, avail);
+                avail = fis.available();
+            }
+
+            final byte[] hash = digest.digest();
+
+            // Assemble hash string
+            final StringBuilder sb = new StringBuilder();
+            for (final byte b : hash) {
+                final String format = String.format("%02x", b);
+                sb.append(format);
+            }
+
+            fis.close();
+
+            final String hashValue = sb.toString().substring(0, sb.toString().length());
+            return hashValue;
+        } catch (final NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (final FileNotFoundException e) {
+            // e.printStackTrace();
+        } catch (final IOException e) {
+            e.printStackTrace();
+        } finally {
+            //
+        }
+        return null;
+    }
+
+    /**
+     * Stores the given stream to the file.
+     * 
+     * @param openStream Stream to store.
+     * @param file File to store it to.
+     */
+    public static void saveTo(InputStream is, File file) {
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(file);
+        } catch (FileNotFoundException e1) {
+            return;
+        }
+        final byte[] data = new byte[1024 * 1024];
+        int lastRead = 1;
+
+        // Update hash
+        while (lastRead > 0) {
+            try {
+                lastRead = is.read(data, 0, data.length);
+                if(lastRead <= 0) break;
+                fos.write(data, 0, lastRead);
+            } catch (IOException e) {
+                //
+                lastRead = 0;
+            }
+        }
+
+        try {
+            fos.close();
+        } catch (IOException e) {
+            //
+        }
     }
 }

@@ -27,11 +27,14 @@
  */
 package benchmarks.benchmarks;
 
+import static net.jcores.CoreKeeper.$;
+
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Random;
 
+import junit.data.Data;
 import net.jcores.interfaces.functions.F1;
+import net.jcores.interfaces.functions.F2ReduceObjects;
 import benchmarks.benchmarker.Benchmark;
 import benchmarks.model.TaskData;
 import benchmarks.model.TaskSolver;
@@ -40,27 +43,38 @@ import benchmarks.model.TaskSolver;
  * @author rb
  *
  */
-public class SimpleTest extends Benchmark<Void> {
+public class SimpleTest extends Benchmark<String[]> {
 
     @Override
-    public TaskData<Void> data() {
-        return null;
+    public TaskData<String[]> data() {
+        return new TaskData<String[]>(Data.sn);
     }
 
     @Override
-    public Collection<TaskSolver<Void>> solver() {
-        final Collection<TaskSolver<Void>> rval = new ArrayList<TaskSolver<Void>>();
+    public Collection<TaskSolver<String[]>> solver() {
+        final Collection<TaskSolver<String[]>> rval = new ArrayList<TaskSolver<String[]>>();
 
-        rval.add(new TaskSolver<Void>("m1", new F1<Void, Void>() {
+        rval.add(new TaskSolver<String[]>("m1", new F1<String[], Object>() {
             @Override
-            public Void f(Void x) {
+            public Void f(String[] x) {
+                String longest = "";
+                for (int i = 0; i < x.length; i++) {
+                    if (x[i].length() > longest.length()) longest = x[i];
+                }
+                longest.getBytes();
+
                 return null;
             }
         }));
-        rval.add(new TaskSolver<Void>("m2", new F1<Void, Void>() {
+        rval.add(new TaskSolver<String[]>("m2", new F1<String[], Object>() {
             @Override
-            public Void f(Void x) {
-                new Random().nextInt(10);
+            public Void f(String[] x) {
+                String longest = $(x).fold(new F2ReduceObjects<String>() {
+                    public String f(String left, String right) {
+                        return left.length() < right.length() ? right : left;
+                    }
+                }).get("Failed");
+
                 return null;
             }
         }));

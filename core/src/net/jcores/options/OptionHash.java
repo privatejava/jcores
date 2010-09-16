@@ -1,5 +1,5 @@
 /*
- * TaskSolver.java
+ * OptionDummy.java
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
@@ -25,42 +25,31 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package benchmarks.model;
-
-import net.jcores.interfaces.functions.F1;
+package net.jcores.options;
 
 /**
+ * Specifies the hash-method to use.
+ * 
  * @author Ralf Biedert
- * @param <T> 
- *
  */
-public class TaskSolver<T> {
+public class OptionHash extends Option {
+
     /** */
-    private F1<T, Object> f;
-    
-    /** */
-    private String name;
+    private final String method;
 
     /**
-     * @param name
-     * @param f
+     * @param string
      */
-    public TaskSolver(String name, F1<T, Object> f) {
-        this.f = f;
-        this.name = name;
+    public OptionHash(String string) {
+        this.method = string;
     }
 
     /**
-     * @return .
+     * Returns the hash method.
+     * 
+     * @return the method
      */
-    public F1<T, Object> f() {
-        return this.f;
-    }
-    
-    /**
-     * @return .
-     */
-    public String name() {
-        return this.name;
+    public String getMethod() {
+        return this.method;
     }
 }

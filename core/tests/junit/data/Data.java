@@ -50,7 +50,7 @@ public class Data {
 
     /** Initialize big values */
     static {
-        sn = strings(10000);
+        sn = strings(100000);
     }
 
     /**

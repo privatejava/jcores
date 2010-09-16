@@ -27,12 +27,16 @@
  */
 package net.jcores.cores;
 
+import static net.jcores.CoreKeeper.$;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipInputStream;
 
 import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F1;
+import net.jcores.options.Option;
+import net.jcores.options.OptionHash;
 import net.jcores.utils.io.StreamUtils;
 
 /**
@@ -103,6 +107,25 @@ public class CoreInputStream extends CoreObject<InputStream> {
         return new CoreString(this.commonCore, map(new F1<InputStream, String>() {
             public String f(final InputStream x) {
                 return StreamUtils.readText(CoreInputStream.this.commonCore, x);
+            }
+        }).array(String.class));
+    }
+
+    /**
+     * Creates a hash of the given input streams.<br/><br/>
+     * 
+     * Multi-threaded.<br/><br/>
+     * 
+     * @param options Relevant options: <code>OptionHashMD5</code>.
+     * 
+     * @return A CoreString containing the generated hashes.
+     */
+    public CoreString hash(Option... options) {
+        final String method = $(options).get(OptionHash.class, Option.HASH_MD5).getMethod();
+       
+        return new CoreString(this.commonCore, map(new F1<InputStream, String>() {
+            public String f(final InputStream x) {
+                return StreamUtils.generateHash(x, method);
             }
         }).array(String.class));
     }

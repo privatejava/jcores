@@ -29,6 +29,7 @@ package net.jcores;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Collection;
 import java.util.concurrent.locks.Lock;
 
@@ -39,6 +40,7 @@ import net.jcores.cores.CoreInt;
 import net.jcores.cores.CoreLock;
 import net.jcores.cores.CoreObject;
 import net.jcores.cores.CoreString;
+import net.jcores.cores.CoreURI;
 import net.jcores.interfaces.functions.F1;
 import net.jcores.options.Option;
 import net.jcores.options.OptionMapType;
@@ -107,6 +109,16 @@ public class CoreKeeper {
      */
     public static CoreString $(String... object) {
         return new CoreString($, object);
+    }
+
+    /**
+     * Wraps number of URIs and returns a new CoreURI.  
+     * 
+     * @param object The URIs to wrap. 
+     * @return  A CoreString wrapping the given strings.
+     */
+    public static CoreURI $(URI... object) {
+        return new CoreURI($, object);
     }
 
     /**

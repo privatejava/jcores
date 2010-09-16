@@ -35,8 +35,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -124,7 +127,7 @@ public class CoreFile extends CoreObject<File> {
      * @return A CoreInputStream with the opened files. 
      */
     public CoreInputStream input() {
-        return map(new F1<File, InputStream>() {
+        return new CoreInputStream(this.commonCore, map(new F1<File, InputStream>() {
             public InputStream f(File x) {
                 try {
                     return new BufferedInputStream(new FileInputStream(x));
@@ -133,7 +136,43 @@ public class CoreFile extends CoreObject<File> {
                 }
                 return null;
             }
-        }).as(CoreInputStream.class);
+        }).array(InputStream.class));
+    }
+
+    /**
+     * Opens the enclosed file streams as binary files and reads their data into byte buffers. 
+     * File stream which could not be opened will be returned as null.<br/><br/> 
+     * 
+     * Multi-threaded.<br/><br/>
+     * 
+     * @return A CoreByteBuffer with binary content. 
+     */
+    public CoreByteBuffer data() {
+        return new CoreByteBuffer(this.commonCore, map(new F1<File, ByteBuffer>() {
+            public ByteBuffer f(File x) {
+                try {
+                    final FileChannel channel = new FileInputStream(x).getChannel();
+                    final long size = channel.size();
+
+                    final ByteBuffer buffer = ByteBuffer.allocate((int) size);
+                    int read = channel.read(buffer);
+                    
+                    if(read != size) {
+                        CoreFile.this.commonCore.report(MessageType.EXCEPTION, "Error reading data() from " + x + ". Size mismatch (" + read + " != " + size + ")");
+                        return null;
+                    }
+                    
+                    channel.close();
+                    return buffer;
+                } catch (FileNotFoundException e) {
+                    CoreFile.this.commonCore.report(MessageType.EXCEPTION, "Error reading data() from " + x + ". File not found!");
+                    return null;
+                } catch (IOException e) {
+                    CoreFile.this.commonCore.report(MessageType.EXCEPTION, "Error reading data() from " + x + ". IOException!");
+                    return null;
+                }
+            }
+        }).array(ByteBuffer.class));
     }
 
     /**

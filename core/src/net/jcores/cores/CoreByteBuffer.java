@@ -1,5 +1,5 @@
 /*
- * TaskSolver.java
+ * CoreFile.java
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
@@ -25,42 +25,28 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package benchmarks.model;
+package net.jcores.cores;
 
-import net.jcores.interfaces.functions.F1;
+import java.nio.ByteBuffer;
+
+import net.jcores.CommonCore;
 
 /**
+ * Wraps a number of ByteBuffers and exposes some convenience functions.  
+ * 
  * @author Ralf Biedert
- * @param <T> 
- *
+ * 
+ * @since 1.0
  */
-public class TaskSolver<T> {
-    /** */
-    private F1<T, Object> f;
-    
-    /** */
-    private String name;
+public class CoreByteBuffer extends CoreObject<ByteBuffer> {
 
     /**
-     * @param name
-     * @param f
+     * Creates an ZipInputStream core. 
+     * 
+     * @param supercore The common core. 
+     * @param objects The strings to wrap.
      */
-    public TaskSolver(String name, F1<T, Object> f) {
-        this.f = f;
-        this.name = name;
-    }
-
-    /**
-     * @return .
-     */
-    public F1<T, Object> f() {
-        return this.f;
-    }
-    
-    /**
-     * @return .
-     */
-    public String name() {
-        return this.name;
+    public CoreByteBuffer(CommonCore supercore, ByteBuffer... objects) {
+        super(supercore, objects);
     }
 }
