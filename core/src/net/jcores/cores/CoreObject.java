@@ -826,7 +826,7 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Reduces a randomly selected object, including null values.<br/><br/>
+     * Returns a randomly selected object, including null values.<br/><br/>
      *    
      * Single-threaded.<br/><br/>
      * 
@@ -1007,23 +1007,6 @@ public class CoreObject<T> extends Core {
 
         // Return the new, unique core.
         return new CoreObject<T>(this.commonCore, copy).compact();
-    }
-
-    /**
-     * Return our content as an array. 
-     * 
-     * NOTE: Calling this method is not safe, as sometimes arrays of type Object[] can be returned 
-     * (especially in the case of empty cores) which are not mappable to more specific arrays. E.g:
-     * 
-     * String[] strings = emptystringcore.array()
-     * 
-     * This is due to the case that empty cores do not know of what type they really are.
-     * 
-     * @return Nothing sensible.
-     */
-    @Deprecated
-    protected T[] _array() {
-        return this.t;
     }
 
     /**

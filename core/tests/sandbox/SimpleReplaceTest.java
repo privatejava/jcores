@@ -28,6 +28,9 @@
 package sandbox;
 
 import static net.jcores.CoreKeeper.$;
+
+import java.util.Comparator;
+
 import net.jcores.cores.CoreString;
 
 /**
@@ -52,5 +55,11 @@ public class SimpleReplaceTest {
         */
 
         $("hello", "world", "how", null, "world").unique().as(CoreString.class).print();
+        String string = $("hello", "world", "how", null, "world").unique().sort(new Comparator<String>() {
+            public int compare(String o1, String o2) {
+                return o2.compareTo(o1);
+            }
+        }).get(0.5);
+        System.out.println(string);
     }
 }
