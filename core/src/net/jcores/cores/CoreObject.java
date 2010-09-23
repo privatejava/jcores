@@ -37,6 +37,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F0;
@@ -555,6 +557,28 @@ public class CoreObject<T> extends Core {
     }
 
     /**
+     * Filters all object by their toString() value using the given regular 
+     * expression. <br/><br/>
+     * 
+     * Multi-threaded.<br/><br/>
+     * 
+     * @param regex The regular expression to use.
+     * @param options Currently none used.
+     * 
+     * @return A CoreObject containing a filtered subset of our elements. 
+     */
+    public CoreObject<T> filter(final String regex, Option... options) {
+        final Pattern p = Pattern.compile(regex);
+
+        return filter(new F1Object2Bool<T>() {
+            public boolean f(T x) {
+                final Matcher matcher = p.matcher(x.toString());
+                return matcher.matches();
+            }
+        }, options);
+    }
+
+    /**
      * Reduces the given object, multi-threaded version. In contrast to reduce() the 
      * order in which two element might be reduced is not defined. Note: At present, 
      * reduce() is much faster for simple operations, as it involves much less synchronization 
@@ -834,9 +858,9 @@ public class CoreObject<T> extends Core {
      */
     public T random() {
         final int size = size();
-        
-        if(size == 0) return null;
-        
+
+        if (size == 0) return null;
+
         return this.t[this.commonCore.random().nextInt(size)];
     }
 

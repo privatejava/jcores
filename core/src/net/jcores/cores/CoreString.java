@@ -84,6 +84,7 @@ public class CoreString extends CoreObject<String> {
      * 
      * @return A CoreString containing a filtered subset of our elements. 
      */
+    @Override
     public CoreString filter(final String regex, Option... options) {
         final Pattern p = Pattern.compile(regex);
 
@@ -148,14 +149,18 @@ public class CoreString extends CoreObject<String> {
      * Prints all strings to the console.<br/><br/>
      * 
      * Single-threaded.<br/><br/>
+     * 
+     * @return Returns this CoreString object again.
      */
-    public void print() {
-        if (size() == 0) return;
+    public CoreString print() {
+        if (size() == 0) return this;
 
         for (String s : this.t) {
             if (s == null) continue;
             System.out.println(s);
         }
+
+        return this;
     }
 
     /**

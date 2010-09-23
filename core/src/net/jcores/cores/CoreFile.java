@@ -38,14 +38,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F1;
+import net.jcores.interfaces.functions.F1Object2Bool;
 import net.jcores.options.MessageType;
 import net.jcores.options.Option;
 import net.jcores.utils.io.FileUtils;
@@ -156,12 +160,12 @@ public class CoreFile extends CoreObject<File> {
 
                     final ByteBuffer buffer = ByteBuffer.allocate((int) size);
                     int read = channel.read(buffer);
-                    
-                    if(read != size) {
+
+                    if (read != size) {
                         CoreFile.this.commonCore.report(MessageType.EXCEPTION, "Error reading data() from " + x + ". Size mismatch (" + read + " != " + size + ")");
                         return null;
                     }
-                    
+
                     channel.close();
                     return buffer;
                 } catch (FileNotFoundException e) {
@@ -260,5 +264,41 @@ public class CoreFile extends CoreObject<File> {
         });
 
         return this;
+    }
+
+    /**
+     * Converts all files to URIs<br/><br/>
+     * 
+     * Multi-threaded.<br/><br/>
+     * 
+     * @return A CoreURI object with all converted files.
+     */
+    public CoreURI uri() {
+        return new CoreURI(this.commonCore, map(new F1<File, URI>() {
+            public URI f(File x) {
+                return x.toURI();
+            }
+        }).array(URI.class));
+    }
+
+    /**
+     * Filters all files by their name using the given regular expression. <br/><br/>
+     * 
+     * Multi-threaded.<br/><br/>
+     * 
+     * @param regex The regular expression to use.
+     * @param options Currently none used.
+     * 
+     * @return A CoreFile containing a filtered subset of our elements. 
+     */
+    @Override
+    public CoreFile filter(final String regex, Option... options) {
+        final Pattern p = Pattern.compile(regex);
+        return new CoreFile(this.commonCore, filter(new F1Object2Bool<File>() {
+            public boolean f(File x) {
+                final Matcher matcher = p.matcher(x.getAbsolutePath());
+                return matcher.matches();
+            }
+        }, options).array(File.class));
     }
 }

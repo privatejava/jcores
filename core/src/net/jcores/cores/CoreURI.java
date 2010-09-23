@@ -75,23 +75,22 @@ public class CoreURI extends CoreObject<URI> {
                     final URL url = x.toURL();
                     final InputStream openStream = url.openStream();
                     final File file = File.createTempFile("jcores.download.", ".tmp");
-                    
+
                     StreamUtils.saveTo(openStream, file);
-                    
+
                     openStream.close();
-                    
+
                     return file;
                 } catch (MalformedURLException e) {
                     CoreURI.this.commonCore.report(MessageType.EXCEPTION, "URI " + x + " could not be transformed into an URL.");
                 } catch (IOException e) {
                     CoreURI.this.commonCore.report(MessageType.EXCEPTION, "URI " + x + " could not be opened for reading.");
                 }
-                
+
                 return null;
             }
         }).array(File.class));
     }
-    
 
     /**
      * Downloads the enclosed URIs to the given directory, using the filename encoded 
@@ -111,20 +110,41 @@ public class CoreURI extends CoreObject<URI> {
                     final URL url = x.toURL();
                     final InputStream openStream = url.openStream();
                     final File file = new File(path + "/" + filepath);
-                    
+
                     StreamUtils.saveTo(openStream, file);
-                    
+
                     openStream.close();
-                    
+
                     return file;
                 } catch (MalformedURLException e) {
                     CoreURI.this.commonCore.report(MessageType.EXCEPTION, "URI " + x + " could not be transformed into an URL.");
                 } catch (IOException e) {
                     CoreURI.this.commonCore.report(MessageType.EXCEPTION, "URI " + x + " could not be opened for reading.");
                 }
-                
+
                 return null;
             }
         }).array(File.class));
     }
+
+    /**
+     * Tries to convert all URIs to local File objects.<br/><br/>
+     * 
+     * Multi-threaded.<br/><br/>
+     * 
+     * @return A CoreFile object enclosing all successfully converted file handles
+     */
+    public CoreFile file() {
+        return new CoreFile(this.commonCore, map(new F1<URI, File>() {
+            public File f(URI x) {
+                try {
+                    return new File(x);
+                } catch (Exception e) {
+                    //
+                }
+                return null;
+            }
+        }).array(File.class));
+    }
+
 }
