@@ -36,6 +36,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -247,7 +248,7 @@ public class StreamUtils {
      * @param openStream Stream to store.
      * @param file File to store it to.
      */
-    public static void saveTo(InputStream is, File file) {
+    public static void saveTo(InputStream openStream, File file) {
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(file);
@@ -260,8 +261,8 @@ public class StreamUtils {
         // Update hash
         while (lastRead > 0) {
             try {
-                lastRead = is.read(data, 0, data.length);
-                if(lastRead <= 0) break;
+                lastRead = openStream.read(data, 0, data.length);
+                if (lastRead <= 0) break;
                 fos.write(data, 0, lastRead);
             } catch (IOException e) {
                 //
@@ -274,5 +275,44 @@ public class StreamUtils {
         } catch (IOException e) {
             //
         }
+    }
+
+    /**
+     * Reads all the data of the given input stream.
+     * 
+     * @param x Input stream to read from
+     * 
+     * @return ByteBuffer w. data.
+     */
+    public static ByteBuffer getByteData(InputStream x) {
+        byte globaldata[] = new byte[1024 * 1024];
+        byte localdata[] = new byte[1024 * 1024];
+
+        try {
+            int total = 0;
+            int lastread = x.read(localdata);
+
+            while (lastread > 0) {
+
+                // Expand array if it does not fit
+                if (total + lastread > globaldata.length) {
+                    final byte newglobal[] = new byte[total + 1024 * 1024];
+                    System.arraycopy(globaldata, 0, newglobal, 0, total);
+                    globaldata = newglobal;
+                }
+
+                // Append new data
+                System.arraycopy(globaldata, total, localdata, 0, lastread);
+
+                total += lastread;
+                lastread = x.read(localdata);
+            }
+
+            return ByteBuffer.wrap(globaldata, 0, total);
+        } catch (IOException e) {
+            //
+        }
+
+        return null;
     }
 }

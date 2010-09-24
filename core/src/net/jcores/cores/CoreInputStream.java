@@ -31,6 +31,7 @@ import static net.jcores.CoreKeeper.$;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
 import java.util.zip.ZipInputStream;
 
 import net.jcores.CommonCore;
@@ -122,11 +123,26 @@ public class CoreInputStream extends CoreObject<InputStream> {
      */
     public CoreString hash(Option... options) {
         final String method = $(options).get(OptionHash.class, Option.HASH_MD5).getMethod();
-       
+
         return new CoreString(this.commonCore, map(new F1<InputStream, String>() {
             public String f(final InputStream x) {
                 return StreamUtils.generateHash(x, method);
             }
         }).array(String.class));
+    }
+
+    /**
+     * Uses the enclosed input streams and reads their data into byte buffers.<br/><br/> 
+     * 
+     * Multi-threaded.<br/><br/>
+     * 
+     * @return A CoreByteBuffer with binary content. 
+     */
+    public CoreByteBuffer data() {
+        return new CoreByteBuffer(this.commonCore, map(new F1<InputStream, ByteBuffer>() {
+            public ByteBuffer f(InputStream x) {
+                return StreamUtils.getByteData(x);
+            }
+        }).array(ByteBuffer.class));
     }
 }

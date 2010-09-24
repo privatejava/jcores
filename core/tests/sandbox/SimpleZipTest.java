@@ -46,9 +46,9 @@ public class SimpleZipTest {
      */
     public static void main(String[] args) throws IOException {
         //doUnzip("/tmp/1.zip", "/tmp/unz");
-
-        $("/Users/rb/Desktop/markedread.zip").file().input().zipstream().dir().print();
-        $($("/Users/rb/Desktop/markedread.zip").file().input().zipstream().get("markedread.ralf.txt")).text().print();
+        $("http://jcores.net/index.html").uri().download().input().hash().print();
+        //$("/Users/rb/Desktop/markedread.zip").file().input().zipstream().dir().print();
+       // $($("/Users/rb/Desktop/markedread.zip").file().input().zipstream().get("markedread.ralf.txt")).text().print();
 
     }
 

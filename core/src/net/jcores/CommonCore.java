@@ -58,7 +58,7 @@ public class CommonCore {
     /** Executes commands */
     private final ExecutorService executor;
 
-    /** Commong logger */
+    /** Common logger */
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     /** Stores error reports */
@@ -70,7 +70,6 @@ public class CommonCore {
     /** Random variable */
     private final Random random = new Random();
 
-    
     /**
      * Constructs the common core. 
      */
@@ -156,7 +155,7 @@ public class CommonCore {
     public void report() {
         this.reporter.printRecords();
     }
-    
+
     /**
      * Returns our random object.
      * 

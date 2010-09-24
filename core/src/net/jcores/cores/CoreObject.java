@@ -251,6 +251,23 @@ public class CoreObject<T> extends Core {
     }
 
     /**
+     * Return a CoreClass for all enclosed objects' classes<br/><br/> 
+     * 
+     * Multi-threaded. <br/><br/>
+     * 
+     * @return A new CoreObject of the same type, with a (probably) reduced size without any null element.
+     */
+    @SuppressWarnings("unchecked")
+    public CoreClass<T> clazz() {
+        return new CoreClass<T>(this.commonCore, map(new F1<T, Class<T>>() {
+            @Override
+            public Class<T> f(T x) {
+                return (Class<T>) x.getClass();
+            }
+        }).array(Class.class));
+    }
+
+    /**
      * Returns a compacted core whose underlying array does not 
      * contain null anymore. <br/><br/> 
      * 

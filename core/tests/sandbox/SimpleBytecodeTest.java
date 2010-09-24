@@ -1,5 +1,5 @@
 /*
- * CoreFile.java
+ * SimpleSpeedTests.java
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
@@ -25,54 +25,27 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.cores;
+package sandbox;
 
 import static net.jcores.CoreKeeper.$;
 
-import java.nio.ByteBuffer;
-
-import net.jcores.CommonCore;
-import net.jcores.interfaces.functions.F1;
-import net.jcores.options.Option;
-import net.jcores.options.OptionHash;
-import net.jcores.utils.io.DataUtils;
+import java.io.IOException;
+import java.util.Random;
 
 /**
- * Wraps a number of ByteBuffers and exposes some convenience functions.  
- * 
- * @author Ralf Biedert
- * 
- * @since 1.0
+ * @author rb
+ *
  */
-public class CoreByteBuffer extends CoreObject<ByteBuffer> {
+public class SimpleBytecodeTest {
+
+    static Random rnd = new Random();
 
     /**
-     * Creates an ZipInputStream core. 
-     * 
-     * @param supercore The common core. 
-     * @param objects The strings to wrap.
+     * @param args
+     * @throws IOException 
      */
-    public CoreByteBuffer(CommonCore supercore, ByteBuffer... objects) {
-        super(supercore, objects);
-    }
-
-    /**
-     * Creates a hash of the given data.<br/><br/>
-     * 
-     * Multi-threaded.<br/><br/>
-     * 
-     * @param options Relevant options: <code>OptionHashMD5</code>.
-     * 
-     * @return A CoreString containing the generated hashes.
-     */
-    public CoreString hash(Option... options) {
-        final String method = $(options).get(OptionHash.class, Option.HASH_MD5).getMethod();
-
-        return new CoreString(this.commonCore, map(new F1<ByteBuffer, String>() {
-            public String f(final ByteBuffer x) {
-                return DataUtils.generateHash(x, method);
-            }
-        }).array(String.class));
+    public static void main(String[] args) throws IOException {
+        $($("s")).clazz().bytecode().hash().print();
     }
 
 }

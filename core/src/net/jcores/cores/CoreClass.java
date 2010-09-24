@@ -31,6 +31,7 @@ import static net.jcores.CoreKeeper.$;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,6 +39,7 @@ import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F1;
 import net.jcores.managers.ManagerClass;
 import net.jcores.options.MessageType;
+import net.jcores.utils.io.StreamUtils;
 
 /**
  * Wraps class objects, usually only one, and exposes some convenience functions 
@@ -64,6 +66,30 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
         super(supercore, clazzes);
 
         this.manager = supercore.manager(ManagerClass.class);
+    }
+
+    /**
+     * Returns the bytecode of the given classes.<br/><br/>
+     * 
+     * Multi-threaded. Heavyweight. <br/><br/>
+     *  
+     * @return A CoreByteBuffer wrapping the classes' bytecode */
+    public CoreByteBuffer bytecode() {
+        return new CoreByteBuffer(this.commonCore, map(new F1<Class<T>, ByteBuffer>() {
+            @Override
+            public ByteBuffer f(Class<T> x) {
+                final String classname = x.getCanonicalName().replaceAll("\\.", "/") + ".class";
+                final ClassLoader classloader = x.getClassLoader();
+
+                // For internal object this usually does not work 
+                if (classloader == null) {
+                    CoreClass.this.commonCore.report(MessageType.EXCEPTION, "Could not get classloader for " + x);
+                    return null;
+                }
+
+                return StreamUtils.getByteData(classloader.getResourceAsStream(classname));
+            }
+        }).array(ByteBuffer.class));
     }
 
     /**
@@ -182,4 +208,5 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
             return new CoreObject<T>(this.commonCore, (T[]) new Object[0]);
         return new CoreObject<T>($, this.manager.getAllObjectsFor(get(0)));
     }
+
 }

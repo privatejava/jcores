@@ -1,5 +1,5 @@
 /*
- * CoreFile.java
+ * FileUtil.java
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
@@ -25,54 +25,46 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.cores;
-
-import static net.jcores.CoreKeeper.$;
+package net.jcores.utils.io;
 
 import java.nio.ByteBuffer;
-
-import net.jcores.CommonCore;
-import net.jcores.interfaces.functions.F1;
-import net.jcores.options.Option;
-import net.jcores.options.OptionHash;
-import net.jcores.utils.io.DataUtils;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
- * Wraps a number of ByteBuffers and exposes some convenience functions.  
- * 
  * @author Ralf Biedert
- * 
- * @since 1.0
  */
-public class CoreByteBuffer extends CoreObject<ByteBuffer> {
-
+public class DataUtils {
     /**
-     * Creates an ZipInputStream core. 
+     * Hashes the given data.
      * 
-     * @param supercore The common core. 
-     * @param objects The strings to wrap.
+     * @param data Data to use.
+     * @param method Method to use.
+     * @return A string with the hash.
      */
-    public CoreByteBuffer(CommonCore supercore, ByteBuffer... objects) {
-        super(supercore, objects);
-    }
+    @SuppressWarnings("boxing")
+    public static String generateHash(ByteBuffer data, String method) {
+        // Try to generate hash
+        try {
+            final MessageDigest digest = java.security.MessageDigest.getInstance(method);
+            digest.update(data.array(), 0, data.limit());
 
-    /**
-     * Creates a hash of the given data.<br/><br/>
-     * 
-     * Multi-threaded.<br/><br/>
-     * 
-     * @param options Relevant options: <code>OptionHashMD5</code>.
-     * 
-     * @return A CoreString containing the generated hashes.
-     */
-    public CoreString hash(Option... options) {
-        final String method = $(options).get(OptionHash.class, Option.HASH_MD5).getMethod();
+            final byte[] hash = digest.digest();
 
-        return new CoreString(this.commonCore, map(new F1<ByteBuffer, String>() {
-            public String f(final ByteBuffer x) {
-                return DataUtils.generateHash(x, method);
+            // Assemble hash string
+            final StringBuilder sb = new StringBuilder();
+            for (final byte b : hash) {
+                final String format = String.format("%02x", b);
+                sb.append(format);
             }
-        }).array(String.class));
-    }
 
+            final String hashValue = sb.toString().substring(0, sb.toString().length());
+            return hashValue;
+        } catch (final NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } finally {
+            //
+        }
+        return null;
+    }
 }
