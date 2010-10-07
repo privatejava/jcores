@@ -28,7 +28,9 @@
 package net.jcores.cores;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
@@ -224,5 +226,26 @@ public class CoreString extends CoreObject<String> {
                 }
             }
         }).array(URI.class));
+    }
+
+    /**
+     * Returns the (UTF-8) byte data of the enclosed strings.<br/><br/>
+     * 
+     * Multi-threaded.<br/><br/>
+     * 
+     * @return A CoreByteBuffer object with the byte data of all enclosed strings.
+     */
+    public CoreByteBuffer bytes() {
+        return new CoreByteBuffer(this.commonCore, map(new F1<String, ByteBuffer>() {
+            public ByteBuffer f(String x) {
+                try {
+                    byte[] bytes = x.getBytes("UTF-8");
+                    return ByteBuffer.wrap(bytes);
+                } catch (UnsupportedEncodingException e) {
+                    //
+                }
+                return null;
+            }
+        }).array(ByteBuffer.class));
     }
 }

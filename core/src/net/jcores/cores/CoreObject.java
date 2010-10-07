@@ -317,6 +317,7 @@ public class CoreObject<T> extends Core {
      * 
      * @return This object again. 
      */
+    @SuppressWarnings("unused")
     public CoreObject<T> debug() {
 
         final StringBuilder sb = new StringBuilder();
@@ -328,11 +329,23 @@ public class CoreObject<T> extends Core {
 
         // Append inner size
         if (this.t != null) {
+            Object first = null;
             int ctr = 0;
+
+            // Count elements and extract first nonnull element.
             for (int i = 0; i < this.t.length; i++) {
-                if (this.t[i] != null) ctr++;
+                if (this.t[i] != null) {
+                    ctr++;
+                    if (first == null) first = this.t[i];
+                }
             }
             sb.append(ctr);
+
+            // Append type of first element (disabled)
+            if (first != null && false) {
+                sb.append("; firstElement:");
+                sb.append(first.getClass().getSimpleName());
+            }
         } else {
             sb.append("null");
         }
@@ -341,9 +354,10 @@ public class CoreObject<T> extends Core {
         if (this.t != null && this.t.length <= 16) {
             sb.append("; fingerprint:");
             for (int i = 0; i < this.t.length; i++) {
-                if (this.t[i] != null) sb.append(".");
-                else
-                    sb.append("0");
+                if (this.t[i] != null) {
+                    sb.append(this.t[i].getClass().getSimpleName().charAt(0));
+                } else
+                    sb.append(".");
             }
         }
 
@@ -547,7 +561,7 @@ public class CoreObject<T> extends Core {
             }
 
             // A single element?
-            Array.set(n, offset, x);
+            Array.set(n, offset++, x);
         }
 
         return new CoreObject<N>(this.commonCore, n);
