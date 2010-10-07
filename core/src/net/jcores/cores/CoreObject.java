@@ -318,18 +318,39 @@ public class CoreObject<T> extends Core {
      * @return This object again. 
      */
     public CoreObject<T> debug() {
-        String inner = "null";
 
-        int ctr = 0;
+        final StringBuilder sb = new StringBuilder();
+        sb.append("@(");
+        sb.append(getClass().getSimpleName());
+        sb.append("; outerSize:");
+        sb.append(size());
+        sb.append("; innerSize:");
+
+        // Append inner size
         if (this.t != null) {
+            int ctr = 0;
             for (int i = 0; i < this.t.length; i++) {
                 if (this.t[i] != null) ctr++;
             }
-
-            inner = "" + ctr;
+            sb.append(ctr);
+        } else {
+            sb.append("null");
         }
 
-        System.out.println("@(" + getClass().getSimpleName() + "; outerSize:" + size() + "; innerSize:" + inner + ")");
+        // Append fingerprint
+        if (this.t != null && this.t.length <= 16) {
+            sb.append("; fingerprint:");
+            for (int i = 0; i < this.t.length; i++) {
+                if (this.t[i] != null) sb.append(".");
+                else
+                    sb.append("0");
+            }
+        }
+
+        sb.append(")");
+
+        // Print the result
+        System.out.println(sb.toString());
 
         return this;
     }
