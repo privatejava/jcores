@@ -655,15 +655,35 @@ public class CoreObject<T> extends Core {
      * 
      * @param percent 0.0 returns the first element, 1.0 the last element, 0.5 returns the element in the 
      * middle, and so on. 
+     * @param dflt The value to return if null had been returned otherwise.
+
+     * @return The value at the requested position, or dflt if there is none.
+     */
+    public T get(double percent, T dflt) {
+        if (Double.isNaN(percent)) return dflt;
+        if (percent < 0) return dflt;
+        if (percent > 1) return dflt;
+
+        if (this.t == null) return dflt;
+
+        int offset = (int) (percent * size());
+        if (offset >= this.t.length) return dflt;
+
+        return this.t[offset];
+    }
+
+    /**
+     * Return the an element at the the relative position.<br/><br/>
+     * 
+     * Single-threaded. <br/><br/>
+     * 
+     * @param percent 0.0 returns the first element, 1.0 the last element, 0.5 returns the element in the 
+     * middle, and so on. 
 
      * @return The value at the requested position, or null if there is none.
      */
     public T get(double percent) {
-        if (Double.isNaN(percent)) return null;
-        if (percent < 0) return null;
-        if (percent > 1) return null;
-
-        return this.t[(int) (percent * size())];
+        return get(percent, null);
     }
 
     /**
@@ -958,7 +978,8 @@ public class CoreObject<T> extends Core {
      *    
      * Single-threaded. <br/><br/>
      * 
-     * @param c Comparator to use.
+     * @param c Comparator to use. Caution, <code>c</code> will be called with <code>null</code> values 
+     * for non-existing elements, <code>compact()</code> the core before if you don't want this behavior. 
      * @return A CoreObject with sorted entries.
      */
     public CoreObject<T> sort(Comparator<T> c) {
