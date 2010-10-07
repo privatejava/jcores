@@ -760,8 +760,13 @@ public class CoreObject<T> extends Core {
      * @return True if all elements are not null, false if a single element was null.
      */
     public boolean hasAll() {
-        // TODO: That's not fast, just lazy ...
-        return size() == compact().size();
+        if (this.t == null) return false;
+
+        for (int i = 0; i < this.t.length; i++) {
+            if (this.t[i] == null) return false;
+        }
+
+        return true;
     }
 
     /**
@@ -772,8 +777,13 @@ public class CoreObject<T> extends Core {
      * @return True if any element is set. False if all elements are null.
      */
     public boolean hasAny() {
-        // TODO: That's not fast, just lazy ...
-        return compact().size() > 0;
+        if (this.t == null) return false;
+
+        for (int i = 0; i < this.t.length; i++) {
+            if (this.t[i] != null) return true;
+        }
+
+        return false;
     }
 
     /**
