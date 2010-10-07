@@ -521,6 +521,8 @@ public class CoreObject<T> extends Core {
                 e.printStackTrace();
             } catch (ArrayStoreException e) {
                 //
+            } catch (IllegalArgumentException e) {
+                //
             }
 
             // A single element?
