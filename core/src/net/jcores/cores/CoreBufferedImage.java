@@ -27,52 +27,49 @@
  */
 package net.jcores.cores;
 
-import static net.jcores.CoreKeeper.$;
-
-import java.nio.ByteBuffer;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 
 import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F1;
-import net.jcores.options.Option;
-import net.jcores.options.OptionHash;
-import net.jcores.utils.io.DataUtils;
 
 /**
- * Wraps a number of ByteBuffers and exposes some convenience functions.  
+ * Wraps a number of BufferedImages and exposes some convenience functions.  
  * 
  * @author Ralf Biedert
  * 
  * @since 1.0
  */
-public class CoreByteBuffer extends CoreObject<ByteBuffer> {
+public class CoreBufferedImage extends CoreObject<BufferedImage> {
 
     /**
-     * Creates an ZipInputStream core. 
+     * Creates an BufferedImage core. 
      * 
      * @param supercore The common core. 
-     * @param objects The ByteBuffers to wrap.
+     * @param objects The BufferedImage to wrap.
      */
-    public CoreByteBuffer(CommonCore supercore, ByteBuffer... objects) {
+    public CoreBufferedImage(CommonCore supercore, BufferedImage... objects) {
         super(supercore, objects);
     }
 
     /**
-     * Creates a hash of the given data.<br/><br/>
+     * Copies the buffered images, creating deep clones of the given image data. Altering a copy 
+     * will not alter the source image.<br/><br/>
      * 
      * Multi-threaded.<br/><br/>
      * 
-     * @param options Relevant options: <code>OptionHashMD5</code>.
-     * 
-     * @return A CoreString containing the generated hashes.
+     * @return A CoreBufferedImage containing the copies.
      */
-    public CoreString hash(Option... options) {
-        final String method = $(options).get(OptionHash.class, Option.HASH_MD5).getMethod();
-
-        return new CoreString(this.commonCore, map(new F1<ByteBuffer, String>() {
-            public String f(final ByteBuffer x) {
-                return DataUtils.generateHash(x, method);
+    public CoreBufferedImage copy() {
+        return new CoreBufferedImage(this.commonCore, map(new F1<BufferedImage, BufferedImage>() {
+            public BufferedImage f(final BufferedImage bi) {
+                ColorModel cm = bi.getColorModel();
+                boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+                WritableRaster raster = bi.copyData(null);
+                return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
             }
-        }).array(String.class));
+        }).array(BufferedImage.class));
     }
 
 }

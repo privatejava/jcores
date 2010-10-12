@@ -47,6 +47,7 @@ import net.jcores.interfaces.functions.F1Object2Bool;
 import net.jcores.interfaces.functions.F1Object2Int;
 import net.jcores.interfaces.functions.F2DeltaObjects;
 import net.jcores.interfaces.functions.F2ReduceObjects;
+import net.jcores.managers.ManagerDebugGUI;
 import net.jcores.options.MessageType;
 import net.jcores.options.Option;
 import net.jcores.options.OptionMapType;
@@ -365,6 +366,9 @@ public class CoreObject<T> extends Core {
 
         // Print the result
         System.out.println(sb.toString());
+
+        // And add it to the debug GUI
+        ManagerDebugGUI debugGUI = this.commonCore.manager(ManagerDebugGUI.class);
 
         return this;
     }

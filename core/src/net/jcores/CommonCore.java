@@ -38,6 +38,7 @@ import java.util.logging.Logger;
 
 import net.jcores.managers.Manager;
 import net.jcores.managers.ManagerClass;
+import net.jcores.managers.ManagerDebugGUI;
 import net.jcores.managers.ManagerStatistics;
 import net.jcores.options.MessageType;
 import net.jcores.utils.Reporter;
@@ -86,6 +87,7 @@ public class CommonCore {
         // Register managers we know
         manager(ManagerClass.class, new ManagerClass());
         manager(ManagerStatistics.class, new ManagerStatistics());
+        manager(ManagerDebugGUI.class, new ManagerDebugGUI());
     }
 
     /**

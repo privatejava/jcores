@@ -1,5 +1,5 @@
 /*
- * CoreFile.java
+ * ClassManager.java
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
@@ -25,54 +25,24 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.cores;
+package net.jcores.managers;
 
-import static net.jcores.CoreKeeper.$;
-
-import java.nio.ByteBuffer;
-
-import net.jcores.CommonCore;
-import net.jcores.interfaces.functions.F1;
-import net.jcores.options.Option;
-import net.jcores.options.OptionHash;
-import net.jcores.utils.io.DataUtils;
+import net.jcores.cores.CoreObject;
 
 /**
- * Wraps a number of ByteBuffers and exposes some convenience functions.  
- * 
- * @author Ralf Biedert
+ * Manager for the debug GUI.
  * 
  * @since 1.0
+ * @author Ralf Biedert
  */
-public class CoreByteBuffer extends CoreObject<ByteBuffer> {
+public class ManagerDebugGUI extends Manager {
 
     /**
-     * Creates an ZipInputStream core. 
+     * Adds a core to the GUIs debug output.
      * 
-     * @param supercore The common core. 
-     * @param objects The ByteBuffers to wrap.
+     * @param core The core to add.
      */
-    public CoreByteBuffer(CommonCore supercore, ByteBuffer... objects) {
-        super(supercore, objects);
+    public void addCore(CoreObject<?> core) {
+        // TODO
     }
-
-    /**
-     * Creates a hash of the given data.<br/><br/>
-     * 
-     * Multi-threaded.<br/><br/>
-     * 
-     * @param options Relevant options: <code>OptionHashMD5</code>.
-     * 
-     * @return A CoreString containing the generated hashes.
-     */
-    public CoreString hash(Option... options) {
-        final String method = $(options).get(OptionHash.class, Option.HASH_MD5).getMethod();
-
-        return new CoreString(this.commonCore, map(new F1<ByteBuffer, String>() {
-            public String f(final ByteBuffer x) {
-                return DataUtils.generateHash(x, method);
-            }
-        }).array(String.class));
-    }
-
 }

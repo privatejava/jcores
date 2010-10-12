@@ -27,12 +27,14 @@
  */
 package net.jcores;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Collection;
 import java.util.concurrent.locks.Lock;
 
+import net.jcores.cores.CoreBufferedImage;
 import net.jcores.cores.CoreClass;
 import net.jcores.cores.CoreFile;
 import net.jcores.cores.CoreInputStream;
@@ -115,7 +117,7 @@ public class CoreKeeper {
      * Wraps number of URIs and returns a new CoreURI.  
      * 
      * @param object The URIs to wrap. 
-     * @return  A CoreString wrapping the given strings.
+     * @return  A CoreString wrapping the given URIs.
      */
     public static CoreURI $(URI... object) {
         return new CoreURI($, object);
@@ -135,7 +137,7 @@ public class CoreKeeper {
      * Wraps number of Files and returns a new CoreFile.
      * 
      * @param object The Files to wrap. 
-     * @return A CoreFile wrapping the given Locks.
+     * @return A CoreFile wrapping the given Files.
      */
     public static CoreFile $(File... object) {
         return new CoreFile($, object);
@@ -145,10 +147,20 @@ public class CoreKeeper {
      * Wraps number of InputStreams and returns a new CoreInputStream.
      * 
      * @param object  The InputStreams to wrap.
-     * @return A CoreInputStream wrapping the given Locks.
+     * @return A CoreInputStream wrapping the given InputStreams.
      */
     public static CoreInputStream $(InputStream... object) {
         return new CoreInputStream($, object);
+    }
+
+    /**
+     * Wraps number of BufferedImages and returns a new CoreBufferedImage.
+     * 
+     * @param object  The BufferedImage to wrap.
+     * @return A CoreBufferedImage wrapping the given BufferedImages.
+     */
+    public static CoreBufferedImage $(BufferedImage... object) {
+        return new CoreBufferedImage($, object);
     }
 
     /**
