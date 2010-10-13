@@ -44,11 +44,40 @@ import net.jcores.utils.io.StreamUtils;
 /**
  * Wraps an input stream and exposes some convenience functions. <br/><br/>
  * 
- * Note that some functions consume the input stream and close it 
+ * Note that some functions <b>consume</b> the input stream and close it 
  * afterwards. After calling a consuming function the associated stream may not 
  * be used anymore. As a result, no two consuming methods may be called, either
- * on the same object, on the wrapped input stream or on trailing cores. Instead,
- * a fresh input stream has to be provided every time.
+ * on the same core, on the wrapped streams or on trailing cores. Instead,
+ * a fresh InputStream has to be provided every time. This means, you must 
+ * do:<br/><br/>
+ * 
+ * <code>
+ * // Fine<br/> 
+ * $(...).input().consuming("x")<br/>
+ * $(...).input().consuming("y")<br/>
+ * </code><br/>
+ * 
+ * instead of:<br/><br/>
+ * 
+ * <code>
+ * // Illegal<br/>
+ * input = $(...).input();<br/>
+ * input.consuming("x")<br/>
+ * input.consuming("y")<br/>
+ * </code><br/>
+ * 
+ * or:<br/><br/>
+ * 
+ * <code>
+ * // Illegal<br/>
+ * input = $(...).input().consuming("x").consuming("y");
+ * </code><br/><br/>
+ * 
+ * Unfortunately, at the time of writing, consuming methods are the only way to 
+ * ensure streams and file handles are closed properly. On some platforms
+ * (like Mac OS) not closing streams usually has a negligible effect, on other 
+ * platforms (Win32) you might run into trouble overwriting files.    
+ * 
  * 
  * @since 1.0
  * @author Ralf Biedert

@@ -41,7 +41,7 @@ import net.jcores.utils.io.StreamUtils;
 /**
  * Wraps a number of ZipInputStreams and exposes some convenience functions.<br/><br/>
  *
- * Also see {@link CoreInputStream} regarding consuming methods.
+ * <b>Important note: See {@link CoreInputStream} regarding <i>consuming</i> methods.</b>
  * 
  * @author Ralf Biedert
  * @since 1.0
