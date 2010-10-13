@@ -526,7 +526,7 @@ public class CoreObject<T> extends Core {
     public <N> CoreObject<N> expand(Class<N> class1) {
         int length = 0;
 
-        if (this.t == null) return new CoreObject<N>(this.commonCore, class1, null);
+        if (size() == 0) return new CoreObject<N>(this.commonCore, class1, null);
 
         // Compute overall size 
         for (T x : this.t) {
@@ -611,7 +611,7 @@ public class CoreObject<T> extends Core {
      * @return A filled up CoreObject. 
      */
     public CoreObject<T> fill(T fillValue) {
-        if (this.t == null) return this;
+        if (size() == 0) return this;
 
         final T[] copy = Arrays.copyOf(this.t, size());
 
@@ -735,7 +735,7 @@ public class CoreObject<T> extends Core {
         if (percent < 0) return dflt;
         if (percent > 1) return dflt;
 
-        if (this.t == null) return dflt;
+        if (size() == 0) return dflt;
 
         int offset = (int) (percent * size());
         if (offset >= this.t.length) return dflt;
@@ -1054,10 +1054,19 @@ public class CoreObject<T> extends Core {
      * @return A ObjectCore wrapping all sliced elements.
      */
     public CoreObject<T> slice(final int start, final int length) {
-        if (this.t == null) return this;
+        if (size() == 0) return this;
 
         final int i = indexToOffset(start);
         final int l = length > 0 ? length : indexToOffset(length) - i + 1;
+
+        if (i < 0 || i >= size()) {
+            this.commonCore.report(MessageType.MISUSE, "slice() - converted parameter start(" + start + " -> " + i + ") is outside bounds.");
+            return new CoreObject<T>(this.commonCore, Arrays.copyOfRange(this.t, 0, 0));
+        }
+        if (l < 0 || l >= size()) {
+            this.commonCore.report(MessageType.MISUSE, "slice() - converted parameter length(" + length + " -> " + l + ") is outside bounds.");
+            return new CoreObject<T>(this.commonCore, Arrays.copyOfRange(this.t, 0, 0));
+        }
 
         return new CoreObject<T>(this.commonCore, Arrays.copyOfRange(this.t, i, i + l));
     }
@@ -1072,7 +1081,7 @@ public class CoreObject<T> extends Core {
      * @return A CoreObject with sorted entries.
      */
     public CoreObject<T> sort(Comparator<T> c) {
-        if (this.t == null) return this;
+        if (size() == 0) return this;
 
         final T[] copyOf = Arrays.copyOf(this.t, size());
         Arrays.sort(copyOf, c);

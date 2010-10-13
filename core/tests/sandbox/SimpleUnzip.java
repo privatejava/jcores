@@ -42,6 +42,8 @@ import java.util.Random;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import net.jcores.cores.CoreZipInputStream;
+
 /**
  * @author rb
  *
@@ -58,7 +60,20 @@ public class SimpleUnzip {
         //doUnzip("/tmp/1.zip", "/tmp/unz");
 
         $("/tmp/uunz").file().delete();
-        
+        CoreZipInputStream zipstream = $("/tmp/torate.zip").file().input().zipstream();
+        // zipstream.dir().print();
+        System.out.println(zipstream.get("experiment.9.pageThailand.1282134351569.1282134351928.png"));
+        System.out.println(zipstream.get("experiment.8.pageHonigbiene.1282131517351.1282131517788.png"));
+
+        /*
+         * experiment.9.pageThailand.1282134341053.1282134341397.png
+        experiment.9.pageThailand.1282134345022.1282134345444.png
+        experiment.9.pageThailand.1282134351569.1282134351928.png
+        experiment.9.pageThailand.1282134358163.1282134358538.png
+        experiment.9.pageThailand.1282134358694.1282134359179.png
+        experiment.9.pageThailand.1282134363726.1282134364179.png
+         */
+
         //$("/tmp/1.zip").file().streams().unzip("/tmp/uunz");
     }
 

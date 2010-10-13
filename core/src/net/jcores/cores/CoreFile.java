@@ -254,6 +254,7 @@ public class CoreFile extends CoreObject<File> {
                 try {
                     PrintWriter printWriter = new PrintWriter(new BufferedOutputStream(new FileOutputStream(x, true)));
                     printWriter.append(string);
+                    printWriter.flush();
                     printWriter.close();
                 } catch (FileNotFoundException e) {
                     CoreFile.this.commonCore.report(MessageType.EXCEPTION, e.getLocalizedMessage());

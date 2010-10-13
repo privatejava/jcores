@@ -48,8 +48,9 @@ public class FileUtils {
      * @return .
      */
     public static String readText(CommonCore cc, File file) {
+        BufferedReader reader = null;
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
+            reader = new BufferedReader(new FileReader(file));
             StringBuilder sb = new StringBuilder();
             String line;
 
@@ -63,6 +64,12 @@ public class FileUtils {
             cc.report(MessageType.EXCEPTION, "File not found " + file);
         } catch (IOException e) {
             cc.report(MessageType.EXCEPTION, "Error reading from file " + file);
+        } finally {
+            if (reader != null) try {
+                reader.close();
+            } catch (IOException e) {
+                cc.report(MessageType.EXCEPTION, "Error closing file " + file);
+            }
         }
 
         return null;

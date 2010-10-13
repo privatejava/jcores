@@ -36,12 +36,19 @@ import java.util.zip.ZipInputStream;
 
 import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F1;
+import net.jcores.options.MessageType;
 import net.jcores.options.Option;
 import net.jcores.options.OptionHash;
 import net.jcores.utils.io.StreamUtils;
 
 /**
- * Wraps an input stream and exposes some convenience functions.  
+ * Wraps an input stream and exposes some convenience functions. <br/><br/>
+ * 
+ * Note that some functions consume the input stream and close it 
+ * afterwards. After calling a consuming function the associated stream may not 
+ * be used anymore. As a result, no two consuming methods may be called, either
+ * on the same object, on the wrapped input stream or on trailing cores. Instead,
+ * a fresh input stream has to be provided every time.
  * 
  * @since 1.0
  * @author Ralf Biedert
@@ -59,11 +66,27 @@ public class CoreInputStream extends CoreObject<InputStream> {
     }
 
     /**
+     * Closes all contained streams.<br/><br/>
+     * 
+     * Single-threaded. Consuming.<br/><br/>
+     */
+    public void close() {
+        for (int i = 0; i < size(); i++) {
+            final InputStream inputStream = get(i);
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                this.commonCore.report(MessageType.EXCEPTION, "Error closing stream " + inputStream + ".");
+            }
+        }
+    }
+
+    /**
      * Treats the given input streams as <code>ZipInputStreams</code> and tries to unzip them to 
      * the given directory, creating sub directories as necessary. This is a shorthand notation 
      * for <code>zipstream().unzip()</code><br/><br/>
      * 
-     * Multi-threaded.<br/><br/>
+     * Multi-threaded. Consuming.<br/><br/>
      * 
      * @param destination The destination to write to.
      */
@@ -73,8 +96,9 @@ public class CoreInputStream extends CoreObject<InputStream> {
             public Void f(InputStream x) {
                 try {
                     StreamUtils.doUnzip(x, destination);
+                    x.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    CoreInputStream.this.commonCore.report(MessageType.EXCEPTION, "IO error processing " + x + ".");
                 }
                 return null;
             }
@@ -100,14 +124,22 @@ public class CoreInputStream extends CoreObject<InputStream> {
      * Returns all lines of all files joint. A core will be returned in which each 
      * entry is a String containing the specific file's content.<br/><br/>
      * 
-     * Multi-threaded.<br/><br/>
+     * Multi-threaded. Consuming.<br/><br/>
      * 
      * @return A CoreString containing all contained text.
      */
     public CoreString text() {
         return new CoreString(this.commonCore, map(new F1<InputStream, String>() {
             public String f(final InputStream x) {
-                return StreamUtils.readText(CoreInputStream.this.commonCore, x);
+                String readText = StreamUtils.readText(CoreInputStream.this.commonCore, x);
+
+                try {
+                    x.close();
+                } catch (IOException e) {
+                    CoreInputStream.this.commonCore.report(MessageType.EXCEPTION, "Error closing stream " + x + ".");
+                }
+
+                return readText;
             }
         }).array(String.class));
     }
@@ -115,7 +147,7 @@ public class CoreInputStream extends CoreObject<InputStream> {
     /**
      * Creates a hash of the given input streams.<br/><br/>
      * 
-     * Multi-threaded.<br/><br/>
+     * Multi-threaded. Consuming.<br/><br/>
      * 
      * @param options Relevant options: <code>OptionHashMD5</code>.
      * 
@@ -126,7 +158,15 @@ public class CoreInputStream extends CoreObject<InputStream> {
 
         return new CoreString(this.commonCore, map(new F1<InputStream, String>() {
             public String f(final InputStream x) {
-                return StreamUtils.generateHash(x, method);
+                String generateHash = StreamUtils.generateHash(x, method);
+
+                try {
+                    x.close();
+                } catch (IOException e) {
+                    CoreInputStream.this.commonCore.report(MessageType.EXCEPTION, "Error closing stream " + x + ".");
+                }
+
+                return generateHash;
             }
         }).array(String.class));
     }
@@ -134,14 +174,22 @@ public class CoreInputStream extends CoreObject<InputStream> {
     /**
      * Uses the enclosed input streams and reads their data into byte buffers.<br/><br/> 
      * 
-     * Multi-threaded.<br/><br/>
+     * Multi-threaded. Consuming.<br/><br/>
      * 
      * @return A CoreByteBuffer with binary content. 
      */
     public CoreByteBuffer data() {
         return new CoreByteBuffer(this.commonCore, map(new F1<InputStream, ByteBuffer>() {
             public ByteBuffer f(InputStream x) {
-                return StreamUtils.getByteData(x);
+                ByteBuffer byteData = StreamUtils.getByteData(x);
+
+                try {
+                    x.close();
+                } catch (IOException e) {
+                    CoreInputStream.this.commonCore.report(MessageType.EXCEPTION, "Error closing stream " + x + ".");
+                }
+
+                return byteData;
             }
         }).array(ByteBuffer.class));
     }
