@@ -30,6 +30,7 @@ package sandbox;
 import static net.jcores.CoreKeeper.$;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Random;
 
 import net.jcores.cores.CoreObject;
@@ -57,6 +58,9 @@ public class SimpleNullTest {
      * @throws IOException 
      */
     public static void main(String[] args) throws IOException {
+        Arrays.deepEquals(null, new Object[] { new Object() });
+        System.out.println(Arrays.deepHashCode(null));
+
         Double d[] = new Double[] { null, null, null };
 
         CoreObject<Double> c1 = $(d);

@@ -27,6 +27,8 @@
  */
 package net.jcores.cores;
 
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
@@ -64,6 +66,7 @@ public class CoreBufferedImage extends CoreObject<BufferedImage> {
     public CoreBufferedImage copy() {
         return new CoreBufferedImage(this.commonCore, map(new F1<BufferedImage, BufferedImage>() {
             public BufferedImage f(final BufferedImage bi) {
+                // Code shamelessly stolen from stackoverflow.com
                 ColorModel cm = bi.getColorModel();
                 boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
                 WritableRaster raster = bi.copyData(null);
@@ -72,4 +75,24 @@ public class CoreBufferedImage extends CoreObject<BufferedImage> {
         }).array(BufferedImage.class));
     }
 
+    /**
+     * Scales all contained images by the given factor<br/><br/>
+     * 
+     * Multi-threaded.<br/><br/>
+     * 
+     * @param factor The factor by which to scale the image. 
+     * 
+     * @return A CoreBufferedImage containing the scaled images.
+     */
+    public CoreBufferedImage scale(final float factor) {
+        return new CoreBufferedImage(this.commonCore, map(new F1<BufferedImage, BufferedImage>() {
+            public BufferedImage f(final BufferedImage bi) {
+                // Code shamelessly stolen from stackoverflow.com
+                final AffineTransform af = new AffineTransform();
+                af.scale(factor, factor);
+                final AffineTransformOp operation = new AffineTransformOp(af, AffineTransformOp.TYPE_BILINEAR);
+                return operation.filter(bi, null);
+            }
+        }).array(BufferedImage.class));
+    }
 }

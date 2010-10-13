@@ -57,8 +57,12 @@ import net.jcores.utils.Staple;
 import net.jcores.utils.lang.ObjectUtils;
 
 /**
- * The standard core that wraps a number of objects and exposes a number of methods to act on 
- * them, some of them in parallel. If you implement your own core you should extend this class.
+ * The standard core that wraps a number of objects and exposes a number of methods to 
+ * act on them, some of them in parallel. If you implement your own core you should extend 
+ * this class.<br/><br/>
+ * 
+ * A core is immutable. No method will ever change its content array (it is, however, 
+ * possible, that the individual elements enclosed might change).    
  * 
  * @author Ralf Biedert
  * @since 1.0
@@ -494,6 +498,18 @@ public class CoreObject<T> extends Core {
         }, c);
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || !(obj instanceof CoreObject)) return false;
+
+        final CoreObject<?> other = (CoreObject<?>) obj;
+
+        return Arrays.deepEquals(this.t, other.t);
+    }
+
     /**
      * Expands contained arrays into a single array of the given type. This means, if this core wraps
      * a number of collections, lists or arrays, each of which are containing elements on their own, 
@@ -522,6 +538,12 @@ public class CoreObject<T> extends Core {
                 continue;
             }
 
+            // Is it a core?
+            if (x instanceof CoreObject<?>) {
+                length += ((CoreObject<?>) x).size();
+                continue;
+            }
+
             // An array?
             try {
                 length += Array.getLength(x);
@@ -545,6 +567,14 @@ public class CoreObject<T> extends Core {
             // Is it a collection?
             if (x instanceof Collection<?>) {
                 Object[] array = ((Collection<?>) x).toArray();
+                System.arraycopy(array, 0, n, offset, array.length);
+                offset += array.length;
+                continue;
+            }
+
+            // Is it a core?
+            if (x instanceof CoreObject<?>) {
+                Object[] array = ((CoreObject<?>) x).array(Object.class);
                 System.arraycopy(array, 0, n, offset, array.length);
                 offset += array.length;
                 continue;
@@ -789,6 +819,14 @@ public class CoreObject<T> extends Core {
      */
     public T get(T dflt) {
         return get(0, dflt);
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(this.t);
     }
 
     /**
@@ -1088,6 +1126,38 @@ public class CoreObject<T> extends Core {
                 return x.toString();
             }
         }).as(CoreString.class);
+    }
+
+    /**
+     * Returns a core containing all elements of this core and that are not 
+     * in the passed core.<br/><br/>
+     *    
+     * Single-threaded. <br/><br/>
+     * 
+     * @param toSubtract The core to subtract from this core. 
+     * 
+     * @return A CoreObject containing all objects of this core that are not 
+     * in the other core.
+     */
+    public CoreObject<T> subtract(CoreObject<T> toSubtract) {
+        if (size() == 0 || toSubtract.size() == 0) return this;
+
+        final T[] copy = Arrays.copyOf(this.t, size());
+
+        // Remove every element we in the other core
+        for (int i = 0; i < toSubtract.size(); i++) {
+            final T element = toSubtract.get(i);
+            if (element == null) continue;
+
+            // Check if the copy contains the element
+            for (int j = 0; j < copy.length; j++) {
+                final T our = copy[j];
+                if (our == null || !our.equals(element)) continue;
+                copy[j] = null;
+            }
+        }
+
+        return new CoreObject<T>(this.commonCore, copy);
     }
 
     /**

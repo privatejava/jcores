@@ -62,7 +62,7 @@ import net.jcores.utils.Wrapper;
  */
 public class CoreKeeper {
     /** The common core shared by all other cores. */
-    public final static CommonCore $ = new CommonCore();
+    public final static CommonCore $ = new CommonCore(); // Once $(), but misleading, looked like a CoreObject(), which CC is not. 
 
     /**
      * Wraps the given object(s) and returns a parameterized CoreObject. This 

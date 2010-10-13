@@ -206,7 +206,7 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
     public CoreObject<T> spawned() {
         if (get(null) == null)
             return new CoreObject<T>(this.commonCore, (T[]) new Object[0]);
-        return new CoreObject<T>($, this.manager.getAllObjectsFor(get(0)));
+        return new CoreObject<T>(this.commonCore, this.manager.getAllObjectsFor(get(0)));
     }
 
 }
