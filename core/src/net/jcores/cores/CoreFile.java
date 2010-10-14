@@ -37,7 +37,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -252,11 +254,13 @@ public class CoreFile extends CoreObject<File> {
         map(new F1<File, Object>() {
             public Object f(File x) {
                 try {
-                    PrintWriter printWriter = new PrintWriter(new BufferedOutputStream(new FileOutputStream(x, true)));
+                    PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(x, true)), "UTF-8"));
                     printWriter.append(string);
                     printWriter.flush();
                     printWriter.close();
                 } catch (FileNotFoundException e) {
+                    CoreFile.this.commonCore.report(MessageType.EXCEPTION, e.getLocalizedMessage());
+                } catch (UnsupportedEncodingException e) {
                     CoreFile.this.commonCore.report(MessageType.EXCEPTION, e.getLocalizedMessage());
                 }
 
