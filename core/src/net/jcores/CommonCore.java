@@ -27,6 +27,8 @@
  */
 package net.jcores;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -165,5 +167,20 @@ public class CommonCore {
      */
     public Random random() {
         return this.random;
+    }
+
+    /** 
+     * Returns a temporary file.
+     * 
+     * @return A File object for a temporary file.
+     */
+    public File tempfile() {
+        try {
+            return File.createTempFile("jcores.", ".tmp");
+        } catch (IOException e) {
+            //
+        }
+
+        return new File("/tmp/jcores.failedtmp." + System.nanoTime() + ".tmp");
     }
 }
