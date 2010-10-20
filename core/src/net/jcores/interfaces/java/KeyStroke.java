@@ -1,5 +1,5 @@
 /*
- * Option.java
+ * KeyStroke.java
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
@@ -25,37 +25,21 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.options;
+package net.jcores.interfaces.java;
+
+import java.awt.event.KeyEvent;
 
 /**
- * Contains all available options.
+ * Called upon a keystroke.
  * 
  * @since 1.0
  * @author Ralf Biedert
  */
-public class Option {
-
-    /** We don't allow for user-created options S */
-    protected Option() { /* */
-    }
-
-    /** If CoreFile.dir() should list directory entries as well */
-    public final static OptionListDirectories LIST_DIRECTORIES = new OptionListDirectories();
-
-    /** If a selection should be inverted. */
-    public final static OptionInvertSelection INVERT_SELECTION = new OptionInvertSelection();
-
-    /** Hash method to use (MD5) */
-    public final static OptionHashMD5 HASH_MD5 = new OptionHashMD5();
-
+public interface KeyStroke {
     /**
-     * Specifies that the map result should be of type. Useful if map returns various
-     * types.
+     * Called upon a key-stroke.
      * 
-     * @param type Class to use.
-     * @return An option of the given type.
+     * @param event The Java key event
      */
-    public final static OptionMapType MAP_TYPE(Class<?> type) {
-        return new OptionMapType(type);
-    }
+    public void keystroke(KeyEvent event);
 }

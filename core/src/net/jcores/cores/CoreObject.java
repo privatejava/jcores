@@ -27,6 +27,8 @@
  */
 package net.jcores.cores;
 
+import static net.jcores.CoreKeeper.$;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
@@ -57,17 +59,18 @@ import net.jcores.utils.Staple;
 import net.jcores.utils.lang.ObjectUtils;
 
 /**
- * The standard core that wraps a number of objects and exposes a number of methods to 
- * act on them, some of them in parallel. If you implement your own core you should extend 
- * this class.<br/><br/>
+ * The standard core that wraps a number of objects and exposes a number of methods to
+ * act on them, some of them in parallel. If you implement your own core you should extend
+ * this class.<br/>
+ * <br/>
  * 
- * A core is immutable. No method will ever change its content array (it is, however, 
- * possible, that the individual elements enclosed might change).    
+ * A core is immutable. No method will ever change its content array (it is, however,
+ * possible, that the individual elements enclosed might change).
  * 
  * @author Ralf Biedert
  * @since 1.0
- *  
- * @param <T> Type of the objects to wrap. 
+ * 
+ * @param <T> Type of the objects to wrap.
  */
 public class CoreObject<T> extends Core {
 
@@ -77,16 +80,16 @@ public class CoreObject<T> extends Core {
     /**
      * Creates the core object for the given single object.
      * 
-     * @param supercore CommonCore to use. 
-     * @param type  Type of the object to wrap (in case it is null).
+     * @param supercore CommonCore to use.
+     * @param type Type of the object to wrap (in case it is null).
      * @param object Object to wrap.
      */
     @SuppressWarnings("unchecked")
     public CoreObject(CommonCore supercore, Class<?> type, T object) {
         super(supercore);
 
-        // Check if we have an object. If not, and if there is no type, use an 
-        // empty Object array 
+        // Check if we have an object. If not, and if there is no type, use an
+        // empty Object array
         if (object != null) {
             this.t = (T[]) Array.newInstance(type, 1);
             this.t[0] = object;
@@ -98,7 +101,7 @@ public class CoreObject<T> extends Core {
     /**
      * Creates the core object for the given array.
      * 
-     * @param supercore CommonCore to use. 
+     * @param supercore CommonCore to use.
      * @param objects Object to wrap.
      */
     public CoreObject(CommonCore supercore, T... objects) {
@@ -108,10 +111,12 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns the core's content as an array of the given type. Elements that don't fit 
-     * into the given target type will be skipped.<br/><br/>
+     * Returns the core's content as an array of the given type. Elements that don't fit
+     * into the given target type will be skipped.<br/>
+     * <br/>
      * 
-     * Single-threaded.<br/><br/>
+     * Single-threaded.<br/>
+     * <br/>
      * 
      * @param in Type of the target array to use.
      * @param <N> Type of the array.
@@ -129,16 +134,22 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns a core that tries to treat all elements as being of the given type. Elements which 
-     * don't match are ignored. Can also be used to load extensions (e.g., <code>somecore.as(CoreString.class)</code>). 
-     * This function should not be called within hot-spots (functions called millions of times a second) 
-     * as it relies heavily on reflection.<br/><br/>
+     * Returns a core that tries to treat all elements as being of the given type.
+     * Elements which
+     * don't match are ignored. Can also be used to load extensions (e.g.,
+     * <code>somecore.as(CoreString.class)</code>).
+     * This function should not be called within hot-spots (functions called millions of
+     * times a second)
+     * as it relies heavily on reflection.<br/>
+     * <br/>
      * 
-     * Single-threaded. Heavyweight.<br/><br/>
+     * Single-threaded. Heavyweight.<br/>
+     * <br/>
      * 
      * @param <C> Type of the clazz.
-     * @param clazz Core to be spawned and returned. 
-     * @return If successful, spawns a core of type <code>clazz</code> and returns it, wrapping all contained elements.
+     * @param clazz Core to be spawned and returned.
+     * @return If successful, spawns a core of type <code>clazz</code> and returns it,
+     * wrapping all contained elements.
      */
     @SuppressWarnings({ "unchecked", "null" })
     public <C extends Core> C as(Class<C> clazz) {
@@ -172,7 +183,8 @@ public class CoreObject<T> extends Core {
 
             return constructor.newInstance(this.commonCore, newT);
 
-            // NOTE: We do not swallow all execptions, because as() is a bit special and we cannot return
+            // NOTE: We do not swallow all execptions, because as() is a bit special and
+            // we cannot return
             // anyhting that would still be usable.
         } catch (SecurityException e) {
             e.printStackTrace();
@@ -193,13 +205,17 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Performs a generic call on each element of this core. This function should not be called within 
-     * hot-spots (functions called millions of times a second) as it relies heavily on reflection.<br/><br/>
+     * Performs a generic call on each element of this core. This function should not be
+     * called within
+     * hot-spots (functions called millions of times a second) as it relies heavily on
+     * reflection.<br/>
+     * <br/>
      * 
-     * Multi-threaded. Heavyweight.<br/><br/>
+     * Multi-threaded. Heavyweight.<br/>
+     * <br/>
      * 
      * @param string The call to perform, e.g. <code>toString</code>
-     * @param params Parameters the call takes 
+     * @param params Parameters the call takes
      * 
      * @return A CoreObject wrapping the results of each invocation.
      */
@@ -236,9 +252,11 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Casts all elements to the given type or sets them null if they are not castable.<br/><br/>
+     * Casts all elements to the given type or sets them null if they are not castable.<br/>
+     * <br/>
      * 
-     * Multi-threaded. <br/><br/>
+     * Multi-threaded. <br/>
+     * <br/>
      * 
      * @param <N> Target type.
      * @param target Class to cast all elements
@@ -256,11 +274,14 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Return a CoreClass for all enclosed objects' classes<br/><br/> 
+     * Return a CoreClass for all enclosed objects' classes<br/>
+     * <br/>
      * 
-     * Multi-threaded. <br/><br/>
+     * Multi-threaded. <br/>
+     * <br/>
      * 
-     * @return A new CoreObject of the same type, with a (probably) reduced size without any null element.
+     * @return A new CoreObject of the same type, with a (probably) reduced size without
+     * any null element.
      */
     @SuppressWarnings("unchecked")
     public CoreClass<T> clazz() {
@@ -273,12 +294,15 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns a compacted core whose underlying array does not 
-     * contain null anymore. <br/><br/> 
+     * Returns a compacted core whose underlying array does not
+     * contain null anymore. <br/>
+     * <br/>
      * 
-     * Single-threaded. <br/><br/>
+     * Single-threaded. <br/>
+     * <br/>
      * 
-     * @return A new CoreObject of the same type, with a (probably) reduced size without any null element.
+     * @return A new CoreObject of the same type, with a (probably) reduced size without
+     * any null element.
      */
     public CoreObject<T> compact() {
         // No size == no fun.
@@ -298,12 +322,14 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns true if this core contains the given object. <br/><br/> 
+     * Returns true if this core contains the given object. <br/>
+     * <br/>
      * 
-     * Single-threaded. <br/><br/>
+     * Single-threaded. <br/>
+     * <br/>
      * 
-     * @param object The object to search for. A search for null will always return false. 
-     * @return True if the object is there, false if not. 
+     * @param object The object to search for. A search for null will always return false.
+     * @return True if the object is there, false if not.
      */
     public boolean contains(final T object) {
         // TODO: Parallelize me.
@@ -315,12 +341,14 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Prints a debug output. Useful for figuring out what's going wrong in a 
-     * chain of map() operations.<br/><br/> 
+     * Prints a debug output. Useful for figuring out what's going wrong in a
+     * chain of map() operations.<br/>
+     * <br/>
      * 
-     * Single-threaded. <br/><br/>
+     * Single-threaded. <br/>
+     * <br/>
      * 
-     * @return This object again. 
+     * @return This object again.
      */
     @SuppressWarnings("unused")
     public CoreObject<T> debug() {
@@ -378,19 +406,21 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns a core of length size() - 1 consisting of the results of the delta 
+     * Returns a core of length size() - 1 consisting of the results of the delta
      * function. Delta always takes two adjacent elements and execute stores the
-     * delta function's output. In contrast to the common map operation this function 
+     * delta function's output. In contrast to the common map operation this function
      * does not ignore <code>null</code> elements. If of two adjacent slots any
-     * is <code>null</code>, the value <code>null</code> will be stored. <br/><br/> 
+     * is <code>null</code>, the value <code>null</code> will be stored. <br/>
+     * <br/>
      * 
-     * Multi-threaded. <br/><br/>
-     *  
+     * Multi-threaded. <br/>
+     * <br/>
+     * 
      * @param delta The delta function, taking two elements and return a result.
      * @param <R> Type of the result.
      * @param options Relevant options: <code>OptionMapType</code>.
      * 
-     * @return A core of size n - 1 containing all deltas. 
+     * @return A core of size n - 1 containing all deltas.
      */
     @SuppressWarnings("unchecked")
     public <R> CoreObject<R> delta(final F2DeltaObjects<T, R> delta, Option... options) {
@@ -422,7 +452,8 @@ public class CoreObject<T> extends Core {
 
                 if (out == null) return;
 
-                // If we haven't had an in-array, create it now, according to the return type
+                // If we haven't had an in-array, create it now, according to the return
+                // type
                 if (a == null) {
                     a = (R[]) updateArray(Array.newInstance(out.getClass(), this.size));
                 }
@@ -435,8 +466,10 @@ public class CoreObject<T> extends Core {
         // Map ...
         map(mapper, options);
 
-        // In case we don't have a return array (which happens when the mapper never returned something
-        // sensible), we create a simple object array of our size, so that the core's size stays
+        // In case we don't have a return array (which happens when the mapper never
+        // returned something
+        // sensible), we create a simple object array of our size, so that the core's size
+        // stays
         // consistent.
         R rval[] = (R[]) mapper.getTargetArray();
         if (rval == null) {
@@ -449,13 +482,19 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns a single object that, if any of its functions is executed, the corresponding function is 
-     * executed on all enclosed elements. Only works if <code>c</code> is an interface and only on
-     * enclosed elements implementing <code>c</code>. From a performance perspective this method only 
-     * makes sense if the requested operation is complex, as on simple methods the reflection costs will
-     * outweigh all benefits. Also note that all return values are skipped. <br/><br/>
-     *    
-     * Multi-threaded. Heavyweight.<br/><br/>
+     * Returns a single object that, if any of its functions is executed, the
+     * corresponding function is
+     * executed on all enclosed elements. Only works if <code>c</code> is an interface and
+     * only on
+     * enclosed elements implementing <code>c</code>. From a performance perspective this
+     * method only
+     * makes sense if the requested operation is complex, as on simple methods the
+     * reflection costs will
+     * outweigh all benefits. Also note that all return values are skipped. <br/>
+     * <br/>
+     * 
+     * Multi-threaded. Heavyweight.<br/>
+     * <br/>
      * 
      * @param c The interface to use.
      * @param <X> The interface's type.
@@ -498,7 +537,9 @@ public class CoreObject<T> extends Core {
         }, c);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -511,15 +552,19 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Expands contained arrays into a single array of the given type. This means, if this core wraps
-     * a number of collections, lists or arrays, each of which are containing elements on their own, 
-     * <code>expand()</code> will break up all of these lists and return a single CoreObject wrapping 
-     * the union of everything that was previously held in them.<br/><br/>
-     *    
-     * Single-threaded.<br/><br/> 
+     * Expands contained arrays into a single array of the given type. This means, if this
+     * core wraps
+     * a number of collections, lists or arrays, each of which are containing elements on
+     * their own, <code>expand()</code> will break up all of these lists and return a
+     * single CoreObject wrapping
+     * the union of everything that was previously held in them.<br/>
+     * <br/>
      * 
-     * @param <N> Type of the return core. 
-     * @param class1 Defines the class element of the returned core's array. 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @param <N> Type of the return core.
+     * @param class1 Defines the class element of the returned core's array.
      * @return A CoreObject wrapping all broken up collections, arrays, ...
      */
     @SuppressWarnings("unchecked")
@@ -528,7 +573,7 @@ public class CoreObject<T> extends Core {
 
         if (size() == 0) return new CoreObject<N>(this.commonCore, class1, null);
 
-        // Compute overall size 
+        // Compute overall size
         for (T x : this.t) {
             if (x == null) continue;
 
@@ -560,7 +605,7 @@ public class CoreObject<T> extends Core {
         N[] n = (N[]) Array.newInstance(class1, length);
         int offset = 0;
 
-        // Copy to array 
+        // Copy to array
         for (T x : this.t) {
             if (x == null) continue;
 
@@ -602,13 +647,15 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns a new core with all null elements set to <code>fillValue</code>.<br/><br/> 
+     * Returns a new core with all null elements set to <code>fillValue</code>.<br/>
+     * <br/>
      * 
-     * Single-threaded.<br/><br/>
-     *  
+     * Single-threaded.<br/>
+     * <br/>
+     * 
      * @param fillValue Value used to fill up all <code>null</code> slots.
-     *  
-     * @return A filled up CoreObject. 
+     * 
+     * @return A filled up CoreObject.
      */
     public CoreObject<T> fill(T fillValue) {
         if (size() == 0) return this;
@@ -623,20 +670,27 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Filters the object using the given function. A compacted array will be returned that
-     * contains only values for which f returned true.<br/><br/>
-     *    
-     * Multi-threaded.<br/><br/> 
+     * Filters the object using the given function. A compacted array will be returned
+     * that contains only values for which f returned true.<br/>
+     * <br/>
      * 
-     * @param f If f returns true the object is kept. 
-     * @param options No options supported right now.
+     * Multi-threaded.<br/>
+     * <br/>
+     * 
+     * @param f If f returns true the object is kept.
+     * @param options Supports INVERT_SELECTION if the filter logic should be inverted
+     * (options that match will not be considered).
      * 
      * @return A new CoreObject of our type, containing only kept elements.
      */
     public CoreObject<T> filter(final F1Object2Bool<T> f, Option... options) {
-        CoreObject<T> rval = map(new F1<T, T>() {
+        final boolean invert = $(options).contains(Option.INVERT_SELECTION);
+        final CoreObject<T> rval = map(new F1<T, T>() {
             public T f(T x) {
-                if (f.f(x)) return x;
+                final boolean result = f.f(x);
+
+                if ((!invert && result) || (invert == !result)) return x;
+
                 return null;
             }
         });
@@ -645,15 +699,17 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Filters all object by their toString() value using the given regular 
-     * expression. <br/><br/>
+     * Filters all object by their toString() value using the given regular
+     * expression. <br/>
+     * <br/>
      * 
-     * Multi-threaded.<br/><br/>
+     * Multi-threaded.<br/>
+     * <br/>
      * 
      * @param regex The regular expression to use.
      * @param options Currently none used.
      * 
-     * @return A CoreObject containing a filtered subset of our elements. 
+     * @return A CoreObject containing a filtered subset of our elements.
      */
     public CoreObject<T> filter(final String regex, Option... options) {
         final Pattern p = Pattern.compile(regex);
@@ -667,16 +723,19 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Reduces the given object, multi-threaded version. In contrast to reduce() the 
-     * order in which two element might be reduced is not defined. Note: At present, 
-     * reduce() is much faster for simple operations, as it involves much less synchronization 
-     * overhead. Right now, only use fold for very complex operations. <br/><br/>
-     *    
-     * Multi-threaded. Heavyweight.<br/><br/>
+     * Reduces the given object, multi-threaded version. In contrast to reduce() the
+     * order in which two element might be reduced is not defined. Note: At present,
+     * reduce() is much faster for simple operations, as it involves much less
+     * synchronization
+     * overhead. Right now, only use fold for very complex operations. <br/>
+     * <br/>
+     * 
+     * Multi-threaded. Heavyweight.<br/>
+     * <br/>
      * 
      * @param f The reduce function. Takes two elements, returns one.
      * @param options Relevant options: <code>OptionMapType</code>.
-     * @return A CoreObject, containing at most a single element. 
+     * @return A CoreObject, containing at most a single element.
      */
     @SuppressWarnings("unchecked")
     public CoreObject<T> fold(final F2ReduceObjects<T> f, Option... options) {
@@ -720,14 +779,17 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Return the an element at the the relative position.<br/><br/>
+     * Return the an element at the the relative position.<br/>
+     * <br/>
      * 
-     * Single-threaded. <br/><br/>
+     * Single-threaded. <br/>
+     * <br/>
      * 
-     * @param percent 0.0 returns the first element, 1.0 the last element, 0.5 returns the element in the 
-     * middle, and so on. 
+     * @param percent 0.0 returns the first element, 1.0 the last element, 0.5 returns the
+     * element in the
+     * middle, and so on.
      * @param dflt The value to return if null had been returned otherwise.
-
+     * 
      * @return The value at the requested position, or dflt if there is none.
      */
     public T get(double percent, T dflt) {
@@ -744,13 +806,16 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Return the an element at the the relative position.<br/><br/>
+     * Return the an element at the the relative position.<br/>
+     * <br/>
      * 
-     * Single-threaded. <br/><br/>
+     * Single-threaded. <br/>
+     * <br/>
      * 
-     * @param percent 0.0 returns the first element, 1.0 the last element, 0.5 returns the element in the 
-     * middle, and so on. 
-
+     * @param percent 0.0 returns the first element, 1.0 the last element, 0.5 returns the
+     * element in the
+     * middle, and so on.
+     * 
      * @return The value at the requested position, or null if there is none.
      */
     public T get(double percent) {
@@ -758,15 +823,17 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns the first element that is an instance of the requested type. 
+     * Returns the first element that is an instance of the requested type.
      * 
-     * Single-threaded. Heavyweight.<br/><br/>
+     * Single-threaded. Heavyweight.<br/>
+     * <br/>
      * 
-     * @param <X> Subtype to request. 
+     * @param <X> Subtype to request.
      * @param request A subclass of our type to request.
      * @param dflt The value to return when no class was found.
-
-     * @return The first object that is assignable to request, or dflt if there was no such element. 
+     * 
+     * @return The first object that is assignable to request, or dflt if there was no
+     * such element.
      */
     @SuppressWarnings("unchecked")
     public <X extends T> X get(Class<X> request, X dflt) {
@@ -778,11 +845,14 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Return the ith element.<br/><br/>
+     * Return the ith element.<br/>
+     * <br/>
      * 
-     * Single-threaded. <br/><br/>
+     * Single-threaded. <br/>
+     * <br/>
      * 
-     * @param i Position to retrieve. Negative indices are treated as values starting at the end (i.e., -1 is the last element, -2 the second-last, ...)
+     * @param i Position to retrieve. Negative indices are treated as values starting at
+     * the end (i.e., -1 is the last element, -2 the second-last, ...)
      * 
      * @return The element at the given position.
      */
@@ -795,14 +865,19 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Return the ith element or dflt if the element if otherwise <code>null</code> had been returned.<br/><br/>
+     * Return the ith element or dflt if the element if otherwise <code>null</code> had
+     * been returned.<br/>
+     * <br/>
      * 
-     * Single-threaded. <br/><br/>
+     * Single-threaded. <br/>
+     * <br/>
      * 
-     * @param i Position to retrieve. Negative indices are treated as values starting at the end (i.e., -1 is the last element, -2 the second-last, ...)
-     * @param dflt The value to return if null had been returned. 
+     * @param i Position to retrieve. Negative indices are treated as values starting at
+     * the end (i.e., -1 is the last element, -2 the second-last, ...)
+     * @param dflt The value to return if null had been returned.
      * 
-     * @return Unless dflt is null, this function is guaranteed to return a non-null value.
+     * @return Unless dflt is null, this function is guaranteed to return a non-null
+     * value.
      */
     public T get(int i, T dflt) {
         final T rval = get(i);
@@ -810,18 +885,23 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns the first element, or, if there is none, return dflt.<br/><br/>
+     * Returns the first element, or, if there is none, return dflt.<br/>
+     * <br/>
      * 
-     * Single-threaded. <br/><br/>
+     * Single-threaded. <br/>
+     * <br/>
      * 
-     * @param dflt The value to return if get(0) is null. 
-     * @return Unless dflt is null, this function is guaranteed to return a non-null value.
+     * @param dflt The value to return if get(0) is null.
+     * @return Unless dflt is null, this function is guaranteed to return a non-null
+     * value.
      */
     public T get(T dflt) {
         return get(0, dflt);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -830,9 +910,11 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Checks if all elements are not null.<br/><br/>
+     * Checks if all elements are not null.<br/>
+     * <br/>
      * 
-     * Single-threaded. <br/><br/>
+     * Single-threaded. <br/>
+     * <br/>
      * 
      * @return True if all elements are not null, false if a single element was null.
      */
@@ -847,9 +929,11 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Checks if the element has any element.<br/><br/>
+     * Checks if the element has any element.<br/>
+     * <br/>
      * 
-     * Single-threaded. <br/><br/>
+     * Single-threaded. <br/>
+     * <br/>
      * 
      * @return True if any element is set. False if all elements are null.
      */
@@ -864,9 +948,11 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * If all elements are present, execute f0.<br/><br/>
+     * If all elements are present, execute f0.<br/>
+     * <br/>
      * 
-     * Single-threaded. <br/><br/>
+     * Single-threaded. <br/>
+     * <br/>
      * 
      * @param f0 The function to execute if all elements are given.
      */
@@ -875,9 +961,11 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns the wrapped collection as a list.<br/><br/>
+     * Returns the wrapped collection as a list.<br/>
+     * <br/>
      * 
-     * Single-threaded. <br/><br/>
+     * Single-threaded. <br/>
+     * <br/>
      * 
      * @return A list containing all elements. Null values should be preserved.
      */
@@ -887,17 +975,21 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Maps the core's content with the given function and returns the result. This is the most fundamental 
-     * function of this core. Maps all elements using the given mapper function. If the core is of size 0 
-     * nothing is done, if it is of size 1 <code>f</code> is executed directly. <br/><br/>
-     *    
-     * Multi-threaded.<br/><br/> 
+     * Maps the core's content with the given function and returns the result. This is the
+     * most fundamental
+     * function of this core. Maps all elements using the given mapper function. If the
+     * core is of size 0
+     * nothing is done, if it is of size 1 <code>f</code> is executed directly. <br/>
+     * <br/>
      * 
-     * @param <R> Return type.  
-     * @param f Mapper function, should be thread-safe. 
+     * Multi-threaded.<br/>
+     * <br/>
+     * 
+     * @param <R> Return type.
+     * @param f Mapper function, should be thread-safe.
      * @param options Relevant options: <code>OptionMapType</code>.
      * 
-     * @return A CoreObject containing the mapped elements in a stable order.   
+     * @return A CoreObject containing the mapped elements in a stable order.
      */
     @SuppressWarnings("unchecked")
     public <R> CoreObject<R> map(final F1<T, R> f, Option... options) {
@@ -926,7 +1018,8 @@ public class CoreObject<T> extends Core {
                 final R out = f.f(in);
                 if (out == null) return;
 
-                // If we haven't had an in-array, create it now, according to the return type
+                // If we haven't had an in-array, create it now, according to the return
+                // type
                 if (a == null) {
                     a = (R[]) updateArray(Array.newInstance(out.getClass(), this.size));
                 }
@@ -939,8 +1032,10 @@ public class CoreObject<T> extends Core {
         // Map ...
         map(mapper, options);
 
-        // In case we don't have a return array (which happens when the mapper never returned something
-        // sensible), we create a simple object array of our size, so that the core's size stays
+        // In case we don't have a return array (which happens when the mapper never
+        // returned something
+        // sensible), we create a simple object array of our size, so that the core's size
+        // stays
         // consistent.
         R rval[] = (R[]) mapper.getTargetArray();
         if (rval == null) {
@@ -955,10 +1050,10 @@ public class CoreObject<T> extends Core {
      * Maps the core's content with the given function and returns the result.
      * 
      * @param f
-     * @param options 
+     * @param options
      * 
      * @deprecated
-     * @return The mapped elements in a stable order   
+     * @return The mapped elements in a stable order
      */
     @Deprecated
     public CoreInt map(final F1Object2Int<T> f, Option... options) {
@@ -976,11 +1071,13 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns a randomly selected object, including null values.<br/><br/>
-     *    
-     * Single-threaded.<br/><br/>
+     * Returns a randomly selected object, including null values.<br/>
+     * <br/>
      * 
-     * @return A randomly selected object from this core. 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @return A randomly selected object from this core.
      */
     public T random() {
         final int size = size();
@@ -991,16 +1088,19 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Reduces the given object, single-threaded version. In contrast to fold() the 
-     * order in which two element might be reduced is well defined from left to right. You should
-     * use <code>reduce()</code> for simple operations and <code>fold()</code> for very 
-     * complex operations.<br/><br/>
-     *    
-     * Single-threaded.<br/><br/>
+     * Reduces the given object, single-threaded version. In contrast to fold() the
+     * order in which two element might be reduced is well defined from left to right. You
+     * should
+     * use <code>reduce()</code> for simple operations and <code>fold()</code> for very
+     * complex operations.<br/>
+     * <br/>
+     * 
+     * Single-threaded.<br/>
+     * <br/>
      * 
      * @param f The reduce function. Takes two elements, returns one.
      * @param options Relevant options: <code>OptionMapType</code>.
-     * @return A CoreObject, containing at most a single element. 
+     * @return A CoreObject, containing at most a single element.
      */
     @SuppressWarnings("unchecked")
     public CoreObject<T> reduce(final F2ReduceObjects<T> f, Option... options) {
@@ -1021,18 +1121,20 @@ public class CoreObject<T> extends Core {
             stack = f.f(stack, current);
         }
 
-        // We have to use the stack, because we otherwise we might 
-        // create an array of another type, and not the type f returned. 
+        // We have to use the stack, because we otherwise we might
+        // create an array of another type, and not the type f returned.
         final Class<T> type = stack != null ? (Class<T>) stack.getClass() : null;
 
         return new CoreObject<T>(this.commonCore, type, stack);
     }
 
     /**
-     * Returns how many slots are in this core, counting null elements.<br/><br/>
-     *    
-     * Single-threaded. <br/><br/>
-     *  
+     * Returns how many slots are in this core, counting null elements.<br/>
+     * <br/>
+     * 
+     * Single-threaded. <br/>
+     * <br/>
+     * 
      * @see Core#size()
      * @return .
      */
@@ -1043,14 +1145,17 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns a slice of this core. Element inside this slice start at 
-     * <code>start</code>. If <code>length</code> is positive it is treated
-     * as a length, if it is negative, it is treated as a (inclusive) end-index.<br/><br/>
-     *    
-     * Single-threaded. <br/><br/>
+     * Returns a slice of this core. Element inside this slice start at <code>start</code>
+     * . If <code>length</code> is positive it is treated
+     * as a length, if it is negative, it is treated as a (inclusive) end-index.<br/>
+     * <br/>
+     * 
+     * Single-threaded. <br/>
+     * <br/>
      * 
      * @param start The start position.
-     * @param length If length is positive it is treated as length, if negative as a starting position from the end (-1 equals the last position)
+     * @param length If length is positive it is treated as length, if negative as a
+     * starting position from the end (-1 equals the last position)
      * @return A ObjectCore wrapping all sliced elements.
      */
     public CoreObject<T> slice(final int start, final int length) {
@@ -1072,12 +1177,16 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns a new, sorted core.<br/><br/>
-     *    
-     * Single-threaded. <br/><br/>
+     * Returns a new, sorted core.<br/>
+     * <br/>
      * 
-     * @param c Comparator to use. Caution, <code>c</code> will be called with <code>null</code> values 
-     * for non-existing elements, <code>compact()</code> the core before if you don't want this behavior. 
+     * Single-threaded. <br/>
+     * <br/>
+     * 
+     * @param c Comparator to use. Caution, <code>c</code> will be called with
+     * <code>null</code> values
+     * for non-existing elements, <code>compact()</code> the core before if you don't want
+     * this behavior.
      * @return A CoreObject with sorted entries.
      */
     public CoreObject<T> sort(Comparator<T> c) {
@@ -1090,19 +1199,23 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Staples all elements. Assists, for example, in computing the average of a number 
-     * of elements. <code>staple()</code> is similar to <code>reduce()</code>, with the exception that a
+     * Staples all elements. Assists, for example, in computing the average of a number
+     * of elements. <code>staple()</code> is similar to <code>reduce()</code>, with the
+     * exception that a
      * given neutral element is used as a starting point, and some some derived value
-     * of each contained element might be connected with it. In the end a <code>Staple</code> will 
-     * be returned, containing the stapled value and the actual number of elements used.<br/><br/>
-     *    
-     * Single-threaded. <br/><br/>
+     * of each contained element might be connected with it. In the end a
+     * <code>Staple</code> will
+     * be returned, containing the stapled value and the actual number of elements used.<br/>
+     * <br/>
+     * 
+     * Single-threaded. <br/>
+     * <br/>
      * 
      * @param neutralElement The initial element.
-     * @param sumAndNext A reduce function. Left will be the current sum, right will 
+     * @param sumAndNext A reduce function. Left will be the current sum, right will
      * be the next element.
      * 
-     * @return A <code>Staple</code> object, with the current sum and the size. 
+     * @return A <code>Staple</code> object, with the current sum and the size.
      */
     public Staple<T> staple(T neutralElement, F2ReduceObjects<T> sumAndNext) {
         final int size = size();
@@ -1123,9 +1236,11 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Converts all elements to strings.<br/><br/>
-     *    
-     * Multi-threaded. <br/><br/>
+     * Converts all elements to strings.<br/>
+     * <br/>
+     * 
+     * Multi-threaded. <br/>
+     * <br/>
      * 
      * @return A CoreString containing all <code>toString()</code> output.
      */
@@ -1138,14 +1253,16 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns a core containing all elements of this core and that are not 
-     * in the passed core.<br/><br/>
-     *    
-     * Single-threaded. <br/><br/>
+     * Returns a core containing all elements of this core and that are not
+     * in the passed core.<br/>
+     * <br/>
      * 
-     * @param toSubtract The core to subtract from this core. 
+     * Single-threaded. <br/>
+     * <br/>
      * 
-     * @return A CoreObject containing all objects of this core that are not 
+     * @param toSubtract The core to subtract from this core.
+     * 
+     * @return A CoreObject containing all objects of this core that are not
      * in the other core.
      */
     public CoreObject<T> subtract(CoreObject<T> toSubtract) {
@@ -1170,9 +1287,12 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns a core containing only unique objects, i.e., object mutually un-<code>equal()</code>.<br/><br/>
-     *    
-     * Single-threaded. <br/><br/>
+     * Returns a core containing only unique objects, i.e., object mutually un-
+     * <code>equal()</code>.<br/>
+     * <br/>
+     * 
+     * Single-threaded. <br/>
+     * <br/>
      * 
      * @return A CoreObject containing only unique, non-null objects.
      */
@@ -1212,7 +1332,7 @@ public class CoreObject<T> extends Core {
 
         if (index >= size) return -1;
 
-        // We also support negative indices. 
+        // We also support negative indices.
         if (index < 0) {
             if (-index > size) return -1;
             return size + index;
