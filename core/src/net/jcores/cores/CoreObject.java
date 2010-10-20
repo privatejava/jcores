@@ -53,6 +53,7 @@ import net.jcores.managers.ManagerDebugGUI;
 import net.jcores.options.MessageType;
 import net.jcores.options.Option;
 import net.jcores.options.OptionMapType;
+import net.jcores.utils.Compound;
 import net.jcores.utils.Folder;
 import net.jcores.utils.Mapper;
 import net.jcores.utils.Staple;
@@ -319,6 +320,21 @@ public class CoreObject<T> extends Core {
         }
 
         return new CoreObject<T>(this.commonCore, Arrays.copyOf(tmp, dst));
+    }
+
+    /**
+     * Creates a compound out of this core's content. This is useful for quickly creating
+     * complex objects
+     * which should be handled by the framework.<br/>
+     * <br/>
+     * 
+     * Single-threaded. <br/>
+     * <br/>
+     * 
+     * @return A new {@link Compound} with this core's content.
+     */
+    public Compound compound() {
+        return Compound.create(this.t);
     }
 
     /**
@@ -958,6 +974,47 @@ public class CoreObject<T> extends Core {
      */
     public void ifAll(F0 f0) {
         if (hasAll()) f0.f();
+    }
+
+    /**
+     * Returns a core intersected with another core.<br/>
+     * <br/>
+     * 
+     * Single-threaded. <br/>
+     * <br/>
+     * 
+     * @param other The other core to intersect.
+     * @return Returns a core enclosing only objects present in this and the other core.
+     */
+    public CoreObject<T> intersect(CoreObject<T> other) {
+        if (size() == 0) return this;
+        if (other.size() == 0) return other;
+
+        final T[] copy = Arrays.copyOf(this.t, size());
+
+        // Remove every element we in the other core
+        for (int i = 0; i < copy.length; i++) {
+            final T element = copy[i];
+            if (element == null) continue;
+
+            boolean found = false;
+
+            // Check if the copy contains the element
+            for (int j = 0; j < other.size(); j++) {
+                final T x = other.get(j);
+                if (x == null || !x.equals(element)) continue;
+                found = true;
+                break;
+            }
+
+            // If not in both, remove.
+            if (!found) {
+                copy[i] = null;
+            }
+        }
+
+        // Return a compacted core.
+        return new CoreObject<T>(this.commonCore, copy).compact();
     }
 
     /**
