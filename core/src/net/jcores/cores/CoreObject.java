@@ -483,14 +483,14 @@ public class CoreObject<T> extends Core {
 
     /**
      * Returns a single object that, if any of its functions is executed, the
-     * corresponding function is
-     * executed on all enclosed elements. Only works if <code>c</code> is an interface and
-     * only on
-     * enclosed elements implementing <code>c</code>. From a performance perspective this
-     * method only
-     * makes sense if the requested operation is complex, as on simple methods the
-     * reflection costs will
-     * outweigh all benefits. Also note that all return values are skipped. <br/>
+     * corresponding function is executed on all enclosed elements. Only works if
+     * <code>c</code> is an interface and only on enclosed elements implementing
+     * <code>c</code>. From a
+     * performance perspective this method only makes sense if the requested operation is
+     * complex,
+     * as on simple methods the reflection costs will outweigh all benefits. Also note
+     * that all return
+     * values are skipped. <br/>
      * <br/>
      * 
      * Multi-threaded. Heavyweight.<br/>
