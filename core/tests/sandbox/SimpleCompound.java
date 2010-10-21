@@ -46,5 +46,7 @@ public class SimpleCompound {
         System.out.println(c1.equals(c2));
         System.out.println(c1);
         System.out.println(c2);
+
+        $("a", "b", "c", "d", "e", "f", "g", "h").random(0.5).string().print();
     }
 }

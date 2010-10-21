@@ -1145,6 +1145,72 @@ public class CoreObject<T> extends Core {
     }
 
     /**
+     * Returns a randomly selected subset, including null values. The elements will be
+     * returned in a random order.<br/>
+     * <br/>
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @param percent Specifies how many percent of elements of this core should be in the
+     * resulting core. For example <code>0.5</code> means that half of the elements of
+     * this core will be randomly selected and returned, <code>0.0</code> means an empty
+     * core will be returned and <code>1.0</code> a shuffled core will be returned.
+     * 
+     * @return A core enclosing randomly selected objects.
+     */
+    public CoreObject<T> random(double percent) {
+        final double p = Math.max(Math.min(1.0, percent), 0.0);
+        return random((int) (p * size()));
+    }
+
+    /**
+     * Returns a randomly selected subset, including null values. The elements will be
+     * returned in a random order.<br/>
+     * <br/>
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @param newSize Specifies how many elements of this core should be in the
+     * resulting core.
+     * 
+     * @return A core enclosing randomly selected objects.
+     */
+    public CoreObject<T> random(int newSize) {
+        final int size = size();
+
+        if (size == 0) return this;
+
+        // Create a shuffletable
+        final int table[] = new int[size];
+        final T[] copyOf = Arrays.copyOf(this.t, newSize);
+
+        // Initialize table
+        for (int i = 0; i < table.length; i++) {
+            table[i] = i;
+        }
+
+        // Shuffle TODO: How often should we shuffle? (lets just take twice the size for
+        // the start)
+        for (int i = 0; i < table.length * 2; i++) {
+            int x = this.commonCore.random().nextInt(size);
+            int y = this.commonCore.random().nextInt(size);
+
+            int v = table[x];
+            table[x] = table[y];
+            table[y] = v;
+        }
+
+        // Now we just fill the shuffled elements into our table
+        for (int i = 0; i < newSize; i++) {
+            copyOf[i] = get(table[i]);
+        }
+
+        return new CoreObject<T>(this.commonCore, copyOf);
+    }
+
+    /**
      * Reduces the given object, single-threaded version. In contrast to fold() the
      * order in which two element might be reduced is well defined from left to right. You
      * should
