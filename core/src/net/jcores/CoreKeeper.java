@@ -38,6 +38,7 @@ import java.util.concurrent.locks.Lock;
 import net.jcores.cores.CoreBufferedImage;
 import net.jcores.cores.CoreClass;
 import net.jcores.cores.CoreComponent;
+import net.jcores.cores.CoreCompound;
 import net.jcores.cores.CoreFile;
 import net.jcores.cores.CoreInputStream;
 import net.jcores.cores.CoreInt;
@@ -48,6 +49,7 @@ import net.jcores.cores.CoreURI;
 import net.jcores.interfaces.functions.F1;
 import net.jcores.options.Option;
 import net.jcores.options.OptionMapType;
+import net.jcores.utils.Compound;
 import net.jcores.utils.Wrapper;
 
 /**
@@ -98,6 +100,16 @@ public class CoreKeeper {
     @Deprecated
     public static CoreInt $(int... object) {
         return new CoreInt($, object);
+    }
+
+    /**
+     * Wraps number of compounds and returns a new CompoundCore.
+     * 
+     * @param object The compounds to wrap.
+     * @return A CoreCompound wrapping the given compounds.
+     */
+    public static CoreCompound $(Compound... object) {
+        return new CoreCompound($, object);
     }
 
     /**
