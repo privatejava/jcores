@@ -28,6 +28,7 @@
 package net.jcores.utils;
 
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * Represents a compound object, consisting of several smaller objects.
@@ -66,4 +67,25 @@ public class Compound extends HashMap<String, Object> {
         return rval;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.util.AbstractMap#toString()
+     */
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("{ ");
+
+        final Set<String> keySet = keySet();
+        for (String string : keySet) {
+            sb.append(string);
+            sb.append(":");
+            sb.append(get(string));
+            sb.append(" ");
+        }
+
+        sb.append("}");
+        return sb.toString();
+    }
 }

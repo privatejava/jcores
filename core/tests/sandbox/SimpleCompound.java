@@ -44,5 +44,7 @@ public class SimpleCompound {
         Compound c2 = $("hel".concat("lo"), new Long(new Long(12345670) + 8)).compound();
 
         System.out.println(c1.equals(c2));
+        System.out.println(c1);
+        System.out.println(c2);
     }
 }
