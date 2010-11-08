@@ -40,11 +40,10 @@ import java.util.regex.Pattern;
 import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F1;
 import net.jcores.interfaces.functions.F1Object2Bool;
-import net.jcores.interfaces.functions.F2ReduceObjects;
 import net.jcores.options.Option;
 
 /**
- * Wraps a number of String and exposes some convenience functions.  
+ * Wraps a number of String and exposes some convenience functions.
  * 
  * @author Ralf Biedert
  * @since 1.0
@@ -52,9 +51,9 @@ import net.jcores.options.Option;
 public class CoreString extends CoreObject<String> {
 
     /**
-     * Creates an string core. 
+     * Creates an string core.
      * 
-     * @param supercore The common core. 
+     * @param supercore The common core.
      * @param objects The strings to wrap.
      */
     public CoreString(CommonCore supercore, String... objects) {
@@ -62,9 +61,11 @@ public class CoreString extends CoreObject<String> {
     }
 
     /**
-     * Treats all strings as filenames and returns the corresponding files. <br/><br/>
+     * Treats all strings as filenames and returns the corresponding files. <br/>
+     * <br/>
      * 
-     * Multi-threaded.<br/><br/>
+     * Multi-threaded.<br/>
+     * <br/>
      * 
      * @return A CoreFile object with all enclosed files.
      */
@@ -77,14 +78,16 @@ public class CoreString extends CoreObject<String> {
     }
 
     /**
-     * Filters all strings using the given regular expression. <br/><br/>
+     * Filters all strings using the given regular expression. <br/>
+     * <br/>
      * 
-     * Multi-threaded.<br/><br/>
+     * Multi-threaded.<br/>
+     * <br/>
      * 
      * @param regex The regular expression to use.
      * @param options Currently none used.
      * 
-     * @return A CoreString containing a filtered subset of our elements. 
+     * @return A CoreString containing a filtered subset of our elements.
      */
     @Override
     public CoreString filter(final String regex, Option... options) {
@@ -99,9 +102,11 @@ public class CoreString extends CoreObject<String> {
     }
 
     /**
-     * Joins all string with an empty ("") joiner. <br/><br/>
+     * Joins all string with an empty ("") joiner. <br/>
+     * <br/>
      * 
-     * Single-threaded.<br/><br/>
+     * Single-threaded.<br/>
+     * <br/>
      * 
      * @return The joined string, or "" if there was nothing to do.
      */
@@ -110,34 +115,41 @@ public class CoreString extends CoreObject<String> {
     }
 
     /**
-     * Joins all strings to a single string.<br/><br/>
+     * Joins all strings to a single string.<br/>
+     * <br/>
      * 
-     * Single-threaded.<br/><br/>
+     * Single-threaded.<br/>
+     * <br/>
      * 
-     * @param joiner String used to join. 
+     * @param joiner String used to join.
      * @return The joined result or "" of there was nothing to do.
      */
     public String join(final String joiner) {
         if (size() == 0) return "";
-        return reduce(new F2ReduceObjects<String>() {
-            public String f(String stack, String next) {
-                final StringBuilder sb = new StringBuilder();
-                sb.append(stack);
+
+        final StringBuilder sb = new StringBuilder();
+        final int size = size();
+
+        for (int i = 0; i < size; i++) {
+            sb.append(get(i));
+            if (i < size - 1) {
                 sb.append(joiner);
-                sb.append(next);
-                return sb.toString();
             }
-        }).get(0);
+        }
+
+        return sb.toString();
     }
 
     /**
-     * Splits all string using the splitter, returning an <code>expanded()</code> core.<br/><br/>
+     * Splits all string using the splitter, returning an <code>expanded()</code> core.<br/>
+     * <br/>
      * 
-     * Multi-threaded.<br/><br/>
+     * Multi-threaded.<br/>
+     * <br/>
      * 
-     * @param splitter A regular expression used to split the given strings. 
+     * @param splitter A regular expression used to split the given strings.
      * 
-     * @return A an expanded CoreString with all split tokens. 
+     * @return A an expanded CoreString with all split tokens.
      */
     public CoreString split(final String splitter) {
         return map(new F1<String, List<String>>() {
@@ -148,9 +160,11 @@ public class CoreString extends CoreObject<String> {
     }
 
     /**
-     * Prints all strings to the console.<br/><br/>
+     * Prints all strings to the console.<br/>
+     * <br/>
      * 
-     * Single-threaded.<br/><br/>
+     * Single-threaded.<br/>
+     * <br/>
      * 
      * @return Returns this CoreString object again.
      */
@@ -166,19 +180,23 @@ public class CoreString extends CoreObject<String> {
     }
 
     /**
-     * Logs the enclosed strings with a default level.<br/><br/>
+     * Logs the enclosed strings with a default level.<br/>
+     * <br/>
      * 
-     * Single-threaded.<br/><br/>
+     * Single-threaded.<br/>
+     * <br/>
      */
     public void log() {
         log(Level.INFO);
     }
 
     /**
-     * Logs the given string using the given level.<br/><br/>
+     * Logs the given string using the given level.<br/>
+     * <br/>
      * 
-     * Single-threaded.<br/><br/>
-     *  
+     * Single-threaded.<br/>
+     * <br/>
+     * 
      * @param level Logging level to use.
      */
     public void log(final Level level) {
@@ -191,9 +209,11 @@ public class CoreString extends CoreObject<String> {
     }
 
     /**
-     * Replaces some pattern with a replacement.<br/><br/>
+     * Replaces some pattern with a replacement.<br/>
+     * <br/>
      * 
-     * Multi-threaded.<br/><br/>
+     * Multi-threaded.<br/>
+     * <br/>
      * 
      * @param pattern The pattern to search for.
      * @param with The replacement.
@@ -210,9 +230,11 @@ public class CoreString extends CoreObject<String> {
     }
 
     /**
-     * Creates URIs for all enclosed Strings.<br/><br/>
+     * Creates URIs for all enclosed Strings.<br/>
+     * <br/>
      * 
-     * Multi-threaded.<br/><br/>
+     * Multi-threaded.<br/>
+     * <br/>
      * 
      * @return A CoreURI object with URIs for all enclosed strings.
      */
@@ -229,9 +251,11 @@ public class CoreString extends CoreObject<String> {
     }
 
     /**
-     * Returns the (UTF-8) byte data of the enclosed strings.<br/><br/>
+     * Returns the (UTF-8) byte data of the enclosed strings.<br/>
+     * <br/>
      * 
-     * Multi-threaded.<br/><br/>
+     * Multi-threaded.<br/>
+     * <br/>
      * 
      * @return A CoreByteBuffer object with the byte data of all enclosed strings.
      */
@@ -242,10 +266,10 @@ public class CoreString extends CoreObject<String> {
                     byte[] bytes = x.getBytes("UTF-8");
                     return ByteBuffer.wrap(bytes);
                 } catch (UnsupportedEncodingException e) {
-                    //
-                }
-                return null;
-            }
+                                                       //
+                                                   }
+                                                   return null;
+                                               }
         }).array(ByteBuffer.class));
     }
 }

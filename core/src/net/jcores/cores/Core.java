@@ -40,9 +40,11 @@ import net.jcores.utils.Folder;
 import net.jcores.utils.Mapper;
 
 /**
- * The abstract base class of all cores. Contains commonly used methods and variables. In general 
- * you should not need to bother with this class, as in most cases you will extend CoreObject for 
- * your own cores, not this class.  
+ * The abstract base class of all cores. Contains commonly used methods and variables. In
+ * general
+ * you should not need to bother with this class, as in most cases you will extend
+ * CoreObject for
+ * your own cores, not this class.
  * 
  * @since 1.0
  * @author Ralf Biedert
@@ -55,7 +57,7 @@ public abstract class Core {
     /**
      * Creates the core object for the given collection.
      * 
-     * @param core 
+     * @param core
      */
     protected Core(CommonCore core) {
         this.commonCore = core;
@@ -63,15 +65,15 @@ public abstract class Core {
 
     /**
      * Returns the size of enclosed elements, counting null elements.
-     *  
+     * 
      * @return The number of element slots this core encloses.
      */
     public abstract int size();
 
     /**
-     * Starts a new parallel mapping process. 
+     * Starts a new parallel mapping process.
      * 
-     * @param mapper The mapper to use. 
+     * @param mapper The mapper to use.
      * @param options Relevant options: <code>OptionMapType</code>.
      */
     protected void map(final Mapper mapper, final Option... options) {
@@ -84,20 +86,20 @@ public abstract class Core {
             return;
         }
 
-        // TODO: Test-convert the first item and measure time. If time and size are above a 
-        // certain threshold, parallelize, otherwise map sequentially
+        // TODO: Test-convert the first item and measure time. If time and size are above
+        // a certain threshold, parallelize, otherwise map sequentially
 
         // Now find the first element and measure how long the conversion takes
         // for (int i = 0; i < size; i++) { }
 
         // TODO: Also measure how long thread creation takes (once)
-        // TODO: Then decide if we should parallelize or execute directly. 
+        // TODO: Then decide if we should parallelize or execute directly.
         // TODO: Get proper value for step size (same problem, see below)
         final int STEP_SIZE = Math.max(size() / 10, 1);
         final int NUM_THREADS = Runtime.getRuntime().availableProcessors();
 
         // TODO: Check size, if small, don't do all this setup in here ...
-        // NAH, even for two objects we can have a speed gain if the calls 
+        // NAH, even for two objects we can have a speed gain if the calls
         // are very slow ...
 
         final AtomicInteger baseCount = new AtomicInteger();
@@ -116,7 +118,6 @@ public abstract class Core {
                 while (lower < size) {
                     final int max = Math.min(lower + STEP_SIZE, size);
 
-                    System.nanoTime();
                     // Pass over all elements
                     for (int i = lower; i < max; i++) {
                         mapper.handle(i);
@@ -149,7 +150,7 @@ public abstract class Core {
     }
 
     /**
-     * Starts a parallel folding process.  
+     * Starts a parallel folding process.
      * 
      * @param folder The folder to use.
      * @param options Relevant options: <code>OptionMapType</code>.
@@ -166,12 +167,13 @@ public abstract class Core {
 
         final int NUM_THREADS = Runtime.getRuntime().availableProcessors();
 
-        // Indicates which level (in the folding hierarchy) we are and where the next thread should
+        // Indicates which level (in the folding hierarchy) we are and where the next
+        // thread should
         // proceed
         final AtomicInteger baseCount = new AtomicInteger();
         final AtomicInteger level = new AtomicInteger();
 
-        // Synchronizes threads 
+        // Synchronizes threads
         final CyclicBarrier levelbarrier = new CyclicBarrier(NUM_THREADS);
         final CyclicBarrier barrier = new CyclicBarrier(NUM_THREADS + 1);
 
@@ -196,7 +198,8 @@ public abstract class Core {
                         j = i + dist;
                     }
 
-                    // Check if we were the node processing the last element and if there was a single 
+                    // Check if we were the node processing the last element and if there
+                    // was a single
                     // element left over. In that case, process both these elements again
                     if (i <= upperBound && i > 0) {
                         int left = i - (int) Math.pow(2, lvl + 1);
@@ -212,7 +215,8 @@ public abstract class Core {
                         e.printStackTrace();
                     }
 
-                    // Increase the level afterwards. If we were the one who changed the level,
+                    // Increase the level afterwards. If we were the one who changed the
+                    // level,
                     // we also change the baseCount back to 0
                     if (level.compareAndSet(lvl, lvl + 1)) {
                         baseCount.set(0);
@@ -246,11 +250,14 @@ public abstract class Core {
     }
 
     /**
-     * Sends a request to the developers requesting a feature with the given name. The request will 
-     * be sent to a server and collected. Information of the enclosed objects and the feature request
-     * string will be transmitted as well.  
+     * Sends a request to the developers requesting a feature with the given name. The
+     * request will
+     * be sent to a server and collected. Information of the enclosed objects and the
+     * feature request
+     * string will be transmitted as well.
      * 
-     * @param functionName Call this function for example like this $(myobjects).featurerequest(".compress() -- Should compress the given objects."); 
+     * @param functionName Call this function for example like this
+     * $(myobjects).featurerequest(".compress() -- Should compress the given objects.");
      */
     public void featurerequest(String functionName) {
         $("Request logged.").log();
