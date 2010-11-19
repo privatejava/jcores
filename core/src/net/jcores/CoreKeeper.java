@@ -41,8 +41,8 @@ import net.jcores.cores.CoreComponent;
 import net.jcores.cores.CoreCompound;
 import net.jcores.cores.CoreFile;
 import net.jcores.cores.CoreInputStream;
-import net.jcores.cores.CoreInt;
 import net.jcores.cores.CoreLock;
+import net.jcores.cores.CoreNumber;
 import net.jcores.cores.CoreObject;
 import net.jcores.cores.CoreString;
 import net.jcores.cores.CoreURI;
@@ -54,16 +54,13 @@ import net.jcores.utils.Wrapper;
 
 /**
  * Keeps the common core and contains Johnnys(<code>$</code>) for all our cores. This
- * class is the main
- * entry point into jCores. You should use these functions as static imports. See
- * <a href="http://code.google.com/p/jcores/wiki/EclipseIntegration">the Eclipse
- * Integration Guide</a> on how
- * to make your life much more simple.<br/>
+ * class is the main entry point into jCores. You should use these functions as static
+ * imports. See <a href="http://code.google.com/p/jcores/wiki/EclipseIntegration">the
+ * Eclipse Integration Guide</a> on how to make your life much more simple.<br/>
  * <br/>
  * 
  * If you want to see your own core in here (or if you have any recommendations for new
- * cores)
- * contact us in <a href="http://groups.google.com/group/jcores">the forum</a>.
+ * cores) contact us in <a href="http://groups.google.com/group/jcores">the forum</a>.
  * 
  * @since 1.0
  * @author Ralf Biedert
@@ -88,18 +85,13 @@ public class CoreKeeper {
     }
 
     /**
-     * Wraps the given integers.<br/>
-     * <br/>
+     * Wraps number of numbers and returns a new CoreNumber.
      * 
-     * Please note that this functionality is EXPERIMENTAL and might be
-     * removed in the future.
-     * 
-     * @param object A single int or int array to wrap.
-     * @return A CoreInt wrapping the given integers.
+     * @param object The numbers to wrap.
+     * @return A CoreNumber wrapping the given compounds.
      */
-    @Deprecated
-    public static CoreInt $(int... object) {
-        return new CoreInt($, object);
+    public static CoreNumber $(Number... object) {
+        return new CoreNumber($, object);
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * CoreStringTest.java
+ * SimpleSpeedTests.java
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
@@ -25,35 +25,24 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package junit;
+package sandbox;
 
 import static net.jcores.CoreKeeper.$;
-import net.jcores.interfaces.functions.F1;
-
-import org.junit.Assert;
-import org.junit.Test;
+import net.jcores.cores.CoreNumber;
 
 /**
- * @author Ralf Biedert
+ * @author rb
+ * 
  */
-public class CoreObjectTest {
+public class SimpleNumberTest {
+    /**
+     * @param args
+     */
+    @SuppressWarnings("boxing")
+    public static void main(String[] args) {
+        CoreNumber number = $(2.0, 4, 6, null, 8, 100);
 
-    /** */
-    @Test
-    public void testIntersect() {
-        Assert.assertEquals("world", $("hello", "world").intersect($("world", "goodbye")).get(0));
-        Assert.assertEquals(1, $("world", "hello").intersect($("world", "goodbye")).compact().size());
-    }
-
-    /** */
-    @Test
-    public void testForEach() {
-        Assert.assertEquals("hw", $("hello", "world").forEach(new F1<String, String>() {
-            @Override
-            public String f(String x) {
-                return x.substring(0, 1);
-            }
-
-        }).string().join());
+        System.out.println(number.average());
+        System.out.println(number.variance());
     }
 }

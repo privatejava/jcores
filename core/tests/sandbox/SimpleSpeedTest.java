@@ -40,7 +40,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import net.jcores.cores.CoreClass;
 import net.jcores.interfaces.functions.F0;
 import net.jcores.interfaces.functions.F1;
-import net.jcores.interfaces.functions.F1Int2Int;
 import net.jcores.interfaces.functions.F2DeltaObjects;
 import net.jcores.interfaces.functions.F2ReduceObjects;
 import sandbox.dummys.F0Impl;
@@ -325,6 +324,7 @@ public class SimpleSpeedTest {
             }
         }, 10);
 
+        /*
         long b3 = benchmark(new F0() {
             public void f() {
                 $(ints).map(new F1Int2Int() {
@@ -333,7 +333,7 @@ public class SimpleSpeedTest {
                     }
                 });
             }
-        }, 10);
+        }, 10);*/
 
         long b4 = benchmark(new F0() {
             public void f() {
@@ -356,7 +356,7 @@ public class SimpleSpeedTest {
         System.out.println("--- Parallelization Results ---");
         System.out.println(b1);
         System.out.println(b2);
-        System.out.println(b3);
+        //System.out.println(b3);
         System.out.println(b4);
         System.out.println(b6);
 

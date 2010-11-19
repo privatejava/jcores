@@ -33,21 +33,15 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Random;
 
-import net.jcores.cores.CoreObject;
-import net.jcores.interfaces.functions.F1;
+class A {}
 
-class A {
-}
+class B extends A {}
 
-class B extends A {
-}
-
-class C extends B {
-}
+class C extends B {}
 
 /**
  * @author rb
- *
+ * 
  */
 public class SimpleNullTest {
 
@@ -55,27 +49,41 @@ public class SimpleNullTest {
 
     /**
      * @param args
-     * @throws IOException 
+     * @throws IOException
      */
+    @SuppressWarnings("boxing")
     public static void main(String[] args) throws IOException {
         Arrays.deepEquals(null, new Object[] { new Object() });
         System.out.println(Arrays.deepHashCode(null));
 
-        Double d[] = new Double[] { null, null, null };
+        Number n = Math.PI;
+        System.out.println(Long.MAX_VALUE);
+        Long l = Long.MAX_VALUE;
+        System.out.println(l.doubleValue());
+        Double d = l.doubleValue();
+        Long ll = d.longValue();
+        System.out.println(ll);
 
-        CoreObject<Double> c1 = $(d);
-        System.out.println(c1.size());
-
-        CoreObject<B> c2 = c1.map(new F1<Double, B>() {
-            @Override
-            public B f(Double x) {
-                return null;
-            }
-        });
-        System.out.println(c2.size());
-
-        CoreObject<B> c3 = c2.fill(new C());
-        B b = c3.get(1);
-        System.out.println(b);
+        System.out.println(n.doubleValue());
+        $(3, 4, 5);
+        /*
+         * Double d[] = new Double[] { null, null, null };
+         * 
+         * CoreObject<Double> c1 = $(d);
+         * System.out.println(c1.size());
+         * 
+         * CoreObject<B> c2 = c1.map(new F1<Double, B>() {
+         * 
+         * @Override
+         * public B f(Double x) {
+         * return null;
+         * }
+         * });
+         * System.out.println(c2.size());
+         * 
+         * CoreObject<B> c3 = c2.fill(new C());
+         * B b = c3.get(1);
+         * System.out.println(b);
+         */
     }
 }

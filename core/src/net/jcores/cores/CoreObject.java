@@ -275,7 +275,7 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Return a CoreClass for all enclosed objects' classes<br/>
+     * Return a CoreClass for all enclosed objects' classes.<br/>
      * <br/>
      * 
      * Multi-threaded. <br/>
@@ -792,6 +792,60 @@ public class CoreObject<T> extends Core {
 
         // ... and return result.
         return new CoreObject<T>(this.commonCore, Arrays.copyOf((T[]) folder.getTargetArray(), 1));
+    }
+
+    /**
+     * Performs the given operation on each element and returns a new core. This is the
+     * single-threaded version of map().<br/>
+     * <br/>
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @param <R> Return type.
+     * @param f Mapper function.
+     * @param options Relevant options: <code>OptionMapType</code>.
+     * 
+     * @return A CoreObject containing the mapped elements in a stable order.
+     */
+    @SuppressWarnings("unchecked")
+    public <R> CoreObject<R> forEach(final F1<T, R> f, Option... options) {
+
+        final int size = size();
+        R[] a = null;
+
+        // Check options if we have a map type.
+        for (Option option : options) {
+            if (option instanceof OptionMapType) {
+                a = (R[]) Array.newInstance(((OptionMapType) option).getType(), size);
+            }
+        }
+
+        for (int i = 0; i < size; i++) {
+            // Get the in-value from the source-array
+            final T in = this.t[i];
+
+            // Convert
+            if (in == null) continue;
+            final R out = f.f(in);
+            if (out == null) continue;
+
+            // If we haven't had an in-array, create it now, according to
+            // the return type
+            if (a == null) {
+                a = (R[]) Array.newInstance(out.getClass(), size);
+            }
+
+            // Eventually set the out value
+            a[i] = out;
+        }
+
+        if (a == null) {
+            a = (R[]) Array.newInstance(Object.class, 0);
+        }
+
+        // ... and return result.
+        return new CoreObject<R>(this.commonCore, a);
     }
 
     /**
