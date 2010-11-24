@@ -27,6 +27,8 @@
  */
 package net.jcores.cores;
 
+import static net.jcores.CoreKeeper.$;
+
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -41,6 +43,7 @@ import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F1;
 import net.jcores.interfaces.functions.F1Object2Bool;
 import net.jcores.options.Option;
+import net.jcores.options.OptionRegEx;
 
 /**
  * Wraps a number of String and exposes some convenience functions.
@@ -217,10 +220,13 @@ public class CoreString extends CoreObject<String> {
      * 
      * @param pattern The pattern to search for.
      * @param with The replacement.
+     * @param options Relevant options: {@link OptionRegEx}.
+     * 
      * @return A CoreString with all patterns replaced.
      */
-    public CoreString replace(final String pattern, final String with) {
-        final Pattern p = Pattern.compile(pattern);
+    public CoreString replace(final String pattern, final String with, Option... options) {
+        final int regexOptions = $(options).cast(OptionRegEx.class).get(0, new OptionRegEx(0)).getOptions();
+        final Pattern p = Pattern.compile(pattern, regexOptions);
 
         return new CoreString(this.commonCore, map(new F1<String, String>() {
             public String f(String x) {
