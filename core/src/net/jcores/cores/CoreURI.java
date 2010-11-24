@@ -42,7 +42,7 @@ import net.jcores.options.MessageType;
 import net.jcores.utils.io.StreamUtils;
 
 /**
- * Wraps a number of URIs and exposes some convenience functions.  
+ * Wraps a number of URIs and exposes some convenience functions.
  * 
  * @author Ralf Biedert
  * 
@@ -51,9 +51,9 @@ import net.jcores.utils.io.StreamUtils;
 public class CoreURI extends CoreObject<URI> {
 
     /**
-     * Creates an ZipInputStream core. 
+     * Creates an ZipInputStream core.
      * 
-     * @param supercore The common core. 
+     * @param supercore The common core.
      * @param objects The strings to wrap.
      */
     public CoreURI(CommonCore supercore, URI... objects) {
@@ -61,10 +61,39 @@ public class CoreURI extends CoreObject<URI> {
     }
 
     /**
-     * Downloads the enclosed URIs to a temporary directories and returns core 
-     * containing their filenames.<br/><br/>
+     * Opens the associated input stream.<br/>
+     * <br/>
      * 
-     * Multi-threaded.<br/><br/>
+     * Multi-threaded.<br/>
+     * <br/>
+     * 
+     * @return A CoreInputStream object enclosing the opened input streams.
+     */
+    public CoreInputStream input() {
+        return new CoreInputStream(this.commonCore, map(new F1<URI, InputStream>() {
+            public InputStream f(URI x) {
+                try {
+                    final URL url = x.toURL();
+                    final InputStream openStream = url.openStream();
+                    return openStream;
+                } catch (MalformedURLException e) {
+                    CoreURI.this.commonCore.report(MessageType.EXCEPTION, "URI " + x + " could not be transformed into an URL.");
+                } catch (IOException e) {
+                    CoreURI.this.commonCore.report(MessageType.EXCEPTION, "URI " + x + " could not be opened for reading.");
+                }
+
+                return null;
+            }
+        }).array(InputStream.class));
+    }
+
+    /**
+     * Downloads the enclosed URIs to a temporary directories and returns core
+     * containing their filenames.<br/>
+     * <br/>
+     * 
+     * Multi-threaded.<br/>
+     * <br/>
      * 
      * @return A CoreFile object enclosing the files of all downloaded URIs.
      */
@@ -93,12 +122,14 @@ public class CoreURI extends CoreObject<URI> {
     }
 
     /**
-     * Downloads the enclosed URIs to the given directory, using the filename encoded 
-     * within the uri and returns a core containing their filenames.<br/><br/>
+     * Downloads the enclosed URIs to the given directory, using the filename encoded
+     * within the uri and returns a core containing their filenames.<br/>
+     * <br/>
      * 
-     * Multi-threaded.<br/><br/>
+     * Multi-threaded.<br/>
+     * <br/>
      * 
-     * @param path The directory to which the files will be downloaded. 
+     * @param path The directory to which the files will be downloaded.
      * 
      * @return A CoreFile object enclosing the files of all downloaded URIs.
      */
@@ -128,9 +159,11 @@ public class CoreURI extends CoreObject<URI> {
     }
 
     /**
-     * Tries to convert all URIs to local File objects.<br/><br/>
+     * Tries to convert all URIs to local File objects.<br/>
+     * <br/>
      * 
-     * Multi-threaded.<br/><br/>
+     * Multi-threaded.<br/>
+     * <br/>
      * 
      * @return A CoreFile object enclosing all successfully converted file handles
      */
@@ -140,10 +173,10 @@ public class CoreURI extends CoreObject<URI> {
                 try {
                     return new File(x);
                 } catch (Exception e) {
-                    //
-                }
-                return null;
-            }
+                                                 //
+                                             }
+                                             return null;
+                                         }
         }).array(File.class));
     }
 
