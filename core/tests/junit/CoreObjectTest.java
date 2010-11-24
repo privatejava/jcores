@@ -56,4 +56,10 @@ public class CoreObjectTest {
 
         }).string().join());
     }
+
+    /** */
+    @Test
+    public void testSlice() {
+        Assert.assertEquals("goodbyecruelworld", $("goodbye", "cruel", "world").slice(0, 3).string().join());
+    }
 }

@@ -1345,7 +1345,7 @@ public class CoreObject<T> extends Core {
             this.commonCore.report(MessageType.MISUSE, "slice() - converted parameter start(" + start + " -> " + i + ") is outside bounds.");
             return new CoreObject<T>(this.commonCore, Arrays.copyOfRange(this.t, 0, 0));
         }
-        if (l < 0 || l >= size()) {
+        if (l < 0 || l > size()) {
             this.commonCore.report(MessageType.MISUSE, "slice() - converted parameter length(" + length + " -> " + l + ") is outside bounds.");
             return new CoreObject<T>(this.commonCore, Arrays.copyOfRange(this.t, 0, 0));
         }
