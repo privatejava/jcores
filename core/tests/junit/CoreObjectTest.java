@@ -28,6 +28,8 @@
 package junit;
 
 import static net.jcores.CoreKeeper.$;
+import junit.data.Data;
+import net.jcores.cores.CoreString;
 import net.jcores.interfaces.functions.F1;
 
 import org.junit.Assert;
@@ -61,5 +63,15 @@ public class CoreObjectTest {
     @Test
     public void testSlice() {
         Assert.assertEquals("goodbyecruelworld", $("goodbye", "cruel", "world").slice(0, 3).string().join());
+    }
+
+    /** */
+    @Test
+    public void testSerialize() {
+        $("hello", "world").serialize("test.jcores");
+        final CoreString converted = $("test.jcores").file().deserialize(String.class).string();
+        Assert.assertEquals("helloworld", converted.join());
+        
+        $(Data.strings(10000)).serialize("big.file");
     }
 }

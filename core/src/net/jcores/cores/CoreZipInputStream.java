@@ -39,8 +39,9 @@ import net.jcores.utils.io.InputStreamWrapper;
 import net.jcores.utils.io.StreamUtils;
 
 /**
- * Wraps a number of ZipInputStreams and exposes some convenience functions.<br/><br/>
- *
+ * Wraps a number of ZipInputStreams and exposes some convenience functions.<br/>
+ * <br/>
+ * 
  * <b>Important note: See {@link CoreInputStream} regarding <i>consuming</i> methods.</b>
  * 
  * @author Ralf Biedert
@@ -48,13 +49,16 @@ import net.jcores.utils.io.StreamUtils;
  */
 public class CoreZipInputStream extends CoreObject<ZipInputStream> {
 
+    /** Used for serialization */
+    private static final long serialVersionUID = 5934382074823292082L;
+
     /** Indicates if multiple get() operations have been performed */
     private boolean multipleGet = false;
 
     /**
-     * Creates an ZipInputStream core. 
+     * Creates an ZipInputStream core.
      * 
-     * @param supercore The common core. 
+     * @param supercore The common core.
      * @param objects The strings to wrap.
      */
     public CoreZipInputStream(CommonCore supercore, ZipInputStream... objects) {
@@ -62,12 +66,14 @@ public class CoreZipInputStream extends CoreObject<ZipInputStream> {
     }
 
     /**
-     * Unzips all enclosed streams to the given directory. Usually only called with 
-     * a single enclosed object. <br/><br/>
+     * Unzips all enclosed streams to the given directory. Usually only called with
+     * a single enclosed object. <br/>
+     * <br/>
      * 
-     * Multi-threaded. Consuming.<br/><br/>
+     * Multi-threaded. Consuming.<br/>
+     * <br/>
      * 
-     * @param destination The destination to unzip the given files to. All necessary 
+     * @param destination The destination to unzip the given files to. All necessary
      * directories will be created.
      * 
      * @return Return <code>this</code>.
@@ -90,12 +96,14 @@ public class CoreZipInputStream extends CoreObject<ZipInputStream> {
     }
 
     /**
-     * Lists all entries within all ZIP files. Usually only called with a single enclosed 
-     * element.<br/><br/>
+     * Lists all entries within all ZIP files. Usually only called with a single enclosed
+     * element.<br/>
+     * <br/>
      * 
-     * Multi-threaded. Consuming.<br/><br/>
+     * Multi-threaded. Consuming.<br/>
+     * <br/>
      * 
-     * @return A CoreString, enclosing a list of all entries is returned. 
+     * @return A CoreString, enclosing a list of all entries is returned.
      */
     public CoreString dir() {
         return map(new F1<ZipInputStream, List<String>>() {
@@ -114,21 +122,29 @@ public class CoreZipInputStream extends CoreObject<ZipInputStream> {
     }
 
     /**
-     * Returns an input stream for the given ZIP-file-entry. This only uses the first element 
-     * within the core, if there is any.<br/><br/>
+     * Returns an input stream for the given ZIP-file-entry. This only uses the first
+     * element
+     * within the core, if there is any.<br/>
+     * <br/>
      * 
-     * YOU MUST NOT CALL THIS FUNCTION SEVERAL TIMES on the same core. The reason is, the 
+     * YOU MUST NOT CALL THIS FUNCTION SEVERAL TIMES on the same core. The reason is, the
      * internal input stream is 'drained' by each get and the method will be unable to
-     * see prior entries after retrieving latter ones. For example, given the zip file contains
-     * three entries A, B, C. If you get("B"), the input stream will be consumed until B is found
-     * which is returned. If you then get("A") there is no way of rolling back the stream, so all
-     * this method sees is 'C' and it cannot return 'A'.<br/><br/>
+     * see prior entries after retrieving latter ones. For example, given the zip file
+     * contains
+     * three entries A, B, C. If you get("B"), the input stream will be consumed until B
+     * is found
+     * which is returned. If you then get("A") there is no way of rolling back the stream,
+     * so all
+     * this method sees is 'C' and it cannot return 'A'.<br/>
+     * <br/>
      * 
-     * Single-threaded, size-of-one. Consuming.<br/><br/>
+     * Single-threaded, size-of-one. Consuming.<br/>
+     * <br/>
      * 
      * @param path The zip-entry-path to obtain.
      * 
-     * @return The opened InputStream for the given zip entry, or null if nothing was found.
+     * @return The opened InputStream for the given zip entry, or null if nothing was
+     * found.
      */
     public InputStream get(String path) {
         if (this.multipleGet) {
@@ -141,8 +157,10 @@ public class CoreZipInputStream extends CoreObject<ZipInputStream> {
         try {
             final InputStream inputStream = StreamUtils.getInputStream(zipInputStream, path);
 
-            // We CAN NOT close the parent stream right away, because then we would invalidate
-            // the returned stream. Instead we have to wait until the returned stream is closed as 
+            // We CAN NOT close the parent stream right away, because then we would
+            // invalidate
+            // the returned stream. Instead we have to wait until the returned stream is
+            // closed as
             // well.
             return new InputStreamWrapper(inputStream) {
                 @Override
@@ -152,7 +170,7 @@ public class CoreZipInputStream extends CoreObject<ZipInputStream> {
                 }
             };
         } catch (IOException e) {
-            // 
+            //
         } finally {
             this.multipleGet = true;
         }

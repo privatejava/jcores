@@ -53,6 +53,9 @@ import net.jcores.options.OptionRegEx;
  */
 public class CoreString extends CoreObject<String> {
 
+    /** Used for serialization */
+    private static final long serialVersionUID = -2412531498060577117L;
+
     /**
      * Creates an string core.
      * 

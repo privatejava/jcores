@@ -50,6 +50,9 @@ import net.jcores.utils.io.StreamUtils;
  */
 public class CoreURI extends CoreObject<URI> {
 
+    /** Used for serialization */
+    private static final long serialVersionUID = 7366734773387957013L;
+
     /**
      * Creates an ZipInputStream core.
      * 

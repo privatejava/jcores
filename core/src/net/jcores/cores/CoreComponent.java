@@ -44,6 +44,9 @@ import net.jcores.interfaces.java.KeyStroke;
  */
 public class CoreComponent extends CoreObject<Component> {
 
+    /** Used for serialization */
+    private static final long serialVersionUID = -6859431347201006730L;
+
     /**
      * Creates an Component core.
      * 

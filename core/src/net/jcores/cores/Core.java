@@ -29,6 +29,7 @@ package net.jcores.cores;
 
 import static net.jcores.CoreKeeper.$;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
@@ -49,10 +50,13 @@ import net.jcores.utils.Mapper;
  * @since 1.0
  * @author Ralf Biedert
  */
-public abstract class Core {
+public abstract class Core implements Serializable {
+
+    /** Used for serialization */
+    private static final long serialVersionUID = 2195880634253143587L;
 
     /** Our 'parent' core. */
-    final protected CommonCore commonCore;
+    transient protected CommonCore commonCore;
 
     /**
      * Creates the core object for the given collection.

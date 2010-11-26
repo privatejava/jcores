@@ -37,7 +37,7 @@ import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F1;
 
 /**
- * Wraps a number of BufferedImages and exposes some convenience functions.  
+ * Wraps a number of BufferedImages and exposes some convenience functions.
  * 
  * @author Ralf Biedert
  * 
@@ -45,10 +45,13 @@ import net.jcores.interfaces.functions.F1;
  */
 public class CoreBufferedImage extends CoreObject<BufferedImage> {
 
+    /** Used for serialization */
+    private static final long serialVersionUID = -9069210371713045372L;
+
     /**
-     * Creates an BufferedImage core. 
+     * Creates an BufferedImage core.
      * 
-     * @param supercore The common core. 
+     * @param supercore The common core.
      * @param objects The BufferedImage to wrap.
      */
     public CoreBufferedImage(CommonCore supercore, BufferedImage... objects) {
@@ -56,10 +59,13 @@ public class CoreBufferedImage extends CoreObject<BufferedImage> {
     }
 
     /**
-     * Copies the buffered images, creating deep clones of the given image data. Altering a copy 
-     * will not alter the source image.<br/><br/>
+     * Copies the buffered images, creating deep clones of the given image data. Altering
+     * a copy
+     * will not alter the source image.<br/>
+     * <br/>
      * 
-     * Multi-threaded.<br/><br/>
+     * Multi-threaded.<br/>
+     * <br/>
      * 
      * @return A CoreBufferedImage containing the copies.
      */
@@ -76,11 +82,13 @@ public class CoreBufferedImage extends CoreObject<BufferedImage> {
     }
 
     /**
-     * Scales all contained images by the given factor<br/><br/>
+     * Scales all contained images by the given factor<br/>
+     * <br/>
      * 
-     * Multi-threaded.<br/><br/>
+     * Multi-threaded.<br/>
+     * <br/>
      * 
-     * @param factor The factor by which to scale the image. 
+     * @param factor The factor by which to scale the image.
      * 
      * @return A CoreBufferedImage containing the scaled images.
      */

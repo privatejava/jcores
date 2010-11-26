@@ -89,6 +89,9 @@ import net.jcores.utils.io.StreamUtils;
  */
 public class CoreInputStream extends CoreObject<InputStream> {
 
+    /** Used for serialization */
+    private static final long serialVersionUID = 1520313333781137198L;
+
     /**
      * Creates an input stream core.
      * 
@@ -115,6 +118,35 @@ public class CoreInputStream extends CoreObject<InputStream> {
                 this.commonCore.report(MessageType.EXCEPTION, "Error closing stream " + inputStream + ".");
             }
         }
+    }
+
+    /**
+     * De-serializes the previously serialized core from the enclosed file. Objects that
+     * are not serializable are ignored.<br/>
+     * <br/>
+     * 
+     * Single-threaded. Size-of-one.<br/>
+     * <br/>
+     * 
+     * @param <T> Type of the returned core's content.
+     * @param type Type of the returned core's content.
+     * @param options Currently not used.
+     * @return The previously serialized core (using <code>.serialize()</code>).
+     * @see CoreObject
+     */
+    public <T> CoreObject<T> deserialize(Class<T> type, Option... options) {
+
+        if (size() > 1)
+            this.commonCore.report(MessageType.MISUSE, "deserialize() should not be used on cores with more than one class!");
+
+        // Try to restore the core, and don't forget to set the commonCore
+        final CoreObject<T> core = StreamUtils.deserializeCore(type, get(0));
+        if (core != null) {
+            core.commonCore = this.commonCore;
+            return core;
+        }
+
+        return new CoreObject<T>(this.commonCore, type, null);
     }
 
     /**

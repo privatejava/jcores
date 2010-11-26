@@ -29,6 +29,9 @@ package net.jcores.cores;
 
 import static net.jcores.CoreKeeper.$;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
@@ -57,6 +60,7 @@ import net.jcores.utils.Compound;
 import net.jcores.utils.Folder;
 import net.jcores.utils.Mapper;
 import net.jcores.utils.Staple;
+import net.jcores.utils.io.StreamUtils;
 import net.jcores.utils.lang.ObjectUtils;
 
 /**
@@ -74,6 +78,9 @@ import net.jcores.utils.lang.ObjectUtils;
  * @param <T> Type of the objects to wrap.
  */
 public class CoreObject<T> extends Core {
+
+    /** */
+    private static final long serialVersionUID = -6436821141631907999L;
 
     /** The array we work on. */
     protected final T[] t;
@@ -1303,6 +1310,27 @@ public class CoreObject<T> extends Core {
         final Class<T> type = stack != null ? (Class<T>) stack.getClass() : null;
 
         return new CoreObject<T>(this.commonCore, type, stack);
+    }
+
+    /**
+     * Serializes this core into the given file. Objects that are not serializable
+     * are ignored.<br/>
+     * <br/>
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @param path The location to which this core should be serialized.
+     * @param options Currently not used.
+     * @return This core.
+     */
+    public CoreObject<T> serialize(final String path, Option... options) {
+        try {
+            StreamUtils.serializeCore(this, new FileOutputStream(new File(path)));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return this;
     }
 
     /**

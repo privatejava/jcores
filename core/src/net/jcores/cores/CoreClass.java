@@ -42,14 +42,17 @@ import net.jcores.options.MessageType;
 import net.jcores.utils.io.StreamUtils;
 
 /**
- * Wraps class objects, usually only one, and exposes some convenience functions 
- * on them. 
+ * Wraps class objects, usually only one, and exposes some convenience functions
+ * on them.
  * 
  * @author Ralf Biedert
  * @since 1.0
- * @param <T> Type of the classes' objects. 
+ * @param <T> Type of the classes' objects.
  */
 public class CoreClass<T> extends CoreObject<Class<T>> {
+    /** Used for serialization */
+    private static final long serialVersionUID = -5054890786513339808L;
+
     /** Our class manager */
     protected final ManagerClass manager;
 
@@ -69,11 +72,14 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
     }
 
     /**
-     * Returns the bytecode of the given classes.<br/><br/>
+     * Returns the bytecode of the given classes.<br/>
+     * <br/>
      * 
-     * Multi-threaded. Heavyweight. <br/><br/>
-     *  
-     * @return A CoreByteBuffer wrapping the classes' bytecode */
+     * Multi-threaded. Heavyweight. <br/>
+     * <br/>
+     * 
+     * @return A CoreByteBuffer wrapping the classes' bytecode
+     */
     public CoreByteBuffer bytecode() {
         return new CoreByteBuffer(this.commonCore, map(new F1<Class<T>, ByteBuffer>() {
             @Override
@@ -81,7 +87,7 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
                 final String classname = x.getCanonicalName().replaceAll("\\.", "/") + ".class";
                 final ClassLoader classloader = x.getClassLoader();
 
-                // For internal object this usually does not work 
+                // For internal object this usually does not work
                 if (classloader == null) {
                     CoreClass.this.commonCore.report(MessageType.EXCEPTION, "Could not get classloader for " + x);
                     return null;
@@ -93,16 +99,17 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
     }
 
     /**
-     * Spawns the cored class with the given objects as args. This function will only 
+     * Spawns the cored class with the given objects as args. This function will only
      * operate on the core's first entry (get(0)). If the wrapped class is an interface,
-     * the last implementor registered with <code>implementor()</code> will be spawned.
-     * <br/><br/>
-     * Single-threaded, size-of-one.<br/><br/>
+     * the last implementor registered with <code>implementor()</code> will be spawned. <br/>
+     * <br/>
+     * Single-threaded, size-of-one.<br/>
+     * <br/>
      * 
      * Note that this function is still under development.
      * 
-     * @param args Arguments to pass to the constructor. 
-     *  
+     * @param args Arguments to pass to the constructor.
+     * 
      * @return The newly created object, or null if no object could be created.
      */
     @SuppressWarnings("unchecked")
@@ -111,7 +118,7 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
         if (size() > 1)
             this.commonCore.report(MessageType.MISUSE, "spawn() should not be used on cores with more than one class!");
 
-        // Get the class we operate on 
+        // Get the class we operate on
         Class<T> request = get(null);
         if (request == null) return null;
         Class<T> toSpawn = request;
@@ -155,7 +162,8 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
 
             return this.manager.registerObject(request, constructor.newInstance(args));
 
-            // NOTE: We do not swallow all execptions silently, becasue spawn() is a bit special and 
+            // NOTE: We do not swallow all execptions silently, becasue spawn() is a bit
+            // special and
             // we cannot return anything that would still be usable.
         } catch (SecurityException e) {
             e.printStackTrace();
@@ -171,16 +179,19 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
             e.printStackTrace();
         }
 
-        // TODO Make sure to only use weak references, so that we don't run out of memory and prevent 
+        // TODO Make sure to only use weak references, so that we don't run out of memory
+        // and prevent
         // garbage colleciton.
 
         return null;
     }
 
     /**
-     * Registers an implementor for the currently wrapped interface.<br> <br/>
+     * Registers an implementor for the currently wrapped interface.<br>
+     * <br/>
      * 
-     * Single-threaded, size-of-one.<br/><br/>
+     * Single-threaded, size-of-one.<br/>
+     * <br/>
      * 
      * @param implemenetor A class implementing the interface enclosed in get(0).
      */
@@ -188,7 +199,7 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
         if (size() > 1)
             this.commonCore.report(MessageType.MISUSE, "implementor() should not be used on cores with more than one class!");
 
-        // Get the class we operate on 
+        // Get the class we operate on
         final Class<T> clazz = get(null);
         if (clazz == null) return;
 
@@ -196,11 +207,14 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
     }
 
     /**
-     * Returns all objects that have been spawned of this type.<br/><br/>
+     * Returns all objects that have been spawned of this type.<br/>
+     * <br/>
      * 
-     * Single-threaded, size-of-one.<br/><br/>
+     * Single-threaded, size-of-one.<br/>
+     * <br/>
      * 
-     * @return A core object with all classes jCores has spawned (using <code>spawn()</code>) of the enclosed class (get(0)).
+     * @return A core object with all classes jCores has spawned (using
+     * <code>spawn()</code>) of the enclosed class (get(0)).
      */
     @SuppressWarnings("unchecked")
     public CoreObject<T> spawned() {

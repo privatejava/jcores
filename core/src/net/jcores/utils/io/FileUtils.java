@@ -43,7 +43,7 @@ public class FileUtils {
     /**
      * Reads the content of file as text.
      * 
-     * @param cc 
+     * @param cc
      * @param file
      * @return .
      */
@@ -67,11 +67,12 @@ public class FileUtils {
         } finally {
             if (reader != null) try {
                 reader.close();
-            } catch (IOException e) {
+                } catch (IOException e) {
                 cc.report(MessageType.EXCEPTION, "Error closing file " + file);
-            }
+                }
         }
 
         return null;
     }
+
 }

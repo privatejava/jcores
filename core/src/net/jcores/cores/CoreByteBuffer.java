@@ -38,7 +38,7 @@ import net.jcores.options.OptionHash;
 import net.jcores.utils.io.DataUtils;
 
 /**
- * Wraps a number of ByteBuffers and exposes some convenience functions.  
+ * Wraps a number of ByteBuffers and exposes some convenience functions.
  * 
  * @author Ralf Biedert
  * 
@@ -46,10 +46,13 @@ import net.jcores.utils.io.DataUtils;
  */
 public class CoreByteBuffer extends CoreObject<ByteBuffer> {
 
+    /** Used for serialization */
+    private static final long serialVersionUID = 6075205848624531993L;
+
     /**
-     * Creates an ZipInputStream core. 
+     * Creates an ZipInputStream core.
      * 
-     * @param supercore The common core. 
+     * @param supercore The common core.
      * @param objects The ByteBuffers to wrap.
      */
     public CoreByteBuffer(CommonCore supercore, ByteBuffer... objects) {
@@ -57,9 +60,11 @@ public class CoreByteBuffer extends CoreObject<ByteBuffer> {
     }
 
     /**
-     * Creates a hash of the given data.<br/><br/>
+     * Creates a hash of the given data.<br/>
+     * <br/>
      * 
-     * Multi-threaded.<br/><br/>
+     * Multi-threaded.<br/>
+     * <br/>
      * 
      * @param options Relevant options: <code>OptionHashMD5</code>.
      * 
@@ -73,7 +78,7 @@ public class CoreByteBuffer extends CoreObject<ByteBuffer> {
                 return DataUtils.generateHash(x, method);
             }
         }).array(String.class));
-        
+
     }
 
 }

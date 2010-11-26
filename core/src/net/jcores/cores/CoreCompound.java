@@ -43,6 +43,9 @@ import net.jcores.utils.Compound;
  */
 public class CoreCompound extends CoreObject<Compound> {
 
+    /** Used for serialization */
+    private static final long serialVersionUID = 5810590185749402495L;
+
     /**
      * Creates an Compound core.
      * 

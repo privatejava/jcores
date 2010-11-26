@@ -37,6 +37,9 @@ import net.jcores.CommonCore;
  */
 public class CoreNumber extends CoreObject<Number> {
 
+    /** Used for serialization */
+    private static final long serialVersionUID = -8437925527295825364L;
+
     /**
      * Wraps a number of numbers.
      * 

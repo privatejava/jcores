@@ -40,6 +40,8 @@ import net.jcores.utils.Mapper;
  * 
  * @author Ralf Biedert
  */
+@SuppressWarnings("serial")
+@Deprecated
 public class CoreInt extends Core {
 
     /** The array we work on (if no fallback was provided) */

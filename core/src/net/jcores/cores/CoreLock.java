@@ -33,17 +33,20 @@ import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F0;
 
 /**
- * Wraps a number of Locks and exposes some convenience functions.   
+ * Wraps a number of Locks and exposes some convenience functions.
  * 
  * @author Ralf Biedert
  * @since 1.0
  */
 public class CoreLock extends CoreObject<Lock> {
 
+    /** Used for serialization */
+    private static final long serialVersionUID = -4449041324296817648L;
+
     /**
      * Wraps a number of locks.
      * 
-     * @param supercore The shared CommonCore. 
+     * @param supercore The shared CommonCore.
      * @param objects The locks to wrap.
      */
     public CoreLock(CommonCore supercore, Lock... objects) {
@@ -51,10 +54,12 @@ public class CoreLock extends CoreObject<Lock> {
     }
 
     /**
-     * Executes the given function as soon as the lock is ready and fail-safely unlocks 
-     * the lock afterwards<br/><br/>
+     * Executes the given function as soon as the lock is ready and fail-safely unlocks
+     * the lock afterwards<br/>
+     * <br/>
      * 
-     * Single-threaded, size-of-one.<br/><br/>
+     * Single-threaded, size-of-one.<br/>
+     * <br/>
      * 
      * @param f The function to execute when the lock is ready.
      */

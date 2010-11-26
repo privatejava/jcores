@@ -36,15 +36,20 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import net.jcores.CommonCore;
+import net.jcores.cores.CoreObject;
 import net.jcores.options.MessageType;
 
 /**
@@ -109,8 +114,8 @@ public class StreamUtils {
                 ioe.printStackTrace();
             }
 
-            //zipFile.closeEntry();
-            //nextEntry = zipFile.closeEntry();
+            // zipFile.closeEntry();
+            // nextEntry = zipFile.closeEntry();
             nextEntry = zipFile.getNextEntry();
         }
 
@@ -120,7 +125,7 @@ public class StreamUtils {
     /**
      * Reads the content of file as text.
      * 
-     * @param cc 
+     * @param cc
      * @param is
      * @return .
      */
@@ -175,7 +180,7 @@ public class StreamUtils {
      * 
      * @param zipFile
      * @return .
-     * @throws IOException 
+     * @throws IOException
      */
     public static List<String> list(ZipInputStream zipFile) throws IOException {
         final List<String> rval = new ArrayList<String>();
@@ -313,6 +318,51 @@ public class StreamUtils {
             //
         }
 
+        return null;
+    }
+
+    /**
+     * Serializes a core to the given file.
+     * 
+     * @param core
+     * @param fos
+     */
+    public static void serializeCore(CoreObject<?> core, FileOutputStream fos) {
+        try {
+            final GZIPOutputStream goz = new GZIPOutputStream(fos);
+            final ObjectOutputStream oos = new ObjectOutputStream(goz);
+
+            oos.writeObject(core);
+            oos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * De-serializes the given file.
+     * 
+     * @param <T> .
+     * @param type .
+     * @param fis .
+     * @return .
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> CoreObject<T> deserializeCore(Class<T> type, InputStream fis) {
+        try {
+            final GZIPInputStream gis = new GZIPInputStream(fis);
+            final ObjectInputStream ois = new ObjectInputStream(gis);
+
+            return (CoreObject<T>) ois.readObject();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 }
