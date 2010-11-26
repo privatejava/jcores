@@ -137,7 +137,13 @@ public class CoreString extends CoreObject<String> {
         final int size = size();
 
         for (int i = 0; i < size; i++) {
-            sb.append(get(i));
+            final String string = get(i);
+
+            // We don't accept null elements
+            if (string == null) continue;
+
+            sb.append(string);
+
             if (i < size - 1) {
                 sb.append(joiner);
             }
