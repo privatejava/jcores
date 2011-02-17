@@ -27,11 +27,17 @@
  */
 package net.jcores.utils.io;
 
+import static net.jcores.CoreKeeper.$;
+
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import net.jcores.CommonCore;
 import net.jcores.options.MessageType;
@@ -75,4 +81,53 @@ public class FileUtils {
         return null;
     }
 
+    /**
+     * Zips a number of files into the target.
+     * 
+     * @param target
+     * @param t
+     */
+    public static void zipFiles(File target, File[] t) {
+        final byte[] buffer = new byte[32 * 1024]; // Create a buffer for copying
+        int bytesRead;
+
+        try {
+            // Open output zip file
+            ZipOutputStream out = new ZipOutputStream(new FileOutputStream(target));
+
+            // Process all given files
+            for (File file : t) {
+                // If it is a file, store it directly, otherwise store subfiles
+                final File toStore[] = file.isDirectory() ? $(file).dir().array(File.class) : $(file).array(File.class);
+                final String absolute = file.getAbsolutePath();
+
+                for (File file2 : toStore) {
+                    // Now check for each item. If this item was added because the original entry denoted
+                    // a file, then add this entry by its name only. Otherwise add the entry as something
+                    // starting relative to its path
+                    String entryname = file.isDirectory() ? file2.getAbsolutePath().substring(absolute.length() + 1) : file2.getName();
+
+                    try {
+                        final FileInputStream in = new FileInputStream(file2);
+                        final ZipEntry entry = new ZipEntry(entryname);
+                        out.putNextEntry(entry);
+                        while ((bytesRead = in.read(buffer)) != -1)
+                            out.write(buffer, 0, bytesRead);
+                        in.close();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            // Close our result
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

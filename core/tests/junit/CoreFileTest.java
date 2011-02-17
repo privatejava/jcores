@@ -31,6 +31,7 @@ import static net.jcores.CoreKeeper.$;
 
 import java.io.File;
 
+import net.jcores.cores.CoreFile;
 import net.jcores.cores.CoreString;
 import net.jcores.interfaces.functions.F1;
 import net.jcores.interfaces.functions.F2ReduceObjects;
@@ -49,7 +50,7 @@ public class CoreFileTest {
     public void testComplexReadWrite() {
 
         // For n times we randomly either append or remove a line to a given file while tracking how
-        // its content must look like afterwards.    	
+        // its content must look like afterwards.
         int sum = 667;
 
         final File testFile = $.tempfile();
@@ -94,4 +95,19 @@ public class CoreFileTest {
 
         Assert.assertEquals(sum, filesum);
     }
+
+    /** */
+    @Test
+    public void testZip() {
+        final String path = $.tempfile().getAbsolutePath();
+        
+        final CoreFile source = $("documentation").file();
+        final int srcsize = source.dir().size();
+        
+        // Zip by path
+        source.zip(path);
+        Assert.assertEquals(srcsize, $(path).file().input().zipstream().dir().size());
+        $(path).file().delete();
+    }
+
 }

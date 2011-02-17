@@ -364,4 +364,22 @@ public class CoreFile extends CoreObject<File> {
             }
         }).array(URI.class));
     }
+
+    /**
+     * Puts all enclosed files into the ZIP file <code>target</code>. If files are enclosed individually they will be
+     * stored as a top-level entry. If directories are enclosed in this core, the relative paths below that directory
+     * are preserved.<br/>
+     * <br/>
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @param target The file to write the ZIP to.
+     * @param options Currently none used.
+     * @return This Core again.
+     */
+    public CoreFile zip(String target, Option... options) {
+        FileUtils.zipFiles(new File(target), this.t);
+        return this;
+    }
 }
