@@ -183,4 +183,17 @@ public class CommonCore {
 
         return new File("/tmp/jcores.failedtmp." + System.nanoTime() + ".tmp");
     }
+
+    /** 
+     * Returns a temporary directory.
+     * 
+     * @return A File object for a temporary directory.
+     */
+    public File tempdir() {
+        final File file = new File(tempfile().getAbsoluteFile() + ".dir");
+        file.mkdirs();
+        return file;
+    }
+
+
 }

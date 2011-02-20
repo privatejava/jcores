@@ -55,6 +55,7 @@ import net.jcores.interfaces.functions.F2ReduceObjects;
 import net.jcores.managers.ManagerDebugGUI;
 import net.jcores.options.MessageType;
 import net.jcores.options.Option;
+import net.jcores.options.OptionDebug;
 import net.jcores.options.OptionMapType;
 import net.jcores.utils.Compound;
 import net.jcores.utils.Folder;
@@ -1112,6 +1113,7 @@ public class CoreObject<T> extends Core {
     @SuppressWarnings("unchecked")
     public <R> CoreObject<R> map(final F1<T, R> f, Option... options) {
 
+        boolean debug = false;
         Class<?> mapType = null;
 
         // Check options if we have a map type.
@@ -1119,9 +1121,13 @@ public class CoreObject<T> extends Core {
             if (option instanceof OptionMapType) {
                 mapType = ((OptionMapType) option).getType();
             }
+            if (option instanceof OptionDebug) {
+                debug = true;
+            }
         }
-
+        
         // Create mapper
+        final boolean debugInternal = debug;
         final Mapper mapper = new Mapper(mapType, size()) {
             @Override
             public void handle(int i) {
@@ -1131,11 +1137,24 @@ public class CoreObject<T> extends Core {
                 // Get the in-value from the source-array
                 final T in = CoreObject.this.t[i];
 
+                // Debugging
+                long startTime = 0;
+                if(debugInternal) {
+                    startTime = System.nanoTime();
+                }
+
                 // Convert
                 if (in == null) return;
                 final R out = f.f(in);
-                if (out == null) return;
 
+                // Debugging
+                if(debugInternal) {
+                    long stopTime = System.nanoTime();
+                    System.out.println("Element " + i + " took " + ((stopTime-startTime)/1000) + "µs");
+                }
+                
+                if (out == null) return;
+                
                 // If we haven't had an in-array, create it now, according to the return
                 // type
                 if (a == null) {

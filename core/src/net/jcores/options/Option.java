@@ -48,6 +48,10 @@ public class Option {
     /** Hash method to use (MD5) */
     public final static OptionHashMD5 HASH_MD5 = new OptionHashMD5();
 
+    /** Print debugging information */
+    public final static OptionDebug DEBUG = new OptionDebug();
+
+    
     /**
      * Specifies that the map result should be of type. Useful if map returns various
      * types.

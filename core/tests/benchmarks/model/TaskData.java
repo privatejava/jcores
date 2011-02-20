@@ -28,15 +28,26 @@
 package benchmarks.model;
 
 /**
+ * Represents the data used for a given task.
+ * 
  * @author Ralf Biedert
- *
- * @param <T>
+ * @param <T> Type of the data
  */
 public class TaskData<T> {
 
-    private T data;
+    /** Data we use */
+    private final T data;
 
     /**
+     * Creates an empty task data.
+     */
+    public TaskData() {
+        this.data = null;
+    }
+
+    /**
+     * Creates a task data with the given object.
+     * 
      * @param data
      */
     public TaskData(T data) {
@@ -44,7 +55,9 @@ public class TaskData<T> {
     }
 
     /**
-     * @return .
+     * Returns the task data
+     * 
+     * @return The object we were initialized with.
      */
     public T getData() {
         return this.data;

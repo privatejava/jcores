@@ -1,7 +1,7 @@
 /*
- * BenchmarkResults.java
+ * OptionDebug.java
  * 
- * Copyright (c) 2010, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,51 +25,13 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package benchmarks.benchmarker;
+package net.jcores.options;
 
 /**
- * Stores the results of a given benchmark run.
+ * If we should print debug information for the given operation.
  * 
  * @author Ralf Biedert
  */
-public class BenchmarkResults {
-    /** The actual timing results in µ-seconds */
-    final private long[] results;
-
-    /**
-     * Results of each run in µ-seconds.
-     * 
-     * @param results
-     */
-    public BenchmarkResults(long[] results) {
-        this.results = results;
-    }
-
-    /**
-     * Returns the average of the n last runs.
-     * 
-     * @param nlast
-     * @return . 
-     */
-    public long average(int nlast) {
-        int delta = this.results.length - nlast;
-        long avg = 0;
-
-        for (int i = delta; i < this.results.length; i++) {
-            avg += this.results[i];
-        }
-
-        avg /= this.results.length - delta;
-
-        return avg;
-    }
-
-    /**
-     * Returns the values for the benchmark
-     * 
-     * @return .
-     */
-    public long[] values() {
-        return this.results;
-    }
+public class OptionDebug extends Option {
+    //
 }

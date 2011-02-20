@@ -30,15 +30,17 @@ package benchmarks.model;
 import net.jcores.interfaces.functions.F1;
 
 /**
+ * Solves a task.
+ * 
  * @author Ralf Biedert
- * @param <T> 
- *
+ * @param <T> Type of the task data
  */
 public class TaskSolver<T> {
-    /** */
-    private F1<T, Object> f;
     
-    /** */
+    /** The actual solver */
+    private F1<T, Object> f;
+
+    /** Name of this solver. */
     private String name;
 
     /**
@@ -51,14 +53,18 @@ public class TaskSolver<T> {
     }
 
     /**
-     * @return .
+     * Returns the task solver.
+     * 
+     * @return The function to solve the task.
      */
     public F1<T, Object> f() {
         return this.f;
     }
-    
+
     /**
-     * @return .
+     * Name of this solver
+     * 
+     * @return Name.
      */
     public String name() {
         return this.name;

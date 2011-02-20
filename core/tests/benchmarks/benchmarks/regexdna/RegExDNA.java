@@ -25,78 +25,97 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package benchmarks.benchmarks;
+package benchmarks.benchmarks.regexdna;
 
-import static net.jcores.CoreKeeper.$;
-
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import junit.data.Data;
 import net.jcores.interfaces.functions.F1;
-import net.jcores.interfaces.functions.F2ReduceObjects;
 import benchmarks.benchmarker.Benchmark;
 import benchmarks.model.TaskData;
 import benchmarks.model.TaskSolver;
 
 /**
- * A very simple test.
+ * regexdna task from the "Computer Language Benchmarks Game"
  * 
  * @author Ralf Biedert
  */
-public class SimpleTest extends Benchmark<String[]> {
+public class RegExDNA extends Benchmark<Void> {
 
     /* (non-Javadoc)
      * @see benchmarks.benchmarker.Benchmark#data()
      */
     @Override
-    public TaskData<String[]> data() {
-        return new TaskData<String[]>(Data.sn);
+    public TaskData<Void> data() {
+        return new TaskData<Void>();
     }
 
     /* (non-Javadoc)
      * @see benchmarks.benchmarker.Benchmark#solver()
      */
     @Override
-    public Collection<TaskSolver<String[]>> solver() {
-        final Collection<TaskSolver<String[]>> rval = new ArrayList<TaskSolver<String[]>>();
-
-        // Add the individual solvers
-        rval.add(new TaskSolver<String[]>("plain", new F1<String[], Object>() {
+    public Collection<TaskSolver<Void>>
+    solver() {
+        final Collection<TaskSolver<Void>> rval = new ArrayList<TaskSolver<Void>>();
+        
+        
+        // Add solver
+        rval.add(new TaskSolver<Void>("jcores.partial.2", new F1<Void, Object>() {
             @Override
-            public Void f(String[] x) {
-                String longest = "";
-                for (int i = 0; i < x.length; i++) {
-                    if (x[i].length() > longest.length()) longest = x[i];
-                }
-                longest.getBytes();
-
-                return null;
+            public Object f(Void x) {
+                InputStream stream = RegExDNA.class.getResourceAsStream("regexdna-input.txt");
+                String main = SolverJCores2.main(stream);
+                System.out.println(main);
+                return main;
             }
         }));
         
-        // Yet another solver
-        rval.add(new TaskSolver<String[]>("jcores", new F1<String[], Object>() {
+        // Add solver
+        rval.add(new TaskSolver<Void>("jcores.partial.1", new F1<Void, Object>() {
             @Override
-            public Void f(String[] x) {
-                String longest = $(x).fold(new F2ReduceObjects<String>() {
-                    public String f(String left, String right) {
-                        return left.length() < right.length() ? right : left;
-                    }
-                }).get("Failed");
-
-                return null;
+            public Object f(Void x) {
+                InputStream stream = RegExDNA.class.getResourceAsStream("regexdna-input.txt");
+                String main = null;
+                try {
+                    main = SolverJCores1.main(stream);
+                    System.out.println(main);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                return main;
             }
         }));
 
+        // Add solver
+        rval.add(new TaskSolver<Void>("plain.shootout", new F1<Void, Object>() {
+            @Override
+            public Object f(Void x) {
+                InputStream stream = RegExDNA.class.getResourceAsStream("regexdna-input.txt");
+                String main = null;
+                try {
+                    main = SolverVanilla.main(stream);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                return main;
+            }
+        }));
+
+
+        
         return rval;
     }
+    
 
     /* (non-Javadoc)
      * @see benchmarks.benchmarker.Benchmark#name()
      */
     @Override
     public String name() {
-        return "Simple Task";
+        return "RegExDNA";
     }
 }

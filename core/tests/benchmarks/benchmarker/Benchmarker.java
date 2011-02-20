@@ -30,9 +30,11 @@ package benchmarks.benchmarker;
 import net.jcores.interfaces.functions.F0;
 
 /**
+ * Benchmarks a task with a set of methods
+ * 
  * @author Ralf Biedert
  */
-public class Benchmarker {
+public class Benchmarker { 
     /**
      * Benchmarks the given function a number of times and returns the average over the last n instances.  
      * 

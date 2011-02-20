@@ -36,6 +36,8 @@ package benchmarks.model;
  */
 public class Task<T> {
     /**
+     * Constructs a task with the given data and solvers.
+     * 
      * @param data
      * @param solver
      */

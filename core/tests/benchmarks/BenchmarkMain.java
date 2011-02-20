@@ -36,6 +36,7 @@ import benchmarks.benchmarker.Benchmark;
 import benchmarks.benchmarker.BenchmarkResults;
 import benchmarks.benchmarker.Benchmarker;
 import benchmarks.benchmarks.SimpleTest;
+import benchmarks.benchmarks.regexdna.RegExDNA;
 import benchmarks.model.TaskData;
 import benchmarks.model.TaskSolver;
 
@@ -49,17 +50,24 @@ public class BenchmarkMain {
      */
     @SuppressWarnings("unchecked")
     public static void main(String[] args) {
+        // Prepare benchmarks contianer
         final Collection<Class<? extends Benchmark<?>>> classes = new ArrayList<Class<? extends Benchmark<?>>>();
+        
+        // Add bechmarks
         classes.add(SimpleTest.class);
-
+        classes.add(RegExDNA.class);
+        
+        // Now process all benchmarks
         for (Class<?> class1 : classes) {
             try {
                 final Benchmark<?> benchmark = (Benchmark<?>) class1.newInstance();
                 final TaskData<?> data = benchmark.data();
                 final Collection<?> solvers = benchmark.solver();
 
+                // Print benchmark we're currently running
                 System.out.println(benchmark.name());
 
+                // And process each solver ...
                 for (Object object : solvers) {
                     final TaskSolver<Object> solver = (TaskSolver<Object>) object;
                     final Object d = data != null ? data.getData() : null;
@@ -67,6 +75,7 @@ public class BenchmarkMain {
 
                     System.out.print("    " + solver.name() + ": ");
 
+                    // Let the benchmark run
                     final BenchmarkResults results = Benchmarker.benchmark(new F0() {
                         @Override
                         public void f() {
@@ -74,6 +83,7 @@ public class BenchmarkMain {
                         }
                     }, 5);
 
+                    // And print results of the last n runs
                     System.out.print(results.average(4) + "µs (");
                     long[] values = results.values();
                     for (int i = 0; i < values.length; i++) {

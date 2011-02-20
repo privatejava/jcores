@@ -125,4 +125,30 @@ public class CoreNumber extends CoreObject<Number> {
     public double standarddeviation() {
         return Math.sqrt(variance());
     }
+    
+
+    /**
+     * Returns the sum of all enclosed numbers.<br/>
+     * <br/>
+     * 
+     * Single-threaded.<br/>>
+     * <br/>
+     * 
+     * @return The sum of all enclosed numbers. If no numbers are
+     * enclosed, <code>0</code> is returned.
+     */
+    public double sum() {
+        final int size = size();
+        double sum = 0.0;
+
+        // Compute the average of all values
+        for (int i = 0; i < size; i++) {
+            final Number number = get(i);
+            if (number == null) continue;
+
+            sum += number.doubleValue();
+        }
+
+        return sum;
+    }
 }
