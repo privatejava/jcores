@@ -50,7 +50,7 @@ public class CoreObjectTest {
     /** */
     @Test
     public void testForEach() {
-        Assert.assertEquals("hw", $("hello", "world").forEach(new F1<String, String>() {
+        Assert.assertEquals("hw", $("hello", "world").each(new F1<String, String>() {
             @Override
             public String f(String x) {
                 return x.substring(0, 1);

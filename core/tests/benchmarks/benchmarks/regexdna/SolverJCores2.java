@@ -66,7 +66,7 @@ public final class SolverJCores2 {
                 result.put(x, count);
                 return x;
             }
-        }).forEach(new F1<String, Void>() {
+        }).each(new F1<String, Void>() {
             public Void f(String x) {
                 console.append(x + " " + result.get(x) + "\n");
                 return null;
