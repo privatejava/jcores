@@ -71,7 +71,7 @@ public class StreamUtils {
 
         unzipDestinationDirectory.mkdirs();
 
-        final ZipInputStream zipFile = new ZipInputStream(inputStream);
+        final ZipInputStream zipFile = (ZipInputStream) ((inputStream instanceof ZipInputStream) ? inputStream : new ZipInputStream(inputStream));
 
         ZipEntry nextEntry = zipFile.getNextEntry();
 

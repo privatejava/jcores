@@ -37,6 +37,7 @@ import benchmarks.benchmarker.BenchmarkResults;
 import benchmarks.benchmarker.Benchmarker;
 import benchmarks.benchmarks.SimpleTest;
 import benchmarks.benchmarks.regexdna.RegExDNA;
+import benchmarks.benchmarks.reversecomplement.ReverseComplement;
 import benchmarks.model.TaskData;
 import benchmarks.model.TaskSolver;
 
@@ -56,6 +57,7 @@ public class BenchmarkMain {
         // Add bechmarks
         classes.add(SimpleTest.class);
         classes.add(RegExDNA.class);
+        classes.add(ReverseComplement.class);
         
         // Now process all benchmarks
         for (Class<?> class1 : classes) {
@@ -81,10 +83,10 @@ public class BenchmarkMain {
                         public void f() {
                             f.f(d);
                         }
-                    }, 5);
+                    }, 20);
 
                     // And print results of the last n runs
-                    System.out.print(results.average(4) + "µs (");
+                    System.out.print(results.average(15) + "µs (");
                     long[] values = results.values();
                     for (int i = 0; i < values.length; i++) {
                         System.out.print(values[i] + "µs");

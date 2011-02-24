@@ -25,9 +25,10 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package benchmarks.benchmarks.regexdna;
+package benchmarks.benchmarks.reversecomplement;
 
-import java.io.IOException;
+import static net.jcores.CoreKeeper.$;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,7 +43,7 @@ import benchmarks.model.TaskSolver;
  * 
  * @author Ralf Biedert
  */
-public class RegExDNA extends Benchmark<Void> {
+public class ReverseComplement extends Benchmark<Void> {
 
     /* (non-Javadoc)
      * @see benchmarks.benchmarker.Benchmark#data()
@@ -61,30 +62,15 @@ public class RegExDNA extends Benchmark<Void> {
         final Collection<TaskSolver<Void>> rval = new ArrayList<TaskSolver<Void>>();
         
         // Add solver
-        rval.add(new TaskSolver<Void>("jcores.1", new F1<Void, Object>() {
+        rval.add(new TaskSolver<Void>("plain.reverse.st", new F1<Void, Object>() {
             @Override
             public Object f(Void x) {
-                InputStream stream = RegExDNA.class.getResourceAsStream("regexdna-input.txt");
-                String main = null;
-                try {
-                    main = SolverJCores1.main(stream);
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                return main;
-            }
-        }));
-
-        // Add solver
-        rval.add(new TaskSolver<Void>("plain.shootout.st", new F1<Void, Object>() {
-            @Override
-            public Object f(Void x) {
-                InputStream stream = RegExDNA.class.getResourceAsStream("regexdna-input.txt");
+                InputStream stream = ReverseComplement.class.getResourceAsStream("reverse-input.txt");
                 String main = null;
                 try {
                     main = SolverVanillaST.main(stream);
-                } catch (IOException e) {
+                    $("test.plain.txt").file().delete().append(main);
+                } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
@@ -92,51 +78,6 @@ public class RegExDNA extends Benchmark<Void> {
             }
         }));
 
-
-        // Add solver
-        rval.add(new TaskSolver<Void>("plain.shootout.mt", new F1<Void, Object>() {
-            @Override
-            public Object f(Void x) {
-                InputStream stream = RegExDNA.class.getResourceAsStream("regexdna-input.txt");
-                String main = null;
-                try {
-                    main = SolverVanillaMT.main(stream);
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                return main;
-            }
-        }));
-
-
-        // Add solver
-        rval.add(new TaskSolver<Void>("plain.shootout.mtassisted", new F1<Void, Object>() {
-            @Override
-            public Object f(Void x) {
-                InputStream stream = RegExDNA.class.getResourceAsStream("regexdna-input.txt");
-                String main = null;
-                try {
-                    main = SolverVanillaMTAssisted.main(stream);
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                return main;
-            }
-        }));
-
-        
-        // Add solver
-        rval.add(new TaskSolver<Void>("jcores.2", new F1<Void, Object>() {
-            @Override
-            public Object f(Void x) {
-                InputStream stream = RegExDNA.class.getResourceAsStream("regexdna-input.txt");
-                String main = SolverJCores2.main(stream);
-                return main;
-            }
-        }));
-        
         
         return rval;
     }
@@ -147,6 +88,6 @@ public class RegExDNA extends Benchmark<Void> {
      */
     @Override
     public String name() {
-        return "RegExDNA";
+        return "Reverse Complement";
     }
 }

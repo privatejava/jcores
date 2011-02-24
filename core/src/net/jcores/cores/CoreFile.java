@@ -116,6 +116,27 @@ public class CoreFile extends CoreObject<File> {
     }
 
     /**
+     * Copies all enclosed files to the destination. If <code>destination</code> is a directory all enclosed objects
+     * will be copied into that directory. If the destination is a file then it will be overwritten. In that case, and
+     * if this core encloses multiple files or directories, it is undefined what the content of <code>destination</code>
+     * will be afterwards<br/>
+     * <br/>
+     * 
+     * Multi-threaded.<br/>
+     * <br/>
+     * 
+     * @param destination The destination to write to. Can be a directory or a file. Directories <b>MUST end with a slash
+     * "/"</b>, otherwise they will be treated as files!
+     * 
+     * @return The same core file object (<code>this</code>).
+     */
+    public CoreFile copy(String destination) {
+        if (destination == null) return this;
+
+        return this;
+    }
+
+    /**
      * Opens the enclosed file streams as binary files and reads their data into byte
      * buffers.
      * File stream which could not be opened will be returned as null.<br/>
@@ -282,6 +303,25 @@ public class CoreFile extends CoreObject<File> {
     }
 
     /**
+     * Returns the file sizes for all enclose file objects<br/>
+     * <br/>
+     * 
+     * Multi-threaded.<br/>
+     * <br/>
+     * 
+     * 
+     * @return A CoreFile containing a filtered subset of our elements.
+     */
+    public CoreNumber filesize() {
+        return new CoreNumber(this.commonCore, map(new F1<File, Long>() {
+            @SuppressWarnings("boxing")
+            public Long f(final File x) {
+                return x.length();
+            }
+        }).array(Long.class));
+    }
+
+    /**
      * Filters all files by their name using the given regular expression. <br/>
      * <br/>
      * 
@@ -320,11 +360,9 @@ public class CoreFile extends CoreObject<File> {
             public InputStream f(File x) {
                 try {
                     return new BufferedInputStream(new FileInputStream(x));
-                } catch (FileNotFoundException e) {
-                                                        //
-                                                    }
-                                                    return null;
-                                                }
+                } catch (FileNotFoundException e) {}
+                return null;
+            }
         }).array(InputStream.class));
     }
 

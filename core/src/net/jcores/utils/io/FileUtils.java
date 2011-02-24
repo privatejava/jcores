@@ -80,6 +80,22 @@ public class FileUtils {
 
         return null;
     }
+    
+    /**
+     * Copies a file .
+     * 
+     * @param cc
+     * @param from
+     * @param to
+     */
+    public static void copy(CommonCore cc, File from, File to) {
+        BufferedReader reader = null;
+        
+        if(to.getAbsolutePath().endsWith("/")) to.mkdirs();
+        
+    }
+
+    
 
     /**
      * Zips a number of files into the target.
