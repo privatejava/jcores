@@ -817,7 +817,7 @@ public class CoreObject<T> extends Core {
      * @return A CoreObject containing the mapped elements in a stable order.
      */
     @SuppressWarnings("unchecked")
-    public <R> CoreObject<R> each(final F1<T, R> f, Option... options) {
+    public <R> CoreObject<R> forEach(final F1<T, R> f, Option... options) {
 
         final int size = size();
         R[] a = null;
