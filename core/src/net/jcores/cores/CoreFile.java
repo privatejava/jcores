@@ -29,6 +29,7 @@ package net.jcores.cores;
 
 import static net.jcores.CoreKeeper.$;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -48,6 +49,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.imageio.ImageIO;
 
 import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F1;
@@ -344,6 +347,30 @@ public class CoreFile extends CoreObject<File> {
         }, options).array(File.class));
     }
 
+    
+    /**
+     * Tries to load all enclosed files as images.<br/>
+     * <br/>
+     * 
+     * Multi-threaded.<br/>
+     * <br/>
+     * 
+     * @return A CoreBufferedImage with the loaded images.
+     */
+    public CoreBufferedImage images() {
+        return new CoreBufferedImage(this.commonCore, map(new F1<File, BufferedImage>() {
+            public BufferedImage f(File x) {
+                try {
+                    return ImageIO.read(x);
+                } catch (IOException e) {
+                    CoreFile.this.commonCore.report(MessageType.EXCEPTION, "Error loading image " + x);
+                }
+                return null;
+            }
+        }).array(BufferedImage.class));
+    }
+
+    
     /**
      * Opens the given file objects as input streams. File stream which could not be
      * opened
@@ -369,8 +396,7 @@ public class CoreFile extends CoreObject<File> {
     /**
      * Returns all lines of all files joint. A core will be returned in which each
      * entry is a String containing the specific file's content. This is a shorthand
-     * notation
-     * for <code>inputstream().text()</code><br/>
+     * notation for <code>inputstream().text()</code><br/>
      * <br/>
      * 
      * Multi-threaded.<br/>
@@ -387,7 +413,7 @@ public class CoreFile extends CoreObject<File> {
     }
 
     /**
-     * Converts all files to URIs<br/>
+     * Converts all files to URIs.<br/>
      * <br/>
      * 
      * Multi-threaded.<br/>

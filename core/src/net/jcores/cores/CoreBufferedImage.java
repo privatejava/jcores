@@ -32,9 +32,14 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F1;
+import net.jcores.options.MessageType;
 
 /**
  * Wraps a number of BufferedImages and exposes some convenience functions.
@@ -82,7 +87,7 @@ public class CoreBufferedImage extends CoreObject<BufferedImage> {
     }
 
     /**
-     * Scales all contained images by the given factor<br/>
+     * Scales all contained images by the given factor.<br/>
      * <br/>
      * 
      * Multi-threaded.<br/>
@@ -103,4 +108,38 @@ public class CoreBufferedImage extends CoreObject<BufferedImage> {
             }
         }).array(BufferedImage.class));
     }
+
+    /**
+     * Writes the enclosed image at position <code>0</code> to the given file. The file type will be
+     * recognized by the suffix.<br/>
+     * <br/>
+     * Single-threaded, size-of-one.<br/>
+     * <br/>
+     * 
+     * @param file The file to write the image get(0) to.
+     * @return This CoreBufferedImage object.
+     */
+    public CoreBufferedImage write(String file) {
+        if (file == null) return this;
+
+        if (size() != 1) {
+            this.commonCore.report(MessageType.MISUSE, "CoreBufferedImage.write() needs exactly one image to write, at the moment.");
+        }
+
+        String type = "png";
+        type = file.toLowerCase().endsWith(".gif") ? "GIF" : type;
+        type = file.toLowerCase().endsWith(".jpg") ? "JPG" : type;
+        type = file.toLowerCase().endsWith(".jpeg") ? "JPG" : type;
+        type = file.toLowerCase().endsWith(".bmp") ? "BMP" : type;
+        type = file.toLowerCase().endsWith(".wbmp") ? "WBMP" : type;
+
+        try {
+            ImageIO.write(get(0), type, new File(file));
+        } catch (IOException e) {
+            this.commonCore.report(MessageType.EXCEPTION, "Error writing image to file " + file);
+        }
+
+        return this;
+    }
+
 }

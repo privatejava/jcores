@@ -43,6 +43,7 @@ import net.jcores.managers.ManagerClass;
 import net.jcores.managers.ManagerDebugGUI;
 import net.jcores.managers.ManagerStatistics;
 import net.jcores.options.MessageType;
+import net.jcores.options.Option;
 import net.jcores.utils.Reporter;
 
 /**
@@ -196,4 +197,14 @@ public class CommonCore {
     }
 
 
+    /**
+     * Creates an unique ID. If nothing is specified each call delivers a 
+     * new, unique ID. TODO: Option.UID_SYSTEM, .UID_USER, .UID_APP, ...
+     *  
+     * @param options 
+     * @return Returns a unique ID.
+     */
+    public String uniqueID(Option ... options) {
+        return "TODO";
+    }
 }
