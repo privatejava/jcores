@@ -93,7 +93,8 @@ public class CoreKeeper {
     public static CoreNumber $(Number... object) {
         return new CoreNumber($, object);
     }
-
+    
+    
     /**
      * Wraps number of compounds and returns a new CompoundCore.
      * 

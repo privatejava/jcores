@@ -44,5 +44,10 @@ public class SimpleNumberTest {
 
         System.out.println(number.average());
         System.out.println(number.variance());
+        
+        System.out.println($.range(1, 50000).random(10).as(CoreNumber.class).standarddeviation());
+        System.out.println($.range(1, 50).random(6).string().join(" "));
+        System.out.println($.range(1, 50).random(1.0).string().join(" "));
+
     }
 }

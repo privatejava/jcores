@@ -27,6 +27,8 @@
  */
 package net.jcores;
 
+import static net.jcores.CoreKeeper.$;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Random;
@@ -38,6 +40,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.jcores.cores.CoreNumber;
 import net.jcores.managers.Manager;
 import net.jcores.managers.ManagerClass;
 import net.jcores.managers.ManagerDebugGUI;
@@ -94,6 +97,23 @@ public class CommonCore {
     }
 
     /**
+     * Wraps number of ints and returns a Integer array.
+     * 
+     * @param object The numbers to wrap.
+     * @return An Integer array.
+     */
+    @SuppressWarnings("boxing")
+    public static Integer[] box(int... object) {
+        int i = 0;
+        
+        final Integer[] myIntegers = new Integer[object.length];
+        for(int val : object) myIntegers[i++] = val;
+        
+        return myIntegers;
+    }
+    
+    
+    /**
      * Executes the given runnable count times. Call this method with your 
      * given workers and a number of threads (usually number of CPUs).
      * 
@@ -142,6 +162,57 @@ public class CommonCore {
         this.logger.log(level, string);
     }
 
+    
+    /**
+     * Creates a CoreNumber object with numbers ranging from 0 up to end.  
+     * 
+     * @param end The last number (exclusive).
+     * @return A core number object. 
+     */
+    public CoreNumber range(int end) {
+        return range(0, end, 1);
+    }
+    
+    /**
+     * Creates a CoreNumber object with the given start and end and a stepping of +-1.  
+     * 
+     * @param from The first number (inclusive) 
+     * @param end The last number (exclusive).
+     * @return A core number object. 
+     */
+    public CoreNumber range(int from, int end) {
+        return range(from, end, from <= end ? 1 : -1);
+    }
+
+    
+    /**
+     * Creates a CoreNumber object with the given start, end and stepping.  
+     * 
+     * @param from The first number (inclusive) 
+     * @param end The last number (exclusive).
+     * @param stepping The stepping
+     *  
+     * @return A core number object. 
+     */
+    public CoreNumber range(int from, int end, int stepping) {
+        // FIXME: Stepping problems
+        final int rval[] = new int[Math.abs((end-from)/stepping)];
+        int ptr = 0;
+        
+        if(from <= end) {
+            for(int i=from; i<end; i+=stepping) {
+                rval[ptr++] = i;
+            }
+        } else {
+            for(int i=from; i>end; i+=stepping) {
+                rval[ptr++] = i;
+            }            
+        }
+        
+        return $(box(rval));
+    }
+    
+    
     /**
      * Reports the problem to our internal problem queue. Use report() for all 
      * internal error and problem reporting and use log() for user requested 
@@ -194,6 +265,23 @@ public class CommonCore {
         final File file = new File(tempfile().getAbsoluteFile() + ".dir");
         file.mkdirs();
         return file;
+    }
+
+
+    /**
+     * Unboxes a number of Integers. 
+     * 
+     * @param object The numbers to unbox.
+     * @return An int array.
+     */
+    @SuppressWarnings("boxing")
+    public static int[] unbox(Integer... object) {
+        int i = 0;
+        
+        final int[] myIntegers = new int[object.length];
+        for(int val : object) myIntegers[i++] = val;
+        
+        return myIntegers;
     }
 
 
