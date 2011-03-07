@@ -1033,9 +1033,11 @@ public class CoreObject<T> extends Core {
      * <br/>
      * 
      * @param f0 The function to execute if all elements are given.
+     * @return This core.
      */
-    public void ifAll(F0 f0) {
+    public CoreObject<T> ifAll(F0 f0) {
         if (hasAll()) f0.f();
+        return this;
     }
 
     /**
