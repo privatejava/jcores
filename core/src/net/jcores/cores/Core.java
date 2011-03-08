@@ -27,8 +27,6 @@
  */
 package net.jcores.cores;
 
-import static net.jcores.CoreKeeper.$;
-
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.concurrent.BrokenBarrierException;
@@ -251,19 +249,5 @@ public abstract class Core implements Serializable {
         } catch (BrokenBarrierException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Sends a request to the developers requesting a feature with the given name. The
-     * request will
-     * be sent to a server and collected. Information of the enclosed objects and the
-     * feature request
-     * string will be transmitted as well.
-     * 
-     * @param functionName Call this function for example like this
-     * $(myobjects).featurerequest(".compress() -- Should compress the given objects.");
-     */
-    public void featurerequest(String functionName) {
-        $("Request logged.").log();
     }
 }

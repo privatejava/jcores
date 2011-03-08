@@ -49,7 +49,6 @@ import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F0;
 import net.jcores.interfaces.functions.F1;
 import net.jcores.interfaces.functions.F1Object2Bool;
-import net.jcores.interfaces.functions.F1Object2Int;
 import net.jcores.interfaces.functions.F2DeltaObjects;
 import net.jcores.interfaces.functions.F2ReduceObjects;
 import net.jcores.managers.ManagerDebugGUI;
@@ -377,51 +376,8 @@ public class CoreObject<T> extends Core {
     @SuppressWarnings("unused")
     public CoreObject<T> debug() {
 
-        final StringBuilder sb = new StringBuilder();
-        sb.append("@(");
-        sb.append(getClass().getSimpleName());
-        sb.append("; outerSize:");
-        sb.append(size());
-        sb.append("; innerSize:");
-
-        // Append inner size
-        if (this.t != null) {
-            Object first = null;
-            int ctr = 0;
-
-            // Count elements and extract first nonnull element.
-            for (int i = 0; i < this.t.length; i++) {
-                if (this.t[i] != null) {
-                    ctr++;
-                    if (first == null) first = this.t[i];
-                }
-            }
-            sb.append(ctr);
-
-            // Append type of first element (disabled)
-            if (first != null && false) {
-                sb.append("; firstElement:");
-                sb.append(first.getClass().getSimpleName());
-            }
-        } else {
-            sb.append("null");
-        }
-
-        // Append fingerprint
-        if (this.t != null && this.t.length <= 16) {
-            sb.append("; fingerprint:");
-            for (int i = 0; i < this.t.length; i++) {
-                if (this.t[i] != null) {
-                    sb.append(this.t[i].getClass().getSimpleName().charAt(0));
-                } else
-                    sb.append(".");
-            }
-        }
-
-        sb.append(")");
-
         // Print the result
-        System.out.println(sb.toString());
+        System.out.println(fingerprint(false));
 
         // And add it to the debug GUI
         ManagerDebugGUI debugGUI = this.commonCore.manager(ManagerDebugGUI.class);
@@ -669,6 +625,24 @@ public class CoreObject<T> extends Core {
 
         return new CoreObject<N>(this.commonCore, n);
     }
+    
+
+    /**
+     * Sends a request to the developers requesting a feature with the given name. The
+     * request will be sent to a server and collected. Information of the enclosed objects and the
+     * feature request string will be transmitted as well.
+     * 
+     * @param functionName Call this function for example like this
+     * $(myobjects).featurerequest(".compress() -- Should compress the given objects.");
+     */
+    @SuppressWarnings("unused")
+    public void featurerequest(String functionName) {
+        final String fingerprint = fingerprint(true);
+        final String message = functionName;
+        
+        
+        $("Request logged.").log();
+    }
 
     /**
      * Returns a new core with all null elements set to <code>fillValue</code>.<br/>
@@ -744,6 +718,58 @@ public class CoreObject<T> extends Core {
                 return matcher.matches();
             }
         }, options);
+    }
+    
+    /**
+     * Generates a textual fingerprint for this element for debugging purporses.
+     * 
+     * @param detailed If the fingerprint should contain detailed information or not.
+     * @return A user-readable string which can be printed.
+     */
+    protected String fingerprint(boolean detailed) {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("@(");
+        sb.append(getClass().getSimpleName());
+        sb.append("; outerSize:");
+        sb.append(size());
+        sb.append("; innerSize:");
+
+        // Append inner size
+        if (this.t != null) {
+            Object first = null;
+            int ctr = 0;
+
+            // Count elements and extract first nonnull element.
+            for (int i = 0; i < this.t.length; i++) {
+                if (this.t[i] != null) {
+                    ctr++;
+                    if (first == null) first = this.t[i];
+                }
+            }
+            sb.append(ctr);
+
+            // Append type of first element (disabled)
+            if (first != null && detailed) {
+                sb.append("; firstElement:");
+                sb.append(first.getClass().getSimpleName());
+            }
+        } else {
+            sb.append("null");
+        }
+
+        // Append fingerprint
+        if (this.t != null && this.t.length <= 16) {
+            sb.append("; fingerprint:");
+            for (int i = 0; i < this.t.length; i++) {
+                if (this.t[i] != null) {
+                    sb.append(this.t[i].getClass().getSimpleName().charAt(0));
+                } else
+                    sb.append(".");
+            }
+        }
+
+        sb.append(")");
+        return sb.toString();
     }
 
     /**
@@ -1185,29 +1211,6 @@ public class CoreObject<T> extends Core {
         return new CoreObject<R>(this.commonCore, rval);
     }
 
-    /**
-     * Maps the core's content with the given function and returns the result.
-     * 
-     * @param f
-     * @param options
-     * 
-     * @deprecated
-     * @return The mapped elements in a stable order
-     */
-    @Deprecated
-    public CoreInt map(final F1Object2Int<T> f, Option... options) {
-        final Mapper mapper = new Mapper(int.class, size()) {
-            @Override
-            public void handle(int i) {
-                int[] a = (int[]) this.array.get();
-                a[i] = f.f(CoreObject.this.t[i]);
-            }
-        };
-
-        map(mapper, options);
-
-        return new CoreInt(this.commonCore, (int[]) mapper.getTargetArray());
-    }
 
     /**
      * Returns a randomly selected object, including null values.<br/>
