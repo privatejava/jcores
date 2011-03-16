@@ -180,6 +180,7 @@ public class CoreString extends CoreObject<String> {
      * 
      * @return Returns this CoreString object again.
      */
+    @Override
     public CoreString print() {
         if (size() == 0) return this;
 

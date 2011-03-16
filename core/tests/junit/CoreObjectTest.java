@@ -74,4 +74,13 @@ public class CoreObjectTest {
         
         $(Data.strings(10000)).serialize("big.file");
     }
+    
+
+    /** */
+    @Test
+    public void testRandom() {
+        Assert.assertEquals(4, $("a", "b", "c", "d", "e", "f", "g").random(4).size());
+        Assert.assertEquals($("a", "b", "c", "d", "e", "f", "g"), $("a", "b", "c", "d", "e", "f", "g").random(1.0).sort());
+        Assert.assertEquals(0, $("a", "b", "c", "d", "e", "f", "g").random(0.0).size());
+    }
 }

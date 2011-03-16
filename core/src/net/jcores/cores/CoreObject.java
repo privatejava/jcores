@@ -144,8 +144,7 @@ public class CoreObject<T> extends Core {
     /**
      * Returns a core that tries to treat all elements as being of the given type.
      * Elements which
-     * don't match are ignored. Can also be used to load extensions (e.g.,
-     * <code>somecore.as(CoreString.class)</code>).
+     * don't match are ignored. Can also be used to load extensions (e.g., <code>somecore.as(CoreString.class)</code>).
      * This function should not be called within hot-spots (functions called millions of
      * times a second)
      * as it relies heavily on reflection.<br/>
@@ -463,9 +462,8 @@ public class CoreObject<T> extends Core {
 
     /**
      * Returns a single object that, if any of its functions is executed, the
-     * corresponding function is executed on all enclosed elements. Only works if
-     * <code>c</code> is an interface and only on enclosed elements implementing
-     * <code>c</code>. From a
+     * corresponding function is executed on all enclosed elements. Only works if <code>c</code> is an interface and
+     * only on enclosed elements implementing <code>c</code>. From a
      * performance perspective this method only makes sense if the requested operation is
      * complex,
      * as on simple methods the reflection costs will outweigh all benefits. Also note
@@ -625,7 +623,6 @@ public class CoreObject<T> extends Core {
 
         return new CoreObject<N>(this.commonCore, n);
     }
-    
 
     /**
      * Sends a request to the developers requesting a feature with the given name. The
@@ -639,8 +636,7 @@ public class CoreObject<T> extends Core {
     public void featurerequest(String functionName) {
         final String fingerprint = fingerprint(true);
         final String message = functionName;
-        
-        
+
         $("Request logged.").log();
     }
 
@@ -719,7 +715,7 @@ public class CoreObject<T> extends Core {
             }
         }, options);
     }
-    
+
     /**
      * Generates a textual fingerprint for this element for debugging purporses.
      * 
@@ -1153,7 +1149,7 @@ public class CoreObject<T> extends Core {
                 debug = true;
             }
         }
-        
+
         // Create mapper
         final boolean debugInternal = debug;
         final Mapper mapper = new Mapper(mapType, size()) {
@@ -1167,7 +1163,7 @@ public class CoreObject<T> extends Core {
 
                 // Debugging
                 long startTime = 0;
-                if(debugInternal) {
+                if (debugInternal) {
                     startTime = System.nanoTime();
                 }
 
@@ -1176,13 +1172,13 @@ public class CoreObject<T> extends Core {
                 final R out = f.f(in);
 
                 // Debugging
-                if(debugInternal) {
+                if (debugInternal) {
                     long stopTime = System.nanoTime();
-                    System.out.println("Element " + i + " took " + ((stopTime-startTime)/1000) + "µs");
+                    System.out.println("Element " + i + " took " + ((stopTime - startTime) / 1000) + "µs");
                 }
-                
+
                 if (out == null) return;
-                
+
                 // If we haven't had an in-array, create it now, according to the return
                 // type
                 if (a == null) {
@@ -1211,6 +1207,26 @@ public class CoreObject<T> extends Core {
         return new CoreObject<R>(this.commonCore, rval);
     }
 
+    /**
+     * Prints all strings to the console. Almost the same as <code>string().print()</code>,
+     * except that this method returns a CoreObject again.<br/>
+     * <br/>
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @return Returns this CoreObject object again.
+     */
+    public CoreObject<T> print() {
+        if (size() == 0) return this;
+
+        for (Object s : this.t) {
+            if (s == null) continue;
+            System.out.println(s);
+        }
+
+        return this;
+    }
 
     /**
      * Returns a randomly selected object, including null values.<br/>
@@ -1268,31 +1284,19 @@ public class CoreObject<T> extends Core {
         if (size == 0) return this;
 
         // Create a shuffletable
-        final int table[] = new int[size];
-        final T[] copyOf = Arrays.copyOf(this.t, newSize);
+        final T[] copyOf = Arrays.copyOf(this.t, size);
 
-        // Initialize table
-        for (int i = 0; i < table.length; i++) {
-            table[i] = i;
+        // Shuffle the copy
+        for (int i = copyOf.length - 1; i >= 1; i--) {
+            int j = this.commonCore.random().nextInt(i + 1);
+
+            T x = copyOf[j];
+            copyOf[j] = copyOf[i];
+            copyOf[i] = x;
         }
 
-        // Shuffle TODO: How often should we shuffle? (lets just take twice the size for
-        // the start)
-        for (int i = 0; i < table.length * 2; i++) {
-            int x = this.commonCore.random().nextInt(size);
-            int y = this.commonCore.random().nextInt(size);
-
-            int v = table[x];
-            table[x] = table[y];
-            table[y] = v;
-        }
-
-        // Now we just fill the shuffled elements into our table
-        for (int i = 0; i < newSize; i++) {
-            copyOf[i] = get(table[i]);
-        }
-
-        return new CoreObject<T>(this.commonCore, copyOf);
+        // And return the first newSize elements
+        return new CoreObject<T>(this.commonCore, Arrays.copyOfRange(copyOf, 0, newSize));
     }
 
     /**
@@ -1374,8 +1378,8 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns a slice of this core. Element inside this slice start at <code>start</code>
-     * . If <code>length</code> is positive it is treated
+     * Returns a slice of this core. Element inside this slice start at <code>start</code> . If <code>length</code> is
+     * positive it is treated
      * as a length, if it is negative, it is treated as a (inclusive) end-index.<br/>
      * <br/>
      * 
@@ -1412,8 +1416,7 @@ public class CoreObject<T> extends Core {
      * Single-threaded. <br/>
      * <br/>
      * 
-     * @param c Comparator to use. Caution, <code>c</code> will be called with
-     * <code>null</code> values
+     * @param c Comparator to use. Caution, <code>c</code> will be called with <code>null</code> values
      * for non-existing elements, <code>compact()</code> the core before if you don't want
      * this behavior.
      * @return A CoreObject with sorted entries.
@@ -1428,12 +1431,36 @@ public class CoreObject<T> extends Core {
     }
 
     /**
+     * Returns a new, sorted core. If the elements of this core are not sortable 
+     * simply this core will be returned again.<br/>
+     * <br/>
+     * 
+     * Single-threaded. <br/>
+     * <br/>
+     * 
+     * @return A CoreObject with sorted entries.
+     */
+    public CoreObject<T> sort() {
+        if (size() == 0) return this;
+
+        final T[] copyOf = Arrays.copyOf(this.t, size());
+        
+        try {
+            Arrays.sort(copyOf);
+        } catch (ClassCastException e) {
+            this.commonCore.report(MessageType.EXCEPTION, "Unable to sort core, elements not comparable: " + fingerprint(true));
+            return this;
+        }
+
+        return new CoreObject<T>(this.commonCore, copyOf);
+    }
+
+    /**
      * Staples all elements. Assists, for example, in computing the average of a number
      * of elements. <code>staple()</code> is similar to <code>reduce()</code>, with the
      * exception that a
      * given neutral element is used as a starting point, and some some derived value
-     * of each contained element might be connected with it. In the end a
-     * <code>Staple</code> will
+     * of each contained element might be connected with it. In the end a <code>Staple</code> will
      * be returned, containing the stapled value and the actual number of elements used.<br/>
      * <br/>
      * 
@@ -1516,8 +1543,7 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns a core containing only unique objects, i.e., object mutually un-
-     * <code>equal()</code>.<br/>
+     * Returns a core containing only unique objects, i.e., object mutually un- <code>equal()</code>.<br/>
      * <br/>
      * 
      * Single-threaded. <br/>
