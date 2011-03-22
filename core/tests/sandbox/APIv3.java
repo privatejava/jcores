@@ -98,7 +98,7 @@ public class APIv3 {
 
         $(F0.class).implementor(F0Impl.class);
         for (int i = 0; i < 100000; i++) {
-            F0 spawn = $(F0.class).spawn();
+           // F0 spawn = $(F0.class).spawn();
             if (i % 1000 == 0) {
                 size = $(F0.class).spawned().size();
                 //System.out.println(size);

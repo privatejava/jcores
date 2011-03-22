@@ -99,91 +99,88 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
     }
 
     /**
-     * Spawns the cored class with the given objects as args. This function will only
-     * operate on the core's first entry (get(0)). If the wrapped class is an interface,
+     * Spawns the cored classes with the given objects as args. If a wrapped class is an interface,
      * the last implementor registered with <code>implementor()</code> will be spawned. <br/>
      * <br/>
      * Single-threaded, size-of-one.<br/>
      * <br/>
      * 
-     * Note that this function is still under development.
-     * 
      * @param args Arguments to pass to the constructor.
      * 
-     * @return The newly created object, or null if no object could be created.
+     * @return The core containing the spawned objects.
      */
     @SuppressWarnings("unchecked")
-    public T spawn(Object... args) {
+    public CoreObject<T> spawn(final Object... args) {
+        // Process each element we might have enclosed.  
+        return map(new F1<Class<T>, T>() {
+            @Override
+            public T f(Class<T> x) {
+                // Get the class we operate on
+                if (x == null) return null;
+                Class<T> toSpawn = x;
 
-        if (size() > 1)
-            this.commonCore.report(MessageType.MISUSE, "spawn() should not be used on cores with more than one class!");
-
-        // Get the class we operate on
-        Class<T> request = get(null);
-        if (request == null) return null;
-        Class<T> toSpawn = request;
-
-        // TODO: Selection of implementor could need some improvement
-        if (request.isInterface()) {
-            toSpawn = (Class<T>) this.manager.getImplementors(request)[0];
-        }
-
-        // Quick pass for most common option
-        if (args == null || args.length == 0) {
-            try {
-                return this.manager.registerObject(request, toSpawn.newInstance());
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-
-        // Get constructor types ...
-        Class<?>[] types = $(args).map(new F1<Object, Class<?>>() {
-            public Class<?> f(Object x) {
-                return x.getClass();
-            }
-        }).array(Class.class);
-
-        try {
-            Constructor<T> constructor = null;
-
-            // Get constructor from cache ... (try to)
-            synchronized (this.constructors) {
-                constructor = this.constructors.get(types);
-
-                // Put a new constructor if it wasn't cached before
-                if (constructor == null) {
-                    constructor = toSpawn.getConstructor(types);
-                    this.constructors.put(types, constructor);
+                // TODO: Selection of implementor could need some improvement
+                if (x.isInterface()) {
+                    toSpawn = (Class<T>) CoreClass.this.manager.getImplementors(x)[0];
                 }
+
+                // Quick pass for most common option
+                if (args == null || args.length == 0) {
+                    try {
+                        return CoreClass.this.manager.registerObject(x, toSpawn.newInstance());
+                    } catch (InstantiationException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                // Get constructor types ...
+                Class<?>[] types = $(args).map(new F1<Object, Class<?>>() {
+                    public Class<?> f(Object xx) {
+                        return xx.getClass();
+                    }
+                }).array(Class.class);
+
+                try {
+                    Constructor<T> constructor = null;
+
+                    // Get constructor from cache ... (try to)
+                    synchronized (CoreClass.this.constructors) {
+                        constructor = CoreClass.this.constructors.get(types);
+
+                        // Put a new constructor if it wasn't cached before
+                        if (constructor == null) {
+                            constructor = toSpawn.getConstructor(types);
+                            CoreClass.this.constructors.put(types, constructor);
+                        }
+                    }
+
+                    return CoreClass.this.manager.registerObject(x, constructor.newInstance(args));
+
+                    // NOTE: We do not swallow all execptions silently, becasue spawn() is a bit
+                    // special and
+                    // we cannot return anything that would still be usable.
+                } catch (SecurityException e) {
+                    e.printStackTrace();
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+
+                // TODO Make sure to only use weak references, so that we don't run out of memory
+                // and prevent
+                // garbage colleciton.
+                return null;
             }
-
-            return this.manager.registerObject(request, constructor.newInstance(args));
-
-            // NOTE: We do not swallow all execptions silently, becasue spawn() is a bit
-            // special and
-            // we cannot return anything that would still be usable.
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-
-        // TODO Make sure to only use weak references, so that we don't run out of memory
-        // and prevent
-        // garbage colleciton.
-
-        return null;
+        });
     }
 
     /**
@@ -213,8 +210,8 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
      * Single-threaded, size-of-one.<br/>
      * <br/>
      * 
-     * @return A core object with all classes jCores has spawned (using
-     * <code>spawn()</code>) of the enclosed class (get(0)).
+     * @return A core object with all classes jCores has spawned (using <code>spawn()</code>) of the enclosed class
+     * (get(0)).
      */
     @SuppressWarnings("unchecked")
     public CoreObject<T> spawned() {

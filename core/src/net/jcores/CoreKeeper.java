@@ -104,6 +104,19 @@ public class CoreKeeper {
     public static CoreCompound $(Compound... object) {
         return new CoreCompound($, object);
     }
+    
+
+    /**
+     * Wraps a single class and returns a new ClassCore. 
+     * 
+     * @param <T> Parameter of the classes' type.
+     * @param clsses The classes to wrap.
+     * @return A CoreClass wrapping the given classes.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> CoreClass<T> $(Class<T> clsses) {
+        return new CoreClass<T>($, new Class[] { clsses });
+    }
 
     /**
      * Wraps number of classes and returns a new ClassCore. In most cases

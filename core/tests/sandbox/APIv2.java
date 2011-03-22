@@ -44,10 +44,10 @@ public class APIv2 {
      * @param args
      */
     public static void main(String[] args) {
-        APIv2 spawn = $(APIv2.class).spawn();
-        Class<APIv2> class1 = $(APIv2.class).get(0);
+        //APIv2 spawn = $(APIv2.class).spawn();
+        //Class<APIv2> class1 = $(APIv2.class).get(0);
 
-        APIv2 object = $(spawn).get(0);
+        //  APIv2 object = $(spawn).get(0);
 
         //List<String> lines = $("open/").file().lines().list();
 
