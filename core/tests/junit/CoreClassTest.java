@@ -28,7 +28,11 @@
 package junit;
 
 import static net.jcores.CoreKeeper.$;
-import junit.data.Data;
+
+import java.awt.Robot;
+
+import net.jcores.cores.CoreClass;
+import net.jcores.cores.CoreObject;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -36,42 +40,19 @@ import org.junit.Test;
 /**
  * @author Ralf Biedert
  */
-public class CoreStringTest {
+public class CoreClassTest {
 
     /** */
+    @SuppressWarnings({ "unchecked", "unused" })
     @Test
-    public void testFile() {
-        Assert.assertEquals("ranges.zip", $(Data.DATA_PATH + "/ranges.zip").file().get(0).getName());
-    }
-
-    /** */
-    @Test
-    public void testFilter() {
-        Assert.assertEquals(1, $(Data.sn).filter("667").size());
-    }
-
-    /** */
-    @Test
-    public void testJoin() {
-        Assert.assertEquals("Hello$World", $("Hello", null, "World").join("$"));
-    }
-
-    /** */
-    @Test
-    public void testSplit() {
-        Assert.assertEquals("rld", $("Hello World").split("o").get(2));
-    }
-    
-
-    /** */
-    @Test
-    public void testNCoding() {
-        Assert.assertEquals("!§$%&/()?", $("!§$%&/()?").encode().decode().get(0));
-    }
-
-    /** */
-    @Test
-    public void testReplace() {
-        Assert.assertEquals("Hello World", $("Hello$World").replace("\\$", " ").get(0));
+    public void testSpawn() {
+        Assert.assertNotNull($(Robot.class).spawn().get(0));
+        Assert.assertNull($(Robot.class).spawn(new Object()).get(0));
+        
+        CoreClass<Robot> a = $(Robot.class, Robot.class);
+        CoreObject<Class<? extends Object>> b = $(Robot.class, Object.class);
+        
+        $(Robot.class).spawned().compact().print();
+        
     }
 }

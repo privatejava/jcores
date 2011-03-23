@@ -32,6 +32,8 @@ import static net.jcores.CoreKeeper.$;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
@@ -66,6 +68,57 @@ public class CoreString extends CoreObject<String> {
         super(supercore, objects);
     }
 
+    
+    
+    
+    /**
+     * Decodes all strings from the application/x-www-form-urlencoded format.<br/>
+     * <br/>
+     * 
+     * Multi-threaded.<br/>
+     * <br/>
+     * 
+     * @return A CoreString object with all decode strings.
+     */
+    public CoreString decode() {
+        return new CoreString(this.commonCore, map(new F1<String, String>() {
+            public String f(String x) {
+                try {
+                    return URLDecoder.decode(x, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                
+                return null;
+            }
+        }).array(String.class));
+    }
+
+    
+    /**
+     * Encodes all strings into the application/x-www-form-urlencoded format.<br/>
+     * <br/>
+     * 
+     * Multi-threaded.<br/>
+     * <br/>
+     * 
+     * @return A CoreString object with all encoded strings.
+     */
+    public CoreString encode() {
+        return new CoreString(this.commonCore, map(new F1<String, String>() {
+            public String f(String x) {
+                try {
+                    return URLEncoder.encode(x, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                
+                return null;
+            }
+        }).array(String.class));
+    }
+    
+    
     /**
      * Treats all strings as filenames and returns the corresponding files. <br/>
      * <br/>
