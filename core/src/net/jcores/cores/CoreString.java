@@ -37,6 +37,8 @@ import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -67,8 +69,30 @@ public class CoreString extends CoreObject<String> {
     public CoreString(CommonCore supercore, String... objects) {
         super(supercore, objects);
     }
-
     
+
+    /**
+     * Returns the (UTF-8) byte data of the enclosed strings.<br/>
+     * <br/>
+     * 
+     * Multi-threaded.<br/>
+     * <br/>
+     * 
+     * @return A CoreByteBuffer object with the byte data of all enclosed strings.
+     */
+    public CoreByteBuffer bytes() {
+        return new CoreByteBuffer(this.commonCore, map(new F1<String, ByteBuffer>() {
+            public ByteBuffer f(String x) {
+                try {
+                    byte[] bytes = x.getBytes("UTF-8");
+                    return ByteBuffer.wrap(bytes);
+                } catch (UnsupportedEncodingException e) {
+                                                       //
+                                                   }
+                                                   return null;
+                                               }
+        }).array(ByteBuffer.class));
+    }
     
     
     /**
@@ -158,6 +182,47 @@ public class CoreString extends CoreObject<String> {
                 return matcher.matches();
             }
         }, options).array(String.class));
+    }
+    
+    
+
+    /**
+     * Converts the content of this core to a <code>String -> String</code> map. Each element of this core 
+     * will be segmented by the first occurance of either '=' or ':'. The content of the returned map is 
+     * undefined for keys appearing double.<br/>
+     * <br/>
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @return A Map<String,String> object containing the entries of this core.  
+     */
+    public Map<String, String> hashmap() {
+        final Map<String, String> rval = new ConcurrentHashMap<String, String>();
+        
+        map(new F1<String, Void>() {
+            @Override
+            public Void f(String x) {
+                final int a = x.indexOf(":");
+                final int b = x.indexOf("=");
+
+                String splitter = null;
+                
+                if(a < 0 && b < 0) return null;
+                if(a >= 0 && b < 0) splitter = ":";
+                if(a < 0 && b >= 0) splitter = "=";
+                if(a >= 0 && b >= 0) {
+                    splitter = a < b ? ":" : "=";
+                }
+                
+                final String[] split = x.split(splitter);
+                rval.put(split[0], split[1]);
+                
+                return null;
+            }
+        });
+        
+        return rval;
     }
 
     /**
@@ -319,26 +384,4 @@ public class CoreString extends CoreObject<String> {
         }).array(URI.class));
     }
 
-    /**
-     * Returns the (UTF-8) byte data of the enclosed strings.<br/>
-     * <br/>
-     * 
-     * Multi-threaded.<br/>
-     * <br/>
-     * 
-     * @return A CoreByteBuffer object with the byte data of all enclosed strings.
-     */
-    public CoreByteBuffer bytes() {
-        return new CoreByteBuffer(this.commonCore, map(new F1<String, ByteBuffer>() {
-            public ByteBuffer f(String x) {
-                try {
-                    byte[] bytes = x.getBytes("UTF-8");
-                    return ByteBuffer.wrap(bytes);
-                } catch (UnsupportedEncodingException e) {
-                                                       //
-                                                   }
-                                                   return null;
-                                               }
-        }).array(ByteBuffer.class));
-    }
 }

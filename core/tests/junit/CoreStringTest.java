@@ -28,6 +28,9 @@
 package junit;
 
 import static net.jcores.CoreKeeper.$;
+
+import java.util.Map;
+
 import junit.data.Data;
 
 import org.junit.Assert;
@@ -61,8 +64,15 @@ public class CoreStringTest {
     public void testSplit() {
         Assert.assertEquals("rld", $("Hello World").split("o").get(2));
     }
-    
 
+    /** */
+    @Test
+    public void testHashMap() {
+        Map<String, String> map = $("x:5", "y=7").hashmap();
+        Assert.assertEquals("5", map.get("x"));
+        Assert.assertEquals("7", map.get("y"));
+    }
+    
     /** */
     @Test
     public void testNCoding() {
