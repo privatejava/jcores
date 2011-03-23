@@ -48,6 +48,7 @@ import net.jcores.interfaces.functions.F1;
 import net.jcores.interfaces.functions.F1Object2Bool;
 import net.jcores.options.Option;
 import net.jcores.options.OptionRegEx;
+import net.jcores.utils.Compound;
 
 /**
  * Wraps a number of String and exposes some convenience functions.
@@ -195,27 +196,32 @@ public class CoreString extends CoreObject<String> {
      * Single-threaded.<br/>
      * <br/>
      * 
+     * @param delimeters The delimeters to use. If none are specifed, the default ones will be used. 
+     * 
      * @return A Map<String,String> object containing the entries of this core.  
      */
-    public Map<String, String> hashmap() {
+    public Map<String, String> hashmap(final String ... delimeters) {
         final Map<String, String> rval = new ConcurrentHashMap<String, String>();
         
         map(new F1<String, Void>() {
             @Override
             public Void f(String x) {
-                final int a = x.indexOf(":");
-                final int b = x.indexOf("=");
-
-                String splitter = null;
+                final String[] delims = delimeters.length > 0 ? delimeters : new String[] {":=", "=", ":"};
+                final Compound best = $("token", "", "dist", ""+Integer.MAX_VALUE).compound();
                 
-                if(a < 0 && b < 0) return null;
-                if(a >= 0 && b < 0) splitter = ":";
-                if(a < 0 && b >= 0) splitter = "=";
-                if(a >= 0 && b >= 0) {
-                    splitter = a < b ? ":" : "=";
+                // Find best delimeter
+                for (String string : delims) {  
+                    final int index = x.indexOf(string);
+                    if(index >= 0 && index < best.getInt("dist")) {
+                        best.put("dist", index);
+                        best.put("token", string);
+                    }
                 }
                 
-                final String[] split = x.split(splitter);
+                final int dist = best.getInt("dist"); 
+                if(dist < 0) return null;
+                
+                final String[] split = x.split(best.getString("token"));
                 rval.put(split[0], split[1]);
                 
                 return null;

@@ -67,6 +67,98 @@ public class Compound extends HashMap<String, Object> {
         return rval;
     }
 
+    /**
+     * Returns the given key as an integer.
+     * 
+     * @param key
+     *  
+     * @return . 
+     */
+    public int getInt(String key) {
+        final Object object = get(key);
+
+        // If we didnt have anything, return 0
+        if(object == null) return 0;
+        
+        // If the object if of type number        
+        if(object instanceof Number) {
+            return ((Number) object).intValue();
+        }
+        
+        // If the object if of type number        
+        if(object instanceof String) {
+            return Integer.parseInt((String) object);
+        }
+
+        // Last resort, return the hash code ...
+        return object.hashCode();
+    } 
+
+    /**
+     * Returns the given key as a string.
+     * 
+     * @param key
+     *  
+     * @return . 
+     */
+    public String getString(String key) {
+        final Object object = get(key);
+
+        if(object == null) return null;
+        
+        return object.toString();
+    } 
+
+    
+    /**
+     * Returns the given key as an integer.
+     * 
+     * @param key
+     *  
+     * @return . 
+     */
+    public double getDouble(String key) {
+        final Object object = get(key);
+
+        // If we didnt have anything, return 0
+        if(object == null) return 0;
+        
+        // If the object if of type number        
+        if(object instanceof Number) {
+            return ((Number) object).doubleValue();
+        }
+        
+        // If the object if of type number        
+        if(object instanceof String) {
+            return Double.parseDouble((String) object);
+        }
+
+        // Last resort, return the hash code ...
+        return object.hashCode();
+    } 
+
+    
+    /**
+     * Puts the given integer into the slot named key
+     * 
+     * @param key
+     * @param value
+     */
+    public void put(String key, int value) {
+        put(key, Integer.valueOf(value));
+    } 
+    
+    
+    /**
+     * Puts the given integer into the slot named key
+     * 
+     * @param key
+     * @param value
+     */
+    public void put(String key, double value) {
+        put(key, Double.valueOf(value));
+    } 
+     
     /*
      * (non-Javadoc)
      * 

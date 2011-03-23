@@ -68,9 +68,11 @@ public class CoreStringTest {
     /** */
     @Test
     public void testHashMap() {
-        Map<String, String> map = $("x:5", "y=7").hashmap();
+        Map<String, String> map = $("x:5", "y=7", "z:=13", "alpha=:31").hashmap();
         Assert.assertEquals("5", map.get("x"));
         Assert.assertEquals("7", map.get("y"));
+        Assert.assertEquals("13", map.get("z"));
+        Assert.assertEquals(":31", map.get("alpha"));
     }
     
     /** */
