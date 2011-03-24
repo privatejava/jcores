@@ -31,7 +31,11 @@ import static net.jcores.CoreKeeper.$;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
@@ -40,7 +44,10 @@ import java.util.concurrent.ThreadFactory;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.SwingUtilities;
+
 import net.jcores.cores.CoreNumber;
+import net.jcores.interfaces.functions.F0;
 import net.jcores.managers.Manager;
 import net.jcores.managers.ManagerClass;
 import net.jcores.managers.ManagerDebugGUI;
@@ -103,13 +110,51 @@ public class CommonCore {
      * @return An Integer array.
      */
     @SuppressWarnings("boxing")
-    public static Integer[] box(int... object) {
+    public Integer[] box(int... object) {
         int i = 0;
         
         final Integer[] myIntegers = new Integer[object.length];
         for(int val : object) myIntegers[i++] = val;
         
         return myIntegers;
+    }
+    
+    
+    /**
+     * Executes the given function in the Event Dispatch Thread (EDT) at some 
+     * point in the future.
+     * 
+     * @param f0 The function to execute.
+     */
+    public void edt(final F0 f0) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                f0.f();
+            }
+        });
+    }
+    
+    
+    /**
+     * Executes the given function in the Event Dispatch Thread (EDT) now, waiting until 
+     * the function was executed.
+     * 
+     * @param f0 The function to execute.
+     */
+    public void edtnow(final F0 f0) {
+        try {
+            SwingUtilities.invokeAndWait(new Runnable() {
+                @Override
+                public void run() {
+                    f0.f();
+                }
+            });
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
     }
     
     
@@ -162,6 +207,22 @@ public class CommonCore {
         this.logger.log(level, string);
     }
 
+    
+    /**
+     * Executes the given function after the given delay.
+     * 
+     * @param f0 The function to execute
+     * @param delay The delay after which the function will be executed.
+     */
+    public void oneTime(final F0 f0, long delay) {
+        final Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                f0.f();
+            }
+        }, delay);
+    }
     
     /**
      * Creates a CoreNumber object with numbers ranging from 0 up to end.  
@@ -291,7 +352,7 @@ public class CommonCore {
      * @return An int array.
      */
     @SuppressWarnings("boxing")
-    public static int[] unbox(Integer... object) {
+    public int[] unbox(Integer... object) {
         int i = 0;
         
         final int[] myIntegers = new int[object.length];
@@ -309,6 +370,6 @@ public class CommonCore {
      * @return Returns a unique ID.
      */
     public String uniqueID(Option ... options) {
-        return "TODO";
+        return UUID.randomUUID().toString();
     }
 }
