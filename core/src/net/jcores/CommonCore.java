@@ -240,6 +240,22 @@ public class CommonCore {
     public Random random() {
         return this.random;
     }
+    
+    /**
+     * Puts the current thread to sleep for some time
+     * 
+     * @param time The time to sleep.
+     * @return <code>true</code> if the sleep was interrupted, <code>false</code> if not.
+     */
+    public boolean sleep(long time) {
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            return true;
+        }
+        
+        return false;
+    }
 
     /** 
      * Returns a temporary file.
