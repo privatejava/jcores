@@ -1,7 +1,7 @@
 /*
- * SimpleSpeedTests.java
+ * OptionDropType.java
  * 
- * Copyright (c) 2010, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,39 +25,15 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package sandbox;
+package net.jcores.options;
 
-import static net.jcores.CoreKeeper.$;
-
-import java.awt.Panel;
-
-import javax.swing.JPanel;
-
-import sandbox.dummys.DiagnosisChannelID;
-import sandbox.dummys.LoggingChannel1;
-import sandbox.dummys.TestChannel;
+import java.io.File;
 
 /**
- * @author rb
- *
+ * If we should print debug information for the given operation.
+ * 
+ * @author Ralf Biedert
  */
-public class SimpleCastTest {
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
-        System.out.println($("a", "b", "c").cast(String.class).compact().size());
-        
-        Panel pp = null;
-        JPanel p = null;
-        $(p);
-        $(p, p, p);
-        $(pp, pp);
-        $(pp, p);
-    }
+public class OptionDropTypeFiles extends OptionDropType<File> {
     
-    public Class<? extends DiagnosisChannelID<?>>[] observedChannels() {
-        return $(TestChannel.class, LoggingChannel1.class).unsafearray();
-        //CoreObject<Class<? extends DiagnosisChannelID<?>>> xx = $;
-    }
 }

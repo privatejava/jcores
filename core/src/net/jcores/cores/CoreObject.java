@@ -1575,6 +1575,22 @@ public class CoreObject<T> extends Core {
         // Return the new, unique core.
         return new CoreObject<T>(this.commonCore, copy).compact();
     }
+    
+    /**
+     * Returns the core's array. Use of this method is strongly discouraged and usually only needed 
+     * in a few very special cases. Might be removed again.<br/>
+     * <br/>
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @return A clone of our array. 
+     */
+    public T[] unsafearray() {
+        if(this.t == null) return null;
+        return this.t.clone();
+    }
+
 
     /**
      * Converts an index to an offset.

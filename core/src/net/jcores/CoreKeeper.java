@@ -35,12 +35,15 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.concurrent.locks.Lock;
 
+import javax.swing.JComponent;
+
 import net.jcores.cores.CoreBufferedImage;
 import net.jcores.cores.CoreClass;
 import net.jcores.cores.CoreComponent;
 import net.jcores.cores.CoreCompound;
 import net.jcores.cores.CoreFile;
 import net.jcores.cores.CoreInputStream;
+import net.jcores.cores.CoreJComponent;
 import net.jcores.cores.CoreLock;
 import net.jcores.cores.CoreNumber;
 import net.jcores.cores.CoreObject;
@@ -94,7 +97,7 @@ public class CoreKeeper {
         return new CoreNumber($, object);
     }
     
-    
+
     /**
      * Wraps number of compounds and returns a new CompoundCore.
      * 
@@ -129,7 +132,7 @@ public class CoreKeeper {
     public static <T> CoreClass<T> $(Class<T>... clsses) {
         return new CoreClass<T>($, clsses);
     }
-
+    
     /**
      * Wraps number of strings and returns a new CoreString.
      * 
@@ -199,6 +202,17 @@ public class CoreKeeper {
     public static CoreComponent $(Component... object) {
         return new CoreComponent($, object);
     }
+    
+    /**
+     * Wraps number of JComponents and returns a new CoreJComponent.
+     * 
+     * @param object The JComponents to wrap.
+     * @return A CoreJComponent wrapping the given Components.
+     */
+    public static CoreJComponent $(JComponent... object) {
+        return new CoreJComponent($, object);
+    }
+
 
     /**
      * Wraps a generic Collection objects. Please note that the Collection is
