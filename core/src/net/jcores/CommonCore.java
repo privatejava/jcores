@@ -339,7 +339,7 @@ public class CommonCore {
      * @return A File object for a temporary directory.
      */
     public File tempdir() {
-        final File file = new File(tempfile().getAbsoluteFile() + ".dir");
+        final File file = new File(tempfile().getAbsoluteFile() + ".dir/");
         file.mkdirs();
         return file;
     }

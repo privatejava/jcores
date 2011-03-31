@@ -89,10 +89,41 @@ public class FileUtils {
      * @param to
      */
     public static void copy(CommonCore cc, File from, File to) {
-        BufferedReader reader = null;
+
+        // Create directory if they don't exist
+        final boolean todir = to.getAbsolutePath().endsWith("/") || to.isDirectory();   
         
-        if(to.getAbsolutePath().endsWith("/")) to.mkdirs();
+        if(todir) to.mkdirs();
         
+        // Streams for input and output
+        FileInputStream fis = null;
+        FileOutputStream fos = null;
+        
+        
+        // Now copy the actual files. TODO: Also copy from when it is a directory!
+        try {
+            fis  = new FileInputStream(from);
+            fos = new FileOutputStream(todir ? new File(to.getAbsoluteFile() + "/" + from.getName()) : to);
+            
+            byte[] buf = new byte[64*1024];
+            int i = 0;
+            while ((i = fis.read(buf)) != -1) {
+                fos.write(buf, 0, i);
+            }
+        } 
+        catch (Exception e) {
+            cc.report(MessageType.EXCEPTION, "Error copying file " + from + " " + to + " due to a " + e.getMessage());
+        }
+        finally {
+            if (fis != null) try {
+                fis.close();
+            } catch (IOException e) {
+            }
+            if (fos != null) try {
+                fos.close();
+            } catch (IOException e) {
+            }
+        }
     }
 
     

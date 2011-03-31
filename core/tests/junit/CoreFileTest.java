@@ -109,5 +109,19 @@ public class CoreFileTest {
         Assert.assertEquals(srcsize, $(path).file().input().zipstream().dir().size());
         $(path).file().delete();
     }
+    
+    
+    /** */
+    @Test
+    public void testCopy() {
+        final File file = $.tempfile();
+        final File dir = $.tempdir();
+        
+        $("core/tests/junit/data/ranges.zip").file().copy(file.getAbsolutePath());
+        Assert.assertEquals($("core/tests/junit/data/ranges.zip").file().get(0).length(), file.length());
+
+        $("core/tests/junit/data/ranges.zip").file().copy(dir.getAbsolutePath());
+        Assert.assertEquals($("core/tests/junit/data/ranges.zip").file().get(0).length(), new File(dir.getAbsolutePath() + "/ranges.zip").length());
+    }
 
 }

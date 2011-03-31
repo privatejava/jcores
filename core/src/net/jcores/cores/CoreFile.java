@@ -128,13 +128,26 @@ public class CoreFile extends CoreObject<File> {
      * Multi-threaded.<br/>
      * <br/>
      * 
-     * @param destination The destination to write to. Can be a directory or a file. Directories <b>MUST end with a slash
-     * "/"</b>, otherwise they will be treated as files!
+     * @param destination The destination to write to. Can be a directory or a file. Directories <b>must end with a slash
+     * (<code>/</code>) or pre-exist</b>, otherwise they will be treated as files!
      * 
      * @return The same core file object (<code>this</code>).
      */
     public CoreFile copy(String destination) {
-        if (destination == null) return this;
+        if (destination == null) {
+            this.commonCore.report(MessageType.MISUSE, "Destination null for copy().");
+            return this;
+        }
+
+        final File dest = new File(destination);
+        
+        map(new F1<File, Void>() {
+            @Override
+            public Void f(File x) {
+                FileUtils.copy(CoreFile.this.commonCore, x, dest);
+                return null;
+            }
+        });
 
         return this;
     }
