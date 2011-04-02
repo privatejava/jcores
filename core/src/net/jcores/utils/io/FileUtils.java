@@ -36,6 +36,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -82,28 +85,88 @@ public class FileUtils {
     }
     
     /**
+     * Lists all elements under the given root.
+     * 
+     * @param root
+     * @param listDirs
+     * @return A list of elements
+     */
+    public static File[] dir(File root, boolean listDirs) {
+        final List<File> rval = new ArrayList<File>();
+
+        // Get top level files ...
+        List<File> next = new ArrayList<File>();
+        File[] listed = root.listFiles();
+
+        // In case there are no files in the given diretory element, return
+        if (listed == null) return null;
+
+        // Queue all we found
+        next.addAll(Arrays.asList(listed));
+
+        while (next.size() > 0) {
+            // Take over all from the next queue
+            listed = next.toArray(new File[0]);
+            next.clear();
+
+            // Now check for each item
+            for (File file : listed) {
+                if (!file.isDirectory()) {
+                    rval.add(file);
+                    continue;
+                }
+
+                if (listDirs) 
+                    rval.add(file);
+
+                final File[] listFiles = file.listFiles();
+                if (listFiles == null) continue;
+                next.addAll(Arrays.asList(listFiles));
+            }
+        }
+
+        return rval.toArray(new File[0]);        
+    }
+    
+    /**
      * Copies a file .
      * 
      * @param cc
      * @param from
      * @param to
      */
-    public static void copy(CommonCore cc, File from, File to) {
+    public static File[] copy(CommonCore cc, File from, File to) {
 
         // Create directory if they don't exist
-        final boolean todir = to.getAbsolutePath().endsWith("/") || to.isDirectory();   
+        final boolean todir = to.getAbsolutePath().endsWith("/") || to.isDirectory();
+        final boolean fromdir = from.getAbsolutePath().endsWith("/") || from.isDirectory();
+
+        // If we had a source dir
+        if(fromdir) {
+            final File[] elements = dir(from, false);
+            final List<File> files = new ArrayList<File>();
+            for (File file : elements) {
+                final String subname = file.getAbsolutePath().replace(from.getAbsolutePath(), "");
+                files.addAll(Arrays.asList(copy(cc, file, new File(to + "/" + subname))));
+            }
+            
+            return files.toArray(new File[0]);
+        }
         
+        // If its a dir, create the dir, if its a file, create its parent
         if(todir) to.mkdirs();
+        else to.getParentFile().mkdirs();
+        
+        final File realTo = todir ? new File(to.getAbsoluteFile() + "/" + from.getName()) : to;
         
         // Streams for input and output
         FileInputStream fis = null;
         FileOutputStream fos = null;
         
-        
         // Now copy the actual files. TODO: Also copy from when it is a directory!
         try {
             fis  = new FileInputStream(from);
-            fos = new FileOutputStream(todir ? new File(to.getAbsoluteFile() + "/" + from.getName()) : to);
+            fos = new FileOutputStream(realTo);
             
             byte[] buf = new byte[64*1024];
             int i = 0;
@@ -124,6 +187,8 @@ public class FileUtils {
             } catch (IOException e) {
             }
         }
+        
+        return new File[] {realTo};
     }
 
     

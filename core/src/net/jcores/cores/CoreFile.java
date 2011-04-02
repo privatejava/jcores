@@ -44,8 +44,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -131,7 +129,7 @@ public class CoreFile extends CoreObject<File> {
      * @param destination The destination to write to. Can be a directory or a file. Directories <b>must end with a slash
      * (<code>/</code>) or pre-exist</b>, otherwise they will be treated as files!
      * 
-     * @return The same core file object (<code>this</code>).
+     * @return The new core file object, containing all files that have been copied..
      */
     public CoreFile copy(String destination) {
         if (destination == null) {
@@ -141,15 +139,12 @@ public class CoreFile extends CoreObject<File> {
 
         final File dest = new File(destination);
         
-        map(new F1<File, Void>() {
+        return new CoreFile(this.commonCore, map(new F1<File, File[]>() {
             @Override
-            public Void f(File x) {
-                FileUtils.copy(CoreFile.this.commonCore, x, dest);
-                return null;
+            public File[] f(File x) {
+                return FileUtils.copy(CoreFile.this.commonCore, x, dest);
             }
-        });
-
-        return this;
+        }).expand(File.class).array(File.class));
     }
 
     /**
@@ -275,45 +270,13 @@ public class CoreFile extends CoreObject<File> {
      */
     public CoreFile dir(Option... options) {
 
+        // Check if we should emit diretories
         final boolean listDirs = $(options).contains(Option.LIST_DIRECTORIES);
 
         return map(new F1<File, File[]>() {
             @Override
             public File[] f(File x) {
-                final List<File> rval = new ArrayList<File>();
-
-                // Get top level files ...
-                List<File> next = new ArrayList<File>();
-                File[] listed = x.listFiles();
-
-                if (listed == null) return null;
-
-                next.addAll(Arrays.asList(listed));
-
-                while (next.size() > 0) {
-                    listed = next.toArray(new File[0]);
-
-                    next.clear();
-
-                    for (File file : listed) {
-                        if (!file.isDirectory()) {
-                            rval.add(file);
-                            continue;
-                        }
-
-                        if (listDirs) {
-                            rval.add(file);
-                        }
-
-                        File[] listFiles = file.listFiles();
-
-                        if (listFiles == null) continue;
-
-                        next.addAll(Arrays.asList(listFiles));
-                    }
-                }
-
-                return rval.toArray(new File[0]);
+                return FileUtils.dir(x, listDirs);
             }
         }).expand(File.class).unique().as(CoreFile.class);
     }
