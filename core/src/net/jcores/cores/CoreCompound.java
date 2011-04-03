@@ -35,7 +35,11 @@ import net.jcores.utils.Compound;
 
 /**
  * Wraps a number of {@link Compound} elements and exposes some convenience
- * functions.
+ * functions. For example, to extract only compound-values with the given key <code>"uri"</code>, 
+ * write:<br/><br/>
+ * 
+ * <code>$(compounds).key("uri")</code>
+ * 
  * 
  * @author Ralf Biedert
  * 

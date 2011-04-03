@@ -59,7 +59,12 @@ import net.jcores.utils.io.FileUtils;
 import net.jcores.utils.io.StreamUtils;
 
 /**
- * Wraps a number of files and exposes some convenience functions.
+ * Wraps a number of files and exposes some convenience functions. For example, 
+ * to list all files in a given path (denoted by a file-object), 
+ * write:<br/><br/>
+ * 
+ * <code>$(path).dir().print()</code>
+ * 
  * 
  * @author Ralf Biedert
  * @since 1.0

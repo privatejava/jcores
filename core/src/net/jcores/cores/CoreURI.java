@@ -42,7 +42,10 @@ import net.jcores.options.MessageType;
 import net.jcores.utils.io.StreamUtils;
 
 /**
- * Wraps a number of URIs and exposes some convenience functions.
+ * Wraps a number of URIs and exposes some convenience functions. For example, 
+ * to download a file to some the <code>downloads</code> directory:<br/><br/>
+ * 
+ * <code>$(uri).download("downloads")</code>
  * 
  * @author Ralf Biedert
  * 

@@ -30,7 +30,10 @@ package net.jcores.cores;
 import net.jcores.CommonCore;
 
 /**
- * Wraps a number of Numbers and exposes some convenience functions.
+ * Wraps a number of Numbers and exposes some convenience functions. For example, 
+ * to calulate the variance of a number of numbers, write:<br/><br/>
+ * 
+ * <code>$(5, 0, 8, 6, 6, 7).variance()</code>
  * 
  * @author Ralf Biedert
  * @since 1.0

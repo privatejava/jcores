@@ -27,6 +27,8 @@
  */
 package net.jcores.options;
 
+import java.io.File;
+
 /**
  * Contains all available options.
  * 
@@ -50,6 +52,9 @@ public class Option {
 
     /** Print debugging information */
     public final static OptionDebug DEBUG = new OptionDebug();
+
+    /** Drop Type (File) */
+    public final static OptionDropType<File> DROPTYPE_FILES = new OptionDropTypeFiles();
 
     
     /**

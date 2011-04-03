@@ -36,7 +36,10 @@ import net.jcores.CommonCore;
 import net.jcores.interfaces.java.KeyStroke;
 
 /**
- * Wraps a number of Component and exposes some convenience functions.
+ * Wraps a number of Component and exposes some convenience functions. For example, 
+ * to assign a key listener to some component, write:<br/><br/>
+ * 
+ * <code>$(panel).keypress(KeyEvent.VK_ESCAPE, handler).</code>
  * 
  * @author Ralf Biedert
  * 

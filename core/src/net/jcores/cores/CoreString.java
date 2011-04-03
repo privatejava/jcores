@@ -51,7 +51,10 @@ import net.jcores.options.OptionRegEx;
 import net.jcores.utils.Compound;
 
 /**
- * Wraps a number of String and exposes some convenience functions.
+ * Wraps a number of String and exposes some convenience functions. For example, 
+ * to parse the content of a file as a set of key-value pairs:<br/><br/>
+ * 
+ * <code>$("file.properties").file().text().split("\n").hashmap()</code>
  * 
  * @author Ralf Biedert
  * @since 1.0
@@ -190,7 +193,9 @@ public class CoreString extends CoreObject<String> {
     /**
      * Converts the content of this core to a <code>String -> String</code> map. Each element of this core 
      * will be segmented by the first occurance of either '=' or ':'. The content of the returned map is 
-     * undefined for keys appearing double.<br/>
+     * undefined for keys appearing double. So, if this core contains two elements of the form 
+     * ("a:5" and "b=3") the resulting map would contain the keys ("a" and "b") with the values 
+     * ("5" and "3") respectively.<br/>
      * <br/>
      * 
      * Single-threaded.<br/>

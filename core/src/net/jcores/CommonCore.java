@@ -303,7 +303,7 @@ public class CommonCore {
     }
     
     /**
-     * Puts the current thread to sleep for some time
+     * Puts the current thread to sleep for some time.
      * 
      * @param time The time to sleep.
      * @return <code>true</code> if the sleep was interrupted, <code>false</code> if not.
@@ -363,7 +363,7 @@ public class CommonCore {
 
 
     /**
-     * Creates an unique ID. If nothing is specified each call delivers a 
+     * Creates a unique ID. If nothing is specified each call delivers a 
      * new, unique ID. TODO: Option.UID_SYSTEM, .UID_USER, .UID_APP, ...
      *  
      * @param options 

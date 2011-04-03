@@ -33,7 +33,10 @@ import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F0;
 
 /**
- * Wraps a number of Locks and exposes some convenience functions.
+ * Wraps a number of Locks and exposes some convenience functions. For example, 
+ * to perform an operation ensuring a lock is locked and unlocked properly write:<br/><br/>
+ * 
+ * <code>$(lock).locked(function)</code>
  * 
  * @author Ralf Biedert
  * @since 1.0

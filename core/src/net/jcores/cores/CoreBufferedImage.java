@@ -42,7 +42,10 @@ import net.jcores.interfaces.functions.F1;
 import net.jcores.options.MessageType;
 
 /**
- * Wraps a number of BufferedImages and exposes some convenience functions.
+ * Wraps a number of BufferedImages and exposes some convenience functions. For example, 
+ * to copy a buffered image you would write:<br/><br/>
+ * 
+ * <code>BufferedImage bi = $(image).copy().get(0)</code>
  * 
  * @author Ralf Biedert
  * 

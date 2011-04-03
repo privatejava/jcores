@@ -42,7 +42,12 @@ import net.jcores.options.OptionHash;
 import net.jcores.utils.io.StreamUtils;
 
 /**
- * Wraps an input stream and exposes some convenience functions. <br/>
+ * Wraps an input stream and exposes some convenience functions. For example, 
+ * to read the text of a given stream, or return an empty string if there was no
+ * text, write:<br/><br/>
+ * 
+ * <code>$(stream).text().get("")</code>
+ * <br/>
  * <br/>
  * 
  * Note that some functions <b>consume</b> the input stream and close it

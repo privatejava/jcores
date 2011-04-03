@@ -40,7 +40,10 @@ import net.jcores.utils.Wrapper;
 import net.jcores.utils.ui.SimpleTransferHandler;
 
 /**
- * Wraps a number of JComponents and exposes some convenience functions.
+ * Wraps a number of JComponents and exposes some convenience functions. For example, 
+ * to add a file-drop-listener to some panel, write:<br/><br/>
+ * 
+ * <code>$(panel).onDrop(handler, Option.DROPTYPE_FILES)</code>
  * 
  * @author Ralf Biedert
  * 

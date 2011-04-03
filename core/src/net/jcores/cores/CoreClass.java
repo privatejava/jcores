@@ -43,7 +43,10 @@ import net.jcores.utils.io.StreamUtils;
 
 /**
  * Wraps class objects, usually only one, and exposes some convenience functions
- * on them.
+ * on them. For example, to dynamically spawn some class you could write:<br/><br/>
+ * 
+ * <code>Robot robot = $(Robot.class).spawn().get(0)</code>
+ * 
  * 
  * @author Ralf Biedert
  * @since 1.0

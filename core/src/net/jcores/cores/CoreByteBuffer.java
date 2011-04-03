@@ -38,7 +38,11 @@ import net.jcores.options.OptionHash;
 import net.jcores.utils.io.DataUtils;
 
 /**
- * Wraps a number of ByteBuffers and exposes some convenience functions.
+ * Wraps a number of ByteBuffers and exposes some convenience functions. For example, 
+ * to hash some binary data with MD5 you would write:<br/><br/>
+ * 
+ * <code>String hash = $(data).hash(Option.HASH_MD5).get(0)</code>
+ * 
  * 
  * @author Ralf Biedert
  * 

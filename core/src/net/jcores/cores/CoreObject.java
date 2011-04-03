@@ -65,9 +65,13 @@ import net.jcores.utils.lang.ObjectUtils;
 
 /**
  * The standard core that wraps a number of objects and exposes a number of methods to
- * act on them, some of them in parallel. If you implement your own core you should extend
- * this class.<br/>
+ * act on them, some of them in parallel. For example, 
+ * to get the last three elements of an array of Strings, write:<br/><br/>
+ * 
+ * <code>$(strings).slice(-3, 3).array(String.class)</code><br/>
  * <br/>
+ * 
+ * If you implement your own core you should extend this class.<br/><br/>
  * 
  * A core is immutable. No method will ever change its content array (it is, however,
  * possible, that the individual elements enclosed might change).
