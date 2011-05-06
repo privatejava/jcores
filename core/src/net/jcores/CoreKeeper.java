@@ -36,8 +36,10 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 
+import javax.sound.sampled.AudioInputStream;
 import javax.swing.JComponent;
 
+import net.jcores.cores.CoreAudioInputStream;
 import net.jcores.cores.CoreBufferedImage;
 import net.jcores.cores.CoreClass;
 import net.jcores.cores.CoreComponent;
@@ -74,7 +76,7 @@ public class CoreKeeper {
     /** The common core shared by all other cores. */
     public final static CommonCore $ = new CommonCore(); // Once $(), but misleading,
                                                          // looked like a CoreObject(),
-                                                         // which CC is not.
+                                                         // which the CC is not.
 
     /**
      * Wraps the given object(s) and returns a parameterized CoreObject. This
@@ -89,6 +91,17 @@ public class CoreKeeper {
         return new CoreObject<T>($, object);
     }
 
+
+    /**
+     * Wraps the given AudioInputStreams and returns a CoreAudioInputStream.
+     * 
+     * @param object The AudioInputStreams to wrap..
+     * @return A CoreAudioInputStream wrapping the set of objects.
+     */
+    public static CoreAudioInputStream $(AudioInputStream... object) {
+        return new CoreAudioInputStream($, object);
+    }
+    
     /**
      * Wraps number of numbers and returns a new CoreNumber.
      * 
