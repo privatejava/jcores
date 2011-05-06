@@ -121,6 +121,51 @@ public class CoreObject<T> extends Core {
 
         this.t = objects;
     }
+    
+    
+    /**
+     * Returns a core containing all elements of this core and the other core. 
+     * Elements that are in both cores will appear twice.<br/>
+     * <br/>
+     * 
+     * Single-threaded. <br/>
+     * <br/>
+     * 
+     * @param toAdd The core to add to this core.
+     * 
+     * @return A CoreObject containing all objects of this core and the other 
+     * core.
+     */
+    @SuppressWarnings("unchecked")
+    public CoreObject<T> add(CoreObject<T> toAdd) {
+        if (size() == 0) return toAdd;
+        if (toAdd.size() == 0) return this;
+        
+        final T[] copy = (T[]) Array.newInstance(this.t.getClass().getComponentType(), this.t.length + toAdd.t.length);
+        System.arraycopy(this.t, 0, copy, 0, this.t.length);
+        System.arraycopy(toAdd.t, 0, copy, this.t.length, toAdd.t.length);
+        
+        return new CoreObject<T>(this.commonCore, copy);
+    }
+
+    
+    /**
+     * Returns a core containing all elements of this core and the other array. 
+     * Elements that are in both will appear twice.<br/>
+     * <br/>
+     * 
+     * Single-threaded. <br/>
+     * <br/>
+     * 
+     * @param toAdd The array to add to this core.
+     * 
+     * @return A CoreObject containing all objects of this core and the other 
+     * array.
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public CoreObject<T> add(T... toAdd) {
+        return this.add(new CoreObject(this.commonCore, toAdd));
+    }
 
     /**
      * Returns the core's content as an array of the given type. Elements that don't fit
@@ -334,8 +379,7 @@ public class CoreObject<T> extends Core {
 
     /**
      * Creates a compound out of this core's content. This is useful for quickly creating
-     * complex objects
-     * which should be handled by the framework.<br/>
+     * complex objects which should be handled by the framework.<br/>
      * <br/>
      * 
      * Single-threaded. <br/>
@@ -343,7 +387,7 @@ public class CoreObject<T> extends Core {
      * 
      * @return A new {@link Compound} with this core's content.
      */
-    public Compound compound() {
+    public Compound<Object> compound() {
         return Compound.create(this.t);
     }
 
@@ -1107,6 +1151,23 @@ public class CoreObject<T> extends Core {
         return new CoreObject<T>(this.commonCore, copy).compact();
     }
 
+
+    /**
+     * Returns a core intersected with another array.<br/>
+     * <br/>
+     * 
+     * Single-threaded. <br/>
+     * <br/>
+     * 
+     * @param other The array to intersect.
+     * @return Returns a core enclosing only objects present in this core and the other array.
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public CoreObject<T> intersect(T... other) {
+        return intersect(new CoreObject(this.commonCore, other));
+    }
+
+    
     /**
      * Returns the wrapped collection as a list.<br/>
      * <br/>
@@ -1546,6 +1607,25 @@ public class CoreObject<T> extends Core {
         return new CoreObject<T>(this.commonCore, copy);
     }
 
+    /**
+     * Returns a core containing all elements of this core and that are not
+     * in the passed array.<br/>
+     * <br/>
+     * 
+     * Single-threaded. <br/>
+     * <br/>
+     * 
+     * @param toSubtract The array to subtract from this core.
+     * 
+     * @return A CoreObject containing all objects of this core that are not
+     * in the other array.
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public CoreObject<T> subtract(T... toSubtract) {
+        return subtract(new CoreObject(this.commonCore, toSubtract));
+    }
+    
+    
     /**
      * Returns a core containing only unique objects, i.e., object mutually un- <code>equal()</code>.<br/>
      * <br/>

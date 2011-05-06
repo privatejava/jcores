@@ -45,7 +45,7 @@ import net.jcores.utils.Compound;
  * 
  * @since 1.0
  */
-public class CoreCompound extends CoreObject<Compound> {
+public class CoreCompound extends CoreObject<Compound<?>> {
 
     /** Used for serialization */
     private static final long serialVersionUID = 5810590185749402495L;
@@ -56,7 +56,7 @@ public class CoreCompound extends CoreObject<Compound> {
      * @param supercore The common core.
      * @param objects The Compounds to wrap.
      */
-    public CoreCompound(CommonCore supercore, Compound... objects) {
+    public CoreCompound(CommonCore supercore, Compound<?>... objects) {
         super(supercore, objects);
     }
 
@@ -75,9 +75,9 @@ public class CoreCompound extends CoreObject<Compound> {
      * key.
      */
     public <T> CoreObject<T> key(final String key, Class<T> type) {
-        return map(new F1<Compound, T>() {
+        return map(new F1<Compound<?>, T>() {
             @SuppressWarnings("unchecked")
-            public T f(final Compound x) {
+            public T f(final Compound<?> x) {
                 return (T) x.get(key);
             }
         }, Option.MAP_TYPE(type));

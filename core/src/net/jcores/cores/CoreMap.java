@@ -1,7 +1,7 @@
 /*
- * SimpleSpeedTests.java
+ * CoreMap.java
  * 
- * Copyright (c) 2010, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,50 +25,53 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package sandbox;
+package net.jcores.cores;
 
-import static net.jcores.CoreKeeper.$;
-
-import java.awt.Panel;
-import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.JPanel;
-
-import sandbox.dummys.DiagnosisChannelID;
-import sandbox.dummys.LoggingChannel1;
-import sandbox.dummys.TestChannel;
+import net.jcores.CommonCore;
 
 /**
- * @author rb
- *
+ * Wraps a single Map. <br/><br/>
+ * 
+ * <code>$(lock).locked(function)</code>
+ * 
+ * @author Ralf Biedert
+ * @param <K> 
+ * @param <V> 
+ * @since 1.0
  */
-public class SimpleCastTest {
+public class CoreMap<K, V> extends CoreObject<K> {
+
+    /** Used for serialization */
+    private static final long serialVersionUID = 5115270057138570660L;
+    
+    /** Internal map data */
+    private Map<K, V> map;
+
     /**
-     * @param args
+     * Wraps a map.
+     * 
+     * @param supercore The shared CommonCore.
+     * @param map The map to wrap.
      */
-    @SuppressWarnings("boxing")
-    public static void main(String[] args) {
-        System.out.println($("a", "b", "c").cast(String.class).compact().size());
-        
-        Panel pp = null;
-        JPanel p = null;
-        $(p).add($(pp));
-        $(p, p, p);
-        $(pp, pp);
-        $(pp, p);
-        
-        $("a", "b").add("c", "d").subtract("b").intersect("b", "d").add("b", "d").unique().print();
-        Map<String, Object> map =  $("a", new Object(), "b", new Object()).compound().map(Object.class);
-        
-        Map<String, Number> mm = new HashMap<String, Number>();
-        mm.put("blah", 123);
-        mm.put("blubb", Math.PI);
-        System.out.println($(mm).value("blah"));
+    @SuppressWarnings("unchecked")
+    public CoreMap(CommonCore supercore, Map<K, V> map) {
+        super(supercore, (K[]) map.keySet().toArray());
+        this.map = map;
     }
     
-    public Class<? extends DiagnosisChannelID<?>>[] observedChannels() {
-        return $(TestChannel.class, LoggingChannel1.class).unsafearray();
-        //CoreObject<Class<? extends DiagnosisChannelID<?>>> xx = $;
+    /**
+     * Returns the value of a given key.<br/>
+     * <br/>
+     * 
+     * Single-threaded. <br/>
+     * <br/>
+     * 
+     * @param key The key to query.
+     * @return The value for the given key.
+     */
+    public V value(K key) {
+        return this.map.get(key);
     }
 }

@@ -28,14 +28,16 @@
 package net.jcores.utils;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * Represents a compound object, consisting of several smaller objects.
  * 
  * @author Ralf Biedert
+ * @param <T>
  */
-public class Compound extends HashMap<String, Object> {
+public class Compound<T> extends HashMap<String, T> {
 
     /** */
     private static final long serialVersionUID = 6962084609409112972L;
@@ -43,16 +45,19 @@ public class Compound extends HashMap<String, Object> {
     /**
      * Creates a new compound.
      * 
+     * @param <T>
+     * 
      * @param objects An array of the form <code>Key1, Value1, Key2, Value2, ...</code>.
      * Keys have to be strings.
      * @return A compound with the specified content or an empty one of none was
      * spawnable.
      */
-    public static Compound create(Object... objects) {
-        final Compound rval = new Compound();
+    @SuppressWarnings("unchecked")
+    public static <T> Compound<T> create(Object... objects) {
+        final Compound<Object> rval = new Compound<Object>();
 
         if (objects == null || objects.length < 2 || objects.length % 2 != 0)
-            return rval;
+            return (Compound<T>) rval;
 
         String key = null;
 
@@ -64,101 +69,114 @@ public class Compound extends HashMap<String, Object> {
             }
         }
 
-        return rval;
+        return (Compound<T>) rval;
     }
 
     /**
      * Returns the given key as an integer.
      * 
      * @param key
-     *  
-     * @return . 
+     * 
+     * @return .
      */
     public int getInt(String key) {
         final Object object = get(key);
 
         // If we didnt have anything, return 0
-        if(object == null) return 0;
-        
-        // If the object if of type number        
-        if(object instanceof Number) {
-            return ((Number) object).intValue();
-        }
-        
-        // If the object if of type number        
-        if(object instanceof String) {
-            return Integer.parseInt((String) object);
-        }
+        if (object == null) return 0;
+
+        // If the object if of type number
+        if (object instanceof Number) { return ((Number) object).intValue(); }
+
+        // If the object if of type number
+        if (object instanceof String) { return Integer.parseInt((String) object); }
 
         // Last resort, return the hash code ...
         return object.hashCode();
-    } 
+    }
 
     /**
      * Returns the given key as a string.
      * 
      * @param key
-     *  
-     * @return . 
+     * 
+     * @return .
      */
     public String getString(String key) {
         final Object object = get(key);
 
-        if(object == null) return null;
-        
-        return object.toString();
-    } 
+        if (object == null) return null;
 
-    
+        return object.toString();
+    }
+
     /**
      * Returns the given key as an integer.
      * 
      * @param key
-     *  
-     * @return . 
+     * 
+     * @return .
      */
     public double getDouble(String key) {
         final Object object = get(key);
 
         // If we didnt have anything, return 0
-        if(object == null) return 0;
-        
-        // If the object if of type number        
-        if(object instanceof Number) {
-            return ((Number) object).doubleValue();
-        }
-        
-        // If the object if of type number        
-        if(object instanceof String) {
-            return Double.parseDouble((String) object);
-        }
+        if (object == null) return 0;
+
+        // If the object if of type number
+        if (object instanceof Number) { return ((Number) object).doubleValue(); }
+
+        // If the object if of type number
+        if (object instanceof String) { return Double.parseDouble((String) object); }
 
         // Last resort, return the hash code ...
         return object.hashCode();
-    } 
+    }
 
-    
+    /**
+     * Returns a typed map.
+     * 
+     * @param <M>
+     * @param clazz
+     * @return .
+     */
+    @SuppressWarnings("unchecked")
+    public <M> Map<String, M> map(Class<M> clazz) {
+        // Check all elements are of the given type
+        final Set<String> keySet2 = keySet();
+        for (String string : keySet2) {
+            final Object l = get(string);
+            if (l == null) continue;
+            if(clazz.isAssignableFrom(l.getClass())) continue;
+            
+            remove(string);
+        }
+        
+        return (Map<String, M>) this;
+    }
+
     /**
      * Puts the given integer into the slot named key
      * 
      * @param key
      * @param value
      */
+    @SuppressWarnings("boxing")
     public void put(String key, int value) {
         put(key, Integer.valueOf(value));
-    } 
-    
-    
+    }
+
     /**
      * Puts the given integer into the slot named key
      * 
      * @param key
      * @param value
      */
+    @SuppressWarnings("boxing")
     public void put(String key, double value) {
         put(key, Double.valueOf(value));
-    } 
-     
+    }
+
     /*
      * (non-Javadoc)
      * 

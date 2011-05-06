@@ -111,6 +111,56 @@ public class CoreBufferedImage extends CoreObject<BufferedImage> {
             }
         }).array(BufferedImage.class));
     }
+    
+
+    /**
+     * Scales all contained images to the given dimensions.<br/>
+     * <br/>
+     * 
+     * Multi-threaded.<br/>
+     * <br/>
+     * 
+     * @param width The new width of all images. If <code>0</code> only height 
+     * will be used and the aspect ratio will be kept. 
+     * @param height The new height of all images. If <code>0</code> only width 
+     * will be used and the aspect ratio will be kept. 
+     * 
+     * @return A CoreBufferedImage containing the scaled images.
+     */
+    public CoreBufferedImage scale(final int width, final int height) {
+        if(width == 0 && height == 0) return this;
+                
+        return new CoreBufferedImage(this.commonCore, map(new F1<BufferedImage, BufferedImage>() {
+            public BufferedImage f(final BufferedImage bi) {
+                final AffineTransform af = new AffineTransform();
+
+                // Compute new width and height for this image
+                float w = bi.getWidth();
+                float h = bi.getHeight();
+                
+                if(width == 0) {
+                    h = height;
+                    w = ((height / h) * w);
+                }
+
+                if(height == 0) {
+                    h = ((width/ w) * h);
+                    w = width;
+                }
+                
+                if(width != 0 && height != 0) {
+                    h = height;
+                    w = width;
+                }
+
+                // And scale
+                af.scale(w / bi.getWidth(), h / bi.getHeight());
+                final AffineTransformOp operation = new AffineTransformOp(af, AffineTransformOp.TYPE_BILINEAR);
+                return operation.filter(bi, null);
+            }
+        }).array(BufferedImage.class));
+    }
+    
 
     /**
      * Writes the enclosed image at position <code>0</code> to the given file. The file type will be
