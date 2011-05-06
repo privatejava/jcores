@@ -45,7 +45,7 @@ public class SimpleURI {
      * @throws IOException 
      */
     public static void main(String[] args) throws IOException {
-        $("http://jcores.net/index.html").uri().download().input().hash().print();
+        $("http://jcores.net/index.html").uri().download().input().text().print().bytes().hash().print();
     }
 
 }

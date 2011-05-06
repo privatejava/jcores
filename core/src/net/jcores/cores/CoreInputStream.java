@@ -34,12 +34,15 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.zip.ZipInputStream;
 
+import javax.sound.sampled.AudioInputStream;
+
 import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F1;
 import net.jcores.options.MessageType;
 import net.jcores.options.Option;
 import net.jcores.options.OptionHash;
 import net.jcores.utils.io.StreamUtils;
+import net.jcores.utils.sound.SoundUtils;
 
 /**
  * Wraps an input stream and exposes some convenience functions. For example, 
@@ -107,6 +110,25 @@ public class CoreInputStream extends CoreObject<InputStream> {
         super(supercore, objects);
     }
 
+    
+    /**
+     * Returns a {@link CoreAudioInputStream} for the input streams enclosed in this core.<br/>
+     * <br/>
+     * 
+     * Multi-threaded.<br/>
+     * <br/>
+     * 
+     * @return A CoreAudioInputStream object.
+     */
+    public CoreAudioInputStream audio() {
+        return new CoreAudioInputStream(this.commonCore, map(new F1<InputStream, AudioInputStream>() {
+            public AudioInputStream f(InputStream x) {
+                return SoundUtils.getStream(x);
+            }
+        }).array(AudioInputStream.class));
+    }
+
+    
     /**
      * Closes all contained streams.<br/>
      * <br/>

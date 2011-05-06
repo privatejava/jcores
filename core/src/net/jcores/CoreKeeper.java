@@ -33,10 +33,13 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.locks.Lock;
 
+import javax.sound.sampled.AudioInputStream;
 import javax.swing.JComponent;
 
+import net.jcores.cores.CoreAudioInputStream;
 import net.jcores.cores.CoreBufferedImage;
 import net.jcores.cores.CoreClass;
 import net.jcores.cores.CoreComponent;
@@ -45,6 +48,7 @@ import net.jcores.cores.CoreFile;
 import net.jcores.cores.CoreInputStream;
 import net.jcores.cores.CoreJComponent;
 import net.jcores.cores.CoreLock;
+import net.jcores.cores.CoreMap;
 import net.jcores.cores.CoreNumber;
 import net.jcores.cores.CoreObject;
 import net.jcores.cores.CoreString;
@@ -72,7 +76,7 @@ public class CoreKeeper {
     /** The common core shared by all other cores. */
     public final static CommonCore $ = new CommonCore(); // Once $(), but misleading,
                                                          // looked like a CoreObject(),
-                                                         // which CC is not.
+                                                         // which the CC is not.
 
     /**
      * Wraps the given object(s) and returns a parameterized CoreObject. This
@@ -87,6 +91,17 @@ public class CoreKeeper {
         return new CoreObject<T>($, object);
     }
 
+
+    /**
+     * Wraps the given AudioInputStreams and returns a CoreAudioInputStream.
+     * 
+     * @param object The AudioInputStreams to wrap..
+     * @return A CoreAudioInputStream wrapping the set of objects.
+     */
+    public static CoreAudioInputStream $(AudioInputStream... object) {
+        return new CoreAudioInputStream($, object);
+    }
+    
     /**
      * Wraps number of numbers and returns a new CoreNumber.
      * 
@@ -104,6 +119,7 @@ public class CoreKeeper {
      * @param object The compounds to wrap.
      * @return A CoreCompound wrapping the given compounds.
      */
+    @SuppressWarnings("rawtypes")
     public static CoreCompound $(Compound... object) {
         return new CoreCompound($, object);
     }
@@ -231,6 +247,25 @@ public class CoreKeeper {
     public static <T> CoreObject<T> $(Collection<T> collection) {
         return new CoreObject<T>($, (T[]) Wrapper.convert(collection, Object.class));
     }
+    
+    /**
+     * Wraps a map. The inherited parts of the CoreMap will behave like a CoreObject on the 
+     * Map's key set. Note, however, that the order of the key set is undefined, so for example 
+     * <code>get(0)</code> might yield different results on for different CoreMaps of the 
+     * same Map. Also note that this function always returns a parameterized, but vanilla 
+     * CoreObject, which has to be cast using <code>.as()</code> again.
+     * 
+     * @param map The map to wrap
+     * @param <K> Type of keys.
+     * @param <V> Type of values.
+     * 
+     * @return A CoreMap of the given type wrapping a converted array of the
+     * collection.
+     */
+    public static <K, V> CoreMap<K, V> $(Map<K, V> map) {
+        return new CoreMap<K, V>($, map);
+    }
+    
 
     /**
      * Converts and wraps the given collection. Except that this method first converts

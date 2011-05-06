@@ -1,5 +1,5 @@
 /*
- * SimpleSpeedTests.java
+ * CoreStringTest.java
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
@@ -25,50 +25,21 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package sandbox;
+package junit;
 
 import static net.jcores.CoreKeeper.$;
+import junit.data.Data;
 
-import java.awt.Panel;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.swing.JPanel;
-
-import sandbox.dummys.DiagnosisChannelID;
-import sandbox.dummys.LoggingChannel1;
-import sandbox.dummys.TestChannel;
+import org.junit.Test;
 
 /**
- * @author rb
- *
+ * @author Ralf Biedert
  */
-public class SimpleCastTest {
-    /**
-     * @param args
-     */
-    @SuppressWarnings("boxing")
-    public static void main(String[] args) {
-        System.out.println($("a", "b", "c").cast(String.class).compact().size());
-        
-        Panel pp = null;
-        JPanel p = null;
-        $(p).add($(pp));
-        $(p, p, p);
-        $(pp, pp);
-        $(pp, p);
-        
-        $("a", "b").add("c", "d").subtract("b").intersect("b", "d").add("b", "d").unique().print();
-        Map<String, Object> map =  $("a", new Object(), "b", new Object()).compound().map(Object.class);
-        
-        Map<String, Number> mm = new HashMap<String, Number>();
-        mm.put("blah", 123);
-        mm.put("blubb", Math.PI);
-        System.out.println($(mm).value("blah"));
-    }
-    
-    public Class<? extends DiagnosisChannelID<?>>[] observedChannels() {
-        return $(TestChannel.class, LoggingChannel1.class).unsafearray();
-        //CoreObject<Class<? extends DiagnosisChannelID<?>>> xx = $;
+public class CoreAudioInputStream {
+
+    /** */
+    @Test
+    public void testPlay() {
+        $(Data.class.getResourceAsStream("mouse.wav")).audio().play();
     }
 }

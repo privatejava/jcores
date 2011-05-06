@@ -1,5 +1,5 @@
 /*
- * SimpleSpeedTests.java
+ * CoreAudioInputStream
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
@@ -25,50 +25,59 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package sandbox;
+package net.jcores.cores;
 
-import static net.jcores.CoreKeeper.$;
+import javax.sound.sampled.AudioInputStream;
 
-import java.awt.Panel;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.swing.JPanel;
-
-import sandbox.dummys.DiagnosisChannelID;
-import sandbox.dummys.LoggingChannel1;
-import sandbox.dummys.TestChannel;
+import net.jcores.CommonCore;
+import net.jcores.interfaces.functions.F1;
+import net.jcores.utils.sound.SoundUtils;
 
 /**
- * @author rb
- *
+ * Wraps a number of AudioInputStream and exposes some convenience functions. For example, 
+ * to play an audio file, write:<br/><br/>
+ * 
+ * <code>$("sound.wav").file().audio().play()</code><br/>
+ * <br/>
+ * 
+ * <b>Important note: See {@link CoreInputStream} regarding <i>consuming</i> methods.</b>
+ * 
+ * @author Ralf Biedert
+ * @since 1.0
  */
-public class SimpleCastTest {
+public class CoreAudioInputStream extends CoreObject<AudioInputStream> {
+
+    /** Used for serialization */
+    private static final long serialVersionUID = -7643964446329787050L;
+
     /**
-     * @param args
+     * Creates an AudioInputStream core.
+     * 
+     * @param supercore The common core.
+     * @param objects The strings to wrap.
      */
-    @SuppressWarnings("boxing")
-    public static void main(String[] args) {
-        System.out.println($("a", "b", "c").cast(String.class).compact().size());
-        
-        Panel pp = null;
-        JPanel p = null;
-        $(p).add($(pp));
-        $(p, p, p);
-        $(pp, pp);
-        $(pp, p);
-        
-        $("a", "b").add("c", "d").subtract("b").intersect("b", "d").add("b", "d").unique().print();
-        Map<String, Object> map =  $("a", new Object(), "b", new Object()).compound().map(Object.class);
-        
-        Map<String, Number> mm = new HashMap<String, Number>();
-        mm.put("blah", 123);
-        mm.put("blubb", Math.PI);
-        System.out.println($(mm).value("blah"));
+    public CoreAudioInputStream(CommonCore supercore, AudioInputStream... objects) {
+        super(supercore, objects);
     }
-    
-    public Class<? extends DiagnosisChannelID<?>>[] observedChannels() {
-        return $(TestChannel.class, LoggingChannel1.class).unsafearray();
-        //CoreObject<Class<? extends DiagnosisChannelID<?>>> xx = $;
+
+    /**
+     * Plays all enclosed audio streams on the standard sound device.<br/>
+     * <br/>
+     * 
+     * Multi-threaded. Consuming.<br/>
+     * <br/>
+     * 
+     * @return Return <code>this</code>.
+     */
+    public CoreAudioInputStream play() {
+        map(new F1<AudioInputStream, Void>() {
+            @Override
+            public Void f(AudioInputStream x) {
+                SoundUtils.playSound(x);
+                return null;
+            }
+        });
+
+        return this;
     }
 }

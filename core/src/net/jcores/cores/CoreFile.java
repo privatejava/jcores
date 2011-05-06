@@ -49,6 +49,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
 
 import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F1;
@@ -57,6 +58,7 @@ import net.jcores.options.MessageType;
 import net.jcores.options.Option;
 import net.jcores.utils.io.FileUtils;
 import net.jcores.utils.io.StreamUtils;
+import net.jcores.utils.sound.SoundUtils;
 
 /**
  * Wraps a number of files and exposes some convenience functions. For example, 
@@ -120,6 +122,26 @@ public class CoreFile extends CoreObject<File> {
 
         return this;
     }
+    
+    
+    /**
+     * Treats the given files as audio files and returns a {@link CoreAudioInputStream} for them.<br/>
+     * <br/>
+     * 
+     * Multi-threaded.<br/>
+     * <br/>
+     * 
+     * @return The new core for the {@link AudioInputStream} objects.
+     */
+    public CoreAudioInputStream audio() {
+        return new CoreAudioInputStream(this.commonCore, map(new F1<File, AudioInputStream>() {
+            @Override
+            public AudioInputStream f(File x) {
+                return SoundUtils.getStream(x);
+            }
+        }).array(AudioInputStream.class));
+    }
+    
 
     /**
      * Copies all enclosed files to the destination. If <code>destination</code> is a directory all enclosed objects

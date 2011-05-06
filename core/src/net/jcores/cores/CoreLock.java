@@ -1,5 +1,5 @@
 /*
- * CoreFile.java
+ * CoreLock.java
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
