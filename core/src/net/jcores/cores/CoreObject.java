@@ -411,7 +411,12 @@ public class CoreObject<T> extends Core {
     
 
     /**
-     * Returns true if this core contains the given object. <br/>
+     * Returns true if this core contains the given object. An object is contained if there is 
+     * another object in this core that is equal to it. <br/><br/>
+     * 
+     * Note that on a {@link CoreString} this method
+     * does not behave as <code>String.contains()</code> (which checks for substrings). If you want to do 
+     * a substring search, use <code>CoreString.containssubstr()</code>.<br/>
      * <br/>
      * 
      * Single-threaded. <br/>

@@ -161,9 +161,9 @@ public class Compound<T> extends HashMap<String, T> {
      * @param key
      * @param value
      */
-    @SuppressWarnings("boxing")
+    @SuppressWarnings("unchecked")
     public void put(String key, int value) {
-        put(key, Integer.valueOf(value));
+        put(key, (T) Integer.toString(value));
     }
 
     /**
@@ -172,9 +172,9 @@ public class Compound<T> extends HashMap<String, T> {
      * @param key
      * @param value
      */
-    @SuppressWarnings("boxing")
+    @SuppressWarnings("unchecked")
     public void put(String key, double value) {
-        put(key, Double.valueOf(value));
+        put(key, (T) Double.toString(value));
     }
 
     /*

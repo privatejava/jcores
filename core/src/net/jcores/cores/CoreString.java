@@ -99,6 +99,26 @@ public class CoreString extends CoreObject<String> {
     }
     
     
+
+    /**
+     * Returns true if this core contains a string which has the given substring as one of its parts.<br/>
+     * <br/>
+     * 
+     * Single-threaded. <br/>
+     * <br/>
+     * 
+     * @param substring The substring to search for in this String core. A search for null will always return false.
+     * @return True if the substring was found in one of the strings, false if not.
+     */
+    public boolean containssubstr(final String substring) {
+        for (int i = 0; i < size(); i++) {
+            if (this.t[i] != null && this.t[i].contains(substring)) return true;
+        }
+
+        return false;
+    }
+
+    
     /**
      * Decodes all strings from the application/x-www-form-urlencoded format.<br/>
      * <br/>
@@ -212,7 +232,7 @@ public class CoreString extends CoreObject<String> {
             @Override
             public Void f(String x) {
                 final String[] delims = delimeters.length > 0 ? delimeters : new String[] {":=", "=", ":"};
-                final Compound best = $("token", "", "dist", ""+Integer.MAX_VALUE).compound();
+                final Compound<String> best = $("token", "", "dist", ""+Integer.MAX_VALUE).compound(String.class);
                 
                 // Find best delimeter
                 for (String string : delims) {  
@@ -374,6 +394,25 @@ public class CoreString extends CoreObject<String> {
         }).array(String.class));
     }
 
+
+    /**
+     * Trims whitespace in each string.<br/>
+     * <br/>
+     * 
+     * Multi-threaded.<br/>
+     * <br/>
+     * 
+     * @return A CoreString with trimmed values. 
+     */
+    public CoreString trim() {
+        return new CoreString(this.commonCore, map(new F1<String, String>() {
+            public String f(final String x) {
+                return x.trim();
+            }
+        }).array(String.class));
+    }
+
+    
     /**
      * Creates URIs for all enclosed Strings.<br/>
      * <br/>
