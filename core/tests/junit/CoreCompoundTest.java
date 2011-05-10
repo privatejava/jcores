@@ -1,8 +1,7 @@
 /*
- * CoreJComponent
+ * CoreStringTest.java
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
- * 
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -26,59 +25,30 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.cores;
+package junit;
 
-import net.jcores.CommonCore;
-import net.jcores.interfaces.functions.F1;
-import net.jcores.options.Option;
+import static net.jcores.CoreKeeper.$;
 import net.jcores.utils.Compound;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 /**
- * Wraps a number of {@link Compound} elements and exposes some convenience
- * functions. For example, to extract only compound-values with the given key <code>"uri"</code>, 
- * write:<br/><br/>
- * 
- * <code>$(compounds).key("uri")</code>
- * 
- * 
  * @author Ralf Biedert
- * @param <T> The type of the compound.
- * 
- * @since 1.0
  */
-public class CoreCompound<T> extends CoreObject<Compound<T>> {
+public class CoreCompoundTest {
 
-    /** Used for serialization */
-    private static final long serialVersionUID = 5810590185749402495L;
-
-    /**
-     * Creates an Compound core.
-     * 
-     * @param supercore The common core.
-     * @param objects The Compounds to wrap.
-     */
-    public CoreCompound(CommonCore supercore, Compound<T>... objects) {
-        super(supercore, objects);
-    }
-
-    /**
-     * Creates a core wrapping only elements of the given key.<br/>
-     * <br/>
-     * 
-     * Multi-threaded.<br/>
-     * <br/>
-     * 
-     * @param key The key to extract of the compound.
-     * @param type Type of the core to return (must match the type of the elements of
-     * key).
-     * @return A new {@link CoreObject} is returned containing only elements of the given
-     * key.
-     */
-    public CoreObject<T> key(final String key, Class<T> type) {
-        return map(new F1<Compound<T>, T>() {
-            public T f(final Compound<T> x) {
-                return x.get(key);
-            }
-        }, Option.MAP_TYPE(type));
+    /** */
+    @SuppressWarnings({ "boxing", "unchecked" })
+    @Test
+    public void testBasic() {
+        Compound<Object> c1 = $("a", "b", "c", "d").compound();
+        Compound<String> c2 = $("a", "b", "c", "d").compound(String.class);
+        
+        Assert.assertEquals("b", c1.getString("a"));
+        Assert.assertEquals("b", c2.getString("a"));
+        
+        Compound<Double> c3 = $("a", 2.0, "b", 4.0).debug().compound(Double.class);
+        Assert.assertEquals(2.0, c3.getDouble("a"), 0.01);
     }
 }

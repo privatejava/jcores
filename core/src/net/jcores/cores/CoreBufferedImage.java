@@ -120,9 +120,9 @@ public class CoreBufferedImage extends CoreObject<BufferedImage> {
      * Multi-threaded.<br/>
      * <br/>
      * 
-     * @param width The new width of all images. If <code>0</code> only height 
+     * @param width The new width of all images. If <code>0</code> or negative, only height 
      * will be used and the aspect ratio will be kept. 
-     * @param height The new height of all images. If <code>0</code> only width 
+     * @param height The new height of all images. If <code>0</code> or negative, only width 
      * will be used and the aspect ratio will be kept. 
      * 
      * @return A CoreBufferedImage containing the scaled images.
@@ -138,17 +138,17 @@ public class CoreBufferedImage extends CoreObject<BufferedImage> {
                 float w = bi.getWidth();
                 float h = bi.getHeight();
                 
-                if(width == 0) {
+                if(width <= 0) {
                     h = height;
                     w = ((height / h) * w);
                 }
 
-                if(height == 0) {
+                if(height <= 0) {
                     h = ((width/ w) * h);
                     w = width;
                 }
                 
-                if(width != 0 && height != 0) {
+                if(width > 0 && height > 0) {
                     h = height;
                     w = width;
                 }

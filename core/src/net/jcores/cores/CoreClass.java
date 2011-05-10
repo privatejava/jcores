@@ -154,7 +154,34 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
 
                         // Put a new constructor if it wasn't cached before
                         if (constructor == null) {
-                            constructor = toSpawn.getConstructor(types);
+                            try {
+                                constructor = toSpawn.getDeclaredConstructor(types);
+                            } catch (NoSuchMethodException e) {
+                                // We catch this exception in here, as sometimes we fail to obtain the 
+                                // proper constructor with the method above. In that case, we try to get
+                                // the closest match
+                                Constructor<?>[] declaredConstructors = toSpawn.getDeclaredConstructors();
+                                for (Constructor<?> cc : declaredConstructors) {
+                                    // Check if the constructor matches
+                                    Class<?>[] parameterTypes = cc.getParameterTypes();
+                                    if(parameterTypes.length != types.length) continue;
+                                    
+                                    boolean mismatch = false;
+                                    
+                                    // Check if each parameter is assignable
+                                    for(int i=0; i<types.length; i++) {
+                                        if(!parameterTypes[i].isAssignableFrom(types[i])) mismatch = true;
+                                    }
+                                    
+                                    // In case any parameter mismatched, we can't use this constructor
+                                    if(mismatch) continue;
+                                    
+                                    constructor = (Constructor<T>) cc;
+                                }
+                            }
+                            // If we don't have any constructor at this point, we are in trouble 
+                            if(constructor == null) throw new NoSuchMethodException("No constructor found."); 
+                                
                             CoreClass.this.constructors.put(types, constructor);
                         }
                     }
@@ -162,8 +189,7 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
                     return CoreClass.this.manager.registerObject(x, constructor.newInstance(args));
 
                     // NOTE: We do not swallow all execptions silently, becasue spawn() is a bit
-                    // special and
-                    // we cannot return anything that would still be usable.
+                    // special and we cannot return anything that would still be usable.
                 } catch (SecurityException e) {
                     e.printStackTrace();
                 } catch (NoSuchMethodException e) {

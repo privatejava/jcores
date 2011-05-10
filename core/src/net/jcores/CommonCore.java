@@ -104,7 +104,7 @@ public class CommonCore {
     }
 
     /**
-     * Wraps number of ints and returns a Integer array.
+     * Wraps number of ints and returns an Integer array.
      * 
      * @param object The numbers to wrap.
      * @return An Integer array.

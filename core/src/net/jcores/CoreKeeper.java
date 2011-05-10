@@ -74,10 +74,9 @@ import net.jcores.utils.Wrapper;
  */
 public class CoreKeeper {
     /** The common core shared by all other cores. */
-    public final static CommonCore $ = new CommonCore(); // Once $(), but misleading,
-                                                         // looked like a CoreObject(),
-                                                         // which the CC is not.
+    public final static CommonCore $ = new CommonCore(); 
 
+    
     /**
      * Wraps the given object(s) and returns a parameterized CoreObject. This
      * is also the default method being used when wrapping <i>unknown</i> objects for
@@ -117,11 +116,11 @@ public class CoreKeeper {
      * Wraps number of compounds and returns a new CompoundCore.
      * 
      * @param object The compounds to wrap.
+     * @param <T> The type of the compound. 
      * @return A CoreCompound wrapping the given compounds.
      */
-    @SuppressWarnings("rawtypes")
-    public static CoreCompound $(Compound... object) {
-        return new CoreCompound($, object);
+    public static <T> CoreCompound<T> $(Compound<T>... object) {
+        return new CoreCompound<T>($, object);
     }
     
 

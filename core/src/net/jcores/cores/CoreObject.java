@@ -390,6 +390,25 @@ public class CoreObject<T> extends Core {
     public Compound<Object> compound() {
         return Compound.create(this.t);
     }
+    
+
+    /**
+     * Creates a compound out of this core's content with the given type. This is useful 
+     * for quickly creating complex objects which should be handled by the framework.<br/>
+     * <br/>
+     * 
+     * Single-threaded. <br/>
+     * <br/>
+     * 
+     * @param clazz The type of the {@link Compound}.
+     * @param <C> The type of {@link Compound} to create. 
+     * 
+     * @return A new {@link Compound} with this core's content.
+     */
+    public <C> Compound<C> compound(Class<C> clazz) {
+        return Compound.create(this.t);
+    }
+    
 
     /**
      * Returns true if this core contains the given object. <br/>
