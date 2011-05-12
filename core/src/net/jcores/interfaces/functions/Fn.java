@@ -28,15 +28,20 @@
 package net.jcores.interfaces.functions;
 
 /**
- * @author rb
+ * A function that takes an unlimited number of arguments of the same type and returns a value 
+ * of a possibly different type.
+ * 
+ * @author Ralf Biedert
  *
- * @param <X>
- * @param <Y>
+ * @param <X> The type of input parameters.
+ * @param <Y> The type of the output parameter
  */
 public interface Fn<X, Y> {
     /**
-     * @param x
-     * @return .
+     * Override this method.
+     * 
+     * @param x Some input parameters.
+     * @return The output value.
      */
     public Y f(X ...x);
 }

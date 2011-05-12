@@ -28,14 +28,17 @@
 package net.jcores.interfaces.functions;
 
 /**
+ * A function that returns a boolean value for a given object.
+ * 
  * @author Ralf Biedert.
- * @param <X> 
- *
+ * @param <X>  The type of the input object. 
  */
 public interface F1Object2Bool<X> {
     /**
-     * @param i
-     * @return .
+     * Override this method.
+     * 
+     * @param x The object to consider. 
+     * @return Either true or false.
      */
-    public boolean f(X i);
+    public boolean f(X x);
 }

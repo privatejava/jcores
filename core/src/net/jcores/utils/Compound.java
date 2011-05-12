@@ -33,7 +33,13 @@ import java.util.Set;
 
 /**
  * Represents a compound object, consisting of several smaller objects. A compound basically is
- * a {@link Map}, with Strings as keys and some type as value.
+ * a {@link Map}, with Strings as keys and some type as value. It is a simple way to bundle a number
+ * of objects where only a single object is allowed (e.g., return values). Create a compound like this:<br/>
+ * <br/>
+ * 
+ * <code>Compound= $(image).copy().get(0)</code>
+ * 
+ * 
  * 
  * @author Ralf Biedert
  * @param <T> The type of the values.
@@ -71,6 +77,34 @@ public class Compound<T> extends HashMap<String, T> {
         }
 
         return (Compound<T>) rval;
+    }
+
+    /**
+     * Returns a key mapped to the given type.
+     * 
+     * @param <R> The return type.
+     * @param key The key to query.
+     * @param type The type as which the object should be returned.
+     * @return The corresponding object if it existed, or null.
+     */
+    @SuppressWarnings("unchecked")
+    public <R> R get(String key, Class<R> type) {
+        return (R) get(key);
+    }
+
+    /**
+     * Returns a key mapped to the given type.
+     * 
+     * @param <R> The return type.
+     * @param key The key to query.
+     * @param dflt The default to return if otherwise null would be returned. 
+     * @return The corresponding object if it existed, or the default.
+     */
+    @SuppressWarnings("unchecked")
+    public <R> R get(String key, R dflt) {
+        T t = get(key);
+        if (t == null) return dflt;
+        return (R) t;
     }
 
     /**
@@ -157,7 +191,7 @@ public class Compound<T> extends HashMap<String, T> {
     }
 
     /**
-     * Puts the given integer into the slot named key. 
+     * Puts the given integer into the slot named key.
      * 
      * @param key
      * @param value

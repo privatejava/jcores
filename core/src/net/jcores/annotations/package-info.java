@@ -1,5 +1,5 @@
 /**
- * Annotations maybe relevant in the future. Please ignore.
+ * Annotations that may be relevant in the future.
  *
  * @since 1.0
  */

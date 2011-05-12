@@ -28,10 +28,10 @@
 package net.jcores.interfaces.functions;
 
 /**
- * A constant function.
+ * An empty function, does not accept parameters, does not return a value.
  * 
  * @since 1.0
- * @author Ralf Biedert 
+ * @author Ralf Biedert
  */
 public interface F0 {
     /**

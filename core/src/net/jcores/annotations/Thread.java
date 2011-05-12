@@ -28,11 +28,12 @@
 package net.jcores.annotations;
 
 /**
- * Ignore me, still playground.  
+ * Methods annotated with @Thread will be executed in their own thread.   
  * 
- * @deprecated
+ * @deprecated Might be used in the future, but right now it is unused. 
  * @author Ralf Biedert
  */
+@Deprecated
 public @interface Thread {
     //
 }

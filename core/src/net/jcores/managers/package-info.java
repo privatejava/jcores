@@ -1,5 +1,5 @@
 /**
- * Internally used managers, only relevant to core developers (no pun intended). 
+ * Mostly internally used managers, relevant to core developers (no pun intended). 
  *
  * @since 1.0
  */

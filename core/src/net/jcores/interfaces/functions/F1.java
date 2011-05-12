@@ -28,19 +28,19 @@
 package net.jcores.interfaces.functions;
 
 /**
- * A function taking one parameter.
+ * A function taking one parameter and returning a value.
  * 
  * @author Ralf Biedert
  *
- * @param <X> Input parameter.
- * @param <Y> Output parameter.
+ * @param <X> Input parameter type.
+ * @param <Y> Output parameter type.
  */
 public interface F1<X, Y> {
     /**
      * Override this method.
      * 
-     * @param x Input
-     * @return Output.
+     * @param x Input type
+     * @return Some output.
      */
     public Y f(X x);
 }

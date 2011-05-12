@@ -28,15 +28,19 @@
 package net.jcores.interfaces.functions;
 
 /**
- * @author rb
- *
- * @param <X>
+ * A function that takes two object of some type and returns a new object of the same type.
+ * 
+ * @author Ralf Biedert
+ * 
+ * @param <X> The type the function operates on.
  */
 public interface F2ReduceObjects<X> {
     /**
-     * @param left
-     * @param right 
-     * @return .
+     * Override this method.
+     * 
+     * @param left The <i>left</i> parameter for the delta function. Will usually be the object with the lower index.
+     * @param right The <i>right</i> parameter. Will usually be the object with the higher index.
+     * @return Some return value.
      */
     public X f(X left, X right);
 }

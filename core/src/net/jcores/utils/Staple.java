@@ -28,7 +28,8 @@
 package net.jcores.utils;
 
 /**
- * A staple of the given type. See <code>CoreObject.staple()</code>.
+ * A staple of the given type. A staple is the result of an operation that operated on a number of objects and returned a 
+ * single output value. See <code>CoreObject.staple()</code>.
  * 
  * @author Ralf Biedert
  *
@@ -54,18 +55,18 @@ public class Staple<T> {
     }
 
     /**
-     * Returns the size.
+     * Returns the number of objects that were stapled.
      * 
-     * @return The size.
+     * @return The number of objects.
      */
     public int size() {
         return this.size;
     }
 
     /**
-     * Staple value.
+     * Returns the stapled value.
      * 
-     * @return Value.
+     * @return The stapled value.
      */
     public T staple() {
         return this.t;

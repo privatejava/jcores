@@ -28,16 +28,21 @@
 package net.jcores.interfaces.functions;
 
 /**
+ * A function that takes two objects of the same type and returns a 
+ * object of a probably different type. 
+ * 
  * @author Ralf Biedert
  *
- * @param <X>
- * @param <Y> 
+ * @param <X> The input type.  
+ * @param <Y> The output type.
  */
 public interface F2DeltaObjects<X, Y> {
     /**
-     * @param left
-     * @param right 
-     * @return .
+     * Override this method.
+     * 
+     * @param left The <i>left</i> parameter for the delta function. Will usually be the object with the lower index.
+     * @param right The <i>right</i> parameter. Will usually be the object with the higher index.
+     * @return Some return value.
      */
     public Y f(X left, X right);
 }
