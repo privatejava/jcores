@@ -54,7 +54,7 @@ import net.jcores.managers.ManagerDebugGUI;
 import net.jcores.managers.ManagerStatistics;
 import net.jcores.options.MessageType;
 import net.jcores.options.Option;
-import net.jcores.utils.Reporter;
+import net.jcores.utils.internal.Reporter;
 
 /**
  * The common core is a singleton object shared by (thus common to) all created

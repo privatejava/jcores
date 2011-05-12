@@ -57,11 +57,11 @@ import net.jcores.options.Option;
 import net.jcores.options.OptionDebug;
 import net.jcores.options.OptionMapType;
 import net.jcores.utils.Compound;
-import net.jcores.utils.Folder;
-import net.jcores.utils.Mapper;
 import net.jcores.utils.Staple;
-import net.jcores.utils.io.StreamUtils;
-import net.jcores.utils.lang.ObjectUtils;
+import net.jcores.utils.internal.Folder;
+import net.jcores.utils.internal.Mapper;
+import net.jcores.utils.internal.io.StreamUtils;
+import net.jcores.utils.internal.lang.ObjectUtils;
 
 /**
  * The standard core that wraps a number of objects and exposes a number of methods to

@@ -45,7 +45,11 @@ public class SimpleURI {
      * @throws IOException 
      */
     public static void main(String[] args) throws IOException {
-        $("http://jcores.net/index.html").uri().download().input().text().print().bytes().hash().print();
+        //$("http://jcores.net/index.html").uri().download().input().text().print().bytes().hash().print();
+
+        $("http://api.text20.net/common/versioncheck/?product=peep&version=1.2").uri().download();
+        //$("http://heise.de/").uri().download().input().text().print();
+
     }
 
 }

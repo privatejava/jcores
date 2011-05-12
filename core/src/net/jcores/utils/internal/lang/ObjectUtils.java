@@ -1,5 +1,5 @@
 /*
- * Mapper.java
+ * ObjectUtils.java
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
@@ -25,39 +25,22 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.utils;
+package net.jcores.utils.internal.lang;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
 
 /**
- * Used by the cores when calling the inner core's mapping function. You do not need this.
- * 
  * @author rb
+ *
  */
-public abstract class Mapper extends Handler {
+public class ObjectUtils {
     /**
-     * Creates an empty mapper with the given size.
-     * 
-     * @param size
+     * @param handler
+     * @param interfaces
+     * @return .
      */
-    public Mapper(int size) {
-        this(null, size);
+    public static Object getProxy(InvocationHandler handler, Class<?>... interfaces) {
+        return Proxy.newProxyInstance(ObjectUtils.class.getClassLoader(), interfaces, handler);
     }
-
-    /**
-     * Creates a mapper with an existing return array of the given size.
-     * 
-     * @param class1
-     * @param size
-     */
-    public Mapper(Class<?> class1, int size) {
-        super(class1, size);
-    }
-
-    /**
-     * Overwrite this method and handle element number i. 
-     * 
-     * This method is called highly parallelized. 
-     * 
-     * @param i
-     */
-    public abstract void handle(int i);
 }

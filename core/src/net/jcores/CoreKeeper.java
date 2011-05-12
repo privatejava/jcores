@@ -57,7 +57,7 @@ import net.jcores.interfaces.functions.F1;
 import net.jcores.options.Option;
 import net.jcores.options.OptionMapType;
 import net.jcores.utils.Compound;
-import net.jcores.utils.Wrapper;
+import net.jcores.utils.internal.Wrapper;
 
 /**
  * Keeps the common core and contains Johnnys(<code>$</code>) for all our cores. This

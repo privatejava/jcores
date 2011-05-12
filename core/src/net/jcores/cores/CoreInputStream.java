@@ -41,8 +41,8 @@ import net.jcores.interfaces.functions.F1;
 import net.jcores.options.MessageType;
 import net.jcores.options.Option;
 import net.jcores.options.OptionHash;
-import net.jcores.utils.io.StreamUtils;
-import net.jcores.utils.sound.SoundUtils;
+import net.jcores.utils.internal.io.StreamUtils;
+import net.jcores.utils.internal.sound.SoundUtils;
 
 /**
  * Wraps an input stream and exposes some convenience functions. For example, 

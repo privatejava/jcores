@@ -1,5 +1,5 @@
 /*
- * ObjectUtils.java
+ * Reporter.java
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
@@ -25,22 +25,32 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.utils.lang;
+package net.jcores.utils.internal;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Proxy;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- * @author rb
- *
+ * Manages and keeps internal trouble records. You do not need this.
+ * 
+ * @author Ralf Biedert
  */
-public class ObjectUtils {
+public class Reporter {
+    ConcurrentLinkedQueue<String> allRecords = new ConcurrentLinkedQueue<String>();
+
     /**
-     * @param handler
-     * @param interfaces
-     * @return .
+     * @param record
      */
-    public static Object getProxy(InvocationHandler handler, Class<?>... interfaces) {
-        return Proxy.newProxyInstance(ObjectUtils.class.getClassLoader(), interfaces, handler);
+    public void record(String record) {
+        this.allRecords.add(record);
+    }
+
+    /**
+     * Prints all records.
+     */
+    public void printRecords() {
+        System.out.println(">>> jCores trouble log");
+        for (String r : this.allRecords) {
+            System.out.println(">>> " + r);
+        }
     }
 }

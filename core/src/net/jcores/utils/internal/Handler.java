@@ -1,5 +1,5 @@
 /*
- * Mapper.java
+ * Handler.java
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
@@ -25,22 +25,25 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.utils;
+package net.jcores.utils.internal;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Used by the cores when calling the inner core's mapping function. You do not need this.
+ * Handles parallel tasks. You do not need this.
  * 
  * @author Ralf Biedert
  */
-public abstract class Folder extends Handler {
-    /**
-     * Creates an empty mapper with the given size.
-     * 
-     * @param size
-     */
-    public Folder(int size) {
-        this(null, size);
-    }
+public class Handler {
+    /** If set the return array will be created automatically */
+    protected final Class<?> returnType;
+
+    /** Size of the return array. */
+    protected final int size;
+
+    /** Contains the return array. */
+    @SuppressWarnings("rawtypes")
+    protected final AtomicReference array = new AtomicReference();
 
     /**
      * Creates a mapper with an existing return array of the given size.
@@ -48,16 +51,48 @@ public abstract class Folder extends Handler {
      * @param class1
      * @param size
      */
-    public Folder(Class<?> class1, int size) {
-        super(class1, size);
+    public Handler(Class<?> class1, int size) {
+        this.returnType = class1;
+        this.size = size;
     }
 
     /**
-     * Overwrite this method and handle element number i.
+     * Return the size of the array. 
      * 
-     * @param i
-     * @param j
-     * @param destination 
+     * @return .
      */
-    public abstract void handle(int i, int j, int destination);
+    public int size() {
+        return this.size;
+    }
+
+    /**
+     * Get the resulting array.
+     * 
+     * @return .
+     */
+    public Object getTargetArray() {
+        return this.array.get();
+    }
+
+    /**
+     * Returns the return array type.
+     * 
+     * @return .
+     */
+    public Class<?> getReturnType() {
+        return this.returnType;
+    }
+
+    /**
+     * Tries to update the array and returns the most recent result. 
+     * 
+     * @param object
+     * @return .
+     */
+    @SuppressWarnings("unchecked")
+    public Object updateArray(Object object) {
+        this.array.compareAndSet(null, object);
+        return this.array.get();
+    }
+
 }

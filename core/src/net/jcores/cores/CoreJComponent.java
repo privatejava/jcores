@@ -36,8 +36,8 @@ import javax.swing.JComponent;
 import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F1;
 import net.jcores.options.Option;
-import net.jcores.utils.Wrapper;
-import net.jcores.utils.ui.SimpleTransferHandler;
+import net.jcores.utils.internal.Wrapper;
+import net.jcores.utils.internal.ui.SimpleTransferHandler;
 
 /**
  * Wraps a number of JComponents and exposes some convenience functions. For example, 

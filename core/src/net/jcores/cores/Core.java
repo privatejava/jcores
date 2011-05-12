@@ -35,8 +35,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import net.jcores.CommonCore;
 import net.jcores.options.Option;
-import net.jcores.utils.Folder;
-import net.jcores.utils.Mapper;
+import net.jcores.utils.internal.Folder;
+import net.jcores.utils.internal.Mapper;
 
 /**
  * The abstract base class of all cores. Contains commonly used methods and variables. In

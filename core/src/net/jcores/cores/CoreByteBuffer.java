@@ -35,7 +35,7 @@ import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F1;
 import net.jcores.options.Option;
 import net.jcores.options.OptionHash;
-import net.jcores.utils.io.DataUtils;
+import net.jcores.utils.internal.io.DataUtils;
 
 /**
  * Wraps a number of ByteBuffers and exposes some convenience functions. For example, 

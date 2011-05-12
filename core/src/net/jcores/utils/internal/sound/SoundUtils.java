@@ -25,7 +25,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.utils.sound;
+package net.jcores.utils.internal.sound;
 
 import java.io.BufferedInputStream;
 import java.io.File;

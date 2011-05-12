@@ -56,9 +56,9 @@ import net.jcores.interfaces.functions.F1;
 import net.jcores.interfaces.functions.F1Object2Bool;
 import net.jcores.options.MessageType;
 import net.jcores.options.Option;
-import net.jcores.utils.io.FileUtils;
-import net.jcores.utils.io.StreamUtils;
-import net.jcores.utils.sound.SoundUtils;
+import net.jcores.utils.internal.io.FileUtils;
+import net.jcores.utils.internal.io.StreamUtils;
+import net.jcores.utils.internal.sound.SoundUtils;
 
 /**
  * Wraps a number of files and exposes some convenience functions. For example, 
@@ -115,7 +115,6 @@ public class CoreFile extends CoreObject<File> {
                 } catch (UnsupportedEncodingException e) {
                     CoreFile.this.commonCore.report(MessageType.EXCEPTION, e.getLocalizedMessage());
                 }
-
                 return null;
             }
         });

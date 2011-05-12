@@ -32,10 +32,11 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Represents a compound object, consisting of several smaller objects.
+ * Represents a compound object, consisting of several smaller objects. A compound basically is
+ * a {@link Map}, with Strings as keys and some type as value.
  * 
  * @author Ralf Biedert
- * @param <T>
+ * @param <T> The type of the values.
  */
 public class Compound<T> extends HashMap<String, T> {
 
@@ -147,16 +148,16 @@ public class Compound<T> extends HashMap<String, T> {
         for (String string : keySet2) {
             final Object l = get(string);
             if (l == null) continue;
-            if(clazz.isAssignableFrom(l.getClass())) continue;
-            
+            if (clazz.isAssignableFrom(l.getClass())) continue;
+
             remove(string);
         }
-        
+
         return (Map<String, M>) this;
     }
 
     /**
-     * Puts the given integer into the slot named key
+     * Puts the given integer into the slot named key. 
      * 
      * @param key
      * @param value

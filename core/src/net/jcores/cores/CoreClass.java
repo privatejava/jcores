@@ -39,7 +39,7 @@ import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F1;
 import net.jcores.managers.ManagerClass;
 import net.jcores.options.MessageType;
-import net.jcores.utils.io.StreamUtils;
+import net.jcores.utils.internal.io.StreamUtils;
 
 /**
  * Wraps class objects, usually only one, and exposes some convenience functions

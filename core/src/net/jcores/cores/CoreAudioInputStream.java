@@ -31,7 +31,7 @@ import javax.sound.sampled.AudioInputStream;
 
 import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F1;
-import net.jcores.utils.sound.SoundUtils;
+import net.jcores.utils.internal.sound.SoundUtils;
 
 /**
  * Wraps a number of AudioInputStream and exposes some convenience functions. For example, 

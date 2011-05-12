@@ -25,13 +25,15 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.utils.io;
+package net.jcores.utils.internal.io;
 
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
+ * Internally used data functions.
+ * 
  * @author Ralf Biedert
  */
 public class DataUtils {

@@ -35,8 +35,8 @@ import java.util.zip.ZipInputStream;
 import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F1;
 import net.jcores.options.MessageType;
-import net.jcores.utils.io.InputStreamWrapper;
-import net.jcores.utils.io.StreamUtils;
+import net.jcores.utils.internal.io.InputStreamWrapper;
+import net.jcores.utils.internal.io.StreamUtils;
 
 /**
  * Wraps a number of ZipInputStreams and exposes some convenience functions. For example, 

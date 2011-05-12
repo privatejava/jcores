@@ -3,4 +3,4 @@
  *
  * @since 1.0
  */
-package net.jcores.utils.io;
+package net.jcores.utils.internal.io;

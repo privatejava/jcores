@@ -32,13 +32,12 @@ import java.util.Map;
 import net.jcores.CommonCore;
 
 /**
- * Wraps a single Map. <br/><br/>
+ * Wraps a single Map. This core is currently experimental. <br/><br/>
  * 
- * <code>$(lock).locked(function)</code>
  * 
  * @author Ralf Biedert
- * @param <K> 
- * @param <V> 
+ * @param <K> The type of keys.
+ * @param <V> The type of values.
  * @since 1.0
  */
 public class CoreMap<K, V> extends CoreObject<K> {

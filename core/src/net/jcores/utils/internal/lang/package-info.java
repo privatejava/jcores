@@ -3,4 +3,4 @@
  *
  * @since 1.0
  */
-package net.jcores.utils.lang;
+package net.jcores.utils.internal.lang;

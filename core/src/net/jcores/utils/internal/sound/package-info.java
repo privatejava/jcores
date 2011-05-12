@@ -3,4 +3,4 @@
  *
  * @since 1.0
  */
-package net.jcores.utils.sound;
+package net.jcores.utils.internal.sound;

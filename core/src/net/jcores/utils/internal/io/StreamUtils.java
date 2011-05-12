@@ -25,7 +25,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.utils.io;
+package net.jcores.utils.internal.io;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

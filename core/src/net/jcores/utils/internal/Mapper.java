@@ -1,5 +1,5 @@
 /*
- * Reporter.java
+ * Mapper.java
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
@@ -25,32 +25,39 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.utils;
-
-import java.util.concurrent.ConcurrentLinkedQueue;
+package net.jcores.utils.internal;
 
 /**
- * Manages and keeps internal trouble records. You do not need this.
+ * Used by the cores when calling the inner core's mapping function. You do not need this.
  * 
  * @author Ralf Biedert
  */
-public class Reporter {
-    ConcurrentLinkedQueue<String> allRecords = new ConcurrentLinkedQueue<String>();
-
+public abstract class Mapper extends Handler {
     /**
-     * @param record
+     * Creates an empty mapper with the given size.
+     * 
+     * @param size
      */
-    public void record(String record) {
-        this.allRecords.add(record);
+    public Mapper(int size) {
+        this(null, size);
     }
 
     /**
-     * Prints all records.
+     * Creates a mapper with an existing return array of the given size.
+     * 
+     * @param class1
+     * @param size
      */
-    public void printRecords() {
-        System.out.println(">>> jCores trouble log");
-        for (String r : this.allRecords) {
-            System.out.println(">>> " + r);
-        }
+    public Mapper(Class<?> class1, int size) {
+        super(class1, size);
     }
+
+    /**
+     * Overwrite this method and handle element number i. 
+     * 
+     * This method is called highly parallelized. 
+     * 
+     * @param i
+     */
+    public abstract void handle(int i);
 }
