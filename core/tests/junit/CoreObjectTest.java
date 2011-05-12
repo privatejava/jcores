@@ -28,6 +28,9 @@
 package junit;
 
 import static net.jcores.CoreKeeper.$;
+
+import java.util.List;
+
 import junit.data.Data;
 import net.jcores.cores.CoreString;
 import net.jcores.interfaces.functions.F1;
@@ -75,7 +78,17 @@ public class CoreObjectTest {
         $(Data.strings(10000)).serialize("big.file");
     }
     
+    /** */
+    @Test
+    public void testList() {
+        List<String> list = $("a", "b", "c").list();
+        list.remove(1);
+        list.remove("a");
+        list.add(0, "d");
+        Assert.assertEquals("c", list.get(1));
 
+    }
+    
     /** */
     @Test
     public void testRandom() {

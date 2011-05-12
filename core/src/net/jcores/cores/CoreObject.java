@@ -261,10 +261,10 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Performs a generic call on each element of this core. This function should not be
-     * called within
-     * hot-spots (functions called millions of times a second) as it relies heavily on
-     * reflection.<br/>
+     * Performs a generic call on each element of this core (for 
+     * example <code>core.call("toString")</code>). The return values will be stored in a {@link CoreObject}. This is a dirty but shorthand way
+     * to call the same function on objects that don't share a common superclass. Should not be
+     * called within hot-spots (functions called millions of times a second) as it relies heavily on reflection.<br/>
      * <br/>
      * 
      * Multi-threaded. Heavyweight.<br/>
@@ -336,8 +336,7 @@ public class CoreObject<T> extends Core {
      * Multi-threaded. <br/>
      * <br/>
      * 
-     * @return A new CoreObject of the same type, with a (probably) reduced size without
-     * any null element.
+     * @return A new {@link CoreClass} containing the classes for all objects.
      */
     @SuppressWarnings("unchecked")
     public CoreClass<T> clazz() {
@@ -351,7 +350,8 @@ public class CoreObject<T> extends Core {
 
     /**
      * Returns a compacted core whose underlying array does not
-     * contain null anymore. <br/>
+     * contain null anymore, therefore the positions of elements will be moved to the left to 
+     * fill null values.<br/>
      * <br/>
      * 
      * Single-threaded. <br/>
@@ -378,8 +378,8 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Creates a compound out of this core's content. This is useful for quickly creating
-     * complex objects which should be handled by the framework.<br/>
+     * Creates a {@link Compound} out of this core's content. A Compound is a String -> Object map, which is useful for 
+     * quickly creating complex objects which should be handled by the framework.<br/>
      * <br/>
      * 
      * Single-threaded. <br/>
@@ -435,7 +435,7 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Prints a debug output. Useful for figuring out what's going wrong in a
+     * Prints debug output to the console. Useful for figuring out what's going wrong in a
      * chain of map() operations.<br/>
      * <br/>
      * 
@@ -604,7 +604,7 @@ public class CoreObject<T> extends Core {
     /**
      * Expands contained arrays into a single array of the given type. This means, if this
      * core wraps
-     * a number of collections, lists or arrays, each of which are containing elements on
+     * a number of cores, collections, lists or arrays, each of which are containing elements on
      * their own, <code>expand()</code> will break up all of these lists and return a
      * single CoreObject wrapping
      * the union of everything that was previously held in them.<br/>
@@ -713,7 +713,7 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns a new core with all null elements set to <code>fillValue</code>.<br/>
+     * Returns a new core with all null elements set to <code>fillValue</code>, the other elements are transferred unchanged.<br/>
      * <br/>
      * 
      * Single-threaded.<br/>
@@ -766,14 +766,15 @@ public class CoreObject<T> extends Core {
 
     /**
      * Filters all object by their toString() value using the given regular
-     * expression. <br/>
+     * expression. Only elements that match the regular expression are being kept.<br/>
      * <br/>
      * 
      * Multi-threaded.<br/>
      * <br/>
      * 
      * @param regex The regular expression to use.
-     * @param options Currently none used.
+     * @param options  Supports INVERT_SELECTION if the filter logic should be inverted
+     * (options that match the regular expression will not be considered).
      * 
      * @return A CoreObject containing a filtered subset of our elements.
      */
@@ -951,7 +952,7 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Return the an element at the the relative position.<br/>
+     * Return the element at the the given relative position (0 <= x <= 1) or return <code>dflt</code> if that element is null.<br/>
      * <br/>
      * 
      * Single-threaded. <br/>
@@ -978,7 +979,7 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Return the an element at the the relative position.<br/>
+     * Return an element at the the relative position (0 <= x <= 1).<br/>
      * <br/>
      * 
      * Single-threaded. <br/>
@@ -1203,7 +1204,7 @@ public class CoreObject<T> extends Core {
      */
     public List<T> list() {
         if (this.t == null) return new ArrayList<T>();
-        return Arrays.asList(this.t);
+        return new ArrayList<T>(Arrays.asList(this.t)); 
     }
 
     /**

@@ -37,9 +37,7 @@ import java.util.Set;
  * of objects where only a single object is allowed (e.g., return values). Create a compound like this:<br/>
  * <br/>
  * 
- * <code>Compound= $(image).copy().get(0)</code>
- * 
- * 
+ * <code>Compound&lt;Object&gt; c = $("name", name, "age", age).compound()</code>
  * 
  * @author Ralf Biedert
  * @param <T> The type of the values.
