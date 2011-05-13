@@ -41,7 +41,7 @@ import net.jcores.interfaces.functions.F1;
 import net.jcores.options.Option;
 
 /**
- * Manager for classes.
+ * Manager for classes, contains week references to spawned objects. 
  * 
  * @since 1.0
  * @author Ralf Biedert

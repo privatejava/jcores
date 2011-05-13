@@ -55,6 +55,7 @@ import net.jcores.managers.ManagerDebugGUI;
 import net.jcores.options.MessageType;
 import net.jcores.options.Option;
 import net.jcores.options.OptionDebug;
+import net.jcores.options.OptionIndexer;
 import net.jcores.options.OptionMapType;
 import net.jcores.utils.Compound;
 import net.jcores.utils.Staple;
@@ -915,12 +916,20 @@ public class CoreObject<T> extends Core {
     public <R> CoreObject<R> forEach(final F1<T, R> f, Option... options) {
 
         final int size = size();
+        
         R[] a = null;
+        OptionIndexer indexer = null;
 
         // Check options if we have a map type.
         for (Option option : options) {
+            // In case we have a map type, get it directly
             if (option instanceof OptionMapType) {
                 a = (R[]) Array.newInstance(((OptionMapType) option).getType(), size);
+            }
+            
+            // In case we have a map type, get it directly
+            if (option instanceof OptionIndexer) {
+                indexer = (OptionIndexer) option;
             }
         }
 
@@ -930,6 +939,7 @@ public class CoreObject<T> extends Core {
 
             // Convert
             if (in == null) continue;
+            if (indexer != null) indexer.i(i);
             final R out = f.f(in);
             if (out == null) continue;
 
@@ -1229,6 +1239,7 @@ public class CoreObject<T> extends Core {
 
         boolean debug = false;
         Class<?> mapType = null;
+        OptionIndexer _indexer = null;
 
         // Check options if we have a map type.
         for (Option option : options) {
@@ -1238,10 +1249,16 @@ public class CoreObject<T> extends Core {
             if (option instanceof OptionDebug) {
                 debug = true;
             }
+
+            // In case we have a map type, get it directly
+            if (option instanceof OptionIndexer) {
+                _indexer = (OptionIndexer) option;
+            }            
         }
 
         // Create mapper
         final boolean debugInternal = debug;
+        final OptionIndexer indexer = _indexer;
         final Mapper mapper = new Mapper(mapType, size()) {
             @Override
             public void handle(int i) {
@@ -1259,6 +1276,7 @@ public class CoreObject<T> extends Core {
 
                 // Convert
                 if (in == null) return;
+                if (indexer != null) indexer.i(i);
                 final R out = f.f(in);
 
                 // Debugging
@@ -1721,3 +1739,4 @@ public class CoreObject<T> extends Core {
         return index;
     }
 }
+

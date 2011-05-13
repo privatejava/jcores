@@ -46,6 +46,7 @@ import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
+import net.jcores.cores.Core;
 import net.jcores.cores.CoreNumber;
 import net.jcores.interfaces.functions.F0;
 import net.jcores.managers.Manager;
@@ -58,8 +59,12 @@ import net.jcores.utils.internal.Reporter;
 
 /**
  * The common core is a singleton object shared by (thus common to) all created
- * core instances. It mainly contains helper and utility methods and takes care 
- * of the managers.<br/><br/> 
+ * {@link Core} instances. It mainly contains helper and utility methods and takes care 
+ * of the {@link Manager} objects. For example, to but the current thread to sleep (without the 
+ * ugly try/catch), you would write:<br/><br/>
+ * 
+ * <code>$.sleep(1000);</code>
+ * <br/><br/> 
  * 
  * Methods and object commonly required by the other cores. All methods in here are (and must be!) 
  * thread safe. 
@@ -171,7 +176,7 @@ public class CommonCore {
     }
 
     /**
-     * Sets a manager of a given type.
+     * Sets a manager of a given type, only needed for core developers. 
      * 
      * @param <T> Manager's type.
      * @param clazz Manager's class.
@@ -185,7 +190,7 @@ public class CommonCore {
     }
 
     /**
-     * Returns a manager of the given type.
+     * Returns a manager of the given type, only needed for core developers.
      * 
      * @param <T> Manager's type.
      * @param clazz Manager's class.
@@ -225,7 +230,7 @@ public class CommonCore {
     }
     
     /**
-     * Creates a CoreNumber object with numbers ranging from 0 up to end.  
+     * Creates a CoreNumber object with numbers ranging from 0 (inclusive) up to <code>end</code> (exclusive).  
      * 
      * @param end The last number (exclusive).
      * @return A core number object. 
@@ -235,7 +240,8 @@ public class CommonCore {
     }
     
     /**
-     * Creates a CoreNumber object with the given start and end and a stepping of +-1.  
+     * Creates a CoreNumber object with the given <code>start</code> (inclusive) and 
+     * <code>end</code> (exclusive) and a stepping of +-1 (depending on whether start is smaller or larger than end).  
      * 
      * @param from The first number (inclusive) 
      * @param end The last number (exclusive).
@@ -247,7 +253,7 @@ public class CommonCore {
 
     
     /**
-     * Creates a CoreNumber object with the given start, end and stepping.  
+     * Creates a CoreNumber object with the given <code>start</code> (inclusive), <code>end</code> (exclusive) and stepping.  
      * 
      * @param from The first number (inclusive) 
      * @param end The last number (exclusive).
@@ -275,7 +281,7 @@ public class CommonCore {
     
     
     /**
-     * Reports the problem to our internal problem queue. Use report() for all 
+     * Reports the problem to our internal problem queue, only used by core developers. Use report() for all 
      * internal error and problem reporting and use log() for user requested 
      * logging.
      * 
@@ -287,14 +293,16 @@ public class CommonCore {
     }
 
     /**
-     * Prints all known problem reports to the console. 
+     * Prints all known problem reports to the console. This is the end-user 
+     * version (which means, <i>you</i> can use it) to print what went wrong during
+     * core operation. See the console for output.
      */
     public void report() {
         this.reporter.printRecords();
     }
 
     /**
-     * Returns our random object.
+     * Returns our shared {@link Random} object, initialized some time ago.
      * 
      * @return The initialized random object.
      */
@@ -303,7 +311,7 @@ public class CommonCore {
     }
     
     /**
-     * Puts the current thread to sleep for some time.
+     * Puts the current thread to sleep for some time, without the need for any try/catch block.
      * 
      * @param time The time to sleep.
      * @return <code>true</code> if the sleep was interrupted, <code>false</code> if not.

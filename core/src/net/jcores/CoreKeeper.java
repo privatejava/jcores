@@ -60,7 +60,7 @@ import net.jcores.utils.Compound;
 import net.jcores.utils.internal.Wrapper;
 
 /**
- * Keeps the common core and contains Johnnys(<code>$</code>) for all our cores. This
+ * Keeps the common core and contains all <code>$</code>-operators for all our cores. This
  * class is the main entry point into jCores. You should use these functions as static
  * imports. See <a href="http://code.google.com/p/jcores/wiki/EclipseIntegration">the
  * Eclipse Integration Guide</a> on how to make your life much more simple.<br/>

@@ -1,5 +1,5 @@
 /*
- * Option.java
+ * OptionIndex.java
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
@@ -27,64 +27,49 @@
  */
 package net.jcores.options;
 
-import java.io.File;
+import java.util.concurrent.ConcurrentHashMap;
+
+import net.jcores.cores.CoreObject;
+import net.jcores.interfaces.functions.F1;
 
 /**
- * Contains all available options.
+ * Can be passed to a {@link CoreObject}'s <code>forEach()</code> / <code>map()</code> to
+ * retrieve the current loop index. A use case might look like this:<br/><br/>
  * 
- * @since 1.0
+ * <code>final OptionIndexer i = Option.INDEXER();</code><br/>
+ * <code>$(objects).forEach(new F1<Object, Object>() { public Void f(Object x) {</code><br/>
+ * <code>&nbsp;&nbsp;&nbsp;System.out.println("Current index: " + i.i());</code><br/>
+ * <code>}}, i);</code><br/><br/>
+ * 
+ * An single indexer can be shared among different jCores invocations of the same level (e.g., 
+ * chained invocations), but not in nested invocations (i.e., jCores calls within calls).
+ * 
  * @author Ralf Biedert
  */
-public class Option {
+public class OptionIndexer extends Option {
 
-    /** We don't allow for user-created options S */
-    protected Option() { /* */
-    }
-
-    /** If CoreFile.dir() should list directory entries as well */
-    public final static OptionListDirectories LIST_DIRECTORIES = new OptionListDirectories();
-
-    /** If a selection should be inverted. */
-    public final static OptionInvertSelection INVERT_SELECTION = new OptionInvertSelection();
-
-    /** Hash method to use (MD5) */
-    public final static OptionHashMD5 HASH_MD5 = new OptionHashMD5();
-
-    /** Print debugging information */
-    public final static OptionDebug DEBUG = new OptionDebug();
-
-    /** Drop Type (File) */
-    public final static OptionDropType<File> DROPTYPE_FILES = new OptionDropTypeFiles();
+    /** Stores all indices for each thread */
+    ConcurrentHashMap<Thread, Integer> indices = new ConcurrentHashMap<Thread, Integer>();
 
     /**
-     * Specifies that the map result should be of type. Useful if map returns various
-     * types.
+     * Returns the current index. This method <b>only</b> works inside the {@link F1} function, as the 
+     * value is bound to the currently executing thread. 
      * 
-     * @param type Class to use.
-     * @return An option of the given type.
+     * @return The current index.
      */
-    public final static OptionMapType MAP_TYPE(Class<?> type) {
-        return new OptionMapType(type);
+    @SuppressWarnings("boxing")
+    public int i() {
+        return this.indices.get(Thread.currentThread());
     }
 
     /**
-     * Specifies that the regular expression options to use.
+     * Sets the current index.
      * 
-     * @param options Options to use.
-     * @return An option of the given type.
+     * @param index The index to set.
      */
-    public final static OptionRegEx REGEX(int options) {
-        return new OptionRegEx(options);
-    }
-
-    /**
-     * Can be passed to <code>forEach()</code> / <code>map()</code> to
-     * retrieve the current loop index.
-     * 
-     * @return An OptionIndexer.
-     */
-    public final static OptionIndexer INDEXER() {
-        return new OptionIndexer();
+    @SuppressWarnings("boxing")
+    public void i(int index) {
+        this.indices.put(Thread.currentThread(), index);
     }
 
 }

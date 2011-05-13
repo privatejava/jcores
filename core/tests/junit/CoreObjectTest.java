@@ -34,6 +34,8 @@ import java.util.List;
 import junit.data.Data;
 import net.jcores.cores.CoreString;
 import net.jcores.interfaces.functions.F1;
+import net.jcores.options.Option;
+import net.jcores.options.OptionIndexer;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -61,6 +63,33 @@ public class CoreObjectTest {
 
         }).string().join());
     }
+    
+    /** */
+    @Test
+    public void testForEachIndex() {
+        final OptionIndexer indexer = Option.INDEXER();
+        
+        $.range(100000).forEach(new F1<Number, Number>() {
+            @SuppressWarnings("boxing")
+            @Override
+            public Number f(Number x) {
+                Assert.assertEquals(x, indexer.i());
+                return null;
+            }
+        }, indexer);
+
+        $.range(100000).map(new F1<Number, Number>() {
+            @SuppressWarnings("boxing")
+            @Override
+            public Number f(Number x) {
+                Assert.assertEquals(x, indexer.i());
+                System.out.println(indexer.i());
+                return null;
+            }
+        }, indexer);
+
+    }
+
 
     /** */
     @Test

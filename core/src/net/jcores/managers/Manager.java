@@ -27,9 +27,11 @@
  */
 package net.jcores.managers;
 
+import net.jcores.cores.Core;
+
 /**
- * Base class of each manager. Managers are shared amongst all instances of a given core 
- * to exchange information. Only needed if you develop cores.
+ * Base class for each manager. Managers are shared amongst all instances of a given {@link Core}
+ * to exchange information. You only need this if you develop your own cores..
  * 
  * @author Ralf Biedert
  * @since 1.0

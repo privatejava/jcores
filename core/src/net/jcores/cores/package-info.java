@@ -8,7 +8,7 @@
  * <code>$(o1, o2, o3)</code><br/><br/>
  * 
  * which returns a {@link net.jcores.cores.CoreObject}. The <code>$</code>-function always picks the most suitable {@link net.jcores.cores.Core} 
- * (better said: subclass of Core) for the elements you passed. Similar to the example above example, 
+ * (better said: subclass of Core) for the elements you passed. Similar to the example above, 
  * when you call<br/><br/>
  * 
  * <code>$("a", "b", "c")</code><br/><br/>
