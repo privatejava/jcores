@@ -83,7 +83,6 @@ public class CoreObjectTest {
             @Override
             public Number f(Number x) {
                 Assert.assertEquals(x, indexer.i());
-                System.out.println(indexer.i());
                 return null;
             }
         }, indexer);

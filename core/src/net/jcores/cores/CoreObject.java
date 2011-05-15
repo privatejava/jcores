@@ -1705,7 +1705,15 @@ public class CoreObject<T> extends Core {
     
     /**
      * Returns the core's array. Use of this method is strongly discouraged and usually only needed 
-     * in a few very special cases. Might be removed again.<br/>
+     * in a few very special cases. Do not change the array! <br/><br/>
+     * 
+     * Also, even though the method is parameterized, 
+     * in some cases it does not return the type of array it indicates due to some 
+     * black jCores magic (we sometimes haves
+     * to 'guess' the type at runtime due to type erasure, which can go wrong when 
+     * just blindly returning our internal array).<br/><br/>
+     * 
+     *  In most cases <code>array()</code> should be used instead.<br/>
      * <br/>
      * 
      * Single-threaded.<br/>
