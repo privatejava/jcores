@@ -129,13 +129,14 @@ public class CoreObjectTest {
     @SuppressWarnings("boxing")
     @Test
     public void testFold() {
-        double sum = $.range(0, 100000).fold(new F2ReduceObjects<Number>() {
+        double sum = $.range(0, 11).fold(new F2ReduceObjects<Number>() {
             @Override
             public Number f(Number left, Number right) {
-                return right.intValue() - left.intValue();
+                System.out.println("   " + left + ", " + right + " -> " + Math.max(right.intValue(), left.intValue()));
+                return Math.max(right.intValue(), left.intValue());
             }
-        }).as(CoreNumber.class).sum();
-        Assert.assertEquals(50000, sum, 0.01);
+        }).as(CoreNumber.class).get(0).doubleValue();
+        Assert.assertEquals(100000, sum, 0.01);
     }
 
     /** */
@@ -147,7 +148,7 @@ public class CoreObjectTest {
             public Number f(Number left, Number right) {
                 return right.intValue() - left.intValue();
             }
-        }).as(CoreNumber.class).sum();
+        }).as(CoreNumber.class).get(0).doubleValue();
         Assert.assertEquals(50000, sum, 0.01);
     }
    

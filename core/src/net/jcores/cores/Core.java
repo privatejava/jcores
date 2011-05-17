@@ -166,12 +166,15 @@ public abstract class Core implements Serializable {
         final int NUM_THREADS = Runtime.getRuntime().availableProcessors();
 
         // Indicates which level (in the folding hierarchy) we are and where the next
-        // thread should
-        // proceed
+        // thread should proceed. The base count indicates where which element should be 
+        // selected next by the thread, the level indicates how many times we already passed
+        // through the whole array.
         final AtomicInteger baseCount = new AtomicInteger();
         final AtomicInteger level = new AtomicInteger();
 
-        // Synchronizes threads
+        // Synchronizes threads. Each thread waits at the level-barrier when it finished the last level,
+        // and waits the the global barrier when it is completely done. The main thread will also
+        // wait at the global barrier (thus +1) for all spawned threads. 
         final CyclicBarrier levelbarrier = new CyclicBarrier(NUM_THREADS);
         final CyclicBarrier barrier = new CyclicBarrier(NUM_THREADS + 1);
 
@@ -190,6 +193,7 @@ public abstract class Core implements Serializable {
 
                     // For each level; proceed until we reach the righter bound
                     while (j <= upperBound) {
+                        System.out.println(i + ", " + j + " ->" + i);
                         folder.handle(i, j, i);
 
                         i = baseCount.getAndAdd(2) * dist;
@@ -197,11 +201,12 @@ public abstract class Core implements Serializable {
                     }
 
                     // Check if we were the node processing the last element and if there
-                    // was a single
-                    // element left over. In that case, process both these elements again
+                    // was a single element left over. In that case, process both these elements again
                     if (i <= upperBound && i > 0) {
                         int left = i - (int) Math.pow(2, lvl + 1);
                         folder.handle(left, i, left);
+                        System.out.println(left + ", " + i + " ->" + left);
+
                     }
 
                     // Signal finish
@@ -214,8 +219,7 @@ public abstract class Core implements Serializable {
                     }
 
                     // Increase the level afterwards. If we were the one who changed the
-                    // level,
-                    // we also change the baseCount back to 0
+                    // level, we also change the baseCount back to 0
                     if (level.compareAndSet(lvl, lvl + 1)) {
                         baseCount.set(0);
                     }
