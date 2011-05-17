@@ -42,6 +42,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -825,11 +826,18 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Reduces the given object, multi-threaded version. In contrast to reduce() the
-     * order in which two element might be reduced is not defined. Note: At present,
-     * reduce() is much faster for simple operations, as it involves much less
-     * synchronization
-     * overhead. Right now, only use fold for very complex operations. <br/>
+     * Folds the given object, multi-threaded version. Fold removes two arbitrary elements,
+     * executes <code>f()</code> on them and stores the result again. This is done in parallel until 
+     * only one element remains.<br/><br/>
+     * 
+     * It is guaranteed that each element will have been compared at least once, but the chronological- 
+     * or parameter-order when and where this occurs is, in contrast to <code>reduce()</code>, not defined. 
+     * <code>Null</code> elements are gracefully ignored.<br/>
+     * <br/>
+     * 
+     * At present, <code>reduce()</code> is much faster for simple operations and small cores, as it involves much less
+     * synchronization overhead, while <code>fold()</code> has advantages especially 
+     * with very complex <code>f</code> operators.<br/>
      * <br/>
      * 
      * Multi-threaded. Heavyweight.<br/>
@@ -839,44 +847,43 @@ public class CoreObject<T> extends Core {
      * @param options Relevant options: <code>OptionMapType</code>.
      * @return A CoreObject, containing at most a single element.
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public CoreObject<T> fold(final F2ReduceObjects<T> f, Option... options) {
 
         // In case we only have zero or one elements, don't do anything
         if (size() <= 1) return this;
-
+        
+        final AtomicReferenceArray array = new AtomicReferenceArray(this.t);
         final Folder<T> folder = new Folder<T>(this) {
             @Override
             public void handle(int i, int j, int destination) {
-                // Get our target-array (if it is already there)
-                T[] a = this.returnArray.get();
-
                 // Get the in-value from the source-array
-                final T ii = CoreObject.this.t[i];
-                final T jj = CoreObject.this.t[j];
+                final T ii = (T) array.get(i);
+                final T jj = (T) array.get(j);
 
                 if (ii == null && jj == null) return;
                 if (ii == null && jj != null) {
-                    a[destination] = jj;
+                    array.set(destination, jj);
                     return;
                 }
 
                 if (ii != null && jj == null) {
-                    a[destination] = ii;
+                    array.set(destination, ii);
                     return;
                 }
-
-                a[destination] = f.f(ii, jj);
+                
+                array.set(destination, f.f(ii, jj));
             }
         };
 
-        // Update the target array and fold ...
-        folder.updateReturnArray(Arrays.copyOf(this.t, size()));
-
         // Now do fold ...
         fold(folder, options);
+        
+        T[] target = Arrays.copyOf(this.t, 1);
+        target[0] = (T) array.get(0);
 
         // ... and return result.
-        return new CoreObject<T>(this.commonCore, Arrays.copyOf(folder.getFinalReturnArray(), 1));
+        return new CoreObject<T>(this.commonCore, target);
     }
 
     /**
@@ -1282,11 +1289,14 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Reduces the given object, single-threaded version. In contrast to fold() the
-     * order in which two element might be reduced is well defined from left to right. You
-     * should
-     * use <code>reduce()</code> for simple operations and <code>fold()</code> for very
-     * complex operations.<br/>
+     * Reduces the given object, single-threaded version. Reduce takes the two leftmost elements,
+     * executes <code>f()</code> on them and stores the result again as the leftmost element. This 
+     * is done until only one element remains. <code>Null</code> elements are gracefully ignored.<br/>
+     * <br/>
+     * 
+     * In contrast to fold() the order in which two element might be reduced is well defined 
+     * from left to right. You should use <code>reduce()</code> for simple operations and 
+     * <code>fold()</code> for very complex operations.<br/>
      * <br/>
      * 
      * Single-threaded.<br/>

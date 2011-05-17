@@ -76,14 +76,14 @@ public class FileUtils {
         } finally {
             if (reader != null) try {
                 reader.close();
-                } catch (IOException e) {
+            } catch (IOException e) {
                 cc.report(MessageType.EXCEPTION, "Error closing file " + file);
-                }
+            }
         }
 
         return null;
     }
-    
+
     /**
      * Lists all elements under the given root.
      * 
@@ -116,8 +116,7 @@ public class FileUtils {
                     continue;
                 }
 
-                if (listDirs) 
-                    rval.add(file);
+                if (listDirs) rval.add(file);
 
                 final File[] listFiles = file.listFiles();
                 if (listFiles == null) continue;
@@ -125,15 +124,16 @@ public class FileUtils {
             }
         }
 
-        return rval.toArray(new File[0]);        
+        return rval.toArray(new File[0]);
     }
-    
+
     /**
      * Copies a file .
      * 
      * @param cc
      * @param from
      * @param to
+     * @return .
      */
     public static File[] copy(CommonCore cc, File from, File to) {
 
@@ -142,56 +142,51 @@ public class FileUtils {
         final boolean fromdir = from.getAbsolutePath().endsWith("/") || from.isDirectory();
 
         // If we had a source dir
-        if(fromdir) {
+        if (fromdir) {
             final File[] elements = dir(from, false);
             final List<File> files = new ArrayList<File>();
             for (File file : elements) {
                 final String subname = file.getAbsolutePath().replace(from.getAbsolutePath(), "");
                 files.addAll(Arrays.asList(copy(cc, file, new File(to + "/" + subname))));
             }
-            
+
             return files.toArray(new File[0]);
         }
-        
+
         // If its a dir, create the dir, if its a file, create its parent
-        if(todir) to.mkdirs();
-        else to.getParentFile().mkdirs();
-        
+        if (todir) to.mkdirs();
+        else
+            to.getParentFile().mkdirs();
+
         final File realTo = todir ? new File(to.getAbsoluteFile() + "/" + from.getName()) : to;
-        
+
         // Streams for input and output
         FileInputStream fis = null;
         FileOutputStream fos = null;
-        
+
         // Now copy the actual files. TODO: Also copy from when it is a directory!
         try {
-            fis  = new FileInputStream(from);
+            fis = new FileInputStream(from);
             fos = new FileOutputStream(realTo);
-            
-            byte[] buf = new byte[64*1024];
+
+            byte[] buf = new byte[64 * 1024];
             int i = 0;
             while ((i = fis.read(buf)) != -1) {
                 fos.write(buf, 0, i);
             }
-        } 
-        catch (Exception e) {
+        } catch (Exception e) {
             cc.report(MessageType.EXCEPTION, "Error copying file " + from + " " + to + " due to a " + e.getMessage());
-        }
-        finally {
+        } finally {
             if (fis != null) try {
                 fis.close();
-            } catch (IOException e) {
-            }
+            } catch (IOException e) {}
             if (fos != null) try {
                 fos.close();
-            } catch (IOException e) {
-            }
+            } catch (IOException e) {}
         }
-        
-        return new File[] {realTo};
-    }
 
-    
+        return new File[] { realTo };
+    }
 
     /**
      * Zips a number of files into the target.

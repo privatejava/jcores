@@ -129,14 +129,27 @@ public class CoreObjectTest {
     @SuppressWarnings("boxing")
     @Test
     public void testFold() {
-        double sum = $.range(0, 11).fold(new F2ReduceObjects<Number>() {
+        double sum = $.range(0, 100001).fold(new F2ReduceObjects<Number>() {
             @Override
             public Number f(Number left, Number right) {
-                System.out.println("   " + left + ", " + right + " -> " + Math.max(right.intValue(), left.intValue()));
                 return Math.max(right.intValue(), left.intValue());
             }
         }).as(CoreNumber.class).get(0).doubleValue();
         Assert.assertEquals(100000, sum, 0.01);
+        
+        
+        int value = $("a", "bb", "ccc", "dddd", "eeeee").map(new F1<String, Integer>() {
+            @Override
+            public Integer f(String x) {
+                return x.length();
+            }
+        }).as(CoreNumber.class).fold(new F2ReduceObjects<Number>() {
+            @Override
+            public Number f(Number left, Number right) {
+                return Math.max(right.intValue(), left.intValue());
+            }
+        }).as(CoreNumber.class).get(0).intValue();
+        Assert.assertEquals(5, value);
     }
 
     /** */

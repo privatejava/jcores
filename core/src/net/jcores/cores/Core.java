@@ -193,7 +193,6 @@ public abstract class Core implements Serializable {
 
                     // For each level; proceed until we reach the righter bound
                     while (j <= upperBound) {
-                        System.out.println(i + ", " + j + " ->" + i);
                         folder.handle(i, j, i);
 
                         i = baseCount.getAndAdd(2) * dist;
@@ -205,8 +204,6 @@ public abstract class Core implements Serializable {
                     if (i <= upperBound && i > 0) {
                         int left = i - (int) Math.pow(2, lvl + 1);
                         folder.handle(left, i, left);
-                        System.out.println(left + ", " + i + " ->" + left);
-
                     }
 
                     // Signal finish
