@@ -42,6 +42,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,8 +55,6 @@ import net.jcores.interfaces.functions.F2ReduceObjects;
 import net.jcores.managers.ManagerDebugGUI;
 import net.jcores.options.MessageType;
 import net.jcores.options.Option;
-import net.jcores.options.OptionDebug;
-import net.jcores.options.OptionIndexer;
 import net.jcores.options.OptionMapType;
 import net.jcores.utils.Compound;
 import net.jcores.utils.Staple;
@@ -66,13 +65,15 @@ import net.jcores.utils.internal.lang.ObjectUtils;
 
 /**
  * The standard core that wraps a number of objects and exposes a number of methods to
- * act on them, some of them in parallel. For example, 
- * to get the last three elements of an array of Strings, write:<br/><br/>
+ * act on them, some of them in parallel. For example,
+ * to get the last three elements of an array of Strings, write:<br/>
+ * <br/>
  * 
  * <code>$(strings).slice(-3, 3).array(String.class)</code><br/>
  * <br/>
  * 
- * If you implement your own core you should extend this class.<br/><br/>
+ * If you implement your own core you should extend this class.<br/>
+ * <br/>
  * 
  * A core is immutable. No method will ever change its content array (it is, however,
  * possible, that the individual elements enclosed might change).
@@ -122,10 +123,9 @@ public class CoreObject<T> extends Core {
 
         this.t = objects;
     }
-    
-    
+
     /**
-     * Returns a core containing all elements of this core and the other core. 
+     * Returns a core containing all elements of this core and the other core.
      * Elements that are in both cores will appear twice.<br/>
      * <br/>
      * 
@@ -134,24 +134,23 @@ public class CoreObject<T> extends Core {
      * 
      * @param toAdd The core to add to this core.
      * 
-     * @return A CoreObject containing all objects of this core and the other 
+     * @return A CoreObject containing all objects of this core and the other
      * core.
      */
     @SuppressWarnings("unchecked")
     public CoreObject<T> add(CoreObject<T> toAdd) {
         if (size() == 0) return toAdd;
         if (toAdd.size() == 0) return this;
-        
+
         final T[] copy = (T[]) Array.newInstance(this.t.getClass().getComponentType(), this.t.length + toAdd.t.length);
         System.arraycopy(this.t, 0, copy, 0, this.t.length);
         System.arraycopy(toAdd.t, 0, copy, this.t.length, toAdd.t.length);
-        
+
         return new CoreObject<T>(this.commonCore, copy);
     }
 
-    
     /**
-     * Returns a core containing all elements of this core and the other array. 
+     * Returns a core containing all elements of this core and the other array.
      * Elements that are in both will appear twice.<br/>
      * <br/>
      * 
@@ -160,7 +159,7 @@ public class CoreObject<T> extends Core {
      * 
      * @param toAdd The array to add to this core.
      * 
-     * @return A CoreObject containing all objects of this core and the other 
+     * @return A CoreObject containing all objects of this core and the other
      * array.
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -262,8 +261,9 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Performs a generic call on each element of this core (for 
-     * example <code>core.call("toString")</code>). The return values will be stored in a {@link CoreObject}. This is a dirty but shorthand way
+     * Performs a generic call on each element of this core (for
+     * example <code>core.call("toString")</code>). The return values will be stored in a {@link CoreObject}. This is a
+     * dirty but shorthand way
      * to call the same function on objects that don't share a common superclass. Should not be
      * called within hot-spots (functions called millions of times a second) as it relies heavily on reflection.<br/>
      * <br/>
@@ -351,7 +351,7 @@ public class CoreObject<T> extends Core {
 
     /**
      * Returns a compacted core whose underlying array does not
-     * contain null anymore, therefore the positions of elements will be moved to the left to 
+     * contain null anymore, therefore the positions of elements will be moved to the left to
      * fill null values.<br/>
      * <br/>
      * 
@@ -379,7 +379,7 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Creates a {@link Compound} out of this core's content. A Compound is a String -> Object map, which is useful for 
+     * Creates a {@link Compound} out of this core's content. A Compound is a String -> Object map, which is useful for
      * quickly creating complex objects which should be handled by the framework.<br/>
      * <br/>
      * 
@@ -391,10 +391,9 @@ public class CoreObject<T> extends Core {
     public Compound<Object> compound() {
         return Compound.create(this.t);
     }
-    
 
     /**
-     * Creates a compound out of this core's content with the given type. This is useful 
+     * Creates a compound out of this core's content with the given type. This is useful
      * for quickly creating complex objects which should be handled by the framework.<br/>
      * <br/>
      * 
@@ -402,21 +401,21 @@ public class CoreObject<T> extends Core {
      * <br/>
      * 
      * @param clazz The type of the {@link Compound}.
-     * @param <C> The type of {@link Compound} to create. 
+     * @param <C> The type of {@link Compound} to create.
      * 
      * @return A new {@link Compound} with this core's content.
      */
     public <C> Compound<C> compound(Class<C> clazz) {
         return Compound.create(this.t);
     }
-    
 
     /**
-     * Returns true if this core contains the given object. An object is contained if there is 
-     * another object in this core that is equal to it. <br/><br/>
+     * Returns true if this core contains the given object. An object is contained if there is
+     * another object in this core that is equal to it. <br/>
+     * <br/>
      * 
      * Note that on a {@link CoreString} this method
-     * does not behave as <code>String.contains()</code> (which checks for substrings). If you want to do 
+     * does not behave as <code>String.contains()</code> (which checks for substrings). If you want to do
      * a substring search, use <code>CoreString.containssubstr()</code>.<br/>
      * <br/>
      * 
@@ -476,22 +475,16 @@ public class CoreObject<T> extends Core {
      */
     @SuppressWarnings("unchecked")
     public <R> CoreObject<R> delta(final F2DeltaObjects<T, R> delta, Option... options) {
-
-        Class<?> mapType = null;
-
-        // Check options if we have a map type.
-        for (Option option : options) {
-            if (option instanceof OptionMapType) {
-                mapType = ((OptionMapType) option).getType();
-            }
-        }
-
         // Create mapper
-        final Mapper mapper = new Mapper(mapType, size() - 1) {
+        final int size = size();
+        final Mapper<T, R> mapper = new Mapper<T, R>(this, options) {
             @Override
             public void handle(int i) {
+                // We don't handle the last iteration
+                if(i == size - 1) return;
+                
                 // Get our target-array (if it is already there)
-                R[] a = (R[]) this.array.get();
+                R[] a = this.returnArray.get();
 
                 // Get the in-value from the source-array
                 final T ii = CoreObject.this.t[i];
@@ -504,10 +497,9 @@ public class CoreObject<T> extends Core {
 
                 if (out == null) return;
 
-                // If we haven't had an in-array, create it now, according to the return
-                // type
+                // If we haven't had an in-array, create it now, according to the return type
                 if (a == null) {
-                    a = (R[]) updateArray(Array.newInstance(out.getClass(), this.size));
+                    a = updateReturnArray((R[]) Array.newInstance(out.getClass(), size));
                 }
 
                 // Eventually set the out value
@@ -518,18 +510,8 @@ public class CoreObject<T> extends Core {
         // Map ...
         map(mapper, options);
 
-        // In case we don't have a return array (which happens when the mapper never
-        // returned something
-        // sensible), we create a simple object array of our size, so that the core's size
-        // stays
-        // consistent.
-        R rval[] = (R[]) mapper.getTargetArray();
-        if (rval == null) {
-            rval = (R[]) Array.newInstance(Object.class, Math.max(0, size() - 1));
-        }
-
         // ... and return result.
-        return new CoreObject<R>(this.commonCore, rval);
+        return new CoreObject<R>(this.commonCore, mapper.getFinalReturnArray());
 
     }
 
@@ -714,7 +696,8 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns a new core with all null elements set to <code>fillValue</code>, the other elements are transferred unchanged.<br/>
+     * Returns a new core with all null elements set to <code>fillValue</code>, the other elements are transferred
+     * unchanged.<br/>
      * <br/>
      * 
      * Single-threaded.<br/>
@@ -774,7 +757,7 @@ public class CoreObject<T> extends Core {
      * <br/>
      * 
      * @param regex The regular expression to use.
-     * @param options  Supports INVERT_SELECTION if the filter logic should be inverted
+     * @param options Supports INVERT_SELECTION if the filter logic should be inverted
      * (options that match the regular expression will not be considered).
      * 
      * @return A CoreObject containing a filtered subset of our elements.
@@ -843,11 +826,18 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Reduces the given object, multi-threaded version. In contrast to reduce() the
-     * order in which two element might be reduced is not defined. Note: At present,
-     * reduce() is much faster for simple operations, as it involves much less
-     * synchronization
-     * overhead. Right now, only use fold for very complex operations. <br/>
+     * Folds the given object, multi-threaded version. Fold removes two arbitrary elements,
+     * executes <code>f()</code> on them and stores the result again. This is done in parallel until 
+     * only one element remains.<br/><br/>
+     * 
+     * It is guaranteed that each element will have been compared at least once, but the chronological- 
+     * or parameter-order when and where this occurs is, in contrast to <code>reduce()</code>, not defined. 
+     * <code>Null</code> elements are gracefully ignored.<br/>
+     * <br/>
+     * 
+     * At present, <code>reduce()</code> is much faster for simple operations and small cores, as it involves much less
+     * synchronization overhead, while <code>fold()</code> has advantages especially 
+     * with very complex <code>f</code> operators.<br/>
      * <br/>
      * 
      * Multi-threaded. Heavyweight.<br/>
@@ -857,45 +847,43 @@ public class CoreObject<T> extends Core {
      * @param options Relevant options: <code>OptionMapType</code>.
      * @return A CoreObject, containing at most a single element.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public CoreObject<T> fold(final F2ReduceObjects<T> f, Option... options) {
 
         // In case we only have zero or one elements, don't do anything
         if (size() <= 1) return this;
-
-        final Folder folder = new Folder(null, size()) {
+        
+        final AtomicReferenceArray array = new AtomicReferenceArray(this.t);
+        final Folder<T> folder = new Folder<T>(this) {
             @Override
             public void handle(int i, int j, int destination) {
-                // Get our target-array (if it is already there)
-                T[] a = (T[]) this.array.get();
-
                 // Get the in-value from the source-array
-                final T ii = a[i];
-                final T jj = a[j];
+                final T ii = (T) array.get(i);
+                final T jj = (T) array.get(j);
 
                 if (ii == null && jj == null) return;
                 if (ii == null && jj != null) {
-                    a[destination] = jj;
+                    array.set(destination, jj);
                     return;
                 }
 
                 if (ii != null && jj == null) {
-                    a[destination] = ii;
+                    array.set(destination, ii);
                     return;
                 }
-
-                a[destination] = f.f(ii, jj);
+                
+                array.set(destination, f.f(ii, jj));
             }
         };
 
-        // Update the target array and fold ...
-        folder.updateArray(Arrays.copyOf(this.t, size()));
-
         // Now do fold ...
         fold(folder, options);
+        
+        T[] target = Arrays.copyOf(this.t, 1);
+        target[0] = (T) array.get(0);
 
         // ... and return result.
-        return new CoreObject<T>(this.commonCore, Arrays.copyOf((T[]) folder.getTargetArray(), 1));
+        return new CoreObject<T>(this.commonCore, target);
     }
 
     /**
@@ -908,61 +896,26 @@ public class CoreObject<T> extends Core {
      * 
      * @param <R> Return type.
      * @param f Mapper function.
-     * @param options Relevant options: <code>OptionMapType</code>.
+     * @param _options Relevant options: <code>OptionMapType</code>.
      * 
      * @return A CoreObject containing the mapped elements in a stable order.
      */
     @SuppressWarnings("unchecked")
-    public <R> CoreObject<R> forEach(final F1<T, R> f, Option... options) {
+    public <R> CoreObject<R> forEach(final F1<T, R> f, Option... _options) {
 
-        final int size = size();
-        
-        R[] a = null;
-        OptionIndexer indexer = null;
-
-        // Check options if we have a map type.
-        for (Option option : options) {
-            // In case we have a map type, get it directly
-            if (option instanceof OptionMapType) {
-                a = (R[]) Array.newInstance(((OptionMapType) option).getType(), size);
-            }
-            
-            // In case we have a map type, get it directly
-            if (option instanceof OptionIndexer) {
-                indexer = (OptionIndexer) option;
-            }
-        }
-
-        for (int i = 0; i < size; i++) {
-            // Get the in-value from the source-array
-            final T in = this.t[i];
-
-            // Convert
-            if (in == null) continue;
-            if (indexer != null) indexer.i(i);
-            final R out = f.f(in);
-            if (out == null) continue;
-
-            // If we haven't had an in-array, create it now, according to
-            // the return type
-            if (a == null) {
-                a = (R[]) Array.newInstance(out.getClass(), size);
-            }
-
-            // Eventually set the out value
-            a[i] = out;
-        }
-
-        if (a == null) {
-            a = (R[]) Array.newInstance(Object.class, 0);
+        // Create a mapper and iterate over it 
+        final Mapper<T, R> mapper = mapper(f, _options);
+        for (int i = 0; i < size(); i++) {
+            mapper.handle(i);
         }
 
         // ... and return result.
-        return new CoreObject<R>(this.commonCore, a);
+        return new CoreObject<R>(this.commonCore, mapper.getFinalReturnArray());
     }
 
     /**
-     * Return the element at the the given relative position (0 <= x <= 1) or return <code>dflt</code> if that element is null.<br/>
+     * Return the element at the the given relative position (0 <= x <= 1) or return <code>dflt</code> if that element
+     * is null.<br/>
      * <br/>
      * 
      * Single-threaded. <br/>
@@ -1186,7 +1139,6 @@ public class CoreObject<T> extends Core {
         return new CoreObject<T>(this.commonCore, copy).compact();
     }
 
-
     /**
      * Returns a core intersected with another array.<br/>
      * <br/>
@@ -1202,7 +1154,6 @@ public class CoreObject<T> extends Core {
         return intersect(new CoreObject(this.commonCore, other));
     }
 
-    
     /**
      * Returns the wrapped collection as a list.<br/>
      * <br/>
@@ -1214,7 +1165,7 @@ public class CoreObject<T> extends Core {
      */
     public List<T> list() {
         if (this.t == null) return new ArrayList<T>();
-        return new ArrayList<T>(Arrays.asList(this.t)); 
+        return new ArrayList<T>(Arrays.asList(this.t));
     }
 
     /**
@@ -1230,89 +1181,19 @@ public class CoreObject<T> extends Core {
      * 
      * @param <R> Return type.
      * @param f Mapper function, should be thread-safe.
-     * @param options Relevant options: <code>OptionMapType</code>.
+     * @param _options Relevant options: <code>OptionMapType</code>.
      * 
      * @return A CoreObject containing the mapped elements in a stable order.
      */
     @SuppressWarnings("unchecked")
-    public <R> CoreObject<R> map(final F1<T, R> f, Option... options) {
+    public <R> CoreObject<R> map(final F1<T, R> f, Option... _options) {
 
-        boolean debug = false;
-        Class<?> mapType = null;
-        OptionIndexer _indexer = null;
-
-        // Check options if we have a map type.
-        for (Option option : options) {
-            if (option instanceof OptionMapType) {
-                mapType = ((OptionMapType) option).getType();
-            }
-            if (option instanceof OptionDebug) {
-                debug = true;
-            }
-
-            // In case we have a map type, get it directly
-            if (option instanceof OptionIndexer) {
-                _indexer = (OptionIndexer) option;
-            }            
-        }
-
-        // Create mapper
-        final boolean debugInternal = debug;
-        final OptionIndexer indexer = _indexer;
-        final Mapper mapper = new Mapper(mapType, size()) {
-            @Override
-            public void handle(int i) {
-                // Get our target-array (if it is already there)
-                R[] a = (R[]) this.array.get();
-
-                // Get the in-value from the source-array
-                final T in = CoreObject.this.t[i];
-
-                // Debugging
-                long startTime = 0;
-                if (debugInternal) {
-                    startTime = System.nanoTime();
-                }
-
-                // Convert
-                if (in == null) return;
-                if (indexer != null) indexer.i(i);
-                final R out = f.f(in);
-
-                // Debugging
-                if (debugInternal) {
-                    long stopTime = System.nanoTime();
-                    System.out.println("Element " + i + " took " + ((stopTime - startTime) / 1000) + "µs");
-                }
-
-                if (out == null) return;
-
-                // If we haven't had an in-array, create it now, according to the return
-                // type
-                if (a == null) {
-                    a = (R[]) updateArray(Array.newInstance(out.getClass(), this.size));
-                }
-
-                // Eventually set the out value
-                a[i] = out;
-            }
-        };
-
-        // Map ...
-        map(mapper, options);
-
-        // In case we don't have a return array (which happens when the mapper never
-        // returned something
-        // sensible), we create a simple object array of our size, so that the core's size
-        // stays
-        // consistent.
-        R rval[] = (R[]) mapper.getTargetArray();
-        if (rval == null) {
-            rval = (R[]) Array.newInstance(Object.class, size());
-        }
+        // Map what we got
+        final Mapper<T, R> mapper = mapper(f, _options);
+        map(mapper, _options);
 
         // ... and return result.
-        return new CoreObject<R>(this.commonCore, rval);
+        return new CoreObject<R>(this.commonCore, mapper.getFinalReturnArray());
     }
 
     /**
@@ -1408,11 +1289,14 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Reduces the given object, single-threaded version. In contrast to fold() the
-     * order in which two element might be reduced is well defined from left to right. You
-     * should
-     * use <code>reduce()</code> for simple operations and <code>fold()</code> for very
-     * complex operations.<br/>
+     * Reduces the given object, single-threaded version. Reduce takes the two leftmost elements,
+     * executes <code>f()</code> on them and stores the result again as the leftmost element. This 
+     * is done until only one element remains. <code>Null</code> elements are gracefully ignored.<br/>
+     * <br/>
+     * 
+     * In contrast to fold() the order in which two element might be reduced is well defined 
+     * from left to right. You should use <code>reduce()</code> for simple operations and 
+     * <code>fold()</code> for very complex operations.<br/>
      * <br/>
      * 
      * Single-threaded.<br/>
@@ -1539,7 +1423,7 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns a new, sorted core. If the elements of this core are not sortable 
+     * Returns a new, sorted core. If the elements of this core are not sortable
      * simply this core will be returned again.<br/>
      * <br/>
      * 
@@ -1552,7 +1436,7 @@ public class CoreObject<T> extends Core {
         if (size() == 0) return this;
 
         final T[] copyOf = Arrays.copyOf(this.t, size());
-        
+
         try {
             Arrays.sort(copyOf);
         } catch (ClassCastException e) {
@@ -1667,8 +1551,7 @@ public class CoreObject<T> extends Core {
     public CoreObject<T> subtract(T... toSubtract) {
         return subtract(new CoreObject(this.commonCore, toSubtract));
     }
-    
-    
+
     /**
      * Returns a core containing only unique objects, i.e., object mutually un- <code>equal()</code>.<br/>
      * <br/>
@@ -1702,30 +1585,31 @@ public class CoreObject<T> extends Core {
         // Return the new, unique core.
         return new CoreObject<T>(this.commonCore, copy).compact();
     }
-    
+
     /**
-     * Returns the core's array. Use of this method is strongly discouraged and usually only needed 
-     * in a few very special cases. Do not change the array! <br/><br/>
+     * Returns the core's array. Use of this method is strongly discouraged and usually only needed
+     * in a few very special cases. Do not change the array! <br/>
+     * <br/>
      * 
-     * Also, even though the method is parameterized, 
-     * in some cases it does not return the type of array it indicates due to some 
+     * Also, even though the method is parameterized,
+     * in some cases it does not return the type of array it indicates due to some
      * black jCores magic (we sometimes haves
-     * to 'guess' the type at runtime due to type erasure, which can go wrong when 
-     * just blindly returning our internal array).<br/><br/>
+     * to 'guess' the type at runtime due to type erasure, which can go wrong when
+     * just blindly returning our internal array).<br/>
+     * <br/>
      * 
-     *  In most cases <code>array()</code> should be used instead.<br/>
+     * In most cases <code>array()</code> should be used instead.<br/>
      * <br/>
      * 
      * Single-threaded.<br/>
      * <br/>
      * 
-     * @return A clone of our array. 
+     * @return A clone of our array.
      */
     public T[] unsafearray() {
-        if(this.t == null) return null;
+        if (this.t == null) return null;
         return this.t.clone();
     }
-
 
     /**
      * Converts an index to an offset.
@@ -1746,5 +1630,45 @@ public class CoreObject<T> extends Core {
 
         return index;
     }
-}
 
+    @SuppressWarnings("rawtypes")
+    protected final <R> Mapper mapper(final F1<T, R> f, final Option... options) {
+
+        return new Mapper<T, R>(this, options) {
+            @SuppressWarnings("unchecked")
+            @Override
+            public void handle(int i) {
+                // Try to get our return array (could be there if we or someone successfully mapped)
+                R[] a = this.returnArray.get();
+
+                // Get the in-value from the source-array
+                final T in = CoreObject.this.t[i];
+
+                // Debugging
+                long startTime = 0;
+                if (this.options.debug) {
+                    startTime = System.nanoTime();
+                }
+
+                // Convert
+                if (in == null) return;
+                if (this.options.indexer != null) this.options.indexer.i(i);
+                final R out = f.f(in);
+
+                // Debugging
+                if (this.options.debug) {
+                    long stopTime = System.nanoTime();
+                    System.out.println("Element " + i + " took " + ((stopTime - startTime) / 1000) + "µs");
+                }
+
+                // When we had a results and if we haven't had an in-array, create it now, according to the return type
+                if (out == null) return;
+                if (a == null)
+                    a = updateReturnArray((R[]) Array.newInstance(out.getClass(), this.core.size()));
+
+                // Eventually set the out value
+                a[i] = out;
+            }
+        };
+    }
+}

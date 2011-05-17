@@ -28,7 +28,6 @@
 package net.jcores.cores;
 
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -78,8 +77,9 @@ public abstract class Core implements Serializable {
      * @param mapper The mapper to use.
      * @param options Relevant options: <code>OptionMapType</code>.
      */
+    @SuppressWarnings("rawtypes")
     protected void map(final Mapper mapper, final Option... options) {
-        final int size = mapper.size();
+        final int size = mapper.core().size();
 
         // Quick pass for the probably most common events
         if (size <= 0) return;
@@ -106,11 +106,6 @@ public abstract class Core implements Serializable {
 
         final AtomicInteger baseCount = new AtomicInteger();
         final CyclicBarrier barrier = new CyclicBarrier(NUM_THREADS + 1);
-
-        // If the return type is already known, create it
-        if (mapper.getReturnType() != null) {
-            mapper.updateArray(Array.newInstance(mapper.getReturnType(), size));
-        }
 
         final Runnable runner = new Runnable() {
             public void run() {
@@ -157,8 +152,9 @@ public abstract class Core implements Serializable {
      * @param folder The folder to use.
      * @param options Relevant options: <code>OptionMapType</code>.
      */
+    @SuppressWarnings("rawtypes")
     protected void fold(final Folder folder, final Option... options) {
-        final int size = folder.size();
+        final int size = folder.core().size();
 
         // Quick pass for the probably most common events
         if (size <= 1) return;
@@ -170,12 +166,15 @@ public abstract class Core implements Serializable {
         final int NUM_THREADS = Runtime.getRuntime().availableProcessors();
 
         // Indicates which level (in the folding hierarchy) we are and where the next
-        // thread should
-        // proceed
+        // thread should proceed. The base count indicates where which element should be 
+        // selected next by the thread, the level indicates how many times we already passed
+        // through the whole array.
         final AtomicInteger baseCount = new AtomicInteger();
         final AtomicInteger level = new AtomicInteger();
 
-        // Synchronizes threads
+        // Synchronizes threads. Each thread waits at the level-barrier when it finished the last level,
+        // and waits the the global barrier when it is completely done. The main thread will also
+        // wait at the global barrier (thus +1) for all spawned threads. 
         final CyclicBarrier levelbarrier = new CyclicBarrier(NUM_THREADS);
         final CyclicBarrier barrier = new CyclicBarrier(NUM_THREADS + 1);
 
@@ -201,8 +200,7 @@ public abstract class Core implements Serializable {
                     }
 
                     // Check if we were the node processing the last element and if there
-                    // was a single
-                    // element left over. In that case, process both these elements again
+                    // was a single element left over. In that case, process both these elements again
                     if (i <= upperBound && i > 0) {
                         int left = i - (int) Math.pow(2, lvl + 1);
                         folder.handle(left, i, left);
@@ -218,8 +216,7 @@ public abstract class Core implements Serializable {
                     }
 
                     // Increase the level afterwards. If we were the one who changed the
-                    // level,
-                    // we also change the baseCount back to 0
+                    // level, we also change the baseCount back to 0
                     if (level.compareAndSet(lvl, lvl + 1)) {
                         baseCount.set(0);
                     }

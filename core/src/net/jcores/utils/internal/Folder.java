@@ -27,29 +27,23 @@
  */
 package net.jcores.utils.internal;
 
+import net.jcores.cores.CoreObject;
+
 /**
  * Used by the cores when calling the inner core's mapping function. You do not need this.
  * 
  * @author Ralf Biedert
+ * @param <I> The type of the folder.
  */
-public abstract class Folder extends Handler {
-    /**
-     * Creates an empty mapper with the given size.
-     * 
-     * @param size
-     */
-    public Folder(int size) {
-        this(null, size);
-    }
+public abstract class Folder<I> extends Handler<I, I> {
 
     /**
      * Creates a mapper with an existing return array of the given size.
      * 
-     * @param class1
-     * @param size
+     * @param core 
      */
-    public Folder(Class<?> class1, int size) {
-        super(class1, size);
+    public Folder(CoreObject<I> core) {
+        super(core);
     }
 
     /**

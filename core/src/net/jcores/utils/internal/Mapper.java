@@ -27,37 +27,90 @@
  */
 package net.jcores.utils.internal;
 
+import java.lang.reflect.Array;
+
+import net.jcores.cores.CoreObject;
+import net.jcores.options.Option;
+import net.jcores.options.OptionDebug;
+import net.jcores.options.OptionIndexer;
+import net.jcores.options.OptionMapType;
+
 /**
  * Used by the cores when calling the inner core's mapping function. You do not need this.
  * 
  * @author Ralf Biedert
+ * @param <I> The in-type.
+ * @param <O> The out-type.
  */
-public abstract class Mapper extends Handler {
+public abstract class Mapper<I, O> extends Handler<I, O> {
     /**
-     * Creates an empty mapper with the given size.
+     * Contians the evaluated options for a mapping operation.
      * 
-     * @param size
+     * @author Ralf Biedert
      */
-    public Mapper(int size) {
-        this(null, size);
+    public static class MapOptions {
+        /** If we should print debug information */
+        public final boolean debug;
+
+        /** The target type */
+        public final Class<?> type;
+
+        /** The used indexer */
+        public final OptionIndexer indexer;
+
+        public MapOptions(Option... options) {
+            // Variables to set after we processed the options
+            boolean _debug = false;
+            Class<?> _type = null;
+            OptionIndexer _indexer = null;
+
+            // Check options if we have
+            for (Option option : options) {
+                if (option instanceof OptionMapType) {
+                    _type = ((OptionMapType) option).getType();
+                }
+                if (option instanceof OptionDebug) {
+                    _debug = true;
+                }
+
+                // In case we have a map type, get it directly
+                if (option instanceof OptionIndexer) {
+                    _indexer = (OptionIndexer) option;
+                }
+            }
+
+            this.debug = _debug;
+            this.type = _type;
+            this.indexer = _indexer;
+        }
+    }
+
+    /** Our map options */
+    protected final MapOptions options;
+
+    /**
+     * @param core
+     * @param options
+     */
+    @SuppressWarnings("unchecked")
+    public Mapper(CoreObject<I> core, Option... options) {
+        super(core);
+
+        this.options = new MapOptions(options);
+
+        // If the return type is already known, create it
+        if (this.options.type != null) {
+            updateReturnArray((O[]) Array.newInstance(this.options.type, core.size()));
+        }
     }
 
     /**
-     * Creates a mapper with an existing return array of the given size.
+     * Overwrite this method and handle element number i.
      * 
-     * @param class1
-     * @param size
-     */
-    public Mapper(Class<?> class1, int size) {
-        super(class1, size);
-    }
-
-    /**
-     * Overwrite this method and handle element number i. 
-     * 
-     * This method is called highly parallelized. 
+     * This method is called highly parallelized.
      * 
      * @param i
      */
     public abstract void handle(int i);
+
 }
