@@ -32,8 +32,11 @@ import static net.jcores.CoreKeeper.$;
 import java.util.List;
 
 import junit.data.Data;
+import net.jcores.cores.CoreNumber;
 import net.jcores.cores.CoreString;
 import net.jcores.interfaces.functions.F1;
+import net.jcores.interfaces.functions.F2DeltaObjects;
+import net.jcores.interfaces.functions.F2ReduceObjects;
 import net.jcores.options.Option;
 import net.jcores.options.OptionIndexer;
 
@@ -55,6 +58,14 @@ public class CoreObjectTest {
     /** */
     @Test
     public void testForEach() {
+        Assert.assertEquals("h", $("hello").forEach(new F1<String, String>() {
+            @Override
+            public String f(String x) {
+                return x.substring(0, 1);
+            }
+
+        }).string().join());
+
         Assert.assertEquals("hw", $("hello", "world").forEach(new F1<String, String>() {
             @Override
             public String f(String x) {
@@ -62,13 +73,90 @@ public class CoreObjectTest {
             }
 
         }).string().join());
+
+        Assert.assertEquals("abcdefg", $("aa", "bb", "cc", "dd", "ee", "ff", "gg").forEach(new F1<String, String>() {
+            @Override
+            public String f(String x) {
+                return x.substring(0, 1);
+            }
+
+        }).string().join());
     }
+
+    /** */
+    @Test
+    public void testMap() {
+        Assert.assertEquals("h", $("hello").forEach(new F1<String, String>() {
+            @Override
+            public String f(String x) {
+                return x.substring(0, 1);
+            }
+
+        }).string().join());
+
+        Assert.assertEquals("hw", $("hello", "world").forEach(new F1<String, String>() {
+            @Override
+            public String f(String x) {
+                return x.substring(0, 1);
+            }
+
+        }).string().join());
+
+        Assert.assertEquals("abcdefg", $("aa", "bb", "cc", "dd", "ee", "ff", "gg").forEach(new F1<String, String>() {
+            @Override
+            public String f(String x) {
+                return x.substring(0, 1);
+            }
+
+        }).string().join());
+    }
+
+    /** */
+    @SuppressWarnings("boxing")
+    @Test
+    public void testDelta() {
+        double sum = $.range(0, 100000).delta(new F2DeltaObjects<Number, Number>() {
+            @Override
+            public Integer f(Number left, Number right) {
+                return right.intValue() - left.intValue();
+            }
+        }).as(CoreNumber.class).sum();
+        
+        Assert.assertEquals(99999.0, sum, 0.01);
+    }
+
+    /** */
+    @SuppressWarnings("boxing")
+    @Test
+    public void testFold() {
+        double sum = $.range(0, 100000).fold(new F2ReduceObjects<Number>() {
+            @Override
+            public Number f(Number left, Number right) {
+                return right.intValue() - left.intValue();
+            }
+        }).as(CoreNumber.class).sum();
+        Assert.assertEquals(50000, sum, 0.01);
+    }
+
+    /** */
+    @SuppressWarnings("boxing")
+    @Test
+    public void testReduce() {
+        double sum = $.range(0, 100000).reduce(new F2ReduceObjects<Number>() {
+            @Override
+            public Number f(Number left, Number right) {
+                return right.intValue() - left.intValue();
+            }
+        }).as(CoreNumber.class).sum();
+        Assert.assertEquals(50000, sum, 0.01);
+    }
+   
     
     /** */
     @Test
-    public void testForEachIndex() {
+    public void testIndexer() {
         final OptionIndexer indexer = Option.INDEXER();
-        
+
         $.range(100000).forEach(new F1<Number, Number>() {
             @SuppressWarnings("boxing")
             @Override
@@ -89,7 +177,6 @@ public class CoreObjectTest {
 
     }
 
-
     /** */
     @Test
     public void testSlice() {
@@ -102,10 +189,10 @@ public class CoreObjectTest {
         $("hello", "world").serialize("test.jcores");
         final CoreString converted = $("test.jcores").file().deserialize(String.class).string();
         Assert.assertEquals("helloworld", converted.join());
-        
+
         $(Data.strings(10000)).serialize("big.file");
     }
-    
+
     /** */
     @Test
     public void testList() {
@@ -116,7 +203,7 @@ public class CoreObjectTest {
         Assert.assertEquals("c", list.get(1));
 
     }
-    
+
     /** */
     @Test
     public void testRandom() {

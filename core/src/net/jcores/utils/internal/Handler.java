@@ -27,72 +27,69 @@
  */
 package net.jcores.utils.internal;
 
+import java.lang.reflect.Array;
 import java.util.concurrent.atomic.AtomicReference;
+
+import net.jcores.cores.CoreObject;
 
 /**
  * Handles parallel tasks. You do not need this.
  * 
  * @author Ralf Biedert
+ * @param <I> Handler for the type of core.
+ * @param <O> The output type for this handler.
  */
-public class Handler {
-    /** If set the return array will be created automatically */
-    protected final Class<?> returnType;
+public abstract class Handler<I, O> {
+    /** The core we handle */
+    protected final CoreObject<I> core;
 
-    /** Size of the return array. */
-    protected final int size;
-
-    /** Contains the return array. */
-    @SuppressWarnings("rawtypes")
-    protected final AtomicReference array = new AtomicReference();
+    /** The reference to our return array (atomic, since it will be accessed from many threads). */
+    protected final AtomicReference<O[]> returnArray = new AtomicReference<O[]>();
 
     /**
-     * Creates a mapper with an existing return array of the given size.
+     * Creates a handler for the given core.
      * 
-     * @param class1
-     * @param size
+     * @param core
      */
-    public Handler(Class<?> class1, int size) {
-        this.returnType = class1;
-        this.size = size;
+    public Handler(CoreObject<I> core) {
+        this.core = core;
     }
 
     /**
-     * Return the size of the array. 
+     * Return the size of the array.
      * 
      * @return .
      */
-    public int size() {
-        return this.size;
+    public CoreObject<I> core() {
+        return this.core;
     }
 
     /**
-     * Get the resulting array.
-     * 
-     * @return .
-     */
-    public Object getTargetArray() {
-        return this.array.get();
-    }
-
-    /**
-     * Returns the return array type.
-     * 
-     * @return .
-     */
-    public Class<?> getReturnType() {
-        return this.returnType;
-    }
-
-    /**
-     * Tries to update the array and returns the most recent result. 
+     * Tries to update the array and returns the most recent result.
      * 
      * @param object
      * @return .
      */
-    @SuppressWarnings("unchecked")
-    public Object updateArray(Object object) {
-        this.array.compareAndSet(null, object);
-        return this.array.get();
+    public O[] updateReturnArray(O[] object) {
+        this.returnArray.compareAndSet(null, object);
+        return this.returnArray.get();
     }
 
+    /**
+     * Returns the return array.
+     * 
+     * @return The return array we had.
+     */
+    @SuppressWarnings("unchecked")
+    public O[] getFinalReturnArray() {
+        // In case we don't have a return array (which happens when the mapper never
+        // returned something sensible), we create a simple object array of our size, so
+        // that the core's size stays consistent.
+        O rval[] = this.returnArray.get();
+        if (rval == null) {
+            rval = (O[]) Array.newInstance(Object.class, this.core.size());
+        }
+
+        return rval;
+    }
 }

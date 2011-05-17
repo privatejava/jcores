@@ -28,7 +28,6 @@
 package net.jcores.cores;
 
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -78,8 +77,9 @@ public abstract class Core implements Serializable {
      * @param mapper The mapper to use.
      * @param options Relevant options: <code>OptionMapType</code>.
      */
+    @SuppressWarnings("rawtypes")
     protected void map(final Mapper mapper, final Option... options) {
-        final int size = mapper.size();
+        final int size = mapper.core().size();
 
         // Quick pass for the probably most common events
         if (size <= 0) return;
@@ -106,11 +106,6 @@ public abstract class Core implements Serializable {
 
         final AtomicInteger baseCount = new AtomicInteger();
         final CyclicBarrier barrier = new CyclicBarrier(NUM_THREADS + 1);
-
-        // If the return type is already known, create it
-        if (mapper.getReturnType() != null) {
-            mapper.updateArray(Array.newInstance(mapper.getReturnType(), size));
-        }
 
         final Runnable runner = new Runnable() {
             public void run() {
@@ -157,8 +152,9 @@ public abstract class Core implements Serializable {
      * @param folder The folder to use.
      * @param options Relevant options: <code>OptionMapType</code>.
      */
+    @SuppressWarnings("rawtypes")
     protected void fold(final Folder folder, final Option... options) {
-        final int size = folder.size();
+        final int size = folder.core().size();
 
         // Quick pass for the probably most common events
         if (size <= 1) return;
