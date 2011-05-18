@@ -36,8 +36,10 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
+import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -56,18 +58,20 @@ import net.jcores.managers.ManagerStatistics;
 import net.jcores.options.MessageType;
 import net.jcores.options.Option;
 import net.jcores.utils.internal.Reporter;
+import net.jcores.utils.internal.system.ProfileInformation;
 
 /**
- * The common core is a singleton object shared by (thus common to) all created
- * {@link Core} instances. It mainly contains helper and utility methods and takes care 
- * of the {@link Manager} objects. For example, to but the current thread to sleep (without the 
- * ugly try/catch), you would write:<br/><br/>
+ * The common core is a singleton object shared by (thus common to) all created {@link Core} instances. It mainly
+ * contains helper and utility methods and takes care
+ * of the {@link Manager} objects. For example, to but the current thread to sleep (without the
+ * ugly try/catch), you would write:<br/>
+ * <br/>
  * 
- * <code>$.sleep(1000);</code>
- * <br/><br/> 
+ * <code>$.sleep(1000);</code> <br/>
+ * <br/>
  * 
- * Methods and object commonly required by the other cores. All methods in here are (and must be!) 
- * thread safe. 
+ * Methods and object commonly required by the other cores. All methods in here are (and must be!)
+ * thread safe.
  * 
  * @author Ralf Biedert
  * @since 1.0
@@ -89,8 +93,11 @@ public class CommonCore {
     /** Random variable */
     private final Random random = new Random();
 
+    /** Keeps the profile information */
+    private final ProfileInformation profileInformation;
+
     /**
-     * Constructs the common core. 
+     * Constructs the common core.
      */
     CommonCore() {
         // Create an executor that does not prevent us from quitting.
@@ -106,6 +113,62 @@ public class CommonCore {
         manager(ManagerClass.class, new ManagerClass());
         manager(ManagerStatistics.class, new ManagerStatistics());
         manager(ManagerDebugGUI.class, new ManagerDebugGUI());
+
+        // Test how long it takes to execute a thread in the background
+        this.profileInformation = profile();
+    }
+
+    /**
+     * Benchmark the VM. Dirty, but should give us some rough estimates
+     * 
+     * @return
+     */
+    private ProfileInformation profile() {
+        final ProfileInformation p = new ProfileInformation();
+        final int RUNS = 10;
+        final int N = 5;
+        
+        // Measure how long it takes to fork a thread and to wait for it again. We 
+        // test 10 times and take the average of the last 5 runs.
+        long times[] = new long[RUNS];
+        for (int i = 0; i < RUNS; i++) {
+            times[i] = measure(new F0() {
+                @Override
+                public void f() {
+                    final CyclicBarrier barrier = new CyclicBarrier(2);
+
+                    execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                barrier.await();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            } catch (BrokenBarrierException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, 1);
+
+                    try {
+                        barrier.await();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (BrokenBarrierException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+        
+        // Now take the average
+        for(int i=RUNS - N; i<times.length; i++) {
+            p.forkTime += times[i];
+        }
+        
+        p.forkTime /= N;
+        
+        return p;
     }
 
     /**
@@ -117,16 +180,16 @@ public class CommonCore {
     @SuppressWarnings("boxing")
     public Integer[] box(int... object) {
         int i = 0;
-        
+
         final Integer[] myIntegers = new Integer[object.length];
-        for(int val : object) myIntegers[i++] = val;
-        
+        for (int val : object)
+            myIntegers[i++] = val;
+
         return myIntegers;
     }
-    
-    
+
     /**
-     * Executes the given function in the Event Dispatch Thread (EDT) at some 
+     * Executes the given function in the Event Dispatch Thread (EDT) at some
      * point in the future.
      * 
      * @param f0 The function to execute.
@@ -139,10 +202,9 @@ public class CommonCore {
             }
         });
     }
-    
-    
+
     /**
-     * Executes the given function in the Event Dispatch Thread (EDT) now, waiting until 
+     * Executes the given function in the Event Dispatch Thread (EDT) now, waiting until
      * the function was executed.
      * 
      * @param f0 The function to execute.
@@ -161,13 +223,12 @@ public class CommonCore {
             e.printStackTrace();
         }
     }
-    
-    
+
     /**
-     * Executes the given runnable count times. Call this method with your 
+     * Executes the given runnable count times. Call this method with your
      * given workers and a number of threads (usually number of CPUs).
      * 
-     * @param r The runnable to execute. 
+     * @param r The runnable to execute.
      * @param count Number of threads to spawn.
      */
     public void execute(Runnable r, int count) {
@@ -176,12 +237,13 @@ public class CommonCore {
     }
 
     /**
-     * Sets a manager of a given type, only needed for core developers. 
+     * Sets a manager of a given type, only needed for core developers.
      * 
      * @param <T> Manager's type.
      * @param clazz Manager's class.
      * @param manager The actual manager to put.
-     * @return Return the manager that was already in the list, if there was one, or the current manager which was also set.
+     * @return Return the manager that was already in the list, if there was one, or the current manager which was also
+     * set.
      */
     @SuppressWarnings("unchecked")
     public <T extends Manager> T manager(Class<T> clazz, T manager) {
@@ -202,8 +264,8 @@ public class CommonCore {
     }
 
     /**
-     * Logs the given string. This method might, but is not required, to use the official Java logging 
-     * facilities. 
+     * Logs the given string. This method might, but is not required, to use the official Java logging
+     * facilities.
      * 
      * @param string The string to log.
      * @param level Log level to use.
@@ -212,7 +274,19 @@ public class CommonCore {
         this.logger.log(level, string);
     }
 
-    
+    /**
+     * Measures how long the execution of the given function took. The result will be returned in nanoseconds.
+     * 
+     * @param f The function to execute.
+     * @return The elapsed time in nanoseconds.
+     */
+    public long measure(F0 f) {
+        final long start = System.nanoTime();
+        f.f();
+        final long end = System.nanoTime();
+        return end - start;
+    }
+
     /**
      * Executes the given function after the given delay.
      * 
@@ -228,61 +302,69 @@ public class CommonCore {
             }
         }, delay);
     }
+
+    /**
+     * Returns the profiling information gathered at startup. Only required internally.
+     * 
+     * @return The current profile information. 
+     */
+    public ProfileInformation profileInformation() {
+        return this.profileInformation;
+    }
     
     /**
-     * Creates a CoreNumber object with numbers ranging from 0 (inclusive) up to <code>end</code> (exclusive).  
+     * Creates a CoreNumber object with numbers ranging from 0 (inclusive) up to <code>end</code> (exclusive).
      * 
      * @param end The last number (exclusive).
-     * @return A core number object. 
+     * @return A core number object.
      */
     public CoreNumber range(int end) {
         return range(0, end, 1);
     }
-    
+
     /**
-     * Creates a CoreNumber object with the given <code>start</code> (inclusive) and 
-     * <code>end</code> (exclusive) and a stepping of +-1 (depending on whether start is smaller or larger than end).  
+     * Creates a CoreNumber object with the given <code>start</code> (inclusive) and <code>end</code> (exclusive) and a
+     * stepping of +-1 (depending on whether start is smaller or larger than end).
      * 
-     * @param from The first number (inclusive) 
+     * @param from The first number (inclusive)
      * @param end The last number (exclusive).
-     * @return A core number object. 
+     * @return A core number object.
      */
     public CoreNumber range(int from, int end) {
         return range(from, end, from <= end ? 1 : -1);
     }
 
-    
     /**
-     * Creates a CoreNumber object with the given <code>start</code> (inclusive), <code>end</code> (exclusive) and stepping.  
+     * Creates a CoreNumber object with the given <code>start</code> (inclusive), <code>end</code> (exclusive) and
+     * stepping.
      * 
-     * @param from The first number (inclusive) 
+     * @param from The first number (inclusive)
      * @param end The last number (exclusive).
      * @param stepping The stepping
-     *  
-     * @return A core number object. 
+     * 
+     * @return A core number object.
      */
     public CoreNumber range(int from, int end, int stepping) {
         // FIXME: Stepping problems
-        final int rval[] = new int[Math.abs((end-from)/stepping)];
+        final int rval[] = new int[Math.abs((end - from) / stepping)];
         int ptr = 0;
-        
-        if(from <= end) {
-            for(int i=from; i<end; i+=stepping) {
+
+        if (from <= end) {
+            for (int i = from; i < end; i += stepping) {
                 rval[ptr++] = i;
             }
         } else {
-            for(int i=from; i>end; i+=stepping) {
+            for (int i = from; i > end; i += stepping) {
                 rval[ptr++] = i;
-            }            
+            }
         }
-        
+
         return $(box(rval));
     }
-    
-    
+
     /**
-     * Reports the problem to our internal problem queue, only used by core developers. Use report() for all 
-     * internal error and problem reporting and use log() for user requested 
+     * Reports the problem to our internal problem queue, only used by core developers. Use report() for all
+     * internal error and problem reporting and use log() for user requested
      * logging.
      * 
      * @param type Type of the message.
@@ -293,7 +375,7 @@ public class CommonCore {
     }
 
     /**
-     * Prints all known problem reports to the console. This is the end-user 
+     * Prints all known problem reports to the console. This is the end-user
      * version (which means, <i>you</i> can use it) to print what went wrong during
      * core operation. See the console for output.
      */
@@ -309,7 +391,7 @@ public class CommonCore {
     public Random random() {
         return this.random;
     }
-    
+
     /**
      * Puts the current thread to sleep for some time, without the need for any try/catch block.
      * 
@@ -322,11 +404,11 @@ public class CommonCore {
         } catch (InterruptedException e) {
             return true;
         }
-        
+
         return false;
     }
 
-    /** 
+    /**
      * Returns a temporary file.
      * 
      * @return A File object for a temporary file.
@@ -341,7 +423,7 @@ public class CommonCore {
         return new File("/tmp/jcores.failedtmp." + System.nanoTime() + ".tmp");
     }
 
-    /** 
+    /**
      * Returns a temporary directory.
      * 
      * @return A File object for a temporary directory.
@@ -352,9 +434,8 @@ public class CommonCore {
         return file;
     }
 
-
     /**
-     * Unboxes a number of Integers. 
+     * Unboxes a number of Integers.
      * 
      * @param object The numbers to unbox.
      * @return An int array.
@@ -362,22 +443,22 @@ public class CommonCore {
     @SuppressWarnings("boxing")
     public int[] unbox(Integer... object) {
         int i = 0;
-        
+
         final int[] myIntegers = new int[object.length];
-        for(int val : object) myIntegers[i++] = val;
-        
+        for (int val : object)
+            myIntegers[i++] = val;
+
         return myIntegers;
     }
 
-
     /**
-     * Creates a unique ID. If nothing is specified each call delivers a 
+     * Creates a unique ID. If nothing is specified each call delivers a
      * new, unique ID. TODO: Option.UID_SYSTEM, .UID_USER, .UID_APP, ...
-     *  
-     * @param options 
+     * 
+     * @param options
      * @return Returns a unique ID.
      */
-    public String uniqueID(Option ... options) {
+    public String uniqueID(Option... options) {
         return UUID.randomUUID().toString();
     }
 }

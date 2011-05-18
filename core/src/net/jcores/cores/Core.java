@@ -36,6 +36,7 @@ import net.jcores.CommonCore;
 import net.jcores.options.Option;
 import net.jcores.utils.internal.Folder;
 import net.jcores.utils.internal.Mapper;
+import net.jcores.utils.internal.system.ProfileInformation;
 
 /**
  * The abstract base class of all cores. Contains commonly used methods and variables. In
@@ -87,40 +88,81 @@ public abstract class Core implements Serializable {
             mapper.handle(0);
             return;
         }
-
-        // TODO: Test-convert the first item and measure time. If time and size are above
-        // a certain threshold, parallelize, otherwise map sequentially
-
-        // Now find the first element and measure how long the conversion takes
-        // for (int i = 0; i < size; i++) { }
-
-        // TODO: Also measure how long thread creation takes (once)
-        // TODO: Then decide if we should parallelize or execute directly.
-        // TODO: Get proper value for step size (same problem, see below)
+        
+        // Compute the later step size and the number of threads.
+        final ProfileInformation profileInfo = this.commonCore.profileInformation();
         final int STEP_SIZE = Math.max(size() / 10, 1);
         final int NUM_THREADS = Runtime.getRuntime().availableProcessors();
+        final AtomicInteger index = new AtomicInteger();
+        
+        // Test-convert the first item and measure time. If time and size are above
+        // a certain threshold, parallelize, otherwise map sequentially. However, in here we 
+        // only test the first one
+        long delta = 0;
+        
+        for (int i = 0; i < size; i++) {
+            // Skipp all null elements
+            if(mapper.core().t[i] == null) continue;
+            
+            // Set the base count to the next position we should consider (in case we break the look)
+            index.set(i + 1);
 
+            // Now map the given value
+            final long start = System.nanoTime();
+            mapper.handle(i);
+            delta = System.nanoTime() - start;
+            
+            break;
+        }
+        
+        
+        // Next, we check if have a speed gain when we move parallel. In general, we do not 
+        // have a speed gain when the time it takes to spawn threads takes longer than it would 
+        // take to finish the loop single-threaded
+        final int toGo = size - index.get();
+        final long estTime = delta * toGo;
+        
+        
+        // We use a safetey factor of 2 for the fork time (FIXME: Should investigate what's the best factor),
+        // also, we only spawn something if there is more than one element still to go.
+        if(estTime < 2 * profileInfo.forkTime && toGo > 1) {
+            // In this case, we go single threaded
+            for(int i=index.get(); i<size; i++) {
+                mapper.handle(i);
+            }
+            
+            return;
+        }
+
+
+        // TODO: Get proper value for step size (same problem, see below)
         // TODO: Check size, if small, don't do all this setup in here ...
         // NAH, even for two objects we can have a speed gain if the calls
         // are very slow ...
 
-        final AtomicInteger baseCount = new AtomicInteger();
+        
+        // Okay, in this case the loop was broken and we decided to go parallel. In that case
+        // setup the barrier and spawn threads for all our processors so that we process the array.
         final CyclicBarrier barrier = new CyclicBarrier(NUM_THREADS + 1);
+        final AtomicInteger baseCount = new AtomicInteger();
 
         final Runnable runner = new Runnable() {
             public void run() {
-                int lower = baseCount.getAndIncrement() * STEP_SIZE;
+                int bc = baseCount.getAndIncrement() * STEP_SIZE;
+                int lower = Math.max(index.get(), bc);
+                
 
                 // Get new basecount for every pass ...
                 while (lower < size) {
-                    final int max = Math.min(lower + STEP_SIZE, size);
+                    final int max = Math.min(Math.min(lower + STEP_SIZE, size), bc + STEP_SIZE);
 
                     // Pass over all elements
                     for (int i = lower; i < max; i++) {
                         mapper.handle(i);
                     }
 
-                    lower = baseCount.getAndIncrement() * STEP_SIZE;
+                    bc = baseCount.getAndIncrement() * STEP_SIZE;
+                    lower = bc;
                 }
 
                 // Signal finish
@@ -166,7 +208,7 @@ public abstract class Core implements Serializable {
         final int NUM_THREADS = Runtime.getRuntime().availableProcessors();
 
         // Indicates which level (in the folding hierarchy) we are and where the next
-        // thread should proceed. The base count indicates where which element should be 
+        // thread should proceed. The base count indicates where which element should be
         // selected next by the thread, the level indicates how many times we already passed
         // through the whole array.
         final AtomicInteger baseCount = new AtomicInteger();
@@ -174,7 +216,7 @@ public abstract class Core implements Serializable {
 
         // Synchronizes threads. Each thread waits at the level-barrier when it finished the last level,
         // and waits the the global barrier when it is completely done. The main thread will also
-        // wait at the global barrier (thus +1) for all spawned threads. 
+        // wait at the global barrier (thus +1) for all spawned threads.
         final CyclicBarrier levelbarrier = new CyclicBarrier(NUM_THREADS);
         final CyclicBarrier barrier = new CyclicBarrier(NUM_THREADS + 1);
 

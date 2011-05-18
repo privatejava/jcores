@@ -28,10 +28,12 @@
 package net.jcores.cores;
 
 import net.jcores.CommonCore;
+import net.jcores.interfaces.functions.F2ReduceObjects;
 
 /**
- * Wraps a number of Numbers and exposes some convenience functions. For example, 
- * to calulate the variance of a number of numbers, write:<br/><br/>
+ * Wraps a number of Numbers and exposes some convenience functions. For example,
+ * to calulate the variance of a number of numbers, write:<br/>
+ * <br/>
  * 
  * <code>$(5, 0, 8, 6, 6, 7).variance()</code>
  * 
@@ -60,8 +62,7 @@ public class CoreNumber extends CoreObject<Number> {
      * Single-threaded.<br/>
      * <br/>
      * 
-     * @return The average of all enclosed numbers. If no numbers are enclosed,
-     * <code>0</code> is returned.
+     * @return The average of all enclosed numbers. If no numbers are enclosed, <code>0</code> is returned.
      */
     public double average() {
         final int size = size();
@@ -84,37 +85,45 @@ public class CoreNumber extends CoreObject<Number> {
     }
 
     /**
-     * Returns the variance of all enclosed numbers, assuming a uniform distribution.<br/>
+     * Returns the maximum value.<br/>
      * <br/>
      * 
-     * Single-threaded.<br/>>
+     * Single-threaded.<br/>
      * <br/>
      * 
-     * @return The variance of all enclosed numbers. If no numbers are enclosed,
-     * <code>0</code> is returned.
+     * @return The maximum value enclosed in this core.
      */
-    public double variance() {
-        final double average = average();
-        final int size = size();
-
-        int cnt = 0;
-        double rval = 0;
-
-        // Compute the variance
-        for (int i = 0; i < size; i++) {
-            final Number number = get(i);
-            if (number == null) continue;
-
-            rval += (average - number.doubleValue()) * (average - number.doubleValue());
-            cnt++;
-        }
-
-        // If we haven't had any element, return 0
-        if (cnt == 0) return 0;
-
-        return rval / cnt;
+    public double max() {
+        return reduce(new F2ReduceObjects<Number>() {
+            @SuppressWarnings("boxing")
+            @Override
+            public Number f(Number left, Number right) {
+                return Math.max(left.doubleValue(), right.doubleValue());
+            }
+        }).get(Double.NaN).doubleValue();
     }
 
+
+    /**
+     * Returns the maximum value.<br/>
+     * <br/>
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @return The maximum value enclosed in this core.
+     */
+    public double min() {
+        return reduce(new F2ReduceObjects<Number>() {
+            @SuppressWarnings("boxing")
+            @Override
+            public Number f(Number left, Number right) {
+                return Math.min(left.doubleValue(), right.doubleValue());
+            }
+        }).get(Double.NaN).doubleValue();
+    }
+
+    
     /**
      * Returns the standard deviation of all enclosed numbers.<br/>
      * <br/>
@@ -128,7 +137,6 @@ public class CoreNumber extends CoreObject<Number> {
     public double standarddeviation() {
         return Math.sqrt(variance());
     }
-    
 
     /**
      * Returns the sum of all enclosed numbers.<br/>
@@ -153,5 +161,36 @@ public class CoreNumber extends CoreObject<Number> {
         }
 
         return sum;
+    }
+
+    /**
+     * Returns the variance of all enclosed numbers, assuming a uniform distribution.<br/>
+     * <br/>
+     * 
+     * Single-threaded.<br/>>
+     * <br/>
+     * 
+     * @return The variance of all enclosed numbers. If no numbers are enclosed, <code>0</code> is returned.
+     */
+    public double variance() {
+        final double average = average();
+        final int size = size();
+
+        int cnt = 0;
+        double rval = 0;
+
+        // Compute the variance
+        for (int i = 0; i < size; i++) {
+            final Number number = get(i);
+            if (number == null) continue;
+
+            rval += (average - number.doubleValue()) * (average - number.doubleValue());
+            cnt++;
+        }
+
+        // If we haven't had any element, return 0
+        if (cnt == 0) return 0;
+
+        return rval / cnt;
     }
 }

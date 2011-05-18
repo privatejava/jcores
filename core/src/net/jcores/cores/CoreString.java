@@ -369,6 +369,25 @@ public class CoreString extends CoreObject<String> {
             }
         });
     }
+    
+
+    /**
+     * Returns a CoreString with all empty strings (i.e., length of <code>0</code>) set to <code>null</code>.<br/>
+     * <br/>
+     * 
+     * Multi-threaded.<br/>
+     * <br/>
+     * 
+     * @return A new core with all empty strings nulled. 
+     */
+    public CoreString nullempty() {
+        return new CoreString(this.commonCore, (String[]) map(new F1<String, Object>() {
+            public Object f(final String x) {
+                return x.length() == 0 ? null : x;
+            }
+        }).unsafearray());
+    }
+
 
     /**
      * Replaces some pattern with a replacement.<br/>

@@ -1,7 +1,7 @@
 /*
- * Data.java
+ * CoreNumberTest.java
  * 
- * Copyright (c) 2010, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,51 +25,22 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package junit.data;
+package junit;
 
-import java.util.ArrayList;
-import java.util.List;
+import static net.jcores.CoreKeeper.$;
+
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
- * Data for the jUnit tests.
- * 
  * @author Ralf Biedert
  */
-public class Data {
-    /** Test data. */
-    public final static String s0[] = new String[] {};
+public class CoreNumberTest {
 
-    /** Test data. */
-    public final static String s1[] = new String[] { "*some.value$is\0älways<bigger);th°n\nanotérone;" };
-
-    /** Test data. */
-    public final static String s5[];
-    
-    /** Test data. */
-    public final static String sn[];
-
-    /** File for file tests */
-    public final static String DATA_PATH = "core/tests/junit/data/";
-
-    /** Initialize big values */
-    static {
-        s5 = strings(5);
-        sn = strings(100000);
-    }
-
-    /**
-     * Returns an array of strings
-     * 
-     * @param num
-     * @return .
-     */
-    public static String[] strings(int num) {
-        final List<String> strings = new ArrayList<String>();
-
-        for (int i = 0; i < num; i++) {
-            strings.add("" + i);
-        }
-
-        return strings.toArray(new String[0]);
+    /** */
+    @Test
+    public void testMinMax() {
+        Assert.assertEquals(100.0, $.range(101).max(), 0.0);
+        Assert.assertEquals(0.0, $.range(101).min(), 0.0);
     }
 }

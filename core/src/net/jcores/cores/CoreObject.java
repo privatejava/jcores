@@ -1644,22 +1644,10 @@ public class CoreObject<T> extends Core {
                 // Get the in-value from the source-array
                 final T in = CoreObject.this.t[i];
 
-                // Debugging
-                long startTime = 0;
-                if (this.options.debug) {
-                    startTime = System.nanoTime();
-                }
-
                 // Convert
                 if (in == null) return;
                 if (this.options.indexer != null) this.options.indexer.i(i);
                 final R out = f.f(in);
-
-                // Debugging
-                if (this.options.debug) {
-                    long stopTime = System.nanoTime();
-                    System.out.println("Element " + i + " took " + ((stopTime - startTime) / 1000) + "µs");
-                }
 
                 // When we had a results and if we haven't had an in-array, create it now, according to the return type
                 if (out == null) return;

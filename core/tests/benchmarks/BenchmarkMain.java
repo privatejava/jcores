@@ -36,6 +36,8 @@ import benchmarks.benchmarker.Benchmark;
 import benchmarks.benchmarker.BenchmarkResults;
 import benchmarks.benchmarker.Benchmarker;
 import benchmarks.benchmarks.SimpleTest;
+import benchmarks.benchmarks.mappinglooping.ComplexLoopingStringArray;
+import benchmarks.benchmarks.mappinglooping.SimpleLoopingStringArray;
 import benchmarks.benchmarks.regexdna.RegExDNA;
 import benchmarks.benchmarks.reversecomplement.ReverseComplement;
 import benchmarks.model.TaskData;
@@ -56,6 +58,8 @@ public class BenchmarkMain {
         
         // Add bechmarks
         classes.add(SimpleTest.class);
+        classes.add(SimpleLoopingStringArray.class);
+        classes.add(ComplexLoopingStringArray.class);
         classes.add(RegExDNA.class);
         classes.add(ReverseComplement.class);
         

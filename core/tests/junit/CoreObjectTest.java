@@ -30,6 +30,8 @@ package junit;
 import static net.jcores.CoreKeeper.$;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.data.Data;
 import net.jcores.cores.CoreNumber;
@@ -109,6 +111,46 @@ public class CoreObjectTest {
             }
 
         }).string().join());
+        
+
+        final AtomicInteger c = new AtomicInteger();
+        c.set(0);
+        $(Data.s5).map(new F1<String, Void>() {
+            @Override
+            public Void f(String x) {
+                c.incrementAndGet();
+                return null;
+            }
+        });
+        Assert.assertEquals(Data.s5.length, c.intValue());
+        
+        c.set(0);
+        $(Data.s1).map(new F1<String, Void>() {
+            @Override
+            public Void f(String x) {
+                c.incrementAndGet();
+                return null;
+            }
+        });
+        
+        Assert.assertEquals(Data.s1.length, c.intValue());
+        
+        c.set(0);
+        final ConcurrentHashMap<Integer, Object> cc = new ConcurrentHashMap<Integer, Object>();
+        final OptionIndexer indexer = Option.INDEXER();
+        
+        $(Data.sn).map(new F1<String, Void>() {
+            @SuppressWarnings("boxing")
+            @Override
+            public Void f(String x) {
+                c.getAndIncrement();
+                if(cc.containsKey(indexer.i())) System.out.println("DOUBLE " + indexer.i());
+                cc.put(indexer.i(), new Object());
+                return null;
+            }
+        }, indexer);
+        Assert.assertEquals(Data.sn.length, c.intValue());
+
     }
 
     /** */

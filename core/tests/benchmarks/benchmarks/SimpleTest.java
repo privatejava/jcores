@@ -34,7 +34,6 @@ import java.util.Collection;
 
 import junit.data.Data;
 import net.jcores.interfaces.functions.F1;
-import net.jcores.interfaces.functions.F2ReduceObjects;
 import benchmarks.benchmarker.Benchmark;
 import benchmarks.model.TaskData;
 import benchmarks.model.TaskSolver;
@@ -44,50 +43,50 @@ import benchmarks.model.TaskSolver;
  * 
  * @author Ralf Biedert
  */
-public class SimpleTest extends Benchmark<String[]> {
+public class SimpleTest extends Benchmark<Data> {
 
     /* (non-Javadoc)
      * @see benchmarks.benchmarker.Benchmark#data()
      */
     @Override
-    public TaskData<String[]> data() {
-        return new TaskData<String[]>(Data.sn);
+    public TaskData<Data> data() {
+        return new TaskData<Data>();
     }
 
     /* (non-Javadoc)
      * @see benchmarks.benchmarker.Benchmark#solver()
      */
     @Override
-    public Collection<TaskSolver<String[]>> solver() {
-        final Collection<TaskSolver<String[]>> rval = new ArrayList<TaskSolver<String[]>>();
+    public Collection<TaskSolver<Data>> solver() {
+        final Collection<TaskSolver<Data>> rval = new ArrayList<TaskSolver<Data>>();
 
-        // Add the individual solvers
-        rval.add(new TaskSolver<String[]>("plain", new F1<String[], Object>() {
+
+        // ADD SOLVER 
+        rval.add(new TaskSolver<Data>("s1.overhead.plain", new F1<Data, Object>() {
+            @SuppressWarnings("static-access")
             @Override
-            public Void f(String[] x) {
-                String longest = "";
-                for (int i = 0; i < x.length; i++) {
-                    if (x[i].length() > longest.length()) longest = x[i];
+            public Object f(Data x) {
+                int v = 0;
+                for(int i = 0; i<10000; i++) {
+                    v += x.s1.length;
                 }
-                longest.getBytes();
-
-                return null;
+                return Integer.valueOf(v);
             }
         }));
-        
-        // Yet another solver
-        rval.add(new TaskSolver<String[]>("jcores", new F1<String[], Object>() {
+
+        // ADD SOLVER 
+        rval.add(new TaskSolver<Data>("s1.overhead.jcores", new F1<Data, Object>() {
+            @SuppressWarnings("static-access")
             @Override
-            public Void f(String[] x) {
-                String longest = $(x).fold(new F2ReduceObjects<String>() {
-                    public String f(String left, String right) {
-                        return left.length() < right.length() ? right : left;
-                    }
-                }).get("Failed");
-
-                return null;
+            public Object f(Data x) {
+                int v = 0;
+                for(int i = 0; i<10000; i++) {
+                    v += $(x.s1).size();
+                }
+                return Integer.valueOf(v);
             }
         }));
+
 
         return rval;
     }
