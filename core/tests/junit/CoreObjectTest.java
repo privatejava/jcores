@@ -259,6 +259,15 @@ public class CoreObjectTest {
         Assert.assertEquals("c", list.get(1));
 
     }
+    
+
+    /** */
+    @Test
+    public void testIndex() {
+        final CoreString cs = $(Data.sn);
+        Assert.assertEquals(2, cs.index("2").i(0));
+        Assert.assertEquals(20, cs.index("10", "20").i(1));
+    }
 
     /** */
     @Test

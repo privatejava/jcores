@@ -481,8 +481,8 @@ public class CoreObject<T> extends Core {
             @Override
             public void handle(int i) {
                 // We don't handle the last iteration
-                if(i == size - 1) return;
-                
+                if (i == size - 1) return;
+
                 // Get our target-array (if it is already there)
                 R[] a = this.returnArray.get();
 
@@ -827,16 +827,17 @@ public class CoreObject<T> extends Core {
 
     /**
      * Folds the given object, multi-threaded version. Fold removes two arbitrary elements,
-     * executes <code>f()</code> on them and stores the result again. This is done in parallel until 
-     * only one element remains.<br/><br/>
+     * executes <code>f()</code> on them and stores the result again. This is done in parallel until
+     * only one element remains.<br/>
+     * <br/>
      * 
-     * It is guaranteed that each element will have been compared at least once, but the chronological- 
-     * or parameter-order when and where this occurs is, in contrast to <code>reduce()</code>, not defined. 
+     * It is guaranteed that each element will have been compared at least once, but the chronological-
+     * or parameter-order when and where this occurs is, in contrast to <code>reduce()</code>, not defined.
      * <code>Null</code> elements are gracefully ignored.<br/>
      * <br/>
      * 
      * At present, <code>reduce()</code> is much faster for simple operations and small cores, as it involves much less
-     * synchronization overhead, while <code>fold()</code> has advantages especially 
+     * synchronization overhead, while <code>fold()</code> has advantages especially
      * with very complex <code>f</code> operators.<br/>
      * <br/>
      * 
@@ -852,7 +853,7 @@ public class CoreObject<T> extends Core {
 
         // In case we only have zero or one elements, don't do anything
         if (size() <= 1) return this;
-        
+
         final AtomicReferenceArray array = new AtomicReferenceArray(this.t);
         final Folder<T> folder = new Folder<T>(this) {
             @Override
@@ -871,14 +872,14 @@ public class CoreObject<T> extends Core {
                     array.set(destination, ii);
                     return;
                 }
-                
+
                 array.set(destination, f.f(ii, jj));
             }
         };
 
         // Now do fold ...
         fold(folder, options);
-        
+
         T[] target = Arrays.copyOf(this.t, 1);
         target[0] = (T) array.get(0);
 
@@ -903,7 +904,7 @@ public class CoreObject<T> extends Core {
     @SuppressWarnings("unchecked")
     public <R> CoreObject<R> forEach(final F1<T, R> f, Option... _options) {
 
-        // Create a mapper and iterate over it 
+        // Create a mapper and iterate over it
         final Mapper<T, R> mapper = mapper(f, _options);
         for (int i = 0; i < size(); i++) {
             mapper.handle(i);
@@ -1099,6 +1100,41 @@ public class CoreObject<T> extends Core {
     }
 
     /**
+     * Returns the first index positions for all objects equal to the given object, or null if no object
+     * equalled the given one.<br/>
+     * <br/>
+     * 
+     * Single-threaded. <br/>
+     * <br/>
+     * 
+     * @param objects The objects to return the first index for.
+     * @return A {@link CoreNumber} object with the corresponding index position.
+     */
+    @SuppressWarnings("boxing")
+    public CoreNumber index(T... objects) {
+        if (objects == null) return new CoreNumber(this.commonCore, new Number[0]);
+        Integer indices[] = new Integer[objects.length];
+
+        
+        // Check all objects ...
+        for (int i = 0; i < objects.length; i++) {
+            final T obj = objects[i];
+            if (obj == null) continue;
+
+            // If there is a match in our core
+            for (int j = 0; j < size(); j++) {
+                // If there is, store the index of our object at the corresponding query position.
+                if (obj.equals(get(j))) {
+                    indices[i] = j;
+                    break;
+                }
+            }
+        }
+        
+        return new CoreNumber(this.commonCore, indices);
+    }
+
+    /**
      * Returns a core intersected with another core.<br/>
      * <br/>
      * 
@@ -1290,13 +1326,13 @@ public class CoreObject<T> extends Core {
 
     /**
      * Reduces the given object, single-threaded version. Reduce takes the two leftmost elements,
-     * executes <code>f()</code> on them and stores the result again as the leftmost element. This 
+     * executes <code>f()</code> on them and stores the result again as the leftmost element. This
      * is done until only one element remains. <code>Null</code> elements are gracefully ignored.<br/>
      * <br/>
      * 
-     * In contrast to fold() the order in which two element might be reduced is well defined 
-     * from left to right. You should use <code>reduce()</code> for simple operations and 
-     * <code>fold()</code> for very complex operations.<br/>
+     * In contrast to fold() the order in which two element might be reduced is well defined
+     * from left to right. You should use <code>reduce()</code> for simple operations and <code>fold()</code> for very
+     * complex operations.<br/>
      * <br/>
      * 
      * Single-threaded.<br/>

@@ -85,6 +85,38 @@ public class CoreNumber extends CoreObject<Number> {
     }
 
     /**
+     * Returns the number at the given position as a double, or
+     * returns <code>Double.NaN</code> if the object was null.<br/>
+     * <br/>
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @param index The index to get the number for.
+     * @return The double value of the number or <code>NaN</code> if it was null.
+     */
+    public double d(int index) {
+        if (get(index) == null) return Double.NaN;
+        return this.t[index].doubleValue();
+    }
+
+    /**
+     * Returns the number at the given position as an integer, or
+     * returns <code>Integer.MIN_VALUE</code> if the object was null.<br/>
+     * <br/>
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @param index The index to get the number for.
+     * @return The integer value of the number or <code>Integer.MIN_VALUE</code> if it was null.
+     */
+    public int i(int index) {
+        if (get(index) == null) return Integer.MIN_VALUE;
+        return this.t[index].intValue();
+    }
+
+    /**
      * Returns the maximum value.<br/>
      * <br/>
      * 
@@ -102,7 +134,6 @@ public class CoreNumber extends CoreObject<Number> {
             }
         }).get(Double.NaN).doubleValue();
     }
-
 
     /**
      * Returns the maximum value.<br/>
@@ -123,7 +154,6 @@ public class CoreNumber extends CoreObject<Number> {
         }).get(Double.NaN).doubleValue();
     }
 
-    
     /**
      * Returns the standard deviation of all enclosed numbers.<br/>
      * <br/>
