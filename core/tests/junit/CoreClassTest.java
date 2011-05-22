@@ -52,7 +52,6 @@ public class CoreClassTest {
         CoreClass<Robot> a = $(Robot.class, Robot.class);
         CoreObject<Class<? extends Object>> b = $(Robot.class, Object.class);
         
-        $(Robot.class).spawned().compact().print();
-        
+        Assert.assertEquals(1, $(Robot.class).spawned().compact().size());
     }
 }

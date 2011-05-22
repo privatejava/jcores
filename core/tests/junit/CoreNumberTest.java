@@ -40,7 +40,15 @@ public class CoreNumberTest {
     /** */
     @Test
     public void testMinMax() {
-        Assert.assertEquals(100.0, $.range(101).max(), 0.0);
         Assert.assertEquals(0.0, $.range(101).min(), 0.0);
+        Assert.assertEquals(100.0, $.range(101).max(), 0.0);
     }
+
+    /** */
+    @Test
+    public void testSum() {
+        int n = 10000;
+        Assert.assertEquals(n*(n-1)/2, $.range(n).sum(), 0.0);
+    }
+
 }

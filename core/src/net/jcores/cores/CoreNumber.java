@@ -145,14 +145,14 @@ public class CoreNumber extends CoreObject<Number> {
      * 
      * @return The maximum value enclosed in this core.
      */
+    @SuppressWarnings("boxing")
     public double max() {
         return reduce(new F2ReduceObjects<Number>() {
-            @SuppressWarnings("boxing")
             @Override
             public Number f(Number left, Number right) {
                 return Math.max(left.doubleValue(), right.doubleValue());
             }
-        }).get(Double.NaN).doubleValue();
+        }).get((Double) Double.NaN).doubleValue();
     }
 
     /**
@@ -169,14 +169,14 @@ public class CoreNumber extends CoreObject<Number> {
      * 
      * @return The maximum value enclosed in this core.
      */
+    @SuppressWarnings("boxing")
     public double min() {
         return reduce(new F2ReduceObjects<Number>() {
-            @SuppressWarnings("boxing")
             @Override
             public Number f(Number left, Number right) {
                 return Math.min(left.doubleValue(), right.doubleValue());
             }
-        }).get(Double.NaN).doubleValue();
+        }).get((Double) Double.NaN).doubleValue();
     }
 
     /**

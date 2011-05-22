@@ -143,9 +143,9 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
                     try {
                         return CoreClass.this.manager.registerObject(x, toSpawn.newInstance());
                     } catch (InstantiationException e) {
-                        e.printStackTrace();
+                        CoreClass.this.commonCore.report(MessageType.EXCEPTION, "Error instantiating type " + x);
                     } catch (IllegalAccessException e) {
-                        e.printStackTrace();
+                        CoreClass.this.commonCore.report(MessageType.EXCEPTION, "Error accessing type " + x);
                     }
                 }
 
@@ -202,17 +202,17 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
                     // NOTE: We do not swallow all execptions silently, becasue spawn() is a bit
                     // special and we cannot return anything that would still be usable.
                 } catch (SecurityException e) {
-                    e.printStackTrace();
+                    CoreClass.this.commonCore.report(MessageType.EXCEPTION, "SecurityException spawning " + x);
                 } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
+                    CoreClass.this.commonCore.report(MessageType.EXCEPTION, "NoSuchMethodException spawning " + x);
                 } catch (IllegalArgumentException e) {
-                    e.printStackTrace();
+                    CoreClass.this.commonCore.report(MessageType.EXCEPTION, "IllegalArgumentException spawning " + x);
                 } catch (InstantiationException e) {
-                    e.printStackTrace();
+                    CoreClass.this.commonCore.report(MessageType.EXCEPTION, "InstantiationException spawning " + x);
                 } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+                    CoreClass.this.commonCore.report(MessageType.EXCEPTION, "IllegalAccessException spawning " + x);
                 } catch (InvocationTargetException e) {
-                    e.printStackTrace();
+                    CoreClass.this.commonCore.report(MessageType.EXCEPTION, "InvocationTargetException spawning " + x);
                 }
 
                 // TODO Make sure to only use weak references, so that we don't run out of memory
