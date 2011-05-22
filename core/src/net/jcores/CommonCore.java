@@ -44,7 +44,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
@@ -54,7 +53,8 @@ import net.jcores.interfaces.functions.F0;
 import net.jcores.managers.Manager;
 import net.jcores.managers.ManagerClass;
 import net.jcores.managers.ManagerDebugGUI;
-import net.jcores.managers.ManagerStatistics;
+import net.jcores.managers.ManagerLogging;
+import net.jcores.managers.ManagerDeveloperFeedback;
 import net.jcores.options.MessageType;
 import net.jcores.options.Option;
 import net.jcores.utils.internal.Reporter;
@@ -80,9 +80,6 @@ public class CommonCore {
 
     /** Executes commands */
     private final ExecutorService executor;
-
-    /** Common logger */
-    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     /** Stores error reports */
     private final Reporter reporter = new Reporter();
@@ -111,8 +108,9 @@ public class CommonCore {
 
         // Register managers we know
         manager(ManagerClass.class, new ManagerClass());
-        manager(ManagerStatistics.class, new ManagerStatistics());
+        manager(ManagerDeveloperFeedback.class, new ManagerDeveloperFeedback());
         manager(ManagerDebugGUI.class, new ManagerDebugGUI());
+        manager(ManagerLogging.class, new ManagerLogging());
 
         // Test how long it takes to execute a thread in the background
         this.profileInformation = profile();
@@ -271,7 +269,7 @@ public class CommonCore {
      * @param level Log level to use.
      */
     public void log(String string, Level level) {
-        this.logger.log(level, string);
+        this.manager(ManagerLogging.class).handler().log(string, level);
     }
 
     /**

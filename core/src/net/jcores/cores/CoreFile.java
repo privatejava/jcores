@@ -87,9 +87,16 @@ public class CoreFile extends CoreObject<File> {
     }
 
     /**
-     * Appends the object.toString() to all given files. Usually only called with a single
-     * enclosed file object. <br/>
+     * Appends the object.toString() to all given files. The files will be created if they don't 
+     * exist. The function is usually only called with a single enclosed file object. <br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("test.txt").file().append("Hello World")</code> - Appends <code>'Hello World'</code> to the file <code>'test.txt'</code>.</li>
+     * <li><code>$("result.csv").file().delete().append("a,b,c")</code> - Writes a data set into a file, the previous content will have been removed.</li>
+     * </ul>
+     * 
      * 
      * Multi-threaded.<br/>
      * <br/>
@@ -127,6 +134,11 @@ public class CoreFile extends CoreObject<File> {
      * Treats the given files as audio files and returns a {@link CoreAudioInputStream} for them.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$("test.wav").file().audio().play()</code> - Treats the file as an audio file and plays it.</li>
+     * </ul>
+     * 
      * Multi-threaded.<br/>
      * <br/>
      * 
@@ -148,6 +160,13 @@ public class CoreFile extends CoreObject<File> {
      * if this core encloses multiple files or directories, it is undefined what the content of <code>destination</code>
      * will be afterwards<br/>
      * <br/>
+     * 
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("source.zip").file().copy("/dest/")</code> - Copies the file <code>source.zip</code> to the toplevel folder <code>/dest</code></li>
+     * <li><code>$("src/").file().copy("bin/")</code> - Copies the directory <code>src</code> to the directory <code>bin</code></li>
+     * </ul>
      * 
      * Multi-threaded.<br/>
      * <br/>
@@ -178,6 +197,11 @@ public class CoreFile extends CoreObject<File> {
      * buffers.
      * File stream which could not be opened will be returned as null.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("data.jar").file().data().hash().print()</code> - Prints the (MD5) hash of the given file.</li>
+     * </ul>
      * 
      * Multi-threaded.<br/>
      * <br/>
@@ -217,6 +241,11 @@ public class CoreFile extends CoreObject<File> {
      * files or directories are write protected or locked they should be gone afterwards.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$(".").dir().filter(".*png$").delete()</code> - Deletes all PNG files below the given directory.</li>
+     * </ul>
+     *  
      * Multi-threaded.<br/>
      * <br/>
      * 
@@ -248,10 +277,15 @@ public class CoreFile extends CoreObject<File> {
     }
 
     /**
-     * De-serializes the previously serialized core from the enclosed file. Objects that
-     * are not serializable
-     * are ignored.<br/>
+     * De-serializes the previously serialized {@link CoreObject} from the enclosed file. 
+     * Objects that are not serializable are ignored.<br/>
      * <br/>
+     * 
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("storage.ser").file().deserialize(String.class)</code> - Restores a {@link Core} that previously contained a number of Strings and that was written with <code>core.serialize("storage.ser")</code>.</li>
+     * </ul>
      * 
      * Single-threaded. Size-of-one.<br/>
      * <br/>
@@ -287,6 +321,11 @@ public class CoreFile extends CoreObject<File> {
      * in all sub directories is returned.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$(".").file().dir().print()</code> - Lists all files below the current directory.</li>
+     * </ul>
+     * 
      * Multi-threaded.<br/>
      * <br/>
      * 
@@ -311,9 +350,13 @@ public class CoreFile extends CoreObject<File> {
      * Returns the file sizes for all enclose file objects<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$(".").file().dir().filesize().sum()</code> - Computes how much space all files below this directory consume.</li>
+     * </ul>
+     * 
      * Multi-threaded.<br/>
      * <br/>
-     * 
      * 
      * @return A CoreFile containing a filtered subset of our elements.
      */
@@ -329,6 +372,11 @@ public class CoreFile extends CoreObject<File> {
     /**
      * Filters all files by their name using the given regular expression. <br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(".").file().dir().filter(".*java$").print()</code> - Prints all files that end with <code>.java</code>.</li>
+     * </ul>
      * 
      * Multi-threaded.<br/>
      * <br/>
@@ -354,6 +402,11 @@ public class CoreFile extends CoreObject<File> {
      * Tries to load all enclosed files as images.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$("image.jpg").file().images().get(0)</code> - Returns a {@link BufferedImage} for the specified file.</li>
+     * </ul>
+     *  
      * Multi-threaded.<br/>
      * <br/>
      * 
@@ -375,9 +428,13 @@ public class CoreFile extends CoreObject<File> {
     
     /**
      * Opens the given file objects as input streams. File stream which could not be
-     * opened
-     * will be returned as null.<br/>
+     * opened will be returned as null.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("data.raw").file().input().get(0)</code> - Returns an {@link InputStream} for the specified file.</li>
+     * </ul>
      * 
      * Multi-threaded.<br/>
      * <br/>
@@ -401,6 +458,12 @@ public class CoreFile extends CoreObject<File> {
      * notation for <code>inputstream().text()</code><br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$("README.txt").file().text().print()</code> - Prints the README file.</li>
+     * </ul>
+     * 
+     * 
      * Multi-threaded.<br/>
      * <br/>
      * 
@@ -417,6 +480,11 @@ public class CoreFile extends CoreObject<File> {
     /**
      * Converts all files to URIs.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("code.jar").file().uri().get(0)</code> - Returns the URI for the file <code>code.jar</code>.</li>
+     * </ul>
      * 
      * Multi-threaded.<br/>
      * <br/>
@@ -436,6 +504,11 @@ public class CoreFile extends CoreObject<File> {
      * stored as a top-level entry. If directories are enclosed in this core, the relative paths below that directory
      * are preserved.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("file.a", "file.b").file().zip("archive.zip")</code> - Creates a zip and puts the two given files in it.</li>
+     * </ul>
      * 
      * Single-threaded.<br/>
      * <br/>

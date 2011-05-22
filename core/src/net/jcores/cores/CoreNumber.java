@@ -59,6 +59,11 @@ public class CoreNumber extends CoreObject<Number> {
      * Returns the average of all enclosed numbers.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$(1, 3).average()</code> - Returns the average of 1 and 3, which is 2.</li>
+     * </ul> 
+     * 
      * Single-threaded.<br/>
      * <br/>
      * 
@@ -89,6 +94,11 @@ public class CoreNumber extends CoreObject<Number> {
      * returns <code>Double.NaN</code> if the object was null.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$(100, 200).d(0)</code> - Returns the first value (100) in this core as a double value (100.0).</li>
+     * </ul> 
+     * 
      * Single-threaded.<br/>
      * <br/>
      * 
@@ -105,6 +115,11 @@ public class CoreNumber extends CoreObject<Number> {
      * returns <code>Integer.MIN_VALUE</code> if the object was null.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$(100.26, 200.33).i(1)</code> - Returns the second value (200.33) in this core as an int value (200).</li>
+     * </ul> 
+     * 
      * Single-threaded.<br/>
      * <br/>
      * 
@@ -119,6 +134,11 @@ public class CoreNumber extends CoreObject<Number> {
     /**
      * Returns the maximum value.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(3, 1, 2).max()</code> - Returns 3.0.</li>
+     * </ul> 
      * 
      * Single-threaded.<br/>
      * <br/>
@@ -139,6 +159,11 @@ public class CoreNumber extends CoreObject<Number> {
      * Returns the maximum value.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$(3, 1, -2).max()</code> - Returns -2.0.</li>
+     * </ul> 
+     * 
      * Single-threaded.<br/>
      * <br/>
      * 
@@ -158,6 +183,11 @@ public class CoreNumber extends CoreObject<Number> {
      * Returns the standard deviation of all enclosed numbers.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$(2, -2, 2, -2).standarddeviation()</code> - Returns 2.0.</li>
+     * </ul> 
+     * 
      * Single-threaded.<br/>>
      * <br/>
      * 
@@ -171,6 +201,11 @@ public class CoreNumber extends CoreObject<Number> {
     /**
      * Returns the sum of all enclosed numbers.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(1, 2, 3).sum()</code> - Returns 6.0.</li>
+     * </ul>  
      * 
      * Single-threaded.<br/>>
      * <br/>
@@ -196,6 +231,11 @@ public class CoreNumber extends CoreObject<Number> {
     /**
      * Returns the variance of all enclosed numbers, assuming a uniform distribution.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(2, -2, 2, -2).variance()</code> - Returns 4.0.</li>
+     * </ul> 
      * 
      * Single-threaded.<br/>>
      * <br/>

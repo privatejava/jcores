@@ -68,6 +68,11 @@ public class CoreJComponent extends CoreComponent {
      * Sets the onDrop handler for the given JCompontents.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$(panel).onDrop(handler, Option.DROPTYPE_FILES)</code> - Makes the panel accept file drops from the operating system.</li>
+     * </ul> 
+     * 
      * Single-threaded.<br/>
      * <br/>
      * 

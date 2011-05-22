@@ -70,6 +70,11 @@ public class CoreURI extends CoreObject<URI> {
      * Opens the associated input stream.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$("http://jcores.net/index.html").uri().input()</code> - Opens an input stream for the given URI.</li>
+     * </ul>
+     * 
      * Multi-threaded.<br/>
      * <br/>
      * 
@@ -97,6 +102,11 @@ public class CoreURI extends CoreObject<URI> {
      * Downloads the enclosed URIs to a temporary directories and returns core
      * containing their filenames.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("http://jcores.net/index.html").uri().download()</code> - Downloads the file at the given URI to the temporary directory.</li>
+     * </ul>
      * 
      * Multi-threaded.<br/>
      * <br/>
@@ -131,6 +141,11 @@ public class CoreURI extends CoreObject<URI> {
      * Downloads the enclosed URIs to the given directory, using the filename encoded
      * within the uri and returns a core containing their filenames.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("http://jcores.net/index.html").uri().download("downloads")</code> - Downloads the file at the given URI to downloads directory.</li>
+     * </ul>
      * 
      * Multi-threaded.<br/>
      * <br/>
@@ -168,6 +183,11 @@ public class CoreURI extends CoreObject<URI> {
      * Tries to convert all URIs to local File objects.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$(uri).file().delete()</code> - Deletes a local file that was present as an URI.</li>
+     * </ul>
+     * 
      * Multi-threaded.<br/>
      * <br/>
      * 
@@ -179,10 +199,10 @@ public class CoreURI extends CoreObject<URI> {
                 try {
                     return new File(x);
                 } catch (Exception e) {
-                                                 //
-                                             }
-                                             return null;
-                                         }
+                    //
+                }
+                return null;
+            }
         }).array(File.class));
     }
 

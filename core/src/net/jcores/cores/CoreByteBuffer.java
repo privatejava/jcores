@@ -67,6 +67,12 @@ public class CoreByteBuffer extends CoreObject<ByteBuffer> {
      * Creates a hash of the given data.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$(d1, d2, d3).hash(Option.HASH_MD5).get(-1)</code> - Creates a hash for each of the passed data objects 
+     * and returns the hash value for the last one.</li>
+     * </ul>
+     * 
      * Multi-threaded.<br/>
      * <br/>
      * 

@@ -64,6 +64,11 @@ public class CoreAudioInputStream extends CoreObject<AudioInputStream> {
      * Plays all enclosed audio streams on the standard sound device.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$("sound.wav").file().audio().play()</code> - Plays the file <code>sound.wav</code>.</li>
+     * </ul>
+     * 
      * Multi-threaded. Consuming.<br/>
      * <br/>
      * 

@@ -115,6 +115,11 @@ public class CoreInputStream extends CoreObject<InputStream> {
      * Returns a {@link CoreAudioInputStream} for the input streams enclosed in this core.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$(inputstream).audio().play()</code> - Plays the file in the {@link InputStream}.</li>
+     * </ul>
+     * 
      * Multi-threaded.<br/>
      * <br/>
      * 
@@ -132,6 +137,11 @@ public class CoreInputStream extends CoreObject<InputStream> {
     /**
      * Closes all contained streams.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(s1, s2, s3).close()</code> - Closes all three stream objects.</li>
+     * </ul> 
      * 
      * Single-threaded. Consuming.<br/>
      * <br/>
@@ -151,6 +161,11 @@ public class CoreInputStream extends CoreObject<InputStream> {
      * De-serializes the previously serialized core from the enclosed file. Objects that
      * are not serializable are ignored.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(input).deserialize(String.class)</code> - Deserializes a {@link CoreObject} of Strings that was serialized before with <code>core.serialize()</code>.</li>
+     * </ul> 
      * 
      * Single-threaded. Size-of-one.<br/>
      * <br/>
@@ -178,11 +193,14 @@ public class CoreInputStream extends CoreObject<InputStream> {
 
     /**
      * Treats the given input streams as <code>ZipInputStreams</code> and tries to unzip
-     * them to
-     * the given directory, creating sub directories as necessary. This is a shorthand
-     * notation
-     * for <code>zipstream().unzip()</code><br/>
+     * them to the given directory, creating sub directories as necessary. This is a shorthand
+     * notation for <code>zipstream().unzip()</code><br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(input).unzip("/tmp")</code> - Unzips the data in the InputStream into a temporary directory.</li>
+     * </ul> 
      * 
      * Multi-threaded. Consuming.<br/>
      * <br/>
@@ -208,6 +226,12 @@ public class CoreInputStream extends CoreObject<InputStream> {
      * Converts the given input streams to zip streams.<br/>
      * <br/>
      * 
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(input).zipstream().dir().print()</code> - Lists the content of the given InputStream representing a ZIP.</li>
+     * </ul> 
+     *  
      * Multi-threaded.<br/>
      * <br/>
      * 
@@ -225,6 +249,11 @@ public class CoreInputStream extends CoreObject<InputStream> {
      * Returns all lines of all files joint. A core will be returned in which each
      * entry is a String containing the specific file's content.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(input).text().print()</code> - Loads the text from the stream and prints it to the console.</li>
+     * </ul> 
      * 
      * Multi-threaded. Consuming.<br/>
      * <br/>
@@ -250,6 +279,11 @@ public class CoreInputStream extends CoreObject<InputStream> {
     /**
      * Creates a hash of the given input streams.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(input).hash().print()</code> - Prints a hash for the data in the stream.</li>
+     * </ul> 
      * 
      * Multi-threaded. Consuming.<br/>
      * <br/>
@@ -279,6 +313,11 @@ public class CoreInputStream extends CoreObject<InputStream> {
     /**
      * Uses the enclosed input streams and reads their data into byte buffers.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(input).data()</code> - Loads all data from the stream and stores it into a {@link CoreByteBuffer}.</li>
+     * </ul> 
      * 
      * Multi-threaded. Consuming.<br/>
      * <br/>

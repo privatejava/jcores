@@ -52,7 +52,9 @@ import net.jcores.interfaces.functions.F1;
 import net.jcores.interfaces.functions.F1Object2Bool;
 import net.jcores.interfaces.functions.F2DeltaObjects;
 import net.jcores.interfaces.functions.F2ReduceObjects;
+import net.jcores.interfaces.functions.Fn;
 import net.jcores.managers.ManagerDebugGUI;
+import net.jcores.managers.ManagerDeveloperFeedback;
 import net.jcores.options.MessageType;
 import net.jcores.options.Option;
 import net.jcores.options.OptionMapType;
@@ -129,6 +131,12 @@ public class CoreObject<T> extends Core {
      * Elements that are in both cores will appear twice.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "b").add($("c"))</code> - The resulting core contains 
+     * <code>a</code>, <code>b</code> and <code>c</code>.</li>
+     * </ul>
+     * 
      * Single-threaded. <br/>
      * <br/>
      * 
@@ -154,6 +162,12 @@ public class CoreObject<T> extends Core {
      * Elements that are in both will appear twice.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "b").add("c")</code> - The resulting core contains <code>a</code>, 
+     * <code>b</code> and <code>c</code>.</li>
+     * </ul>
+     * 
      * Single-threaded. <br/>
      * <br/>
      * 
@@ -171,6 +185,13 @@ public class CoreObject<T> extends Core {
      * Returns the core's content as an array of the given type. Elements that don't fit
      * into the given target type will be skipped.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(list).array(String.class)</code> - Returns a String array for the given 
+     * list. Elements that are no String will be returned as null.</li>
+     * </ul>
+     * 
      * 
      * Single-threaded.<br/>
      * <br/>
@@ -192,12 +213,23 @@ public class CoreObject<T> extends Core {
 
     /**
      * Returns a core that tries to treat all elements as being of the given type.
-     * Elements which
-     * don't match are ignored. Can also be used to load extensions (e.g., <code>somecore.as(CoreString.class)</code>).
-     * This function should not be called within hot-spots (functions called millions of
-     * times a second)
+     * Elements which don't match are ignored. Can also be used to load extensions 
+     * (e.g., <code>somecore.as(CoreString.class)</code>). This function should not 
+     * be called within hot-spots (functions called millions of times a second)
      * as it relies heavily on reflection.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(objects).as(MyExtensionCore.class).method()</code> - If you wrote a jCores 
+     * extension this is how  you could activate the extension for a given set of objects and 
+     * execute one of its methods.</li>
+     * <li><code>$("a", null, "c").compact().as(CoreString.class)</code> - Sometimes you call 
+     * methods from a parent Core (like <code>compact()</code>, which is part of CoreObject, 
+     * not of {@link CoreString}) that does returns a more general return type then what you 
+     * want. Using <code>as()</code> you can cast the Core back.</li>
+     * </ul>
+     * 
      * 
      * Single-threaded. Heavyweight.<br/>
      * <br/>
@@ -262,11 +294,19 @@ public class CoreObject<T> extends Core {
 
     /**
      * Performs a generic call on each element of this core (for
-     * example <code>core.call("toString")</code>). The return values will be stored in a {@link CoreObject}. This is a
-     * dirty but shorthand way
+     * example <code>core.call("toString")</code>). The return values will 
+     * be stored in a {@link CoreObject}. This is a dirty but shorthand way
      * to call the same function on objects that don't share a common superclass. Should not be
      * called within hot-spots (functions called millions of times a second) as it relies heavily on reflection.<br/>
      * <br/>
+     * 
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(tA, tB, tC, tD).call("method").unique().size()</code> - Calls a method 
+     * <code>method()</code> on some objects that have no common supertype (except {@link Object}),
+     * and returns the number of distinct objects returned</li>
+     * </ul>
      * 
      * Multi-threaded. Heavyweight.<br/>
      * <br/>
@@ -312,6 +352,13 @@ public class CoreObject<T> extends Core {
      * Casts all elements to the given type or sets them null if they are not castable.<br/>
      * <br/>
      * 
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(object).cast(String.class).get(0)</code> - Same as <code>(object instanceof 
+     * String) ? (String) object : null</code>.</li>
+     * </ul>
+     * 
      * Multi-threaded. <br/>
      * <br/>
      * 
@@ -334,6 +381,12 @@ public class CoreObject<T> extends Core {
      * Return a CoreClass for all enclosed objects' classes.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$(o1, o2).clazz()</code> - Wraps the classes for <code>o1</code> 
+     * and <code>o2</code> in a {@link CoreClass}.</li>
+     * </ul>
+     * 
      * Multi-threaded. <br/>
      * <br/>
      * 
@@ -354,6 +407,14 @@ public class CoreObject<T> extends Core {
      * contain null anymore, therefore the positions of elements will be moved to the left to
      * fill null values.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", null, "b").compact()</code> - Returns a core that
+     * only contains the elements <code>a</code> and <code>b</code> and has a 
+     * size of <code>2</code> (the original core also contains <code>null</code> 
+     * and has a size of <code>3</code>). </li>
+     * </ul>
      * 
      * Single-threaded. <br/>
      * <br/>
@@ -379,9 +440,18 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Creates a {@link Compound} out of this core's content. A Compound is a String -> Object map, which is useful for
-     * quickly creating complex objects which should be handled by the framework.<br/>
+     * Creates a {@link Compound} out of this core's content. A Compound is a String -> Object 
+     * map, which is useful for quickly creating complex objects which should be handled by the 
+     * framework.<br/>
      * <br/>
+     *     
+     * Examples:
+     * <ul>
+     * <li><code>$("name", name, "age", age).compound()</code> - Quickly creates an 
+     * untyped {@link Compound} with the keys <code>name</code> and <code>age</code> and 
+     * the corresponding values.</li>
+     * </ul>
+     * 
      * 
      * Single-threaded. <br/>
      * <br/>
@@ -396,6 +466,13 @@ public class CoreObject<T> extends Core {
      * Creates a compound out of this core's content with the given type. This is useful
      * for quickly creating complex objects which should be handled by the framework.<br/>
      * <br/>
+     *     
+     * Examples:
+     * <ul>
+     * <li><code>$("from", from, "to", to).compound(String.class)</code> - Quickly creates an 
+     * typed {@link Compound} with the keys <code>from</code> and <code>to</code> and 
+     * the corresponding values of the type String.</li>
+     * </ul>
      * 
      * Single-threaded. <br/>
      * <br/>
@@ -415,9 +492,16 @@ public class CoreObject<T> extends Core {
      * <br/>
      * 
      * Note that on a {@link CoreString} this method
-     * does not behave as <code>String.contains()</code> (which checks for substrings). If you want to do
-     * a substring search, use <code>CoreString.containssubstr()</code>.<br/>
+     * does <b>not behave as</b> <code>String.contains()</code> (which checks for substrings). 
+     * If you want to do a substring search, use <code>CoreString.containssubstr()</code>.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(a, b, c, d).contains(c)</code> - Returns <code>true</code>.</li> 
+     * <li><code>$("aa", "bb", "cc").contains("bb")</code> - Returns <code>true</code>.</li>
+     * <li><code>$("aa", "bb", "cc").contains("b")</code> - Returns <b><code>false</code></b>!</li>
+     * </ul>
      * 
      * Single-threaded. <br/>
      * <br/>
@@ -438,6 +522,12 @@ public class CoreObject<T> extends Core {
      * Prints debug output to the console. Useful for figuring out what's going wrong in a
      * chain of map() operations.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>...somecore.debug().map(f).debug()... </code> - Typical pattern to 
+     * figure out why a function (<code>map()</code> in this case) might go wrong.</li> 
+     * </ul>
      * 
      * Single-threaded. <br/>
      * <br/>
@@ -463,6 +553,13 @@ public class CoreObject<T> extends Core {
      * does not ignore <code>null</code> elements. If of two adjacent slots any
      * is <code>null</code>, the value <code>null</code> will be stored. <br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "b", "c").delta(joiner)</code> - If the given delta function
+     * joins two elements then the resulting core contains <code>"ab"</code> and 
+     * <code>"bc"</code>.</li> 
+     * </ul>  
      * 
      * Multi-threaded. <br/>
      * <br/>
@@ -517,14 +614,20 @@ public class CoreObject<T> extends Core {
 
     /**
      * Returns a single object that, if any of its functions is executed, the
-     * corresponding function is executed on all enclosed elements. Only works if <code>c</code> is an interface and
-     * only on enclosed elements implementing <code>c</code>. From a
-     * performance perspective this method only makes sense if the requested operation is
-     * complex,
-     * as on simple methods the reflection costs will outweigh all benefits. Also note
-     * that all return
-     * values are skipped. <br/>
+     * corresponding function is executed on all enclosed elements. Only works 
+     * if <code>c</code> is an interface and only on enclosed elements implementing 
+     * <code>c</code>. From a performance perspective this method only makes sense 
+     * if the requested operation is complex, as on simple methods the reflection 
+     * costs will outweigh all benefits. Also note that all return values are skipped. <br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(x1, x2, x3, x4, x5).each(XInterface.class).x()</code> - Given all 
+     * objects implement <code>XInterface</code> the function <code>each()</code> returns
+     * a new <code>X</code> object that, when <code>x()</code> is executed on it, the function
+     * is executed on all enclosed objects in parallel.</li> 
+     * </ul>  
      * 
      * Multi-threaded. Heavyweight.<br/>
      * <br/>
@@ -585,13 +688,19 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Expands contained arrays into a single array of the given type. This means, if this
-     * core wraps
-     * a number of cores, collections, lists or arrays, each of which are containing elements on
-     * their own, <code>expand()</code> will break up all of these lists and return a
-     * single CoreObject wrapping
-     * the union of everything that was previously held in them.<br/>
+     * Expands contained arrays into a single array of the given type. This means, 
+     * if this core wraps a number of cores, collections, lists or arrays, each of 
+     * which are containing elements on their own, <code>expand()</code> will break 
+     * up all of these lists and return a single CoreObject wrapping the union of 
+     * everything that was previously held in them.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", $("b", "c"), new String[]{"d", "e"}).expand(String.class)</code>
+     *  - Returns a core of size <code>5</code>, directly containing the elements 
+     * <code>a</code>, <code>b</code>, <code>c</code>,  <code>d</code> and <code>e</code>.</li> 
+     * </ul>  
      * 
      * Single-threaded.<br/>
      * <br/>
@@ -684,21 +793,29 @@ public class CoreObject<T> extends Core {
      * request will be sent to a server and collected. Information of the enclosed objects and the
      * feature request string will be transmitted as well.
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$("abba").featurerequest(".palindrome() -- Should be supported!")</code>
+     * </li> 
+     * </ul>  
+     * 
      * @param functionName Call this function for example like this
      * $(myobjects).featurerequest(".compress() -- Should compress the given objects.");
      */
-    @SuppressWarnings("unused")
     public void featurerequest(String functionName) {
-        final String fingerprint = fingerprint(true);
-        final String message = functionName;
-
-        $("Request logged.").log();
+        this.commonCore.manager(ManagerDeveloperFeedback.class).featurerequest(functionName, fingerprint(true));
     }
 
     /**
-     * Returns a new core with all null elements set to <code>fillValue</code>, the other elements are transferred
-     * unchanged.<br/>
+     * Returns a new core with all null elements set to <code>fillValue</code>, the other 
+     * elements are transferred unchanged.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", null, "b").fill("x")</code> - Returns a core where the 
+     * <code>null</code> element is set to <code>"x"</code></li> 
+     * </ul>  
      * 
      * Single-threaded.<br/>
      * <br/>
@@ -723,6 +840,13 @@ public class CoreObject<T> extends Core {
      * Filters the object using the given function. A compacted array will be returned
      * that contains only values for which f returned true.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "bb", "ccc").filter(f)</code> - Given the filter function returns
+     * true for all elements with a length <code>&gt;=2</code> the resulting core contains
+     * <code>"bb"</code> and <code>"ccc"</code>.</li> 
+     * </ul>  
      * 
      * Multi-threaded.<br/>
      * <br/>
@@ -752,6 +876,12 @@ public class CoreObject<T> extends Core {
      * Filters all object by their toString() value using the given regular
      * expression. Only elements that match the regular expression are being kept.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("ax", "bx", "cy").filter(".y")</code> - Returns a core containing
+     * <code>"cy"</code>.</li> 
+     * </ul>  
      * 
      * Multi-threaded.<br/>
      * <br/>
@@ -840,6 +970,13 @@ public class CoreObject<T> extends Core {
      * synchronization overhead, while <code>fold()</code> has advantages especially
      * with very complex <code>f</code> operators.<br/>
      * <br/>
+     *
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(1, 2, 3, 4).fold(fmax)</code> - When <code>fmax</code> returns the larger
+     * of both objects the resulting core will contain <code>4</code>.</li> 
+     * </ul>  
      * 
      * Multi-threaded. Heavyweight.<br/>
      * <br/>
@@ -892,6 +1029,13 @@ public class CoreObject<T> extends Core {
      * single-threaded version of map().<br/>
      * <br/>
      * 
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "b", null, "c").forEach(f)</code> - Performs the operation <code>f</code> on each
+     * element of the core, except <code>null</code>.</li> 
+     * </ul>  
+     * 
      * Single-threaded.<br/>
      * <br/>
      * 
@@ -913,11 +1057,86 @@ public class CoreObject<T> extends Core {
         // ... and return result.
         return new CoreObject<R>(this.commonCore, mapper.getFinalReturnArray());
     }
+    
+    /**
+     * Performs the given operation for each <code>n</code> elements of this core. 
+     * Elements will only be used once, so for example <code>forEach(f, 2)</code> means 
+     * that <code>f</code> will be called with elements <code>f(0, 1)</code>,  
+     * <code>f(2, 3)</code> ... Remaining elements are ignored. This function also acts on
+     * <code>null</code> elements. If you don't want that, <code>compact()</code> the core. 
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "b", null, "c").forEach(f)</code> - Performs the operation <code>f</code> on each
+     * element of the core, except <code>null</code>.</li> 
+     * </ul>
+     * 
+     * Single-threaded.<br/>
+     * <br/> 
+     * 
+     * @param <R> The return type.
+     * @param f The function to execute for each <code>n</code> elements.
+     * @param n The number of elements to put into <code>f</code>
+     * @return A core with the new elements.
+     */
+    @SuppressWarnings("unchecked")
+    public <R> CoreObject<R> forEach(final Fn<T, R> f, int n) {
+        if(size() == 0) return new CoreObject<R>(this.commonCore, null, null);
+        
+        R[] rval = null;
+        T[] slice = Arrays.copyOf(this.t, n);
+        
+        int ptr = 0;
+        int tptr = 0;
+        
+        // Now go over the array
+        for (int i = 0; i < size(); i++) {
+            T e = this.t[i];
+            
+            // When our current element is null, do nothing.
+            if(e == null) continue;
+            
+            // Store element to slice
+            slice[ptr++] = e;
+            
+            // If the slice is not full, continue
+            if(ptr < n) continue;
+            
+            // Execute the call
+            R result = f.f(slice);
+            
+            // If we have a result, create result array
+            if(rval == null && result != null) {
+                rval = (R[]) Array.newInstance(result.getClass(), size() / n);
+            }
+            
+            // If we have the arry, store the result
+            if(rval != null) {
+                rval[tptr] = result;
+            }
+            
+            // Increase the target ptr in any case and reset the source ptr 
+            tptr++;
+            ptr = 0;
+        }
+
+        // ... and return result.
+        return new CoreObject<R>(this.commonCore, rval);
+    }
+    
+        
 
     /**
-     * Return the element at the the given relative position (0 <= x <= 1) or return <code>dflt</code> if that element
+     * Return the element at the the given relative position (0 <= x <= 1) or return 
+     * <code>dflt</code> if that element
      * is null.<br/>
      * <br/>
+     * 
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", null, "c").get(0.5, "b")</code> - Returns <code>"b"</code>.</li> 
+     * </ul>
      * 
      * Single-threaded. <br/>
      * <br/>
@@ -946,6 +1165,11 @@ public class CoreObject<T> extends Core {
      * Return an element at the the relative position (0 <= x <= 1).<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "b", "c", "d", "e").get(0.75)</code> - Returns <code>"d"</code>.</li> 
+     * </ul>
+     * 
      * Single-threaded. <br/>
      * <br/>
      * 
@@ -961,6 +1185,12 @@ public class CoreObject<T> extends Core {
 
     /**
      * Returns the first element that is an instance of the requested type.
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(1, new Object(), "Hi").get(String.class, "Oops")</code> - Returns <code>"Hi"</code>.</li> 
+     * </ul>
+     * 
      * 
      * Single-threaded. Heavyweight.<br/>
      * <br/>
@@ -985,6 +1215,12 @@ public class CoreObject<T> extends Core {
      * Return the ith element.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "b", "c").get(-1)</code> - Returns <code>"c"</code>.</li> 
+     * </ul>
+     * 
+     * 
      * Single-threaded. <br/>
      * <br/>
      * 
@@ -1006,6 +1242,11 @@ public class CoreObject<T> extends Core {
      * been returned.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "b", null).get(2, "c")</code> - Returns <code>"c"</code>.</li> 
+     * </ul>
+     * 
      * Single-threaded. <br/>
      * <br/>
      * 
@@ -1024,6 +1265,12 @@ public class CoreObject<T> extends Core {
     /**
      * Returns the first element, or, if there is none, return dflt.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(name).get("Unknown")</code> - Returns <code>"Unknown"</code> 
+     * if <code>name</code> is <code>null</code>.</li> 
+     * </ul>
      * 
      * Single-threaded. <br/>
      * <br/>
@@ -1050,6 +1297,11 @@ public class CoreObject<T> extends Core {
      * Checks if all elements are not null.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", null, "b").hasAll()</code> - Returns <code>false</code>.</li> 
+     * </ul>
+     * 
      * Single-threaded. <br/>
      * <br/>
      * 
@@ -1068,6 +1320,11 @@ public class CoreObject<T> extends Core {
     /**
      * Checks if the element has any element.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(null, "b").hasAny()</code> - Returns <code>true</code>.</li> 
+     * </ul>
      * 
      * Single-threaded. <br/>
      * <br/>
@@ -1088,6 +1345,11 @@ public class CoreObject<T> extends Core {
      * If all elements are present, execute f0.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$(null, "b").ifAll(f)</code> - Does not execute f.</li> 
+     * </ul>
+     * 
      * Single-threaded. <br/>
      * <br/>
      * 
@@ -1103,6 +1365,11 @@ public class CoreObject<T> extends Core {
      * Returns the first index positions for all objects equal to the given object, or null if no object
      * equalled the given one.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "c", "b").index("c", "b", "a")</code> - Returns a core <code>$(1, 2, 0)</code>.</li> 
+     * </ul>
      * 
      * Single-threaded. <br/>
      * <br/>
@@ -1137,6 +1404,11 @@ public class CoreObject<T> extends Core {
     /**
      * Returns a core intersected with another core.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("x", "y", "z").intersect($("y", "z"))</code> - Returns a core <code>$("y", "z")</code>.</li> 
+     * </ul>
      * 
      * Single-threaded. <br/>
      * <br/>
@@ -1179,6 +1451,12 @@ public class CoreObject<T> extends Core {
      * Returns a core intersected with another array.<br/>
      * <br/>
      * 
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("x", "y", "z").intersect("a", "x", "b")</code> - Returns a core <code>$("x")</code>.</li> 
+     * </ul>
+     * 
      * Single-threaded. <br/>
      * <br/>
      * 
@@ -1193,6 +1471,11 @@ public class CoreObject<T> extends Core {
     /**
      * Returns the wrapped collection as a list.<br/>
      * <br/>
+     *
+     * Examples:
+     * <ul>
+     * <li><code>$(array).list()</code> - Returns a typed {@link List} for the given array.</li> 
+     * </ul>
      * 
      * Single-threaded. <br/>
      * <br/>
@@ -1206,11 +1489,18 @@ public class CoreObject<T> extends Core {
 
     /**
      * Maps the core's content with the given function and returns the result. This is the
-     * most fundamental
-     * function of this core. Maps all elements using the given mapper function. If the
-     * core is of size 0
-     * nothing is done, if it is of size 1 <code>f</code> is executed directly. <br/>
+     * most fundamental function of this core. Maps all elements using the given mapper 
+     * function. If the core is of size 0 nothing is done, if it is of size 1 
+     * <code>f</code> is executed directly. <br/>
      * <br/>
+     * 
+     *
+     * Examples:
+     * <ul>
+     * <li><code>$.range(1000).map(convert)</code> - Given <code>convert</code> performs some conversion, 
+     * this would convert the numbers from 0 to 999 in parallel (using as many CPUs as there are 
+     * available).</li> 
+     * </ul>
      * 
      * Multi-threaded.<br/>
      * <br/>
@@ -1237,6 +1527,12 @@ public class CoreObject<T> extends Core {
      * except that this method returns a CoreObject again.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "b", "c").print().intersect("a").print()</code> - The first output
+     * will be <code>a b c</code>, then again <code>a</code>.</li> 
+     * </ul>
+     * 
      * Single-threaded.<br/>
      * <br/>
      * 
@@ -1257,6 +1553,11 @@ public class CoreObject<T> extends Core {
      * Returns a randomly selected object, including null values.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "b", "c").random()</code> - Returns ... well, we don't know yet.</li> 
+     * </ul>
+     * 
      * Single-threaded.<br/>
      * <br/>
      * 
@@ -1272,8 +1573,16 @@ public class CoreObject<T> extends Core {
 
     /**
      * Returns a randomly selected subset, including null values. The elements will be
-     * returned in a random order.<br/>
+     * returned in a random order. Elements will never be drawn twice.<br/>
      * <br/>
+     * 
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "b", "c", "d").random(0.5)</code> - Could return <code>$("c", "a")</code>, 
+     * but never <code>$("b", "b")</code>.</li> 
+     * </ul>
+     * 
      * 
      * Single-threaded.<br/>
      * <br/>
@@ -1294,6 +1603,12 @@ public class CoreObject<T> extends Core {
      * Returns a randomly selected subset, including null values. The elements will be
      * returned in a random order.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "b", "c", "d").random(2)</code> - Same as <code>.random(0.5)</code>
+     * in the example above.</li> 
+     * </ul>
      * 
      * Single-threaded.<br/>
      * <br/>
@@ -1335,6 +1650,12 @@ public class CoreObject<T> extends Core {
      * complex operations.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "b", null, "c", "d").reduce(fjoin)</code> - When <code>fjoin</code> joins the left
+     * and right String the resulting core will be <code>$("abcd")</code>.</li> 
+     * </ul>  
+     * 
      * Single-threaded.<br/>
      * <br/>
      * 
@@ -1370,8 +1691,14 @@ public class CoreObject<T> extends Core {
 
     /**
      * Serializes this core into the given file. Objects that are not serializable
-     * are ignored.<br/>
+     * are ignored. The file can later be restored with the function 
+     * <code>deserialize()</code> in {@link CoreFile}.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("Hello", "World").serialize("data.ser")</code> - Writes the core to a file.</li> 
+     * </ul>  
      * 
      * Single-threaded.<br/>
      * <br/>
@@ -1393,6 +1720,13 @@ public class CoreObject<T> extends Core {
      * Returns how many slots are in this core, counting null elements.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "b").size()</code> - Returns 2.</li> 
+     * <li><code>$("c", null, "d").size()</code> - Returns 3.</li> 
+     * <li><code>$(null, "e", "f").compact().size()</code> - Returns 2.</li> 
+     * </ul>  
+     * 
      * Single-threaded. <br/>
      * <br/>
      * 
@@ -1406,10 +1740,17 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns a slice of this core. Element inside this slice start at <code>start</code> . If <code>length</code> is
-     * positive it is treated
-     * as a length, if it is negative, it is treated as a (inclusive) end-index.<br/>
+     * Returns a slice of this core. Element inside this slice start at <code>start</code>.
+     * If <code>length</code> is positive it is treated as a length, if it is negative, it 
+     * is treated as a (inclusive) end-index.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "b", "c", "d").slice(0, 2)</code> - Returns <code>$("a", "b")</code>.</li> 
+     * <li><code>$("a", "b", "c", "d").slice(1, -1)</code> - Returns <code>$("b", "c", "d")</code>.</li> 
+     * <li><code>$("a", "b", "c", "d").slice(-2, 2)</code> - Returns <code>$("c", "d")</code>.</li> 
+     * </ul>  
      * 
      * Single-threaded. <br/>
      * <br/>
@@ -1438,8 +1779,13 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns a new, sorted core.<br/>
+     * Returns a new, sorted core using the given {@link Comparator}.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(x, y, z).sort(s)</code> - Returns a sorted core with an order specified by <code>s</code>.</li> 
+     * </ul>  
      * 
      * Single-threaded. <br/>
      * <br/>
@@ -1460,8 +1806,14 @@ public class CoreObject<T> extends Core {
 
     /**
      * Returns a new, sorted core. If the elements of this core are not sortable
-     * simply this core will be returned again.<br/>
+     * (i.e, implementing {@link Comparable}), simply this core will be returned 
+     * again.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("c", "a", "b").sort()</code> - Returns <code>$("a", "b", "c")</code>.</li> 
+     * </ul>  
      * 
      * Single-threaded. <br/>
      * <br/>
@@ -1486,10 +1838,10 @@ public class CoreObject<T> extends Core {
     /**
      * Staples all elements. Assists, for example, in computing the average of a number
      * of elements. <code>staple()</code> is similar to <code>reduce()</code>, with the
-     * exception that a
-     * given neutral element is used as a starting point, and some some derived value
-     * of each contained element might be connected with it. In the end a <code>Staple</code> will
-     * be returned, containing the stapled value and the actual number of elements used.<br/>
+     * exception that a given neutral element is used as a starting point, and some some 
+     * derived value of each contained element might be connected with it. In the end a 
+     * <code>Staple</code> will be returned, containing the stapled value and the actual 
+     * number of elements used.<br/>
      * <br/>
      * 
      * Single-threaded. <br/>
@@ -1520,8 +1872,14 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Converts all elements to strings.<br/>
+     * Converts all elements to strings by calling <code>.toString()</code> on each
+     * element.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(1, 2).string()</code> - Returns <code>$("1", "2")</code>.</li> 
+     * </ul>  
      * 
      * Multi-threaded. <br/>
      * <br/>
@@ -1537,9 +1895,14 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns a core containing all elements of this core and that are not
+     * Returns a core containing all elements of this core that are not
      * in the passed core.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "b", "c").subtract($("b"))</code> - Returns <code>$("a", "c")</code>.</li> 
+     * </ul>  
      * 
      * Single-threaded. <br/>
      * <br/>
@@ -1575,6 +1938,11 @@ public class CoreObject<T> extends Core {
      * in the passed array.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "c").subtract("a", "c")</code> - Returns an empty core <code>$()</code>.</li> 
+     * </ul>  
+     * 
      * Single-threaded. <br/>
      * <br/>
      * 
@@ -1589,8 +1957,14 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns a core containing only unique objects, i.e., object mutually un- <code>equal()</code>.<br/>
+     * Returns a core containing only unique objects, i.e., object 
+     * mutually un- <code>equal()</code>.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "c", "a", "b").unique()</code> - Returns <code>$("a", "c", "b")</code>.</li> 
+     * </ul>  
      * 
      * Single-threaded. <br/>
      * <br/>
@@ -1623,13 +1997,12 @@ public class CoreObject<T> extends Core {
     }
 
     /**
-     * Returns the core's array. Use of this method is strongly discouraged and usually only needed
-     * in a few very special cases. Do not change the array! <br/>
+     * Returns the core's array. Use of this method is strongly discouraged and 
+     * usually only needed in a few very special cases. Do not change the array! <br/>
      * <br/>
      * 
-     * Also, even though the method is parameterized,
-     * in some cases it does not return the type of array it indicates due to some
-     * black jCores magic (we sometimes haves
+     * Also, even though the method is parameterized, in some cases it does not return 
+     * the type of array it indicates due to some black jCores magic (we sometimes haves
      * to 'guess' the type at runtime due to type erasure, which can go wrong when
      * just blindly returning our internal array).<br/>
      * <br/>

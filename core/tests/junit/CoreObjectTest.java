@@ -39,6 +39,7 @@ import net.jcores.cores.CoreString;
 import net.jcores.interfaces.functions.F1;
 import net.jcores.interfaces.functions.F2DeltaObjects;
 import net.jcores.interfaces.functions.F2ReduceObjects;
+import net.jcores.interfaces.functions.Fn;
 import net.jcores.options.Option;
 import net.jcores.options.OptionIndexer;
 
@@ -83,6 +84,39 @@ public class CoreObjectTest {
             }
 
         }).string().join());
+        
+        
+        Assert.assertEquals("ab", $("a", "b", "c", "d").forEach(new Fn<String, String>() {
+            @Override
+            public String f(String... x) {
+                return $(x).join();
+            }
+        }, 2).get(0));
+        Assert.assertEquals("ab", $("a", null, "b", "c", "d").forEach(new Fn<String, String>() {
+            @Override
+            public String f(String... x) {
+                return $(x).join();
+            }
+        }, 2).get(0));
+        Assert.assertEquals("ab", $(null, "a", null, "b", "c", "d").forEach(new Fn<String, String>() {
+            @Override
+            public String f(String... x) {
+                return $(x).join();
+            }
+        }, 2).get(0));
+        Assert.assertEquals("abcd", $(null, "a", null, "b", "c", "d").forEach(new Fn<String, String>() {
+            @Override
+            public String f(String... x) {
+                return $(x).join();
+            }
+        }, 4).get(0));
+        Assert.assertEquals("abc", $(null, "a", null, "b", "c", "d").forEach(new Fn<String, String>() {
+            @Override
+            public String f(String... x) {
+                return $(x).join();
+            }
+        }, 3).get(0));
+
     }
 
     /** */

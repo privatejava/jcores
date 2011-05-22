@@ -98,11 +98,11 @@ public class APIv2 {
         //List<String> list = $("log").file().lines().list();
 
         Lock l = new ReentrantLock();
-        $(l).locked(new F0() {
+        /*$(l).locked(new F0() {
             public void f() {
 
             }
-        });
+        });*/
         
         $(api).as(ExtensionCore.class).yoyo();
     }

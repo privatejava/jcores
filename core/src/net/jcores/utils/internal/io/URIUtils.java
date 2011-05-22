@@ -1,7 +1,7 @@
 /*
- * ClassManager.java
+ * URIUtils.java
  * 
- * Copyright (c) 2010, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,14 +25,25 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.managers;
+package net.jcores.utils.internal.io;
 
-/**
- * Manager for statistics.
- * 
- * @since 1.0
- * @author Ralf Biedert
- */
-public class ManagerStatistics extends Manager {
-    //
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+
+public class URIUtils {
+    public static URI[] URIs(URL url[]) {
+        if (url == null) return new URI[0];
+
+        final URI[] rval = new URI[url.length];
+        for (int i = 0; i < rval.length; i++) {
+            if (url[i] == null) continue;
+            try {
+                rval[i] = url[i].toURI();
+            } catch (URISyntaxException e) {}
+        }
+
+        return rval;
+    }
+
 }

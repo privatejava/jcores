@@ -30,6 +30,7 @@ package net.jcores.cores;
 import static net.jcores.CoreKeeper.$;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
@@ -46,9 +47,11 @@ import java.util.regex.Pattern;
 import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F1;
 import net.jcores.interfaces.functions.F1Object2Bool;
+import net.jcores.options.MessageType;
 import net.jcores.options.Option;
 import net.jcores.options.OptionRegEx;
 import net.jcores.utils.Compound;
+import net.jcores.utils.internal.io.StreamUtils;
 
 /**
  * Wraps a number of String and exposes some convenience functions. For example, 
@@ -78,6 +81,11 @@ public class CoreString extends CoreObject<String> {
     /**
      * Returns the (UTF-8) byte data of the enclosed strings.<br/>
      * <br/>
+     *      
+     * Examples:
+     * <ul>
+     * <li><code>$("Hello World").bytes().get(0)</code> - Returns the binary data for the string.</li>
+     * </ul> 
      * 
      * Multi-threaded.<br/>
      * <br/>
@@ -92,17 +100,23 @@ public class CoreString extends CoreObject<String> {
                     return ByteBuffer.wrap(bytes);
                 } catch (UnsupportedEncodingException e) {
                                                        //
-                                                   }
-                                                   return null;
-                                               }
+                }
+                return null;
+            }
         }).array(ByteBuffer.class));
     }
     
     
 
     /**
-     * Returns true if this core contains a string which has the given substring as one of its parts.<br/>
+     * Returns true if this core contains a string which has the given substring as one of 
+     * its parts. This differs from {@link CoreObject}'s <code>contains()</code> method.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("aaa", "bbb", "ccc").containssubstr("b")</code> - Returns true.</li>
+     * </ul> 
      * 
      * Single-threaded. <br/>
      * <br/>
@@ -122,6 +136,11 @@ public class CoreString extends CoreObject<String> {
     /**
      * Decodes all strings from the application/x-www-form-urlencoded format.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("index.php%3Fx%3D1").decode().print()</code> - Prints <code>index.php?x=1</code>.</li>
+     * </ul> 
      * 
      * Multi-threaded.<br/>
      * <br/>
@@ -147,6 +166,11 @@ public class CoreString extends CoreObject<String> {
      * Encodes all strings into the application/x-www-form-urlencoded format.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$("index.php?x=1").decode().print()</code> - Prints <code>index.php%3Fx%3D1</code>.</li>
+     * </ul> 
+     * 
      * Multi-threaded.<br/>
      * <br/>
      * 
@@ -168,8 +192,98 @@ public class CoreString extends CoreObject<String> {
     
     
     /**
-     * Treats all strings as filenames and returns the corresponding files. <br/>
+     * Treats the contained string as a shell command and executes it, returning the output.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("ls -la /").exec().print()</code> - Lists (on Unix systems) the top level directory and prints the result.</li>
+     * </ul> 
+     * 
+     * Multi-threaded.<br/>
+     * <br/>
+     * 
+     * @param options Not used at the moment.
+     * 
+     * @deprecated Not deprecated, but behavior might change in the future.   
+     * @return A CoreString with all the emitted output.
+     */
+    @Deprecated
+    public CoreString exec(Option ...options) {
+        return new CoreString(this.commonCore, map(new F1<String, String>() {
+            public String f(String x) {
+                // TODO: Iteratively join command in case the command has a space in its path!
+                final ProcessBuilder builder = new ProcessBuilder();
+                builder.command(x.split(" "));
+                try {
+                    final Process start = builder.start();
+                    start.waitFor();
+                    return StreamUtils.readText(CoreString.this.commonCore, start.getInputStream());
+                } catch (IOException e) {
+                    $.report(MessageType.EXCEPTION, "Error invoking " + x);
+                } catch (InterruptedException e) {
+                    $.report(MessageType.EXCEPTION, "Error waiting for " + x);
+                }
+                
+                return null;
+            }
+        }).array(String.class));
+    }
+   
+    
+    
+    /**
+     * Executes the given shell command on each of the contained strings in parallel. The core's content
+     * may be used as <code>$1</code> within the command string. <br/>
+     * <br/>
+     *
+     * Examples:
+     * <ul>
+     * <li><code>$("/a", "/b", "/c").exec("ls -la $1").print()</code> - Lists (on Unix systems) three different top level directories and prints the result.</li>
+     * </ul> 
+     * 
+     * Multi-threaded.<br/>
+     * <br/>
+     * 
+     * @param command The command to execute, e.g., <code>"ls $1"</code>.
+     * @param options Not used at the moment.
+     *  
+     * @deprecated Not deprecated, but behavior might change in the future.   
+     * @return A CoreString with all the emitted output.
+     */
+    @Deprecated
+    public CoreString exec(final String command, Option ...options) {
+        return new CoreString(this.commonCore, map(new F1<String, String>() {
+            public String f(String x) {
+                // TODO: Iteratively join command in case the command has a space in its path!
+                final ProcessBuilder builder = new ProcessBuilder();
+                final String cmd = x.replaceAll("^(.*)$", command);
+                builder.command(cmd.split(" ")); // TODO: This is broken for strings with spaces
+                try {
+                    final Process start = builder.start();
+                    start.waitFor();
+                    return StreamUtils.readText(CoreString.this.commonCore, start.getInputStream());
+                } catch (IOException e) {
+                    $.report(MessageType.EXCEPTION, "Error invoking " + x);
+                } catch (InterruptedException e) {
+                    $.report(MessageType.EXCEPTION, "Error waiting for " + x);
+                }
+                
+                return null;
+            }
+        }).array(String.class));
+    }
+    
+    
+    /**
+     * Treats all strings as filenames and returns a {@link CoreString} object 
+     * with the corresponding files.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("test.txt").file().delete()</code> - Deletes the specified file.</li>
+     * </ul> 
      * 
      * Multi-threaded.<br/>
      * <br/>
@@ -187,6 +301,11 @@ public class CoreString extends CoreObject<String> {
     /**
      * Filters all strings using the given regular expression. <br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("").filter(".*").print()</code> - Filters absolutely nothing.</li>
+     * </ul> 
      * 
      * Multi-threaded.<br/>
      * <br/>
@@ -217,6 +336,11 @@ public class CoreString extends CoreObject<String> {
      * ("a:5" and "b=3") the resulting map would contain the keys ("a" and "b") with the values 
      * ("5" and "3") respectively.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("application.props").file().text().split("\n").hashmap()</code> - Loads and parses application properties.</li>
+     * </ul>  
      * 
      * Single-threaded.<br/>
      * <br/>
@@ -260,6 +384,11 @@ public class CoreString extends CoreObject<String> {
      * Joins all string with an empty ("") joiner. <br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "b", "c").join()</code> - Returns <code>"abc"</code>.</li>
+     * </ul>  
+     * 
      * Single-threaded.<br/>
      * <br/>
      * 
@@ -272,6 +401,11 @@ public class CoreString extends CoreObject<String> {
     /**
      * Joins all strings to a single string.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "b", "c").join(",")</code> - Returns <code>"a,b,c"</code>.</li>
+     * </ul>  
      * 
      * Single-threaded.<br/>
      * <br/>
@@ -302,8 +436,13 @@ public class CoreString extends CoreObject<String> {
     }
 
     /**
-     * Splits all string using the splitter, returning an <code>expanded()</code> core.<br/>
+     * Splits all strings using the splitter, returning an <code>expanded()</code> core.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a,b", "c,d").split(",").print()</code> - Will return a core with all elements split and prints <code>a</code>, <code>b</code>, <code>c</code> and <code>d</code> in some undefined order.</li>
+     * </ul>  
      * 
      * Multi-threaded.<br/>
      * <br/>
@@ -323,6 +462,11 @@ public class CoreString extends CoreObject<String> {
     /**
      * Prints all strings to the console.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("42").print()</code> - Is shorter than <code>System.out.println("42").</code></li>
+     * </ul>  
      * 
      * Single-threaded.<br/>
      * <br/>
@@ -345,6 +489,11 @@ public class CoreString extends CoreObject<String> {
      * Logs the enclosed strings with a default level.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$("Some message").log()</code> - Logs the message to the default logging facility.</li>
+     * </ul>   
+     * 
      * Single-threaded.<br/>
      * <br/>
      */
@@ -355,6 +504,11 @@ public class CoreString extends CoreObject<String> {
     /**
      * Logs the given string using the given level.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("Some message").log(Level.SEVERE)</code> - Logs the message to the default logging facility with high priority.</li>
+     * </ul>   
      * 
      * Single-threaded.<br/>
      * <br/>
@@ -375,6 +529,11 @@ public class CoreString extends CoreObject<String> {
      * Returns a CoreString with all empty strings (i.e., length of <code>0</code>) set to <code>null</code>.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "", "b").nullempty().get(1)</code> - Returns null.</li>
+     * </ul>    
+     * 
      * Multi-threaded.<br/>
      * <br/>
      * 
@@ -390,9 +549,14 @@ public class CoreString extends CoreObject<String> {
 
 
     /**
-     * Replaces some pattern with a replacement.<br/>
+     * Replaces a pattern in all contained strings with a replacement.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$("Hellx", "Wxrld").replace("x", "o")</code> - Sometimes an x should be an o.</li>
+     * </ul>
+     *     
      * Multi-threaded.<br/>
      * <br/>
      * 
@@ -418,6 +582,11 @@ public class CoreString extends CoreObject<String> {
      * Trims whitespace in each string.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$(" a ", " b ").trim().join()</code> - Returns <code>"ab"</code>.</li>
+     * </ul>
+     *          
      * Multi-threaded.<br/>
      * <br/>
      * 
@@ -435,6 +604,11 @@ public class CoreString extends CoreObject<String> {
     /**
      * Creates URIs for all enclosed Strings.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("http://jcores.net/index.html").uri().download()</code> - Downloads the file at the given URI to the temporary directory.</li>
+     * </ul>
      * 
      * Multi-threaded.<br/>
      * <br/>

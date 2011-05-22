@@ -73,6 +73,12 @@ public class CoreZipInputStream extends CoreObject<ZipInputStream> {
      * a single enclosed object. <br/>
      * <br/>
      * 
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("file.zip").file().input().zipstream().unzip("/destination")</code> - Unzips the given file to the destination directory.</li>
+     * </ul>
+     * 
      * Multi-threaded. Consuming.<br/>
      * <br/>
      * 
@@ -102,6 +108,11 @@ public class CoreZipInputStream extends CoreObject<ZipInputStream> {
      * Lists all entries within all ZIP files. Usually only called with a single enclosed
      * element.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("file.zip").file().input().zipstream().dir().print()</code> - Prints what is packed into the zip file.</li>
+     * </ul>
      * 
      * Multi-threaded. Consuming.<br/>
      * <br/>
@@ -140,6 +151,11 @@ public class CoreZipInputStream extends CoreObject<ZipInputStream> {
      * so all
      * this method sees is 'C' and it cannot return 'A'.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("file.zip").file().input().zipstream().get("README.txt")</code> - Returns an {@link InputStream} for the top-level element <code>README.txt</code> of the given archive.</li>
+     * </ul>
      * 
      * Single-threaded, size-of-one. Consuming.<br/>
      * <br/>

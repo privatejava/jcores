@@ -1,5 +1,5 @@
 /*
- * CoreLock.java
+ * SimpleSpeedTests.java
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
@@ -25,54 +25,30 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.cores;
+package sandbox;
 
-import java.util.concurrent.locks.Lock;
+import static net.jcores.CoreKeeper.$;
 
-import net.jcores.CommonCore;
-import net.jcores.interfaces.functions.F0;
+import java.io.IOException;
+import java.util.Random;
 
 /**
- * Wraps a number of Locks and exposes some convenience functions. For example, 
- * to perform an operation ensuring a lock is locked and unlocked properly write:<br/><br/>
- * 
- * <code>$(lock).locked(function)</code>
- * 
- * @author Ralf Biedert
- * @since 1.0
+ * @author rb
+ *
  */
-public class CoreLock extends CoreObject<Lock> {
+public class SimpleExec {
 
-    /** Used for serialization */
-    private static final long serialVersionUID = -4449041324296817648L;
-
-    /**
-     * Wraps a number of locks.
-     * 
-     * @param supercore The shared CommonCore.
-     * @param objects The locks to wrap.
-     */
-    public CoreLock(CommonCore supercore, Lock... objects) {
-        super(supercore, objects);
-    }
+    static Random rnd = new Random();
 
     /**
-     * Executes the given function as soon as the lock is ready and fail-safely unlocks
-     * the lock afterwards<br/>
-     * <br/>
-     * 
-     * Single-threaded, size-of-one.<br/>
-     * <br/>
-     * 
-     * @param f The function to execute when the lock is ready.
+     * @param args
+     * @throws IOException 
      */
-    public void locked(F0 f) {
-        Lock lock = get(0);
+    public static void main(String[] args) throws IOException {
+        // $.exec("ls -la")
+        // $(".").file().dir().filter(".*java$").string().replace("^(.*)$", "ls $1").exec().print();
+        $(".").file().dir().filter(".*java$").string().exec("ls $1").print();
 
-        try {
-            f.f();
-        } finally {
-            lock.unlock();
-        }
     }
+
 }

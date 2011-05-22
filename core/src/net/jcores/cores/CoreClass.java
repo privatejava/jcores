@@ -29,6 +29,7 @@ package net.jcores.cores;
 
 import static net.jcores.CoreKeeper.$;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
@@ -78,6 +79,11 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
      * Returns the bytecode of the given classes.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$(SomeClass.class).bytecode()</code> - Returns a core with the bytecode for the given class file as a {@link CoreByteBuffer}.</li>
+     * </ul>
+     * 
      * Multi-threaded. Heavyweight. <br/>
      * <br/>
      * 
@@ -107,6 +113,11 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
      * <br/>
      * Single-threaded, size-of-one.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(SomeInterface.class).spawn()</code> - Spawns a object implementing SomeInterface that has been registered before with <code>implementor()</code>.</li>
+     * </ul>
      * 
      * @param args Arguments to pass to the constructor.
      * 
@@ -215,6 +226,11 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
     /**
      * Registers an implementor for the currently wrapped interface.<br>
      * <br/>
+     *  
+     * Examples:
+     * <ul>
+     * <li><code>$(SomeInterface.class).implementor(SomeInterfaceImpl.class)</code> - Registers the implementor for the given interface. Can be spawned with <code>spawn()</code>.</li>
+     * </ul>
      * 
      * Single-threaded, size-of-one.<br/>
      * <br/>
@@ -233,8 +249,14 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
     }
 
     /**
-     * Returns all objects that have been spawned of this type.<br/>
+     * Returns all objects that have been spawned of this type. The objects are kept in 
+     * a {@link WeakReference}, so we don't prevent them from being GCed.<br/>
      * <br/>
+     *
+     * Examples:
+     * <ul>
+     * <li><code>$(SomeInterface.class).spawned()</code> - Returns all classes that have been spawned with <code>spawn()</code>.</li>
+     * </ul>
      * 
      * Single-threaded, size-of-one.<br/>
      * <br/>
@@ -248,5 +270,4 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
             return new CoreObject<T>(this.commonCore, (T[]) new Object[0]);
         return new CoreObject<T>(this.commonCore, this.manager.getAllObjectsFor(get(0)));
     }
-
 }

@@ -1,7 +1,7 @@
 /*
- * SimpleSpeedTests.java
+ * LoggingHandler.java
  * 
- * Copyright (c) 2010, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,32 +25,22 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package sandbox;
+package net.jcores.interfaces.internal.logging;
 
-import static net.jcores.CoreKeeper.$;
-import net.jcores.cores.CoreNumber;
+import java.util.logging.Level;
 
 /**
- * @author rb
+ * Will be called by jCores with the string to log.
  * 
+ * @author Ralf Biedert
+ * @since 1.0
  */
-public class SimpleNumberTest {
+public interface LoggingHandler {
     /**
-     * @param args
+     * Logs a string with the given level.
+     * 
+     * @param log
+     * @param level
      */
-    @SuppressWarnings("boxing")
-    public static void main(String[] args) {
-        CoreNumber number = $(2.0, 4, 6, null, 8, 100);
-
-        System.out.println(number.average());
-        System.out.println(number.variance());
-        
-        System.out.println($.range(1, 50000).random(10).as(CoreNumber.class).standarddeviation());
-        System.out.println($.range(1, 50).random(6).string().join(" "));
-        System.out.println($.range(1, 50).random(1.0).string().join(" "));
-
-        System.out.println($(2, -2, 2, -2).standarddeviation());
-        System.out.println($(2, -2, 2, -2).variance());
-
-    }
+    public void log(String log, Level level);
 }

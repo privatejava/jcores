@@ -113,6 +113,13 @@ public class CoreFileTest {
     
     /** */
     @Test
+    public void testFilesize() {
+        Assert.assertTrue($(".").file().dir().filesize().sum() > 1000000);
+    }
+    
+    
+    /** */
+    @Test
     public void testCopy() {
         final File file = $.tempfile();
         final File dir = $.tempdir();

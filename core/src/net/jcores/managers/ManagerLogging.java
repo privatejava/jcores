@@ -1,5 +1,5 @@
 /*
- * SimpleSpeedTests.java
+ * ClassManager.java
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
@@ -25,32 +25,52 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package sandbox;
+package net.jcores.managers;
 
-import static net.jcores.CoreKeeper.$;
-import net.jcores.cores.CoreNumber;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import net.jcores.CommonCore;
+import net.jcores.interfaces.internal.logging.LoggingHandler;
+
 
 /**
- * @author rb
+ * Manager for logging, addressing Issue #9. 
  * 
+ * @since 1.0
+ * @author Ralf Biedert
  */
-public class SimpleNumberTest {
+public class ManagerLogging extends Manager {
+    /** The current logging handler */
+    private volatile LoggingHandler handler;
+    
+    public ManagerLogging() {
+        handler(new LoggingHandler() {
+            /** Common logger */
+            private final Logger logger = Logger.getLogger(CommonCore.class.getName());
+
+            @Override
+            public void log(String log, Level level) {
+                this.logger.log(level, log);
+            }
+        });
+    }
+
     /**
-     * @param args
+     * Sets the current handler
+     * 
+     * @param loggingHandler The handler to set.
      */
-    @SuppressWarnings("boxing")
-    public static void main(String[] args) {
-        CoreNumber number = $(2.0, 4, 6, null, 8, 100);
-
-        System.out.println(number.average());
-        System.out.println(number.variance());
-        
-        System.out.println($.range(1, 50000).random(10).as(CoreNumber.class).standarddeviation());
-        System.out.println($.range(1, 50).random(6).string().join(" "));
-        System.out.println($.range(1, 50).random(1.0).string().join(" "));
-
-        System.out.println($(2, -2, 2, -2).standarddeviation());
-        System.out.println($(2, -2, 2, -2).variance());
-
+    public void handler(LoggingHandler loggingHandler) {
+        this.handler = loggingHandler;
+    }
+    
+    /**
+     * Returns the current handler
+     * 
+     * @return The current handler
+     */
+    public LoggingHandler handler() {
+        return this.handler;
     }
 }

@@ -66,7 +66,13 @@ public abstract class Core implements Serializable {
     }
 
     /**
-     * Returns the size of enclosed elements, counting null elements.
+     * Returns the size of enclosed elements, counting null elements. The size of the core 
+     * is equivalent to the size of the contained array.<br/><br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "b", "c").size()</code> - Returns 3.</li>
+     * </ul>
      * 
      * @return The number of element slots this core encloses.
      */

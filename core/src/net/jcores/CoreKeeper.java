@@ -32,9 +32,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.locks.Lock;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.swing.JComponent;
@@ -47,7 +47,6 @@ import net.jcores.cores.CoreCompound;
 import net.jcores.cores.CoreFile;
 import net.jcores.cores.CoreInputStream;
 import net.jcores.cores.CoreJComponent;
-import net.jcores.cores.CoreLock;
 import net.jcores.cores.CoreMap;
 import net.jcores.cores.CoreNumber;
 import net.jcores.cores.CoreObject;
@@ -58,6 +57,7 @@ import net.jcores.options.Option;
 import net.jcores.options.OptionMapType;
 import net.jcores.utils.Compound;
 import net.jcores.utils.internal.Wrapper;
+import net.jcores.utils.internal.io.URIUtils;
 
 /**
  * Keeps the common core and contains all <code>$</code>-operators for all our cores. This
@@ -167,15 +167,15 @@ public class CoreKeeper {
     public static CoreURI $(URI... object) {
         return new CoreURI($, object);
     }
-
+    
     /**
-     * Wraps number of Locks and returns a new CoreLock.
+     * Wraps number of URLs and returns a new CoreURI.
      * 
-     * @param object The Locks to wrap.
-     * @return A CoreLock wrapping the given Locks.
+     * @param object The URLs to wrap.
+     * @return A CoreString wrapping the given URLs.
      */
-    public static CoreLock $(Lock... object) {
-        return new CoreLock($, object);
+    public static CoreURI $(URL... object) {
+        return new CoreURI($, URIUtils.URIs(object));
     }
 
     /**

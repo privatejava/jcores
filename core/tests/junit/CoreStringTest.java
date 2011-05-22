@@ -85,5 +85,8 @@ public class CoreStringTest {
     @Test
     public void testReplace() {
         Assert.assertEquals("Hello World", $("Hello$World").replace("\\$", " ").get(0));
+        Assert.assertEquals("Hello World", $("Hellx", "Wxrld").replace("x", "o").join(" "));
+
+        
     }
 }

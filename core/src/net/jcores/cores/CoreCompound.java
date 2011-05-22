@@ -38,7 +38,7 @@ import net.jcores.utils.Compound;
  * functions. For example, to extract only compound-values with the given key <code>"uri"</code>, 
  * write:<br/><br/>
  * 
- * <code>$(compounds).key("uri")</code>
+ * <code>$(compounds).value("uri")</code>
  * 
  * 
  * @author Ralf Biedert
@@ -62,9 +62,13 @@ public class CoreCompound<T> extends CoreObject<Compound<T>> {
     }
 
     /**
-     * Creates a core wrapping only elements of the given key.<br/>
+     * Creates a core wrapping only values for the given key.<br/>
      * <br/>
      * 
+     * Examples:
+     * <ul>
+     * <li><code>$(compounds).value("name", String.class).unique().print()</code> - Extracts all values of all Compounds with the given key, removes doubles, and prints the elements.</li>
+     * </ul>
      * Multi-threaded.<br/>
      * <br/>
      * 
@@ -74,7 +78,7 @@ public class CoreCompound<T> extends CoreObject<Compound<T>> {
      * @return A new {@link CoreObject} is returned containing only elements of the given
      * key.
      */
-    public CoreObject<T> key(final String key, Class<T> type) {
+    public CoreObject<T> value(final String key, Class<T> type) {
         return map(new F1<Compound<T>, T>() {
             public T f(final Compound<T> x) {
                 return x.get(key);

@@ -68,9 +68,13 @@ public class CoreBufferedImage extends CoreObject<BufferedImage> {
 
     /**
      * Copies the buffered images, creating deep clones of the given image data. Altering
-     * a copy
-     * will not alter the source image.<br/>
+     * a copy will not alter the source image.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(image).copy().get(0)</code> - Returns a copy of the passed image.</li>
+     * </ul>
      * 
      * Multi-threaded.<br/>
      * <br/>
@@ -92,6 +96,12 @@ public class CoreBufferedImage extends CoreObject<BufferedImage> {
     /**
      * Scales all contained images by the given factor.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(image).scale(2.0).get(0)</code> - Scales the image to twice its size.</li>
+     * <li><code>$(image).scale(0.5).get(0)</code> - Scales the image to half its size.</li>
+     * </ul>
      * 
      * Multi-threaded.<br/>
      * <br/>
@@ -116,6 +126,13 @@ public class CoreBufferedImage extends CoreObject<BufferedImage> {
     /**
      * Scales all contained images to the given dimensions.<br/>
      * <br/>
+     * 
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(image).scale(640, 480).get(0)</code> - Scales the image to the given size, ignoring the original aspect ratio.</li>
+     * <li><code>$(image).scale(1024, 0).get(0)</code> - Scales the image to the given width, keeping the aspect ratio.</li>
+     * </ul>
      * 
      * Multi-threaded.<br/>
      * <br/>
@@ -166,6 +183,12 @@ public class CoreBufferedImage extends CoreObject<BufferedImage> {
      * Writes the enclosed image at position <code>0</code> to the given file. The file type will be
      * recognized by the suffix.<br/>
      * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(image).scale(16, 0).write("output.png")</code> - Creates a thumbnail of the given image and writes it to the file <code>output.png</code>.</li>
+     * </ul>
+     * 
      * Single-threaded, size-of-one.<br/>
      * <br/>
      * 

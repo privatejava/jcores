@@ -64,6 +64,12 @@ public class CoreComponent extends CoreObject<Component> {
      * Adds a key-press handler to the given components.<br/>
      * <br/>
      * 
+     *  
+     * Examples:
+     * <ul>
+     * <li><code>$(component).keypress(KeyEvent.VK_ESCAPE, handler)</code> - Adds a keypress listener to the given component that will fire on ESCAPE.</li>
+     * </ul>
+     * 
      * Single-threaded.<br/>
      * <br/>
      * 
@@ -82,8 +88,8 @@ public class CoreComponent extends CoreObject<Component> {
                 @Override
                 public void keyTyped(KeyEvent e) {
                       //
-                  }
-
+                }
+                
                 @Override
                 public void keyReleased(KeyEvent e) {
                       //
