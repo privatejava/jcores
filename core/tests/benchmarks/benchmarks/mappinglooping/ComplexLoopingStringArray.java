@@ -57,10 +57,9 @@ public class ComplexLoopingStringArray extends Benchmark<Data> {
     }
 
     public static String ff(String x) {
-
         String rval = x;
         for (int i = 0; i < 100; i++) {
-            if ($.random().nextBoolean()) {
+            if (i%2 == 0) {
                 rval = rval.toLowerCase();
             } else {
                 rval = rval.toUpperCase();
