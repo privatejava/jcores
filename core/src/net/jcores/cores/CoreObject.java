@@ -42,6 +42,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1489,9 +1490,20 @@ public class CoreObject<T> extends Core {
 
     /**
      * Maps the core's content with the given function and returns the result. This is the
-     * most fundamental function of this core. Maps all elements using the given mapper 
-     * function. If the core is of size 0 nothing is done, if it is of size 1 
-     * <code>f</code> is executed directly. <br/>
+     * most fundamental function of jCores. If the core is of size 0 nothing is done, if it is of size 1 
+     * <code>f</code> is executed directly. In all other cases <code>map</code> (at least in the 
+     * current implementation) will go parallel <i>on demand</i>. It takes a test run for the 
+     * first element and measures the time to process it. If the estimated time it takes to 
+     * complete the rest of the core is less than the measured time it takes to go parallel (which 
+     * has some overhead), no parallelization is being performed.<br/>
+     * <br/>
+     * 
+     * As a general rule of thumb, <code>map</code> 
+     * works relatively best on large cores (number of elements) and time-consuming <code>f</code>- 
+     * operations and it works worst on small cores and very simple <code>f</code>. However, 
+     * the good message is that these disadvantageous cores/functions only impact your 
+     * application's performance in case you call <code>map</code> on them hundreds of 
+     * thousands times a second, as the absolute overhead is still very small.<br/>
      * <br/>
      * 
      *
@@ -1505,8 +1517,17 @@ public class CoreObject<T> extends Core {
      * Multi-threaded.<br/>
      * <br/>
      * 
+     * <b>Warning:</b> The larger the core (number of objects) the more you should make sure 
+     * that <code>f</code> is as <i>isolated</i> as possible, since sharing even a single object 
+     * (e.g., a shared {@link Random} object like <code>$.random()</code>) among different mapper 
+     * threads can have a dramatic performance impact. In some cases (e.g., many CPUs (>2), large 
+     * core (<code>size >> 1000</code>), simple <code>f</code> with shared, synchronized variable 
+     * access) the performance of <code>map</code> can even drop below the performance of 
+     * <code>forEach</code>.<br/> <br/>
+     * 
+     * 
      * @param <R> Return type.
-     * @param f Mapper function, should be thread-safe.
+     * @param f Mapper function, must be thread-safe.
      * @param _options Relevant options: <code>OptionMapType</code>.
      * 
      * @return A CoreObject containing the mapped elements in a stable order.
