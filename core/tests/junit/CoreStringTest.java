@@ -30,8 +30,12 @@ package junit;
 import static net.jcores.CoreKeeper.$;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
 
 import junit.data.Data;
+import net.jcores.interfaces.internal.logging.LoggingHandler;
+import net.jcores.managers.ManagerLogging;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -86,7 +90,25 @@ public class CoreStringTest {
     public void testReplace() {
         Assert.assertEquals("Hello World", $("Hello$World").replace("\\$", " ").get(0));
         Assert.assertEquals("Hello World", $("Hellx", "Wxrld").replace("x", "o").join(" "));
-
+    }
+    
+    /** */
+    @Test
+    public void testLog() {
+        final AtomicReference<String> result = new AtomicReference<String>();
+        final LoggingHandler oldhandler = $.manager(ManagerLogging.class).handler();
+        final LoggingHandler newHandler = new LoggingHandler() {
+            @Override
+            public void log(String log, Level level) {
+                result.set(log);
+            }
+        };
         
+        $.manager(ManagerLogging.class).handler(newHandler);
+        
+        $("Hello World").log();
+        Assert.assertEquals("Hello World", result.get());
+        
+        $.manager(ManagerLogging.class).handler(oldhandler);
     }
 }
