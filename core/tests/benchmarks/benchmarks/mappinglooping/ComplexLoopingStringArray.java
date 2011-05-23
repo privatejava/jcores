@@ -139,7 +139,7 @@ public class ComplexLoopingStringArray extends Benchmark<Data> {
             public Object f(Data x) {
                 final AtomicInteger v = new AtomicInteger();
                 for (int jj = 0; jj < 1000; jj++) {
-                    for (int i = 0; i < x.s1.length; i++) {
+                    for (int i = 0; i < x.s5.length; i++) {
                         v.addAndGet(ff(x.s5[i]).hashCode());
                     }
                 }
