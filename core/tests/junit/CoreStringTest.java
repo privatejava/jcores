@@ -111,4 +111,10 @@ public class CoreStringTest {
         
         $.manager(ManagerLogging.class).handler(oldhandler);
     }
+    
+    /** */
+    @Test
+    public void testExec() {
+        $("say 'It\\'s working. Let\\'s get some cake.'").exec();
+    }
 }

@@ -52,6 +52,7 @@ import net.jcores.options.Option;
 import net.jcores.options.OptionRegEx;
 import net.jcores.utils.Compound;
 import net.jcores.utils.internal.io.StreamUtils;
+import net.jcores.utils.internal.lang.StringUtils;
 
 /**
  * Wraps a number of String and exposes some convenience functions. For example, 
@@ -139,7 +140,7 @@ public class CoreString extends CoreObject<String> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$("index.php%3Fx%3D1").decode().print()</code> - Prints <code>index.php?x=1</code>.</li>
+     * <li><code>$("index.php%3Fx%3D1").decode().print()</code> - Prints "<code>index.php?x=1</code>".</li>
      * </ul> 
      * 
      * Multi-threaded.<br/>
@@ -168,7 +169,7 @@ public class CoreString extends CoreObject<String> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$("index.php?x=1").decode().print()</code> - Prints <code>index.php%3Fx%3D1</code>.</li>
+     * <li><code>$("index.php?x=1").encode().print()</code> - Prints "<code>index.php%3Fx%3D1</code>".</li>
      * </ul> 
      * 
      * Multi-threaded.<br/>
@@ -192,12 +193,22 @@ public class CoreString extends CoreObject<String> {
     
     
     /**
-     * Treats the contained string as a shell command and executes it, returning the output.<br/>
+     * Treats the contained string as a shell command and executes it, returning the output. The command 
+     * and the individual parameters will be split with whitespace (' '), you can use single quotes 
+     * (<code>'</code>) to force a string with whitespace to be joined. Use <code>\\'</code> to escape 
+     * the quotes. See the examples below:<br/>
      * <br/>
      * 
      * Examples:
      * <ul>
-     * <li><code>$("ls -la /").exec().print()</code> - Lists (on Unix systems) the top level directory and prints the result.</li>
+     * <li><code>$("ls -la /").exec().print()</code> - Lists (on Unix systems) the top level directory and 
+     * prints the result.</li>
+     * <li><code>$("'/Program Files/application.exe' -render 'Hello World'").exec()</code> - Executes the file 
+     * <code>/Program Files/application.exe</code> (quotes necessary due to whitespace in the path), the 
+     * first parameter is <code>-say</code>, the second parameter is <code>Hello World</code> (notice that 
+     * the quotes will NOT be part of the passed argument.</li>
+     * <li><code>$("say 'The cake, it\\'s a lie.'").exec()</code> - Executes the command <code>say</code> with a single
+     * argument <code>The cake, it's a lie.</code>.</li>
      * </ul> 
      * 
      * Multi-threaded.<br/>
@@ -205,16 +216,13 @@ public class CoreString extends CoreObject<String> {
      * 
      * @param options Not used at the moment.
      * 
-     * @deprecated Not deprecated, but behavior might change in the future.   
      * @return A CoreString with all the emitted output.
      */
-    @Deprecated
     public CoreString exec(Option ...options) {
         return new CoreString(this.commonCore, map(new F1<String, String>() {
             public String f(String x) {
-                // TODO: Iteratively join command in case the command has a space in its path!
                 final ProcessBuilder builder = new ProcessBuilder();
-                builder.command(x.split(" "));
+                builder.command(StringUtils.parseExec(x));
                 try {
                     final Process start = builder.start();
                     start.waitFor();
@@ -234,12 +242,18 @@ public class CoreString extends CoreObject<String> {
     
     /**
      * Executes the given shell command on each of the contained strings in parallel. The core's content
-     * may be used as <code>$1</code> within the command string. <br/>
+     * may be used as <code>$1</code> within the command string. For each element of this core a command
+     * will be generated with the given exec string. It is afterwards executed the same way as if calling
+     * <code>$(command).exec()</code> (see above for comments).<br/>
      * <br/>
      *
      * Examples:
      * <ul>
-     * <li><code>$("/a", "/b", "/c").exec("ls -la $1").print()</code> - Lists (on Unix systems) three different top level directories and prints the result.</li>
+     * <li><code>$.range(10).exec("say '$1'")</code> - Counting to ten never was this easy.</li>    
+     * <li><code>$("/a", "/b", "/c").exec("ls -la $1").print()</code> - Lists (on Unix systems) three 
+     * different top level directories and prints the result.</li>
+     * <li><code>$("Hello", "World", "What\\'s up").exec("echo '$1'")</code> - Prints 'Hello', 
+     * 'World' and "What's up" in parallel.</li>
      * </ul> 
      * 
      * Multi-threaded.<br/>
@@ -248,17 +262,14 @@ public class CoreString extends CoreObject<String> {
      * @param command The command to execute, e.g., <code>"ls $1"</code>.
      * @param options Not used at the moment.
      *  
-     * @deprecated Not deprecated, but behavior might change in the future.   
      * @return A CoreString with all the emitted output.
      */
-    @Deprecated
     public CoreString exec(final String command, Option ...options) {
         return new CoreString(this.commonCore, map(new F1<String, String>() {
             public String f(String x) {
-                // TODO: Iteratively join command in case the command has a space in its path!
                 final ProcessBuilder builder = new ProcessBuilder();
                 final String cmd = x.replaceAll("^(.*)$", command);
-                builder.command(cmd.split(" ")); // TODO: This is broken for strings with spaces
+                builder.command(StringUtils.parseExec(cmd)); 
                 try {
                     final Process start = builder.start();
                     start.waitFor();
