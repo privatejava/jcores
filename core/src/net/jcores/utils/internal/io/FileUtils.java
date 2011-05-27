@@ -39,6 +39,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarOutputStream;
+import java.util.jar.Manifest;
+import java.util.zip.Adler32;
+import java.util.zip.CheckedOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -200,7 +205,9 @@ public class FileUtils {
 
         try {
             // Open output zip file
-            ZipOutputStream out = new ZipOutputStream(new FileOutputStream(target));
+        	FileOutputStream fos = new FileOutputStream(target);
+            ZipOutputStream out = new ZipOutputStream(fos);
+            out.setLevel(9);
 
             // Process all given files
             for (File file : t) {
@@ -213,6 +220,8 @@ public class FileUtils {
                     // a file, then add this entry by its name only. Otherwise add the entry as something
                     // starting relative to its path
                     String entryname = file.isDirectory() ? file2.getAbsolutePath().substring(absolute.length() + 1) : file2.getName();
+                    entryname = entryname.replaceAll("\\\\", "/");
+                    entryname = file2.isDirectory() ? entryname + "/" : entryname;
 
                     try {
                         final FileInputStream in = new FileInputStream(file2);
@@ -226,15 +235,78 @@ public class FileUtils {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    
+                    out.closeEntry();
                 }
             }
 
             // Close our result
             out.close();
+            fos.flush();
+            fos.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    /**
+     * JARs a number of files into the target. Why does Java have to be so shitty
+     * that on some VMs a JAR created as ZIP won't be recognized anymore?!    
+     * 
+     * @param target
+     * @param t
+     */
+    public static void jarFiles(File target, Manifest manifest, File[] t) {
+		 final byte[] buffer = new byte[32 * 1024]; // Create a buffer for copying
+	        int bytesRead;
+
+	        try {
+	            // Open output zip file
+	        	FileOutputStream fos = new FileOutputStream(target);
+	            JarOutputStream out = new JarOutputStream(fos, manifest);
+	            out.setLevel(9);
+
+	            // Process all given files
+	            for (File file : t) {
+	                // If it is a file, store it directly, otherwise store subfiles
+	                final File toStore[] = file.isDirectory() ? $(file).dir().array(File.class) : $(file).array(File.class);
+	                final String absolute = file.getAbsolutePath();
+
+	                for (File file2 : toStore) {
+	                    // Now check for each item. If this item was added because the original entry denoted
+	                    // a file, then add this entry by its name only. Otherwise add the entry as something
+	                    // starting relative to its path
+	                    String entryname = file.isDirectory() ? file2.getAbsolutePath().substring(absolute.length() + 1) : file2.getName();
+	                    entryname = entryname.replaceAll("\\\\", "/");
+	                    entryname = file2.isDirectory() ? entryname + "/" : entryname;
+	                    
+	                    try {
+	                        final FileInputStream in = new FileInputStream(file2);
+	                        final JarEntry entry = new JarEntry(entryname);
+	                        out.putNextEntry(entry);
+	                        while ((bytesRead = in.read(buffer)) != -1)
+	                            out.write(buffer, 0, bytesRead);
+	                        in.close();
+	                    } catch (FileNotFoundException e) {
+	                        e.printStackTrace();
+	                    } catch (IOException e) {
+	                        e.printStackTrace();
+	                    }
+	                    
+	                    out.closeEntry();
+	                }
+	            }
+
+	            // Close our result
+	            out.close();
+	            fos.flush();
+	            fos.close();
+	        } catch (FileNotFoundException e) {
+	            e.printStackTrace();
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }		
+	}
 }

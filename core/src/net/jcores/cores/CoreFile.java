@@ -45,6 +45,7 @@ import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.List;
+import java.util.jar.Manifest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -451,6 +452,31 @@ public class CoreFile extends CoreObject<File> {
             }
         }).array(InputStream.class));
     }
+    
+    
+    /**
+     * Puts all enclosed files into the JAR file <code>target</code>. If files are enclosed individually they will be
+     * stored as a top-level entry. If directories are enclosed in this core, the relative paths below that directory
+     * are preserved.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("bin").file().jar("application.jar")</code> - Creates a JAR and puts the content of the folder in it.</li>
+     * </ul>
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @param target The file to write the ZIP to.
+     * @param options Currently none used.
+     * @return This Core again.
+     */
+    public CoreFile jar(String target, Manifest manifest, Option... options) {
+        FileUtils.jarFiles(new File(target), manifest, this.t);
+        return this;
+    }
+
 
     /**
      * Returns all lines of all files joint. A core will be returned in which each
