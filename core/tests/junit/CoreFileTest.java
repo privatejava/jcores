@@ -79,6 +79,11 @@ public class CoreFileTest {
                 sum -= removed;
             }
         }
+        
+        // pdfjoin $@
+        // $("a", "b", "c") ---> pdfjo. a b c 
+        // $("pdfjoin " + $))
+        
 
         // Now compute the value printed in the file
         int filesum = $(testFile).text().split("\n").map(new F1<String, Integer>() {

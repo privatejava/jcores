@@ -246,6 +246,9 @@ public class CoreString extends CoreObject<String> {
      * will be generated with the given exec string. It is afterwards executed the same way as if calling
      * <code>$(command).exec()</code> (see above for comments).<br/>
      * <br/>
+     * 
+     * TODO: $@ should be expanded as all arguments of the core, but not executed in parallel, but 
+     * sequentially. 
      *
      * Examples:
      * <ul>

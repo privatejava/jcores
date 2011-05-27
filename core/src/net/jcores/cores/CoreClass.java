@@ -106,6 +106,7 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
             }
         }).array(ByteBuffer.class));
     }
+    
 
     /**
      * Spawns the cored classes with the given objects as args. If a wrapped class is an interface,

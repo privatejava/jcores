@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.net.jcores</groupId>
 	<artifactId>jcores</artifactId>
-	<version>0.7.1</version>
+	<version>0.8.0</version>
 	<packaging>jar</packaging>
 	<name>JCores</name>
 	<description>jCores' primary goal is to increase developer and runtime efficiency by easing some Java pains, providing short hand notations for commonly used task and parallelize operations on multiple CPUs where possible.</description>
