@@ -98,7 +98,7 @@ public abstract class Core implements Serializable {
         // Compute the later step size and the number of threads.
         final ProfileInformation profileInfo = this.commonCore.profileInformation();
         final int STEP_SIZE = Math.max(size() / 10, 1);
-        final int NUM_THREADS = Runtime.getRuntime().availableProcessors();
+        final int NUM_THREADS = this.commonCore.profileInformation().numCPUs;
         final AtomicInteger index = new AtomicInteger();
         
         // Test-convert the first item and measure time. If time and size are above
@@ -211,7 +211,7 @@ public abstract class Core implements Serializable {
             return;
         }
 
-        final int NUM_THREADS = Runtime.getRuntime().availableProcessors();
+        final int NUM_THREADS = this.commonCore.profileInformation().numCPUs; 
 
         // Indicates which level (in the folding hierarchy) we are and where the next
         // thread should proceed. The base count indicates where which element should be

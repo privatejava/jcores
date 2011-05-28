@@ -27,7 +27,16 @@
  */
 package net.jcores.script.scriptmodes;
 
+import static net.jcores.CoreKeeper.$;
+
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
+import junit.data.Data;
+import net.jcores.interfaces.functions.F0;
 import net.jcores.script.JCoresScript;
+import net.jcores.script.util.console.JCoresConsole;
+import net.jcores.utils.internal.system.ProfileInformation;
 
 /**
  * Development time scripting environment.
@@ -37,22 +46,63 @@ import net.jcores.script.JCoresScript;
  */
 public class JCoresScriptRuntime extends JCoresScript {
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see net.jcores.script.JCoresScript#pack()
-     */
-    public JCoresScriptRuntime(String name, String[] args) {
-        super(name, args);
-    }
+	/** Our console */
+	private JCoresConsole consoleWindow = null;
+	
+	/** The banner to print */ 
+	private String banner;
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see net.jcores.script.JCoresScript#pack()
+	 */
+	public JCoresScriptRuntime(String name, String[] args) {
+		super(name, args);
+		
+		final ProfileInformation pi  = $.profileInformation();
+		this.banner = this.name + " Console - jCores Script (" + pi.numCPUs + " CPUs)";
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see net.jcores.script.JCoresScript#pack()
-     */
-    @Override
-    public void pack() {
-       // Don't do anything
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see net.jcores.script.JCoresScript#pack()
+	 */
+	@Override
+	public void pack() {
+		// Check if we should create a console
+		if (System.console() == null && this.console) {
+			
+			// In case we need a console, create it in the EDT
+			$.edtnow(new F0() {
+				@Override
+				public void f() {
+					initUI();
+					consoleWindow = new JCoresConsole(banner);
+				}
+			});
+			
+			// Register our termination hook
+			this.consoleWindow.addTerminationHook(Thread.currentThread());
+		} 
+	}
+	
+	/**
+	 * Set the system user interface
+	 */
+	private void initUI() {
+		// Whoever designed these APIs must have had an Exception fetish ...
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (UnsupportedLookAndFeelException e) {
+			e.printStackTrace();
+		}
+	}
 }

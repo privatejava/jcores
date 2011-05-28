@@ -35,6 +35,8 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 import net.jcores.script.JCoresScript;
 
@@ -92,16 +94,18 @@ public class JCoresScriptDevtime extends JCoresScript {
 
         // Purge old manifest
         $(tempdir.getAbsoluteFile() + "/META-INF/").file().delete();
-        $(tempdir.getAbsoluteFile() + "/META-INF/").file().get(0).mkdirs();
         
         // And create the new one 
         final String appmain  = $(Thread.currentThread().getStackTrace()).get(-1).getClassName();
-        final String manifest = $("Manifest-Version: 1.0", "Main-Class: " + appmain, "").join("\n");
-        $(tempdir.getAbsoluteFile() + "/META-INF/MANIFEST.MF").file().delete().append(manifest);
         $(tempdir.getAbsoluteFile() + "/net/jcores/script/jcores.script.mode").file().delete().append("runtime");
         
         // Eventually pack the script
-        $(tempdir).zip(this.name + ".jar");
+        final Manifest manifest = new Manifest();
+        final Attributes mainAttributes = manifest.getMainAttributes();
+        mainAttributes.putValue("Manifest-Version", "1.0");
+        mainAttributes.putValue("Main-Class", appmain);
+        
+        $(tempdir).jar(this.name + ".jar", manifest);
 
         // Finally output what we did, and quit
         System.out.println("Application packed as '" + this.name + ".jar'");

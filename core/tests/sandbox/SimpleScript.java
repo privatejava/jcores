@@ -44,7 +44,7 @@ public class SimpleScript {
      * @throws IOException 
      */
     public static void main(String[] args) throws IOException {
-        JCoresScript.SCRIPT("Blah", args).pack();
+        JCoresScript.SCRIPT("Blah", args).console(true).pack();
         
         $(".").file().dir().print();
     }

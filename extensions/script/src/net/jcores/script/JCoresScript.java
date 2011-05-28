@@ -52,10 +52,13 @@ import net.jcores.script.scriptmodes.JCoresScriptRuntime;
  */
 public abstract class JCoresScript {
     /** The name of this script */
-    protected String name;
+    protected final String name;
 
     /** The args the application received at start */
-    protected String[] args;
+    protected final String[] args;
+
+    /** If set to true, a console will always be shown */
+	protected boolean console = false;
 
     /**
      * Store parameters.
@@ -83,6 +86,19 @@ public abstract class JCoresScript {
         if (JCoresScript.class.getResource("jcores.script.mode") != null) { return new JCoresScriptRuntime(name, args); }
 
         return new JCoresScriptDevtime(name, args);
+    }
+    
+    /**
+     * Call this method if you want your script to always show a console. If a terminal
+     * or console is detected at runtime nothing is being done. If no console is detected,
+     * a console window will be spawned.
+     * 
+     * @param show If a console should be shown. Defaults to <code>false</code>.
+     * @return This object.
+     */
+    public JCoresScript console(boolean show) {
+    	this.console = show;
+    	return this;
     }
 
     /**
