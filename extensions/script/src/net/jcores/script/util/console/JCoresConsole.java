@@ -50,21 +50,18 @@ public class JCoresConsole extends JFrame {
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(this.scrollPane, BorderLayout.CENTER);
 
-		addTerminationHook();
-		
 		// Redirect the std. streams.
 		redirectSystemStreams();
 	}
 
 	
-	private void addTerminationHook() {
-		final Thread mainThread = Thread.currentThread();
+	public void addTerminationHook(final Thread thread) {
 		$.manyTimes(new F0() {
 			boolean warned = false;
 			
 			@Override
 			public void f() {
-				if(!mainThread.isAlive() && !this.warned) {
+				if(!thread.isAlive() && !this.warned) {
 					System.out.println("[Terminated]");
 					this.warned = true;					
 				}

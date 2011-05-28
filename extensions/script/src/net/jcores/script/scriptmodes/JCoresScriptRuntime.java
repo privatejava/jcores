@@ -73,6 +73,7 @@ public class JCoresScriptRuntime extends JCoresScript {
 	public void pack() {
 		// Check if we should create a console
 		if (System.console() == null && this.console) {
+			
 			// In case we need a console, create it in the EDT
 			$.edtnow(new F0() {
 				@Override
@@ -81,6 +82,9 @@ public class JCoresScriptRuntime extends JCoresScript {
 					consoleWindow = new JCoresConsole(banner);
 				}
 			});
+			
+			// Register our termination hook
+			this.consoleWindow.addTerminationHook(Thread.currentThread());
 		} 
 	}
 	
