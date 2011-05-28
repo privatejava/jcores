@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
 
 import net.jcores.interfaces.functions.F0;
 
@@ -39,19 +40,22 @@ public class JCoresConsole extends JFrame {
 		setTitle(title);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setSize(600, 400);
-		setVisible(true);
-
+		
 		this.textArea = new JTextArea();
 		this.textArea.setBackground(Color.BLACK);
 		this.textArea.setForeground(Color.LIGHT_GRAY);
 		this.textArea.setEditable(false);
+		this.textArea.setBorder(new EmptyBorder(0, 0, 0, 0));
 		this.scrollPane = new JScrollPane(this.textArea);
+		this.scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(this.scrollPane, BorderLayout.CENTER);
 
 		// Redirect the std. streams.
 		redirectSystemStreams();
+		
+        setVisible(true);
 	}
 
 	
@@ -74,10 +78,10 @@ public class JCoresConsole extends JFrame {
 	 * Shamelessly stolen from
 	 * http://unserializableone.blogspot.com/2009/01/redirecting-systemout-and-systemerr-to.html
 	 */
-	private void updateTextArea(final String text) {
+	void updateTextArea(final String text) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				textArea.append(text);
+				JCoresConsole.this.textArea.append(text);
 			}
 		});
 	}

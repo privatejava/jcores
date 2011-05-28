@@ -32,7 +32,6 @@ import static net.jcores.CoreKeeper.$;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import junit.data.Data;
 import net.jcores.interfaces.functions.F0;
 import net.jcores.script.JCoresScript;
 import net.jcores.script.util.console.JCoresConsole;
@@ -47,10 +46,10 @@ import net.jcores.utils.internal.system.ProfileInformation;
 public class JCoresScriptRuntime extends JCoresScript {
 
 	/** Our console */
-	private JCoresConsole consoleWindow = null;
+	JCoresConsole consoleWindow = null;
 	
 	/** The banner to print */ 
-	private String banner;
+	String banner;
 	
 	/*
 	 * (non-Javadoc)
@@ -79,7 +78,7 @@ public class JCoresScriptRuntime extends JCoresScript {
 				@Override
 				public void f() {
 					initUI();
-					consoleWindow = new JCoresConsole(banner);
+					JCoresScriptRuntime.this.consoleWindow = new JCoresConsole(JCoresScriptRuntime.this.banner);
 				}
 			});
 			
@@ -91,7 +90,7 @@ public class JCoresScriptRuntime extends JCoresScript {
 	/**
 	 * Set the system user interface
 	 */
-	private void initUI() {
+	void initUI() {
 		// Whoever designed these APIs must have had an Exception fetish ...
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
