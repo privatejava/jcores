@@ -58,8 +58,9 @@ public abstract class JCoresScript {
     protected String[] args;
 
     /**
-     * We don't need this
+     * Store parameters.
      * 
+     * @param name
      * @param args
      */
     protected JCoresScript(String name, String[] args) {
@@ -70,7 +71,7 @@ public abstract class JCoresScript {
  
     /**
      * Creates a script object for the current application. Call at the very first 
-     * position of your <code>main()</code>.
+     * position of your <code>main()</code> (see the example above).
      * 
      * @param name The name of your application.
      * @param args The command line arguments that were passed to main.
@@ -85,8 +86,13 @@ public abstract class JCoresScript {
     }
 
     /**
-     * Packs the current script into a single file ready for
-     * deployment.
+     * Packs the current script into a single file ready for deployment. Check the console 
+     * for any output. The application will terminate after this function has been executed 
+     * However, at your script's runtime this command will be ignored.<br/><br/>
+     * 
+     * If you want to pack your application, <code>pack()</code> must be <b>the last</b> of all 
+     * scripting functions executed, i.e., no other function of this object may be executed 
+     * afterwards (which is a direct result of the remark above).
      */
     public abstract void pack();
 }
