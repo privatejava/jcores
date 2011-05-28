@@ -4,6 +4,9 @@ import static net.jcores.CoreKeeper.$;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -31,16 +34,21 @@ public class JCoresConsole extends JFrame {
 	/** Scroll pane */
 	protected JScrollPane scrollPane;
 
+	/** The title / banner for our window */
+	protected String banner;
+
 	/**
 	 * Constructs a console.
 	 * 
 	 * @param title
 	 */
 	public JCoresConsole(String title) {
+		this.banner = title;
+		
 		setTitle(title);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setSize(600, 400);
-		
+
 		this.textArea = new JTextArea();
 		this.textArea.setBackground(Color.BLACK);
 		this.textArea.setForeground(Color.LIGHT_GRAY);
@@ -54,29 +62,28 @@ public class JCoresConsole extends JFrame {
 
 		// Redirect the std. streams.
 		redirectSystemStreams();
-		
-        setVisible(true);
+
+		setVisible(true);
 	}
 
-	
 	public void addTerminationHook(final Thread thread) {
 		$.manyTimes(new F0() {
 			boolean warned = false;
-			
+
 			@Override
 			public void f() {
-				if(!thread.isAlive() && !this.warned) {
+				if (!thread.isAlive() && !this.warned) {
 					System.out.println("[Terminated]");
-					this.warned = true;					
+					this.warned = true;
 				}
 			}
 		}, 500);
 	}
 
-
 	/**
 	 * Shamelessly stolen from
-	 * http://unserializableone.blogspot.com/2009/01/redirecting-systemout-and-systemerr-to.html
+	 * http://unserializableone.blogspot.com/2009/01/redirecting
+	 * -systemout-and-systemerr-to.html
 	 */
 	void updateTextArea(final String text) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -88,7 +95,8 @@ public class JCoresConsole extends JFrame {
 
 	/**
 	 * Shamelessly stolen from
-	 * http://unserializableone.blogspot.com/2009/01/redirecting-systemout-and-systemerr-to.html
+	 * http://unserializableone.blogspot.com/2009/01/redirecting
+	 * -systemout-and-systemerr-to.html
 	 */
 	private void redirectSystemStreams() {
 		OutputStream out = new OutputStream() {

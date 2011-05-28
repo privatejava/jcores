@@ -29,6 +29,12 @@ package net.jcores.script.scriptmodes;
 
 import static net.jcores.CoreKeeper.$;
 
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.KeyEvent;
+import java.util.Properties;
+import java.util.Set;
+
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -47,10 +53,10 @@ public class JCoresScriptRuntime extends JCoresScript {
 
 	/** Our console */
 	JCoresConsole consoleWindow = null;
-	
-	/** The banner to print */ 
+
+	/** The banner to print */
 	String banner;
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -58,9 +64,10 @@ public class JCoresScriptRuntime extends JCoresScript {
 	 */
 	public JCoresScriptRuntime(String name, String[] args) {
 		super(name, args);
-		
-		final ProfileInformation pi  = $.profileInformation();
-		this.banner = this.name + " Console - jCores Script (" + pi.numCPUs + " CPUs)";
+
+		final ProfileInformation pi = $.profileInformation();
+		this.banner = this.name + " Console - jCores Script (" + pi.numCPUs
+				+ " CPUs)";
 	}
 
 	/*
@@ -72,25 +79,29 @@ public class JCoresScriptRuntime extends JCoresScript {
 	public void pack() {
 		// Check if we should create a console
 		if (System.console() == null && this.console) {
-			
+
 			// In case we need a console, create it in the EDT
 			$.edtnow(new F0() {
 				@Override
 				public void f() {
 					initUI();
-					JCoresScriptRuntime.this.consoleWindow = new JCoresConsole(JCoresScriptRuntime.this.banner);
+					JCoresScriptRuntime.this.consoleWindow = new JCoresConsole(
+							JCoresScriptRuntime.this.banner);
 				}
 			});
-			
+
 			// Register our termination hook
 			this.consoleWindow.addTerminationHook(Thread.currentThread());
-		} 
+		}
 	}
-	
+
 	/**
 	 * Set the system user interface
 	 */
 	void initUI() {
+		// Beautiful menu bar on Mac OS
+		System.setProperty("apple.laf.useScreenMenuBar", "true");
+
 		// Whoever designed these APIs must have had an Exception fetish ...
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -103,5 +114,63 @@ public class JCoresScriptRuntime extends JCoresScript {
 		} catch (UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
 		}
+
+		final KeyboardFocusManager kfm = KeyboardFocusManager
+				.getCurrentKeyboardFocusManager();
+		kfm.addKeyEventDispatcher(new KeyEventDispatcher() {
+			@Override
+			public boolean dispatchKeyEvent(KeyEvent e) {
+				if (e.getID() != KeyEvent.KEY_TYPED)
+					return false;
+				if (e.getKeyChar() == 'i')
+					printCommonDebug();
+				if (e.getKeyChar() == 'p')
+					printPropertiesDebug();
+
+				return false;
+			}
+		});
+	}
+
+	/**
+	 * Prints debug information into the console
+	 */
+	public void printCommonDebug() {
+		// Print banner
+		System.out.println();
+		System.out.println();
+		System.out.println(this.banner);
+
+		// Print runtime information
+		final Runtime runtime = Runtime.getRuntime();
+		final long maxMemory = runtime.maxMemory() / (1024 * 1024);
+		final long freeMemory = runtime.freeMemory() / (1024 * 1024);
+		final long totalMemory = runtime.totalMemory() / (1024 * 1024);
+		System.out.println("Memory: " + freeMemory + "Mb free, " + totalMemory + "Mb total, " + maxMemory+ "Mb max");
+		
+		// Print thread information
+		final int activeCount = Thread.activeCount();
+		System.out.println("Threads: " + activeCount + " active");
+		
+		
+		System.out.println();
+	}
+
+	/**
+	 * Prints properties to the output
+	 */
+	private void printPropertiesDebug() {
+		// Print properties
+		System.out.println();
+		System.out.println();
+		System.out.println("System Properties:");
+		final Properties properties = System.getProperties();
+		final Set<Object> set = properties.keySet();
+		for (Object object : set) {
+			System.out.println(object + ": "
+					+ properties.getProperty((String) object));
+		}
+
+		System.out.println();
 	}
 }

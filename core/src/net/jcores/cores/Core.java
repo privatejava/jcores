@@ -218,43 +218,122 @@ public abstract class Core implements Serializable {
         // selected next by the thread, the level indicates how many times we already passed
         // through the whole array.
         final AtomicInteger baseCount = new AtomicInteger();
-        final AtomicInteger level = new AtomicInteger();
+        final AtomicInteger round = new AtomicInteger();
 
         // Synchronizes threads. Each thread waits at the level-barrier when it finished the last level,
         // and waits the the global barrier when it is completely done. The main thread will also
         // wait at the global barrier (thus +1) for all spawned threads.
         final CyclicBarrier levelbarrier = new CyclicBarrier(NUM_THREADS);
         final CyclicBarrier barrier = new CyclicBarrier(NUM_THREADS + 1);
+        
+        // Algorithm example for 10 elements and 4 CPUs :
+        // Content: a b c d e f g h i j
+        // Array:   _ _ _ _ _ _ _ _ _ _
+        // Index:   0 1 2 3 4 5 6 7 8 9
+        
+        // In general, we process in levels, in parallel. In each level, each thread
+        // takes the next two elements, merges them, and stores them in the position of 
+        // the first element. This means, after each level the number of elements we need to 
+        // consider halves.
+        
+        // 1) We create 4 runner threads
+        // 2) Each runner starts by picking / computing
+        //    2.1) The current level (0 in the beginning) - lvl
+        //    2.2) The distance of between X and Y for the fold operation in this level 2^0 = 1
+        // 3) Each level, we check if the distance is bigger than the actual size (10 in this 
+        //    case) of the array. If it is, we know we have finished.
+        // 4) The upper bound for each run is the size of the array minus the stepping distance
+        //    (10 - 1) = 9
+        // 5) The index X for this operation is the base count (0 * 1) = 0
+        // 6) The index Y is X + dist (0 + 1) = 1
+        // 7) Until we reached the upper bound:
+        //    7.1) handle the two elements
+        //    7.2) Take the next available elements (X, Y)
+        // ...
+        
+        // Given fold = max
+        
+        // Level 0, dist = 1
+        // 0 x 1 -> 0
+        // Content: b b c d e f g h i j
+        // 2 x 3 -> 2
+        // Content: b b d d e f g h i j
+        // 4 x 5 -> 4
+        // Content: b b d d f f g h i j
+        // 6 x 7 -> 6
+        // Content: b b d d f f h h i j
+        // 8 x 9 -> 8
+        // Content: b b d d f f h h i i
+        
+        // Level 1, dist = 2
+        // 0 x 2 -> 0
+        // Content: d b d d f f h h i i
+        // 4 x 6 -> 4
+        // Content: d b d d h f h h i i
+        // 4 x 8 -> 4
+        // Content: d b d d h i h h i i
 
+        // Level 2, dist = 4
+        // 0 x 4 -> 4
+        // Content: i b d d h i h h i i
+
+        // Return index[0]
+        
+        
         final Runnable runner = new Runnable() {
             public void run() {
-                int lvl = level.get();
-                int dist = (int) Math.pow(2, lvl);
+                int rnd = round.get();
+                int elementDistance = (int) Math.pow(2, rnd);
 
-                // Process as long as the jump size exceeds the length of our array
-                // (each level the jump size will be increased)
-                while (dist < size) {
-                    final int upperBound = size - dist;
+                // Each thread processes as long as the distance between elements is smaller
+                // than the size
+                while (elementDistance < size) {
+                	// Each round the upper bound gets lower as we don't have to consider
+                	// the last elements
+                    final int upperBound = size - elementDistance;
 
-                    int i = baseCount.getAndAdd(2) * dist;
-                    int j = i + dist;
+                    
+                    // Now we take a next element pair 
+                    int lastHandledI = -1;
+                    int i = baseCount.getAndAdd(2) * elementDistance;
+                    int j = i + elementDistance;
 
-                    // For each level; proceed until we reach the righter bound
+                    // And each thread loop in here, until the right element
+                    // has left the righter bound
                     while (j <= upperBound) {
+                    	// Process two elements and store them
                         folder.handle(i, j, i);
 
-                        i = baseCount.getAndAdd(2) * dist;
-                        j = i + dist;
+                        // Remember what we processed last
+                        lastHandledI = i;
+                        
+                        // Take the next available element pairs
+                        i = baseCount.getAndAdd(2) * elementDistance;
+                        j = i + elementDistance;
                     }
 
-                    // Check if we were the node processing the last element and if there
-                    // was a single element left over. In that case, process both these elements again
-                    if (i <= upperBound && i > 0) {
-                        int left = i - (int) Math.pow(2, lvl + 1);
-                        folder.handle(left, i, left);
+                    
+                    // Ideally, at this point, we are through the array. However, it might be the case 
+                    // that an uneven number of elements was in that loop run
+                    // 10 -> 5 pairs
+                    // 11 -> 5 pairs, one left
+                    
+                    // So we check now if we were the thread processing the last element pair
+                    // in that turn, and if there was a sole element left
+                    
+                    // This is the case when we processed something (lastHandledI > 0)
+                    // and when element 2nd element to the right (the next one) exists
+                    // but its pair (the 3rd one) does not. 
+                    
+                    // In that case we connect this element wit the next one 
+                    
+                    if (lastHandledI + 2 * elementDistance <= upperBound && 
+                        	lastHandledI + 3 * elementDistance > upperBound &&
+                        	lastHandledI >= 0) {
+                        	folder.handle(lastHandledI, lastHandledI + 2 * elementDistance, lastHandledI);
                     }
-
-                    // Signal finish
+                
+                    // At this point we finished the round
                     try {
                         levelbarrier.await();
                     } catch (InterruptedException e) {
@@ -262,16 +341,32 @@ public abstract class Core implements Serializable {
                     } catch (BrokenBarrierException e) {
                         e.printStackTrace();
                     }
-
-                    // Increase the level afterwards. If we were the one who changed the
-                    // level, we also change the baseCount back to 0
-                    if (level.compareAndSet(lvl, lvl + 1)) {
+                    
+                    
+                    // If we were the one who changed the level, we also change the baseCount 
+                    // back to 0
+                    if (round.compareAndSet(rnd, rnd + 1)) {
                         baseCount.set(0);
                     }
+                    
+                   
+                    // We first have to wait twice, as otherwise an other thread
+                    // might be quicker than us in returning up to the loop again and use the
+                    // old level value 
+                    
 
+                    // Now we all wait that the level has been updated
+                    try {
+                        levelbarrier.await();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (BrokenBarrierException e) {
+                        e.printStackTrace();
+                    }
+                    
                     // And get new parameters
-                    lvl = level.get();
-                    dist = (int) Math.pow(2, lvl);
+                    rnd = round.get();
+                    elementDistance = (int) Math.pow(2, rnd);
                 }
 
                 try {

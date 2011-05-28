@@ -997,6 +997,7 @@ public class CoreObject<T> extends Core {
             @Override
             public void handle(int i, int j, int destination) {
                 // Get the in-value from the source-array
+
                 final T ii = (T) array.get(i);
                 final T jj = (T) array.get(j);
 
@@ -1015,9 +1016,10 @@ public class CoreObject<T> extends Core {
             }
         };
 
+        
         // Now do fold ...
         fold(folder, options);
-
+        
         T[] target = Arrays.copyOf(this.t, 1);
         target[0] = (T) array.get(0);
 

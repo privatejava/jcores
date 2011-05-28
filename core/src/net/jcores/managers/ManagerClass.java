@@ -50,7 +50,7 @@ public class ManagerClass extends Manager {
     /**
      * Keeps the things we need to know 
      */
-    class Container {
+    static class Container {
         /** Weak references */
         Collection<WeakReference<?>> references = new ConcurrentLinkedQueue<WeakReference<?>>();
 
