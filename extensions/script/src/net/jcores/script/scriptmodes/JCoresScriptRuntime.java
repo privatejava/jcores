@@ -33,6 +33,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import junit.data.Data;
+import net.jcores.interfaces.functions.F0;
 import net.jcores.script.JCoresScript;
 import net.jcores.script.util.console.JCoresConsole;
 import net.jcores.utils.internal.system.ProfileInformation;
@@ -70,12 +71,16 @@ public class JCoresScriptRuntime extends JCoresScript {
 	 */
 	@Override
 	public void pack() {
-		// Get the profile information
-
 		// Check if we should create a console
 		if (System.console() == null && this.console) {
-			initUI();
-			this.consoleWindow = new JCoresConsole(this.banner);
+			// In case we need a console, create it in the EDT
+			$.edtnow(new F0() {
+				@Override
+				public void f() {
+					initUI();
+					consoleWindow = new JCoresConsole(banner);
+				}
+			});
 		} 
 	}
 	
