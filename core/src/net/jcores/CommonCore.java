@@ -165,6 +165,7 @@ public class CommonCore {
         }
         
         p.forkTime /= N;
+        p.numCPUs = Runtime.getRuntime().availableProcessors();
         
         return p;
     }
@@ -271,6 +272,24 @@ public class CommonCore {
     public void log(String string, Level level) {
         this.manager(ManagerLogging.class).handler().log(string, level);
     }
+    
+    /**
+     * Executes the given function after at the given rate 
+     * indefinitely.
+     * 
+     * @param f0 The function to execute
+     * @param delay The rate at which the function will be executed.
+     */
+    public void manyTimes(final F0 f0, long rate) {
+        final Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                f0.f();
+            }
+        }, 0, rate);
+    }
+
 
     /**
      * Measures how long the execution of the given function took. The result will be returned in nanoseconds.
@@ -286,7 +305,7 @@ public class CommonCore {
     }
 
     /**
-     * Executes the given function after the given delay.
+     * Executes the given function once after the given delay.
      * 
      * @param f0 The function to execute
      * @param delay The delay after which the function will be executed.

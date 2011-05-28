@@ -54,7 +54,7 @@ public class BenchmarkMain {
      */
     @SuppressWarnings("unchecked")
     public static void main(String[] args) {
-    	JCoresScript.SCRIPT("Benchmark", args).pack();
+    	JCoresScript.SCRIPT("Benchmark", args).console(true).pack();
     	
         // Prepare benchmarks contianer
         final Collection<Class<? extends Benchmark<?>>> classes = new ArrayList<Class<? extends Benchmark<?>>>();
@@ -96,7 +96,7 @@ public class BenchmarkMain {
                     System.out.print(results.average(15) + "µs (");
                     long[] values = results.values();
                     for (int i = 0; i < values.length; i++) {
-                        System.out.print(values[i] + "µs");
+                        //System.out.print(values[i] + "µs");
                         if(i < values.length - 1) System.out.print(" ");
                     }
                     System.out.println(")");

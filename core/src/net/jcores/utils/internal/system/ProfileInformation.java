@@ -35,4 +35,7 @@ package net.jcores.utils.internal.system;
 public class ProfileInformation {
     /** The time it takes to <i>fork</i> a thread and wait for it to return. */
     public long forkTime;
+    
+    /** How many CPUs we use when we can */
+    public int numCPUs;
 }

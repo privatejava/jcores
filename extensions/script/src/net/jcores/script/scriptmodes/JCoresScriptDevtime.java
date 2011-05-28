@@ -105,7 +105,6 @@ public class JCoresScriptDevtime extends JCoresScript {
         mainAttributes.putValue("Manifest-Version", "1.0");
         mainAttributes.putValue("Main-Class", appmain);
         
-        
         $(tempdir).jar(this.name + ".jar", manifest);
 
         // Finally output what we did, and quit
