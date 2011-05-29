@@ -447,7 +447,9 @@ public class CommonCore {
      */
     public File tempdir() {
         final File file = new File(tempfile().getAbsoluteFile() + ".dir/");
-        file.mkdirs();
+        if (!file.mkdirs()) {
+        	report(MessageType.EXCEPTION, "Unable to create directory " + file);
+        }
         return file;
     }
 

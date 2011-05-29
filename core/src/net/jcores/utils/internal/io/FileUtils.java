@@ -160,8 +160,10 @@ public class FileUtils {
 
         // If its a dir, create the dir, if its a file, create its parent
         if (todir) to.mkdirs();
-        else
-            to.getParentFile().mkdirs();
+        else {
+        	if(!to.getParentFile().mkdirs())
+        		cc.report(MessageType.EXCEPTION, "Unable to create directory " + to.getParentFile());
+        }
 
         final File realTo = todir ? new File(to.getAbsoluteFile() + "/" + from.getName()) : to;
 

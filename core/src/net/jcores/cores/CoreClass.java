@@ -57,8 +57,8 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
     /** Used for serialization */
     private static final long serialVersionUID = -5054890786513339808L;
 
-    /** Our class manager */
-    protected final ManagerClass manager;
+    /** Our class manager */  
+    protected final ManagerClass manager; // TODO: FindBugs report: what about deserialization?
 
     /** All known constructors. */
     protected final Map<Class<?>[], Constructor<T>> constructors = new HashMap<Class<?>[], Constructor<T>>();

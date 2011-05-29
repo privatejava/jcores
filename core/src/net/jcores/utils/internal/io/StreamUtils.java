@@ -216,6 +216,7 @@ public class StreamUtils {
             while (avail > 0) {
                 avail = Math.min(avail, data.length);
 
+                // TODO: Mmhm, do we need to consider the return value of this (FindBugs report)
                 fis.read(data, 0, avail);
 
                 digest.update(data, 0, avail);

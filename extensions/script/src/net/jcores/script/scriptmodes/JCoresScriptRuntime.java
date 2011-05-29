@@ -135,7 +135,7 @@ public class JCoresScriptRuntime extends JCoresScript {
 	/**
 	 * Prints debug information into the console
 	 */
-	public void printCommonDebug() {
+	void printCommonDebug() {
 		// Print banner
 		System.out.println();
 		System.out.println();
@@ -159,7 +159,7 @@ public class JCoresScriptRuntime extends JCoresScript {
 	/**
 	 * Prints properties to the output
 	 */
-	private void printPropertiesDebug() {
+	void printPropertiesDebug() {
 		// Print properties
 		System.out.println();
 		System.out.println();

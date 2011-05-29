@@ -55,11 +55,16 @@ public class OptionIndexer extends Option {
      * Returns the current index. This method <b>only</b> works inside the {@link F1} function, as the 
      * value is bound to the currently executing thread. 
      * 
-     * @return The current index.
+     * @return The current index or -1 in case the index was not found (which should never happen when 
+     * you call the method only within the loop).
      */
     @SuppressWarnings("boxing")
     public int i() {
-        return this.indices.get(Thread.currentThread());
+    	final Thread currentThread = Thread.currentThread();
+    	
+    	if(!this.indices.containsKey(currentThread)) return -1;
+    	
+        return this.indices.get(currentThread);
     }
 
     /**
