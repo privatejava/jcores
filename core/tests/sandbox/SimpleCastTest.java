@@ -64,7 +64,9 @@ public class SimpleCastTest {
         Map<String, Number> mm = new HashMap<String, Number>();
         mm.put("blah", 123);
         mm.put("blubb", Math.PI);
-        System.out.println($(mm).value("blah"));
+        
+        $(mm).print();
+        $(map).print();
     }
     
     public Class<? extends DiagnosisChannelID<?>>[] observedChannels() {

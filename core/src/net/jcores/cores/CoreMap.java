@@ -27,9 +27,8 @@
  */
 package net.jcores.cores;
 
-import java.util.Map;
-
 import net.jcores.CommonCore;
+import net.jcores.utils.MapEntry;
 
 /**
  * Wraps a single Map. This core is currently experimental. <br/><br/>
@@ -40,37 +39,18 @@ import net.jcores.CommonCore;
  * @param <V> The type of values.
  * @since 1.0
  */
-public class CoreMap<K, V> extends CoreObject<K> {
+public class CoreMap<K, V> extends CoreObject<MapEntry<K, V>> {
 
     /** Used for serialization */
     private static final long serialVersionUID = 5115270057138570660L;
     
-    /** Internal map data */
-    private Map<K, V> map;
-
     /**
      * Wraps a map.
      * 
      * @param supercore The shared CommonCore.
      * @param map The map to wrap.
      */
-    @SuppressWarnings("unchecked")
-    public CoreMap(CommonCore supercore, Map<K, V> map) {
-        super(supercore, (K[]) map.keySet().toArray());
-        this.map = map;
-    }
-    
-    /**
-     * Returns the value of a given key.<br/>
-     * <br/>
-     * 
-     * Single-threaded. <br/>
-     * <br/>
-     * 
-     * @param key The key to query.
-     * @return The value for the given key.
-     */
-    public V value(K key) {
-        return this.map.get(key);
-    }
+    public CoreMap(CommonCore supercore, MapEntry<K, V> ... entries) {
+    	super(supercore, entries);
+    }   
 }

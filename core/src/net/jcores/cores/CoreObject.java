@@ -518,6 +518,28 @@ public class CoreObject<T> extends Core {
 
         return false;
     }
+    
+    /**
+     * Counts how many times each unique item is contained (i.e., computes a 
+     * histogram). <br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "a", "b").contains()</code> - Returns <b><code>false</code></b>!</li>
+     * </ul>
+     * 
+     * Single-threaded. <br/>
+     * <br/>
+     * 
+     * @param object The object to search for. A search for null will always return false.
+     * @return True if the object is there, false if not.
+     */
+    public CoreMap<T, Integer> count() {
+    	
+    	return null;
+    }
+
 
     /**
      * Prints debug output to the console. Useful for figuring out what's going wrong in a

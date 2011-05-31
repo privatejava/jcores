@@ -248,21 +248,17 @@ public class CoreKeeper {
     }
     
     /**
-     * Wraps a map. The inherited parts of the CoreMap will behave like a CoreObject on the 
-     * Map's key set. Note, however, that the order of the key set is undefined, so for example 
-     * <code>get(0)</code> might yield different results on for different CoreMaps of the 
-     * same Map. Also note that this function always returns a parameterized, but vanilla 
-     * CoreObject, which has to be cast using <code>.as()</code> again.
+     * Wraps a map.
      * 
      * @param map The map to wrap
      * @param <K> Type of keys.
      * @param <V> Type of values.
      * 
-     * @return A CoreMap of the given type wrapping a converted array of the
+     * @return A CoreMap of the given type wrapping a converted MapEntry array of the
      * collection.
      */
     public static <K, V> CoreMap<K, V> $(Map<K, V> map) {
-        return new CoreMap<K, V>($, map);
+        return new CoreMap<K, V>($, Wrapper.convert(map));
     }
     
 

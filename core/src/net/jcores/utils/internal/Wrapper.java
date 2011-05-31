@@ -29,8 +29,11 @@ package net.jcores.utils.internal;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import net.jcores.interfaces.functions.F1;
+import net.jcores.utils.MapEntry;
 
 /**
  * Wraps a number of collections to arrays. You do not need this.
@@ -81,4 +84,29 @@ public class Wrapper {
 
         return (Y[]) converted;
     }
+    
+
+    /**
+     * Returns set of MapEntry objects for map.
+     *    
+     * @param <T> 
+     * @param <Y> 
+     * @param converter 
+     * @param list 
+     * @param mapType 
+     * 
+     * @return .
+     */
+    @SuppressWarnings("unchecked")
+    public static <K, V> MapEntry<K,V>[] convert(Map<K, V> map) {
+    	final MapEntry<K, V> entries[] = new MapEntry[map.size()];
+    	int i = 0;
+    	for (Entry<K, V> entry : map.entrySet()) {
+			entries[i++] = new MapEntry<K, V>(entry.getKey(), entry.getValue());
+		}
+
+    	return entries;
+    }
+
+        
 }
