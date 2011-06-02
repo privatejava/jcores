@@ -27,6 +27,7 @@
  */
 package net.jcores.script;
 
+import net.jcores.script.input.Input;
 import net.jcores.script.scriptmodes.JCoresScriptDevtime;
 import net.jcores.script.scriptmodes.JCoresScriptRuntime;
 
@@ -59,6 +60,9 @@ public abstract class JCoresScript {
 
     /** If set to true, a console will always be shown */
 	protected boolean console = false;
+	
+	/** The input object containing all the parameters we have */
+	protected Input input = null;
 
     /**
      * Store parameters.
@@ -89,16 +93,28 @@ public abstract class JCoresScript {
     }
     
     /**
-     * Call this method if you want your script to always show a console. If a terminal
+     * Call this method if you want your script to always provide a console. If a terminal
      * or console is detected at runtime nothing is being done. If no console is detected,
      * a console window will be spawned.
      * 
-     * @param show If a console should be shown. Defaults to <code>false</code>.
+     * @param _input The definition of the input the script accepts.
      * @return This object.
      */
-    public JCoresScript console(boolean show) {
-    	this.console = show;
+    public JCoresScript console(Input _input) {
+    	this.console = true;
+    	this.input = _input;
     	return this;
+    }
+    
+    /**
+     * Call this method if you want your script to always provide a console. If a terminal
+     * or console is detected at runtime nothing is being done. If no console is detected,
+     * a console window will be spawned.
+     * 
+     * @return This object.
+     */
+    public JCoresScript console() {
+        return console(null);
     }
 
     /**
@@ -111,4 +127,17 @@ public abstract class JCoresScript {
      * afterwards (which is a direct result of the remark above).
      */
     public abstract void pack();
+
+
+    /**
+     * TODO
+     * 
+     * @param string
+     * @return
+     */
+    public JCoresScript src(String string) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

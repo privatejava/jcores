@@ -518,6 +518,7 @@ public class CoreObject<T> extends Core {
 
         return false;
     }
+    
 
     /**
      * Prints debug output to the console. Useful for figuring out what's going wrong in a
@@ -1712,6 +1713,33 @@ public class CoreObject<T> extends Core {
         return new CoreObject<T>(this.commonCore, type, stack);
     }
 
+    
+    /**
+     * Returns a Core with the element order reversed.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "b", "c").reverse()</code> - Returns a core <code>$("c", "b", "a")</code>.</li> 
+     * </ul>  
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @return A CoreObject with reversed element order.
+     */
+    public CoreObject<T> reverse() {
+        if(size() == 0) return this;
+        
+        final T[] c = Arrays.copyOf(this.t, this.t.length);
+        for (int i = 0; i < size(); i++) {
+            c[i] = this.t[this.t.length - i];
+        }
+
+        return new CoreObject<T>(this.commonCore, c);
+    }
+    
+    
     /**
      * Serializes this core into the given file. Objects that are not serializable
      * are ignored. The file can later be restored with the function 

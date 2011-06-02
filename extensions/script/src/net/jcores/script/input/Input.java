@@ -1,7 +1,7 @@
 /*
- * SimpleScript.java
+ * Input.java
  * 
- * Copyright (c) 2010, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,26 +25,45 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package sandbox;
+package net.jcores.script.input;
 
-import static net.jcores.CoreKeeper.$;
-
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.jcores.script.JCoresScript;
 
-/**
- * @author rb
- *
- */
-public class SimpleScript {
 
+/**
+ * The input object describes what kind of input a {@link JCoresScript} 
+ * accepts.
+ * 
+ * @author Ralf Biedert
+ * @since 1.0
+ */
+public class Input {
+    /** List with all our inputs */
+    final List<AbstractInputType> inputs = new ArrayList<AbstractInputType>();
+    
     /**
-     * @param args
-     * @throws IOException 
+     * Defines or gets an input parameter with the given name.   
+     * 
+     * @param <T> The type of the input parameter.
+     * @param type The type of the input parameter.
+     * @param name The name of the input parameter.
+     * @return The input object.
      */
-    public static void main(String[] args) throws IOException {
-        JCoresScript.SCRIPT("PrintDirs", args).console().pack();
-        $(".").file().dir().print();
+    public <T extends AbstractInputType> T parameter(Class<T> type, String name) {
+        T t = null;
+        try {
+            t = type.newInstance();
+            this.inputs.add(t);
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        
+        return t;
     }
+
 }
