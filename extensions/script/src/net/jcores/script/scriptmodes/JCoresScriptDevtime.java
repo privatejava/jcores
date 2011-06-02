@@ -34,6 +34,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -79,6 +80,10 @@ public class JCoresScriptDevtime extends JCoresScript {
             urls.addAll(Arrays.asList(loader.getURLs()));
             loader = $(loader.getParent()).get(URLClassLoader.class, null);
         }
+        
+        // We reverse the order so that elements early in the classpath (which are loaded
+        // first), will be copied last, therefore overwriting other elements
+        Collections.reverse(urls);
 
         // Now, go through all elements, when it's a JAR, unpack it, when its a dir, copy it
         final File tempdir = $.tempdir();

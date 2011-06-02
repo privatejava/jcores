@@ -1,7 +1,7 @@
 /*
- * SimpleScript.java
+ * InputFile.java
  * 
- * Copyright (c) 2010, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,26 +25,13 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package sandbox;
-
-import static net.jcores.CoreKeeper.$;
-
-import java.io.IOException;
-
-import net.jcores.script.JCoresScript;
+package net.jcores.script.input;
 
 /**
- * @author rb
- *
+ * Input type reflecting multiple (zero to infinite) files. 
+ * 
+ * @author Ralf Biedert
  */
-public class SimpleScript {
-
-    /**
-     * @param args
-     * @throws IOException 
-     */
-    public static void main(String[] args) throws IOException {
-        JCoresScript.SCRIPT("PrintDirs", args).console().pack();
-        $(".").file().dir().print();
-    }
+public class InputFiles extends AbstractInputType {
+    
 }

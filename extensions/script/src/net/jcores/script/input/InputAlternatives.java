@@ -1,7 +1,7 @@
 /*
- * SimpleScript.java
+ * InputAlternatives.java
  * 
- * Copyright (c) 2010, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,26 +25,49 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package sandbox;
+package net.jcores.script.input;
 
-import static net.jcores.CoreKeeper.$;
-
-import java.io.IOException;
-
-import net.jcores.script.JCoresScript;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * @author rb
- *
+ * Input type reflecting multiple a set of predefined alternatives. 
+ * 
+ * @author Ralf Biedert
+ * @since 1.0
  */
-public class SimpleScript {
-
+public class InputAlternatives extends AbstractInputType {
     /**
-     * @param args
-     * @throws IOException 
+     * One alternative.
+     * 
+     * @author Ralf Biedert
+     * @since 1.0
      */
-    public static void main(String[] args) throws IOException {
-        JCoresScript.SCRIPT("PrintDirs", args).console().pack();
-        $(".").file().dir().print();
+    public static class Alternative {
+        protected String label;
+        protected String shortDescription;
+        protected String longDescription;
+    }
+    
+    final List<Alternative> alternatives = new ArrayList<InputAlternatives.Alternative>();
+    
+    
+    /**
+     * Adds an alternative.
+     * 
+     * @param label The short label of the alternative. 
+     * @param shortDesc The short description of the alternative. 
+     * @param longDescr The long description of the alternative. 
+     * @return This InputAlternatives object. 
+     */
+    public InputAlternatives alternative(String label, String shortDesc, String longDescr) {
+        final Alternative alternative = new Alternative();
+        alternative.label = label;
+        alternative.shortDescription = shortDesc;
+        alternative.longDescription = longDescr;
+        
+        this.alternatives.add(alternative);
+        
+        return this;
     }
 }

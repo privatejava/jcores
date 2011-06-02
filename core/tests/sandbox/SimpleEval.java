@@ -31,20 +31,56 @@ import static net.jcores.CoreKeeper.$;
 
 import java.io.IOException;
 
-import net.jcores.script.JCoresScript;
+import net.jcores.cores.CoreObject;
+import net.jcores.cores.CoreString;
+import net.jcores.interfaces.functions.F1;
 
 /**
  * @author rb
- *
+ * 
  */
-public class SimpleScript {
+public class SimpleEval {
 
     /**
      * @param args
-     * @throws IOException 
+     * @throws IOException
      */
     public static void main(String[] args) throws IOException {
-        JCoresScript.SCRIPT("PrintDirs", args).console().pack();
-        $(".").file().dir().print();
+        CoreString input = $("Evaluated.txt").file().text().string().split("\n");
+
+        CoreObject<String> x0 = x(input, 0);
+        CoreObject<String> x1 = x(input, 1);
+        CoreObject<String> x2 = x(input, 2);
+        CoreObject<String> x3 = x(input, 3);
+        CoreObject<String> x4 = x(input, 4);
+
+        for (int a = 0; a < x0.size(); a++) {
+            for (int b = 0; b < x1.size(); b++) {
+                for (int c = 0; c < x2.size(); c++) {
+                    for (int d = 0; d < x3.size(); d++) {
+                        for (int e = 0; e < x4.size(); e++) {
+                            String s = $(x0.get(a),x1.get(b),x2.get(c),x3.get(d),x4.get(e)).string().join(",") ;
+                            if(!input.containssubstr(s))
+                            System.out.println(s +": " + input.containssubstr(s));
+                            
+                        }
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+    public static CoreObject<String> x(CoreString s, final int i) {
+        return s.map(new F1<String, String>() {
+            @Override
+            public String f(String x) {
+                return x.split(",")[i];
+            }
+        }).unique();
     }
 }

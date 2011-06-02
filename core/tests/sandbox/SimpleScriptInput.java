@@ -32,19 +32,27 @@ import static net.jcores.CoreKeeper.$;
 import java.io.IOException;
 
 import net.jcores.script.JCoresScript;
+import net.jcores.script.input.Input;
+import net.jcores.script.input.InputAlternatives;
+import net.jcores.script.input.InputFiles;
 
 /**
  * @author rb
  *
  */
-public class SimpleScript {
+public class SimpleScriptInput {
 
     /**
      * @param args
      * @throws IOException 
      */
     public static void main(String[] args) throws IOException {
-        JCoresScript.SCRIPT("PrintDirs", args).console().pack();
+        final Input input = new Input();
+        input.parameter(InputFiles.class, "name").description("Short description", "Long description");
+        input.parameter(InputAlternatives.class, "mode").alternative("1", "Short", "Long").dfault("1") ;
+        
+        JCoresScript.SCRIPT("Blah", args).console(input).pack();
+        
         $(".").file().dir().print();
     }
 }

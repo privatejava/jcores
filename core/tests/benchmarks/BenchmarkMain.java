@@ -54,7 +54,7 @@ public class BenchmarkMain {
      */
     @SuppressWarnings("unchecked")
     public static void main(String[] args) {
-    	JCoresScript.SCRIPT("Benchmark", args).console(true).pack();
+    	JCoresScript.SCRIPT("Benchmark", args).console().pack();
     	
         // Prepare benchmarks contianer
         final Collection<Class<? extends Benchmark<?>>> classes = new ArrayList<Class<? extends Benchmark<?>>>();
