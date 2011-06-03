@@ -50,6 +50,7 @@ import net.jcores.interfaces.functions.F1Object2Bool;
 import net.jcores.options.MessageType;
 import net.jcores.options.Option;
 import net.jcores.options.OptionRegEx;
+import net.jcores.utils.CSVLine;
 import net.jcores.utils.Compound;
 import net.jcores.utils.internal.io.StreamUtils;
 import net.jcores.utils.internal.lang.StringUtils;
@@ -132,6 +133,35 @@ public class CoreString extends CoreObject<String> {
 
         return false;
     }
+    
+    
+
+    /**
+     * Treats this core as the content of one or more CSV (comma-separated values) files 
+     * and returns a core where each {@link CSVLine} object represents one line.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("data.csv").file().text().csv().get(5).i(2)</code> - Returns the integer 
+     * in the 6th line at the 3rd position in the file <code>data.csv</code>.</li>
+     * </ul> 
+     * 
+     * Single-threaded. <br/>
+     * <br/>
+     * 
+     * @return A {@link CoreObject} with an {@link CSVLine} object for each line of the 
+     * CSV file. 
+     * 
+     */
+    public CoreObject<CSVLine> csv() {
+        return split("\n").map(new F1<String, CSVLine>() {
+            @Override
+            public CSVLine f(String x) {
+                return new CSVLine($(x.split(",")).trim().t);
+            }
+        });
+    }  
 
     
     /**

@@ -32,16 +32,16 @@ package net.jcores.utils;
  * A MapEntry is a key, value pair from a map. 
  * 
  * @author Ralf Biedert
- *
- * @param <K>
- * @param <V>
+ * @param <K> The type of keys.
+ * @param <V> The type of values.
  * @since 1.0
  */
 public class MapEntry<K, V> implements Comparable<MapEntry<K, V>> {
-	/** */
+    
+	/** The key of this entry */
 	private K key;
 	
-	/** */
+	/** The value of this entry */
 	private V value;
 
 	/**
@@ -84,13 +84,52 @@ public class MapEntry<K, V> implements Comparable<MapEntry<K, V>> {
 	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public int compareTo(MapEntry<K, V> o) {
-		if(key instanceof Comparable) {
-			return ((Comparable) key).compareTo(o);
+		if(this.key instanceof Comparable) {
+			return ((Comparable) this.key).compareTo(o);
 		}
 		return 0;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@SuppressWarnings("rawtypes")
+    @Override
+	public boolean equals(Object obj) {
+	    if (obj instanceof MapEntry) {
+            final MapEntry e = (MapEntry) obj;
+
+            if(this.key == null && this.value == null && e.key == null && e.value == null) return true;
+            if(this.key == null && this.value == null && (e.key != null || e.value != null)) return false;
+            if(this.key != null && this.value == null) {
+                if(e.value != null) return false;
+                return this.key.equals(e.key);
+            }
+            if(this.key == null && this.value != null) {
+                if(e.key != null) return false;
+                return this.value.equals(e.value);
+            }
+
+            return this.key.equals(e.key) && this.value.equals(e.value);
+	    }
+	    
+	    return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+	    int rval = 0;
+	    
+	    if(this.key != null) rval = this.key.hashCode() * 13;
+	    if(this.value != null) rval += this.value.hashCode();
+	    
+	    return rval;
 	}
 }
 	

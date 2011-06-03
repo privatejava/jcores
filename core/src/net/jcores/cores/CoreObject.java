@@ -41,7 +41,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.regex.Matcher;
@@ -63,6 +65,7 @@ import net.jcores.utils.Compound;
 import net.jcores.utils.Staple;
 import net.jcores.utils.internal.Folder;
 import net.jcores.utils.internal.Mapper;
+import net.jcores.utils.internal.Wrapper;
 import net.jcores.utils.internal.io.StreamUtils;
 import net.jcores.utils.internal.lang.ObjectUtils;
 
@@ -519,6 +522,42 @@ public class CoreObject<T> extends Core {
         return false;
     }
     
+    
+    /**
+     * Counts how many times each unique item is contained in this core (i.e., computes a 
+     * histogram). <br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "a", "b").contains().value("a")</code> - Returns 2.</li>
+     * </ul>
+     * 
+     * Single-threaded. <br/>
+     * <br/>
+     * 
+     * @return A CoreMap with the counts for each unique object.
+     */
+    @SuppressWarnings("boxing")
+    public CoreMap<T, Integer> count() {
+    	final Map<T, Integer> results = new HashMap<T, Integer>();
+    	
+    	// Now generate the histogram.
+    	for(int i = 0; i < size(); i++) {
+    	    final T e = this.t[i];
+    	    if(e == null) continue;
+    	    
+    	    if(results.containsKey(e)) {
+    	        results.put(e, results.get(e) + 1);
+    	    } else {
+    	        results.put(e, 1);
+    	    }
+    	}
+    	
+    	// Eventually return the results
+    	return new CoreMap<T, Integer>(this.commonCore, Wrapper.convert(results));
+    }
+
 
     /**
      * Prints debug output to the console. Useful for figuring out what's going wrong in a
@@ -1816,7 +1855,7 @@ public class CoreObject<T> extends Core {
 
         final int i = indexToOffset(start);
         final int l = length > 0 ? length : indexToOffset(length) - i + 1;
-
+        
         if (i < 0 || i >= size()) {
             this.commonCore.report(MessageType.MISUSE, "slice() - converted parameter start(" + start + " -> " + i + ") is outside bounds.");
             return new CoreObject<T>(this.commonCore, Arrays.copyOfRange(this.t, 0, 0));

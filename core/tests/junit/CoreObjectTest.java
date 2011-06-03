@@ -324,4 +324,11 @@ public class CoreObjectTest {
         Assert.assertEquals($("a", "b", "c", "d", "e", "f", "g"), $("a", "b", "c", "d", "e", "f", "g").random(1.0).sort());
         Assert.assertEquals(0, $("a", "b", "c", "d", "e", "f", "g").random(0.0).size());
     }
+    
+    /** */
+    @SuppressWarnings("boxing")
+    @Test
+    public void testCount() {
+        Assert.assertEquals(4, 0 + $("a", "b", "a", "c", "a", "d", "a").count().value("a"));
+    }
 }

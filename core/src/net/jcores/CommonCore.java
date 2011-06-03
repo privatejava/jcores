@@ -53,8 +53,8 @@ import net.jcores.interfaces.functions.F0;
 import net.jcores.managers.Manager;
 import net.jcores.managers.ManagerClass;
 import net.jcores.managers.ManagerDebugGUI;
-import net.jcores.managers.ManagerLogging;
 import net.jcores.managers.ManagerDeveloperFeedback;
+import net.jcores.managers.ManagerLogging;
 import net.jcores.options.MessageType;
 import net.jcores.options.Option;
 import net.jcores.utils.internal.Reporter;
@@ -278,7 +278,7 @@ public class CommonCore {
      * indefinitely.
      * 
      * @param f0 The function to execute
-     * @param delay The rate at which the function will be executed.
+     * @param rate The rate at which the function will be executed.
      */
     public void manyTimes(final F0 f0, long rate) {
         final Timer timer = new Timer();

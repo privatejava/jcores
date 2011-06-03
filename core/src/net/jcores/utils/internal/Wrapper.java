@@ -88,13 +88,11 @@ public class Wrapper {
 
     /**
      * Returns set of MapEntry objects for map.
-     *    
-     * @param <T> 
-     * @param <Y> 
-     * @param converter 
-     * @param list 
-     * @param mapType 
      * 
+     * @param map  The {@link Map} object to wrap.
+     * @param <K> The type of the key.
+     * @param <V> The type of the value.
+     *    
      * @return .
      */
     @SuppressWarnings("unchecked")

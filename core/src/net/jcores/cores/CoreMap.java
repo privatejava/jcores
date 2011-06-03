@@ -33,7 +33,6 @@ import net.jcores.utils.MapEntry;
 /**
  * Wraps a single Map. This core is currently experimental. <br/><br/>
  * 
- * 
  * @author Ralf Biedert
  * @param <K> The type of keys.
  * @param <V> The type of values.
@@ -48,9 +47,62 @@ public class CoreMap<K, V> extends CoreObject<MapEntry<K, V>> {
      * Wraps a map.
      * 
      * @param supercore The shared CommonCore.
-     * @param map The map to wrap.
+     * @param entries The entries to wrap.
      */
     public CoreMap(CommonCore supercore, MapEntry<K, V> ... entries) {
     	super(supercore, entries);
-    }   
+    } 
+    
+
+    /**
+     * Return the value for the given key.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(map).value("v")</code> - Same as <code>map.get("v")</code>.</li> 
+     * </ul>
+     * 
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @param key The key to receive a value for.
+     * @return The value for the given key, or null if no matching key was found.
+     */
+    public V value(K key) {
+        for (int i = 0; i < this.t.length; i++) {
+            if(this.t[i] == null) continue;
+            if(this.t[i].key().equals(key)) return this.t[i].value();
+        }
+        
+        return null;
+    }
+    
+
+    /**
+     * Return the first found key for the given value.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(map).key("v")</code> - Returns the first key with <code>map.put("k", "v")</code>.</li> 
+     * </ul>
+     * 
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @param value The value to retrieve a key for.
+     * @return The key for the given value, or null if no matching value was found.
+     */
+    public K key(V value) {
+        for (int i = 0; i < this.t.length; i++) {
+            if(this.t[i] == null) continue;
+            if(this.t[i].value().equals(value)) return this.t[i].key();
+        }
+        
+        return null;
+    }
+
 }

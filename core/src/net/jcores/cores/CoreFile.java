@@ -270,7 +270,7 @@ public class CoreFile extends CoreObject<File> {
 
                 // Try to delete the entry
                 if(!x.delete()) {
-                	commonCore.report(MessageType.EXCEPTION, "Unable to delete " + x);
+                	CoreFile.this.commonCore.report(MessageType.EXCEPTION, "Unable to delete " + x);
                 }
 
                 return null;
@@ -472,6 +472,7 @@ public class CoreFile extends CoreObject<File> {
      * <br/>
      * 
      * @param target The file to write the ZIP to.
+     * @param manifest The manifest to add to the JAR file.
      * @param options Currently none used.
      * @return This Core again.
      */
