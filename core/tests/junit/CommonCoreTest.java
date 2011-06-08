@@ -66,4 +66,17 @@ public class CommonCoreTest {
 
         Assert.assertEquals(666, i.get());
     }
+    
+    
+    /** */
+    @Test
+    public void testPermute() {
+        final String x[] = $("a", "b", "c", "d", "e").unsafearray();
+        
+        int i = 0;
+        while($.permute(x))
+            i++;
+        
+        Assert.assertEquals(120 - 1, i);
+     }
 }

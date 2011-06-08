@@ -1611,6 +1611,30 @@ public class CoreObject<T> extends Core {
 
         return this;
     }
+    
+
+    /**
+     * Prints all strings to the console in a single line with the given joiner. 
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "b", "c").print(",")</code> - Prints 
+     * <code>a,b,c</code></li> 
+     * </ul>
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @since 1.0
+     * @param joiner The string to put in between the elements. 
+     * @return Returns this CoreObject object again.
+     */
+    public CoreObject<T> print(String joiner) {
+        System.out.println(string().join(joiner));
+        return this;
+    }
+    
 
     /**
      * Returns a randomly selected object, including null values.<br/>

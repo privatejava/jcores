@@ -32,6 +32,11 @@ import static net.jcores.CoreKeeper.$;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -125,8 +130,8 @@ public class CommonCore {
         final ProfileInformation p = new ProfileInformation();
         final int RUNS = 10;
         final int N = 5;
-        
-        // Measure how long it takes to fork a thread and to wait for it again. We 
+
+        // Measure how long it takes to fork a thread and to wait for it again. We
         // test 10 times and take the average of the last 5 runs.
         long times[] = new long[RUNS];
         for (int i = 0; i < RUNS; i++) {
@@ -158,15 +163,15 @@ public class CommonCore {
                 }
             });
         }
-        
+
         // Now take the average
-        for(int i=RUNS - N; i<times.length; i++) {
+        for (int i = RUNS - N; i < times.length; i++) {
             p.forkTime += times[i];
         }
-        
+
         p.forkTime /= N;
         p.numCPUs = Runtime.getRuntime().availableProcessors();
-        
+
         return p;
     }
 
@@ -235,6 +240,7 @@ public class CommonCore {
             this.executor.execute(r);
     }
 
+    
     /**
      * Sets a manager of a given type, only needed for core developers.
      * 
@@ -249,6 +255,7 @@ public class CommonCore {
         this.managers.putIfAbsent(clazz, manager);
         return (T) this.managers.get(clazz);
     }
+    
 
     /**
      * Returns a manager of the given type, only needed for core developers.
@@ -261,6 +268,44 @@ public class CommonCore {
     public <T extends Manager> T manager(Class<T> clazz) {
         return (T) this.managers.get(clazz);
     }
+    
+    
+    /**
+     * Returns a new and empty (hash) {@link Map}.  
+     * 
+     * @param <K> The type of the key.
+     * @param <V> The type of the value.
+     * @return Returns a new map.
+     */
+    public <K, V> Map<K, V> map() {
+        return new HashMap<K, V>();
+    }
+
+    /**
+     * Returns a new (linked) {@link List} when the number of elements to 
+     * store is not known.
+     * 
+     * @since 1.0
+     * @param <T> The type of the list. 
+     * @return The new list.
+     */
+    public <T> List<T> list() {
+        return new LinkedList<T>();
+    }
+
+    /**
+     * Returns a new (array) {@link List} when the number of elements to store is 
+     * approximately known.
+     * 
+     * @since 1.0
+     * @param <T> The type of the list. 
+     * @param n The approximate number of elements to store.
+     * @return The new list.
+     */
+    public <T> List<T> list(int n) {
+        return new ArrayList<T>(n);
+    }
+
 
     /**
      * Logs the given string. This method might, but is not required, to use the official Java logging
@@ -272,9 +317,9 @@ public class CommonCore {
     public void log(String string, Level level) {
         this.manager(ManagerLogging.class).handler().log(string, level);
     }
-    
+
     /**
-     * Executes the given function after at the given rate 
+     * Executes the given function after at the given rate
      * indefinitely.
      * 
      * @param f0 The function to execute
@@ -289,7 +334,6 @@ public class CommonCore {
             }
         }, 0, rate);
     }
-
 
     /**
      * Measures how long the execution of the given function took. The result will be returned in nanoseconds.
@@ -321,14 +365,56 @@ public class CommonCore {
     }
 
     /**
+     * Permutes the given <b>sorted</b> list of objects. With each invocation the next
+     * possible permutation will be constructed. You can call this method multiple times
+     * on the same array, which iteratively creates the next permutation until <code>false</code> is being returned. In
+     * that case, the array was not permuted
+     * and no other permutations exist.
+     * 
+     * @since 1.0
+     * @param <T> The type of the array.
+     * @param objects The array to permute.
+     * @return True if the array was successfully permuted, false if not. Once this method
+     * returns false, subsequent calls on the same array will always return false.
+     */
+    public <T extends Comparable<T>> boolean permute(T objects[]) {
+        // Pseudocode from Wikipedia
+        // Find the largest index k such that a[k] < a[k + 1]. If no such index exists, the permutation is the last
+        // permutation.
+        int kk = -1, ll = -1, n = objects.length;
+        for (int k = 0; k < n - 1; k++) {
+            if (objects[k].compareTo(objects[k + 1]) < 0) kk = k;
+        }
+        if (kk < 0) return false;
+
+        // Find the largest index l such that a[k] < a[l]. Since k + 1 is such an index, l is well defined and satisfies
+        // k < l.
+        for (int l = 0; l < n; l++) {
+            if (objects[kk].compareTo(objects[l]) < 0) ll = l;
+        }
+
+        // Swap a[k] with a[l].
+        swap(objects, kk, ll);
+
+        // Reverse the sequence from a[k + 1] up to and including the final element a[n].
+        int c = 1;
+        for (int i = kk + 1; i < n; i++) {
+            if (i >= n - c) break;
+            swap(objects, i, n - c++);
+        }
+
+        return true;
+    }
+
+    /**
      * Returns the profiling information gathered at startup. Only required internally.
      * 
-     * @return The current profile information. 
+     * @return The current profile information.
      */
     public ProfileInformation profileInformation() {
         return this.profileInformation;
     }
-    
+
     /**
      * Creates a CoreNumber object with numbers ranging from 0 (inclusive) up to <code>end</code> (exclusive).
      * 
@@ -426,6 +512,22 @@ public class CommonCore {
     }
 
     /**
+     * Swaps two elements in an array.
+     * 
+     * @since 1.0
+     * @param <T> The type of the object array.
+     * @param objects The array to swap the elements in.
+     * @param i The index i to swap with j.
+     * @param j The index j to swap with i.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> void swap(T objects[], int i, int j) {
+        Object tmp = objects[i];
+        objects[i] = objects[j];
+        objects[j] = (T) tmp;
+    }
+
+    /**
      * Returns a temporary file.
      * 
      * @return A File object for a temporary file.
@@ -448,7 +550,7 @@ public class CommonCore {
     public File tempdir() {
         final File file = new File(tempfile().getAbsoluteFile() + ".dir/");
         if (!file.mkdirs()) {
-        	report(MessageType.EXCEPTION, "Unable to create directory " + file);
+            report(MessageType.EXCEPTION, "Unable to create directory " + file);
         }
         return file;
     }
