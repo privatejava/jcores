@@ -155,6 +155,9 @@ public class CoreURI extends CoreObject<URI> {
      * @return A CoreFile object enclosing the files of all downloaded URIs.
      */
     public CoreFile download(final String path) {
+        // Create output directory 
+        new File(path).mkdirs();
+        
         return new CoreFile(this.commonCore, map(new F1<URI, File>() {
             public File f(URI x) {
                 try {

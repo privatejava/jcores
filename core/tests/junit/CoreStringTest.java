@@ -95,6 +95,16 @@ public class CoreStringTest {
         Assert.assertEquals("Hello World", $("Hellx", "Wxrld").replace("x", "o").join(" "));
     }
     
+
+    /** */
+    @Test
+    public void testPad() {
+        Assert.assertEquals("007", $("7").pad(3, '0').get(0));
+        Assert.assertEquals("     *", $("*").pad(6).get(0));
+    }
+    
+
+    
     /** */
     @Test
     public void testLog() {

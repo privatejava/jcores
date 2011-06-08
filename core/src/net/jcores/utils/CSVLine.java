@@ -84,6 +84,15 @@ public class CSVLine {
     }
 
     
+    /**
+     * Returns the size of this line (the number of entries).
+     * 
+     * @return The number of entries.
+     */
+    public int size() {
+        return this.entries.length;
+    }
+    
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */

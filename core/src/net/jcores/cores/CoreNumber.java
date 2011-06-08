@@ -112,7 +112,7 @@ public class CoreNumber extends CoreObject<Number> {
 
     /**
      * Returns the number at the given position as an integer, or
-     * returns <code>Integer.MIN_VALUE</code> if the object was null.<br/>
+     * returns <code>0</code> if the object was null.<br/>
      * <br/>
      * 
      * Examples:
@@ -124,10 +124,10 @@ public class CoreNumber extends CoreObject<Number> {
      * <br/>
      * 
      * @param index The index to get the number for.
-     * @return The integer value of the number or <code>Integer.MIN_VALUE</code> if it was null.
+     * @return The integer value of the number or <code>0</code> if it was null.
      */
     public int i(int index) {
-        if (get(index) == null) return Integer.MIN_VALUE;
+        if (get(index) == null) return 0;
         return this.t[index].intValue();
     }
 

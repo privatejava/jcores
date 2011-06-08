@@ -105,4 +105,15 @@ public class CoreMap<K, V> extends CoreObject<MapEntry<K, V>> {
         return null;
     }
 
+    
+    
+    /**
+     * Returns the inverse core of this core, i.e., mapping from values to keys.
+     * 
+     * @return TODO
+     */
+    public CoreMap<V, K> inverse() {
+        // TODO
+        return null;
+    }
 }

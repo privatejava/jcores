@@ -164,6 +164,36 @@ public class CoreString extends CoreObject<String> {
     }  
 
     
+
+    /**
+     * Tries to parse the String at the given position as a double, or
+     * returns <code>Double.NaN</code> if the object was null or not convertible.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("0.4").d(0)</code> - Returns 0.4</li>
+     * </ul> 
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @param index The index to get the number for.
+     * @return The integer value of the number or <code>Double.NaN</code> if it was null.
+     */
+    public double d(int index) {
+        if (get(index) == null) return Double.NaN;
+        
+        try {
+            return Double.parseDouble(this.t[index]);
+        } catch (Exception e) {
+        }
+        
+        return Double.NaN;
+    }
+
+
+    
     /**
      * Decodes all strings from the application/x-www-form-urlencoded format.<br/>
      * <br/>
@@ -424,6 +454,35 @@ public class CoreString extends CoreObject<String> {
         return rval;
     }
 
+
+    /**
+     * Tries to parse the String at the given position as an integer, or
+     * returns <code>0</code> if the object was null or not convertible.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("1").i(0)</code> - Returns 1</li>
+     * </ul> 
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @param index The index to get the number for.
+     * @return The integer value of the number or <code>0</code> if it was null.
+     */
+    public int i(int index) {
+        if (get(index) == null) return 0;
+        
+        try {
+            return Integer.parseInt(this.t[index]);
+        } catch (Exception e) {
+        }
+        
+        return 0;
+    }
+
+    
     /**
      * Joins all string with an empty ("") joiner. <br/>
      * <br/>
@@ -503,6 +562,69 @@ public class CoreString extends CoreObject<String> {
         }).expand(String.class).as(CoreString.class);
     }
 
+    /**
+     * Pads all strings to the given length using the given padding character.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("7").pad(3, '0')</code> - Yields <code>$("007").</code></li>
+     * </ul>  
+     * 
+     * Multi-threaded.<br/>
+     * <br/>
+     * 
+     * @param length The length to which the elements should be padded 
+     * @param pad The character to pad with.
+     * 
+     * @return Returns a core with the padded strings.
+     */
+    public CoreString pad(final int length, final char pad) {
+        if (size() == 0) return this;
+
+        return new CoreString(this.commonCore, map(new F1<String, String>() {
+            @Override
+            public String f(String x) {
+                if(x.length() >= length) return x;
+
+                final StringBuilder sb = new StringBuilder();
+                final int delta = length - x.length();
+                
+                for(int i=0; i<delta; i++) {
+                    sb.append(pad);
+                }
+                
+                sb.append(x);
+                
+                return sb.toString();
+            }
+        
+        }).unsafearray());
+    }
+
+ 
+
+    /**
+     * Pads all strings to the given length with whitespace.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("* bread").pad(2)</code> - Yields <code>$("  * bread").</code></li>
+     * </ul>  
+     * 
+     * Multi-threaded.<br/>
+     * <br/>
+     * 
+     * @param length The length to which the elements should be padded 
+     * 
+     * @return Returns a core with the padded strings.
+     */
+    public CoreString pad(final int length) {
+        return pad(length, ' ');
+    }
+
+    
     /**
      * Prints all strings to the console.<br/>
      * <br/>
