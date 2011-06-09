@@ -32,7 +32,9 @@ import static net.jcores.CoreKeeper.$;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -98,6 +100,9 @@ public class CommonCore {
     /** Keeps the profile information */
     private final ProfileInformation profileInformation;
 
+    /** Method to clone objects */
+    private Method cloneMethod;
+
     /**
      * Constructs the common core.
      */
@@ -110,13 +115,21 @@ public class CommonCore {
                 return t;
             }
         });
-
+        
         // Register managers we know
         manager(ManagerClass.class, new ManagerClass());
         manager(ManagerDeveloperFeedback.class, new ManagerDeveloperFeedback());
         manager(ManagerDebugGUI.class, new ManagerDebugGUI());
         manager(ManagerLogging.class, new ManagerLogging());
 
+        try {
+            this.cloneMethod = Object.class.getDeclaredMethod("clone");
+            this.cloneMethod.setAccessible(true);
+        } catch (Exception e) {
+            report(MessageType.EXCEPTION, "Unable to get cloning method for objects. $.clone() will not work: " + e.getMessage());
+        } 
+
+        
         // Test how long it takes to execute a thread in the background
         this.profileInformation = profile();
     }
@@ -178,6 +191,7 @@ public class CommonCore {
     /**
      * Wraps number of ints and returns an Integer array.
      * 
+     * @since 1.0
      * @param object The numbers to wrap.
      * @return An Integer array.
      */
@@ -192,10 +206,50 @@ public class CommonCore {
         return myIntegers;
     }
 
+
+    /**
+     * Clones the given object if it is cloneable. 
+     * 
+     * @since 1.0
+     * @param <T> 
+     * @param object The object to clone
+     * @return A clone of the object, or null if the object could not be cloned.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T clone(T object) {
+        if(!(object instanceof Cloneable)) return null;
+        
+        try {
+            return (T) this.cloneMethod.invoke(object);
+        } catch (Exception e) {
+            report(MessageType.EXCEPTION, "Unable to execute clone() on " + object);
+        } 
+        
+        return null;
+    }
+
+
+    /**
+     * Clones the given array and returns a <b>shallow</b> copy (i.e., the elements themselves 
+     * are the same in both arrays).
+     *  
+     * @since 1.0
+     * @param <T> 
+     * @param object The array to clone
+     * @return A cloned (copied) array.
+     */
+    public <T> T[] clone(T[] object) {
+        if(object == null) return null;
+        
+        return Arrays.copyOf(object, object.length);
+    }
+
+    
     /**
      * Executes the given function in the Event Dispatch Thread (EDT) at some
      * point in the future.
      * 
+     * @since 1.0
      * @param f0 The function to execute.
      */
     public void edt(final F0 f0) {
@@ -211,6 +265,7 @@ public class CommonCore {
      * Executes the given function in the Event Dispatch Thread (EDT) now, waiting until
      * the function was executed.
      * 
+     * @since 1.0
      * @param f0 The function to execute.
      */
     public void edtnow(final F0 f0) {
@@ -231,7 +286,8 @@ public class CommonCore {
     /**
      * Executes the given runnable count times. Call this method with your
      * given workers and a number of threads (usually number of CPUs).
-     * 
+     *
+     * @since 1.0
      * @param r The runnable to execute.
      * @param count Number of threads to spawn.
      */

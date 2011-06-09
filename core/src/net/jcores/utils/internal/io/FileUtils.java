@@ -42,8 +42,6 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
-import java.util.zip.Adler32;
-import java.util.zip.CheckedOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -258,6 +256,7 @@ public class FileUtils {
      * that on some VMs a JAR created as ZIP won't be recognized anymore?!    
      * 
      * @param target
+     * @param manifest 
      * @param t
      */
     public static void jarFiles(File target, Manifest manifest, File[] t) {

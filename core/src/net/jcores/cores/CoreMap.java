@@ -28,6 +28,7 @@
 package net.jcores.cores;
 
 import net.jcores.CommonCore;
+import net.jcores.interfaces.functions.F1;
 import net.jcores.utils.MapEntry;
 
 /**
@@ -52,6 +53,98 @@ public class CoreMap<K, V> extends CoreObject<MapEntry<K, V>> {
     public CoreMap(CommonCore supercore, MapEntry<K, V> ... entries) {
     	super(supercore, entries);
     } 
+  
+    
+    /**
+     * Returns the inverse core of this core, i.e., mapping from values to keys.
+     * 
+     * @return TODO
+     */
+    public CoreMap<V, K> inverse() {
+        return new CoreMap<V, K>(this.commonCore, map(new F1<MapEntry<K,V>, MapEntry<V, K>>() {
+            @Override
+            public MapEntry<V, K> f(MapEntry<K, V> x) {
+                return new MapEntry<V, K>(x.value(), x.key());
+            }
+            
+        }).unsafearray());
+    }
+    
+    /**
+     * Return the first found key for the given value.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(map).key("v")</code> - Returns the first key with <code>map.put("k", "v")</code>.</li> 
+     * </ul>
+     * 
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @param value The value to retrieve a key for.
+     * @return The key for the given value, or null if no matching value was found.
+     */
+    public K key(V value) {
+        for (int i = 0; i < this.t.length; i++) {
+            if(this.t[i] == null) continue;
+            if(this.t[i].value().equals(value)) return this.t[i].key();
+        }
+        
+        return null;
+    }
+    
+
+
+    /**
+     * Return a {@link CoreObject} with only the keys present from this map.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(map).keys().print()</code> - Prints all key of this map.</li> 
+     * </ul>
+     * 
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @return A {@link CoreObject} with all the keys of this map.
+     */
+    public CoreObject<K> keys() {
+        return new CoreObject<K>(this.commonCore, map(new F1<MapEntry<K,V>, K>() {
+            @Override
+            public K f(MapEntry<K, V> x) {
+                return x.key();
+            }
+        }).unsafearray());
+    }
+    
+
+    /**
+     * Return a {@link CoreObject} with only the values present from this map.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(map).values().unique().size()</code> - Guaranteed to be smaller or equal than <code>$(map).size()</code>.</li> 
+     * </ul>
+     * 
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @return A {@link CoreObject} with all the values of this map.
+     */
+    public CoreObject<V> values() {
+        return new CoreObject<V>(this.commonCore, map(new F1<MapEntry<K,V>, V>() {
+            @Override
+            public V f(MapEntry<K, V> x) {
+                return x.value();
+            }
+        }).unsafearray());
+    }
     
 
     /**
@@ -78,42 +171,5 @@ public class CoreMap<K, V> extends CoreObject<MapEntry<K, V>> {
         
         return null;
     }
-    
-
-    /**
-     * Return the first found key for the given value.<br/>
-     * <br/>
-     * 
-     * Examples:
-     * <ul>
-     * <li><code>$(map).key("v")</code> - Returns the first key with <code>map.put("k", "v")</code>.</li> 
-     * </ul>
-     * 
-     * 
-     * Single-threaded.<br/>
-     * <br/>
-     * 
-     * @param value The value to retrieve a key for.
-     * @return The key for the given value, or null if no matching value was found.
-     */
-    public K key(V value) {
-        for (int i = 0; i < this.t.length; i++) {
-            if(this.t[i] == null) continue;
-            if(this.t[i].value().equals(value)) return this.t[i].key();
-        }
-        
-        return null;
-    }
-
-    
-    
-    /**
-     * Returns the inverse core of this core, i.e., mapping from values to keys.
-     * 
-     * @return TODO
-     */
-    public CoreMap<V, K> inverse() {
-        // TODO
-        return null;
-    }
+  
 }
