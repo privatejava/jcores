@@ -104,7 +104,7 @@ public class SoundUtils {
     
     public static AudioInputStream getStream(InputStream file) {
         try {
-            return AudioSystem.getAudioInputStream(file);
+            return AudioSystem.getAudioInputStream(new BufferedInputStream(file));
         } catch (final UnsupportedAudioFileException e1) {
             e1.printStackTrace();
             return null;
