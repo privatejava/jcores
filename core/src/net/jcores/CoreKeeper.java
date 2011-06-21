@@ -43,7 +43,6 @@ import net.jcores.cores.CoreAudioInputStream;
 import net.jcores.cores.CoreBufferedImage;
 import net.jcores.cores.CoreClass;
 import net.jcores.cores.CoreComponent;
-import net.jcores.cores.CoreCompound;
 import net.jcores.cores.CoreFile;
 import net.jcores.cores.CoreInputStream;
 import net.jcores.cores.CoreJComponent;
@@ -55,7 +54,6 @@ import net.jcores.cores.CoreURI;
 import net.jcores.interfaces.functions.F1;
 import net.jcores.options.Option;
 import net.jcores.options.OptionMapType;
-import net.jcores.utils.Compound;
 import net.jcores.utils.internal.Wrapper;
 import net.jcores.utils.internal.io.URIUtils;
 
@@ -110,18 +108,6 @@ public class CoreKeeper {
     public static CoreNumber $(Number... object) {
         return new CoreNumber($, object);
     }
-
-    /**
-     * Wraps number of compounds and returns a new CompoundCore.
-     * 
-     * @param object The compounds to wrap.
-     * @param <T> The type of the compound. 
-     * @return A CoreCompound wrapping the given compounds.
-     */
-    public static <T> CoreCompound<T> $(Compound<T>... object) {
-        return new CoreCompound<T>($, object);
-    }
-    
 
     /**
      * Wraps a single class and returns a new ClassCore. 

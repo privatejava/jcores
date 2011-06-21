@@ -1,5 +1,5 @@
 /*
- * CoreStringTest.java
+ * Compound.java
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
@@ -25,32 +25,55 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package junit;
+package net.jcores.utils.map;
 
-import static net.jcores.CoreKeeper.$;
-import net.jcores.utils.map.Compound;
-
-import org.junit.Assert;
-import org.junit.Test;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
+ * Represents a compound object, consisting of several smaller objects. A compound basically is
+ * a {@link Map}, with Strings as keys and some type as value. It is a simple way to bundle a number
+ * of objects where only a single object is allowed (e.g., return values). Create a compound like this:<br/>
+ * <br/>
+ * 
+ * <code>Compound&lt;Object&gt; c = $("name", name, "age", age).compound()</code>
+ * 
  * @author Ralf Biedert
  */
-public class CoreCompoundTest {
+public class Compound extends MapUtil<String, Object> {
+
+    /** Creates a new compound */
+    private Compound() {
+        super(new HashMap<String, Object>());
+    }
 
     /** */
-    @SuppressWarnings({ "boxing", "unchecked" })
-    @Test
-    public void testBasic() {
-        Compound c1 = $("a", "b", "c", "d").compound();
-        Compound c2 = $("a", "b", "c", "d").compound();
-        
-        Assert.assertEquals("b", c1.s("a"));
-        Assert.assertEquals("b", c2.s("a"));
-        Assert.assertEquals("nope", c1.get("b", "nope"));
-        
-        Compound c3 = $("a", 2.0, "b", 4.0).debug().compound();
-        Assert.assertEquals(2.0, c3.d("a"), 0.01);
-        Assert.assertEquals(4.0, c3.get("b", Double.class), 0.01);
+    private static final long serialVersionUID = 6962084609409112972L;
+
+    /**
+     * Creates a new compound.
+     * 
+     * @param objects An array of the form <code>Key1, Value1, Key2, Value2, ...</code>.
+     * Keys have to be strings.
+     * @return A compound with the specified content or an empty one of none was
+     * spawnable.
+     */
+    public static Compound create(Object... objects) {
+        final Compound rval = new Compound();
+
+        if (objects == null || objects.length < 2 || objects.length % 2 != 0)
+            return rval;
+
+        String key = null;
+
+        for (int i = 0; i < objects.length; i++) {
+            if (i % 2 == 0) {
+                key = (String) objects[i];
+            } else {
+                rval.put(key, objects[i]);
+            }
+        }
+
+        return rval;
     }
 }

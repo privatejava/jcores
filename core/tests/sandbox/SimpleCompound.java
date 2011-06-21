@@ -28,7 +28,7 @@
 package sandbox;
 
 import static net.jcores.CoreKeeper.$;
-import net.jcores.utils.Compound;
+import net.jcores.utils.map.Compound;
 
 /**
  * @author rb

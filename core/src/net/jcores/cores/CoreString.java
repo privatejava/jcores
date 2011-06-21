@@ -51,9 +51,9 @@ import net.jcores.options.MessageType;
 import net.jcores.options.Option;
 import net.jcores.options.OptionRegEx;
 import net.jcores.utils.CSVLine;
-import net.jcores.utils.Compound;
 import net.jcores.utils.internal.io.StreamUtils;
 import net.jcores.utils.internal.lang.StringUtils;
+import net.jcores.utils.map.Compound;
 
 /**
  * Wraps a number of String and exposes some convenience functions. For example, 
@@ -429,7 +429,7 @@ public class CoreString extends CoreObject<String> {
             @Override
             public Void f(String x) {
                 final String[] delims = delimeters.length > 0 ? delimeters : new String[] {":=", "=", ":"};
-                final Compound<String> best = $("token", "", "dist", ""+Integer.MAX_VALUE).compound(String.class);
+                final Compound best = $("token", "", "dist", ""+Integer.MAX_VALUE).compound();
                 
                 // Find best delimeter
                 for (String string : delims) {  

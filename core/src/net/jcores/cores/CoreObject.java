@@ -61,13 +61,13 @@ import net.jcores.managers.ManagerDeveloperFeedback;
 import net.jcores.options.MessageType;
 import net.jcores.options.Option;
 import net.jcores.options.OptionMapType;
-import net.jcores.utils.Compound;
 import net.jcores.utils.Staple;
 import net.jcores.utils.internal.Folder;
 import net.jcores.utils.internal.Mapper;
 import net.jcores.utils.internal.Wrapper;
 import net.jcores.utils.internal.io.StreamUtils;
 import net.jcores.utils.internal.lang.ObjectUtils;
+import net.jcores.utils.map.Compound;
 
 /**
  * The standard core that wraps a number of objects and exposes a number of methods to
@@ -462,31 +462,7 @@ public class CoreObject<T> extends Core {
      * 
      * @return A new {@link Compound} with this core's content.
      */
-    public Compound<Object> compound() {
-        return Compound.create(this.t);
-    }
-
-    /**
-     * Creates a compound out of this core's content with the given type. This is useful
-     * for quickly creating complex objects which should be handled by the framework.<br/>
-     * <br/>
-     *     
-     * Examples:
-     * <ul>
-     * <li><code>$("from", from, "to", to).compound(String.class)</code> - Quickly creates an 
-     * typed {@link Compound} with the keys <code>from</code> and <code>to</code> and 
-     * the corresponding values of the type String.</li>
-     * </ul>
-     * 
-     * Single-threaded. <br/>
-     * <br/>
-     * 
-     * @param clazz The type of the {@link Compound}.
-     * @param <C> The type of {@link Compound} to create.
-     * 
-     * @return A new {@link Compound} with this core's content.
-     */
-    public <C> Compound<C> compound(Class<C> clazz) {
+    public Compound compound() {
         return Compound.create(this.t);
     }
 

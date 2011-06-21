@@ -86,7 +86,120 @@ public class MapUtil<K, V> extends VanillaUtil<Map<K, V>> implements Map<K, V> {
         return this;
     }
 
+
+    /**
+     * Returns a key mapped to the given type.
+     * 
+     * @param <R> The return type.
+     * @param key The key to query.
+     * @param type The type as which the object should be returned.
+     * @return The corresponding object if it existed, or null.
+     */
+    @SuppressWarnings("unchecked")
+    public <R> R get(String key, Class<R> type) {
+        return (R) get(key);
+    }
+
+    /**
+     * Returns a key mapped to the given type.
+     * 
+     * @param <R> The return type.
+     * @param key The key to query.
+     * @param dflt The default to return if otherwise null would be returned. 
+     * @return The corresponding object if it existed, or the default.
+     */
+    @SuppressWarnings("unchecked")
+    public <R> R get(String key, R dflt) {
+        Object t = get(key);
+        if (t == null) return dflt;
+        return (R) t;
+    }
+
     
+    /**
+     * Tries to return the given key as an integer.
+     * 
+     * @param key The key to return.
+     * 
+     * @return The integer value, <code>0</code> if the object was <code>null</code>, 
+     * or <code>hashCode()</code> if the object was unknown.
+     */
+    public int i(String key) {
+        final Object elem = get(key);
+
+        // If we didnt have anything, return 0
+        if (elem == null) return 0;
+
+        // If the object if of type number
+        if (elem instanceof Number) { return ((Number) elem).intValue(); }
+
+        // If the object if of type number
+        if (elem instanceof String) { return Integer.parseInt((String) elem); }
+
+        // Last resort, return the hash code ...
+        return elem.hashCode();
+    }
+
+    /**
+     * Returns the given key as a string.
+     * 
+     * @param key The key to return.
+     * 
+     * @return Returns <code>map.get(key).toString()</code>.
+     */
+    public String s(String key) {
+        final Object elem = get(key);
+        if (elem == null) return null;
+        return elem.toString();
+    }
+
+    /**
+     * Returns the given key as an integer.
+     * 
+     * @param key The key to return.
+     * 
+     * @return The integer value, <code>0</code> if the object was <code>null</code>, 
+     * or <code>hashCode()</code> if the object was unknown.
+     */
+    public double d(String key) {
+        final Object elem = get(key);
+
+        // If we didnt have anything, return 0
+        if (elem == null) return 0;
+
+        // If the object if of type number
+        if (elem instanceof Number) { return ((Number) elem).doubleValue(); }
+
+        // If the object if of type number
+        if (elem instanceof String) { return Double.parseDouble((String) elem); }
+
+        // Last resort, return the hash code ...
+        return elem.hashCode();
+    }
+
+
+    /**
+     * Puts the given integer into the slot named key.
+     * 
+     * @param key The key to put.
+     * @param value The integer value to put.
+     */
+    @SuppressWarnings("boxing")
+    public void put(K key, int value) {
+        put(key, Integer.valueOf(value));
+    }
+
+    /**
+     * Puts the given integer into the slot named key
+     * 
+     * @param key The key to put.
+     * @param value THe double value to put.
+     */
+    @SuppressWarnings("boxing")
+    public void put(String key, double value) {
+        put(key, Double.valueOf(value));
+    }
+
     /* (non-Javadoc)
      * @see java.util.Map#clear()
      */

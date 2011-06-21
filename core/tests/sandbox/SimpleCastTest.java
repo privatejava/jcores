@@ -59,7 +59,7 @@ public class SimpleCastTest {
         $(pp, p);
         
         $("a", "b").add("c", "d").subtract("b").intersect("b", "d").add("b", "d").unique().print();
-        Map<String, Object> map =  $("a", new Object(), "b", new Object()).compound().map(Object.class);
+        Map<String, Object> map =  $("a", new Object(), "b", new Object()).compound();
         
         Map<String, Number> mm = new HashMap<String, Number>();
         mm.put("blah", 123);
