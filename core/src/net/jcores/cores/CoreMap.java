@@ -27,12 +27,16 @@
  */
 package net.jcores.cores;
 
+import java.util.HashMap;
+
 import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F1;
 import net.jcores.utils.map.MapEntry;
+import net.jcores.utils.map.MapUtil;
 
 /**
- * Wraps a single Map. This core is currently experimental. <br/><br/>
+ * Wraps a single Map. This core is currently experimental. <br/>
+ * <br/>
  * 
  * @author Ralf Biedert
  * @param <K> The type of keys.
@@ -43,40 +47,39 @@ public class CoreMap<K, V> extends CoreObject<MapEntry<K, V>> {
 
     /** Used for serialization */
     private static final long serialVersionUID = 5115270057138570660L;
-    
+
     /**
      * Wraps a map.
      * 
      * @param supercore The shared CommonCore.
      * @param entries The entries to wrap.
      */
-    public CoreMap(CommonCore supercore, MapEntry<K, V> ... entries) {
-    	super(supercore, entries);
-    } 
-  
-    
+    public CoreMap(CommonCore supercore, MapEntry<K, V>... entries) {
+        super(supercore, entries);
+    }
+
     /**
      * Returns the inverse core of this core, i.e., mapping from values to keys.
      * 
      * @return TODO
      */
     public CoreMap<V, K> inverse() {
-        return new CoreMap<V, K>(this.commonCore, map(new F1<MapEntry<K,V>, MapEntry<V, K>>() {
+        return new CoreMap<V, K>(this.commonCore, map(new F1<MapEntry<K, V>, MapEntry<V, K>>() {
             @Override
             public MapEntry<V, K> f(MapEntry<K, V> x) {
                 return new MapEntry<V, K>(x.value(), x.key());
             }
-            
+
         }).unsafearray());
     }
-    
+
     /**
      * Return the first found key for the given value.<br/>
      * <br/>
      * 
      * Examples:
      * <ul>
-     * <li><code>$(map).key("v")</code> - Returns the first key with <code>map.put("k", "v")</code>.</li> 
+     * <li><code>$(map).key("v")</code> - Returns the first key with <code>map.put("k", "v")</code>.</li>
      * </ul>
      * 
      * 
@@ -88,14 +91,12 @@ public class CoreMap<K, V> extends CoreObject<MapEntry<K, V>> {
      */
     public K key(V value) {
         for (int i = 0; i < this.t.length; i++) {
-            if(this.t[i] == null) continue;
-            if(this.t[i].value().equals(value)) return this.t[i].key();
+            if (this.t[i] == null) continue;
+            if (this.t[i].value().equals(value)) return this.t[i].key();
         }
-        
+
         return null;
     }
-    
-
 
     /**
      * Return a {@link CoreObject} with only the keys present from this map.<br/>
@@ -103,7 +104,7 @@ public class CoreMap<K, V> extends CoreObject<MapEntry<K, V>> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$(map).keys().print()</code> - Prints all key of this map.</li> 
+     * <li><code>$(map).keys().print()</code> - Prints all key of this map.</li>
      * </ul>
      * 
      * 
@@ -113,14 +114,41 @@ public class CoreMap<K, V> extends CoreObject<MapEntry<K, V>> {
      * @return A {@link CoreObject} with all the keys of this map.
      */
     public CoreObject<K> keys() {
-        return new CoreObject<K>(this.commonCore, map(new F1<MapEntry<K,V>, K>() {
+        return new CoreObject<K>(this.commonCore, map(new F1<MapEntry<K, V>, K>() {
             @Override
             public K f(MapEntry<K, V> x) {
                 return x.key();
             }
         }).unsafearray());
     }
-    
+
+    /**
+     * Return a true {@link HashMap} (with the decorator {@link MapUtil}) containing all elements
+     * enclosed in this core. <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(map).inverse().map()</code> - Returns a map with all key-value paris reversed.</li>
+     * </ul>
+     * 
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @return A {@link MapUtil} with all the entries of this CoreMap.
+     */
+    public MapUtil<K, V> map() {
+        final MapUtil<K, V> rval = new MapUtil<K, V>(new HashMap<K, V>());
+
+        for (int i = 0; i < size(); i++) {
+            final MapEntry<K, V> mapEntry = get(i);
+            if (mapEntry == null) continue;
+            
+            rval.put(mapEntry.key(), mapEntry.value());
+        }
+
+        return rval;
+    }
 
     /**
      * Return a {@link CoreObject} with only the values present from this map.<br/>
@@ -128,7 +156,8 @@ public class CoreMap<K, V> extends CoreObject<MapEntry<K, V>> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$(map).values().unique().size()</code> - Guaranteed to be smaller or equal than <code>$(map).size()</code>.</li> 
+     * <li><code>$(map).values().unique().size()</code> - Guaranteed to be smaller or equal than
+     * <code>$(map).size()</code>.</li>
      * </ul>
      * 
      * 
@@ -138,14 +167,13 @@ public class CoreMap<K, V> extends CoreObject<MapEntry<K, V>> {
      * @return A {@link CoreObject} with all the values of this map.
      */
     public CoreObject<V> values() {
-        return new CoreObject<V>(this.commonCore, map(new F1<MapEntry<K,V>, V>() {
+        return new CoreObject<V>(this.commonCore, map(new F1<MapEntry<K, V>, V>() {
             @Override
             public V f(MapEntry<K, V> x) {
                 return x.value();
             }
         }).unsafearray());
     }
-    
 
     /**
      * Return the value for the given key.<br/>
@@ -153,7 +181,7 @@ public class CoreMap<K, V> extends CoreObject<MapEntry<K, V>> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$(map).value("v")</code> - Same as <code>map.get("v")</code>.</li> 
+     * <li><code>$(map).value("v")</code> - Same as <code>map.get("v")</code>.</li>
      * </ul>
      * 
      * 
@@ -165,11 +193,11 @@ public class CoreMap<K, V> extends CoreObject<MapEntry<K, V>> {
      */
     public V value(K key) {
         for (int i = 0; i < this.t.length; i++) {
-            if(this.t[i] == null) continue;
-            if(this.t[i].key().equals(key)) return this.t[i].value();
+            if (this.t[i] == null) continue;
+            if (this.t[i].key().equals(key)) return this.t[i].value();
         }
-        
+
         return null;
     }
-  
+
 }

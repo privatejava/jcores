@@ -434,16 +434,16 @@ public class CoreString extends CoreObject<String> {
                 // Find best delimeter
                 for (String string : delims) {  
                     final int index = x.indexOf(string);
-                    if(index >= 0 && index < best.getInt("dist")) {
+                    if(index >= 0 && index < best.i("dist")) {
                         best.put("dist", index);
                         best.put("token", string);
                     }
                 }
                 
-                final int dist = best.getInt("dist"); 
+                final int dist = best.i("dist"); 
                 if(dist < 0) return null;
                 
-                final String[] split = x.split(best.getString("token"));
+                final String[] split = x.split(best.s("token"));
                 rval.put(split[0], split[1]);
                 
                 return null;

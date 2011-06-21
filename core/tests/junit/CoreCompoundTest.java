@@ -45,12 +45,12 @@ public class CoreCompoundTest {
         Compound<Object> c1 = $("a", "b", "c", "d").compound();
         Compound<String> c2 = $("a", "b", "c", "d").compound(String.class);
         
-        Assert.assertEquals("b", c1.getString("a"));
-        Assert.assertEquals("b", c2.getString("a"));
+        Assert.assertEquals("b", c1.s("a"));
+        Assert.assertEquals("b", c2.s("a"));
         Assert.assertEquals("nope", c1.get("b", "nope"));
         
         Compound<Double> c3 = $("a", 2.0, "b", 4.0).debug().compound(Double.class);
-        Assert.assertEquals(2.0, c3.getDouble("a"), 0.01);
+        Assert.assertEquals(2.0, c3.d("a"), 0.01);
         Assert.assertEquals(4.0, c3.get("b", Double.class), 0.01);
     }
 }

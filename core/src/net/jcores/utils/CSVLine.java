@@ -46,7 +46,7 @@ public class CSVLine {
      * 
      * @param entries
      */
-    public CSVLine(String[] entries) {
+    public CSVLine(String ... entries) {
         this.entries = entries;
     }
     

@@ -112,7 +112,7 @@ public class Compound<T> extends HashMap<String, T> {
      * 
      * @return .
      */
-    public int getInt(String key) {
+    public int i(String key) {
         final Object object = get(key);
 
         // If we didnt have anything, return 0
@@ -135,7 +135,7 @@ public class Compound<T> extends HashMap<String, T> {
      * 
      * @return .
      */
-    public String getString(String key) {
+    public String s(String key) {
         final Object object = get(key);
 
         if (object == null) return null;
@@ -150,7 +150,7 @@ public class Compound<T> extends HashMap<String, T> {
      * 
      * @return .
      */
-    public double getDouble(String key) {
+    public double d(String key) {
         final Object object = get(key);
 
         // If we didnt have anything, return 0
