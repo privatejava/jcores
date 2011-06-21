@@ -139,6 +139,31 @@ public class MapUtil<K, V> extends VanillaUtil<Map<K, V>> implements Map<K, V> {
         // Last resort, return the hash code ...
         return elem.hashCode();
     }
+    
+    /**
+     * Tries to return the given key as a long.
+     * 
+     * @param key The key to return.
+     * 
+     * @return The long value, <code>0</code> if the object was <code>null</code>, 
+     * or <code>hashCode()</code> if the object was unknown.
+     */
+    public long l(String key) {
+        final Object elem = get(key);
+
+        // If we didnt have anything, return 0
+        if (elem == null) return 0;
+
+        // If the object if of type number
+        if (elem instanceof Number) { return ((Number) elem).longValue(); }
+
+        // If the object if of type number
+        if (elem instanceof String) { return Long.parseLong((String) elem); }
+
+        // Last resort, return the hash code ...
+        return elem.hashCode();
+    }
+    
 
     /**
      * Returns the given key as a string.
