@@ -35,6 +35,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -66,6 +67,7 @@ import net.jcores.options.MessageType;
 import net.jcores.options.Option;
 import net.jcores.utils.internal.Reporter;
 import net.jcores.utils.internal.system.ProfileInformation;
+import net.jcores.utils.map.MapUtil;
 
 /**
  * The common core is a singleton object shared by (thus common to) all created {@link Core} instances. It mainly
@@ -240,8 +242,42 @@ public class CommonCore {
      */
     public <T> T[] clone(T[] object) {
         if(object == null) return null;
-        
         return Arrays.copyOf(object, object.length);
+    }
+
+
+    /**
+     * Clones the given collection and returns a <b>shallow</b> copy (i.e., the elements themselves 
+     * are the same in both arrays).
+     *  
+     * @since 1.0
+     * @param <T> 
+     * @param collection The collection to clone
+     * @return A cloned (copied) collection.
+     */
+    public <T> Collection<T> clone(Collection<T> collection) {
+        if(collection == null) return null;
+        return new ArrayList<T>(collection);
+    }
+    
+    /**
+     * Clones the given array and returns a <b>deep</b> copy (i.e., the elements themselves 
+     * are the cloned in both arrays).
+     *  
+     * @since 1.0
+     * @param <T> 
+     * @param object The array to clone
+     * @return A cloned array.
+     */
+    public <T> T[] deepclone(T[] object) {
+        if(object == null) return null;
+        
+        final T[] copyOf = Arrays.copyOf(object, object.length);
+        for (int i = 0; i < copyOf.length; i++) {
+            copyOf[i] = clone(copyOf[i]);
+        }
+        
+        return copyOf;
     }
 
     
@@ -331,11 +367,63 @@ public class CommonCore {
      * 
      * @param <K> The type of the key.
      * @param <V> The type of the value.
+     * @since 1.0
      * @return Returns a new map.
      */
-    public <K, V> Map<K, V> map() {
-        return new HashMap<K, V>();
+    public <K, V> MapUtil<K, V> map() {
+        return new MapUtil<K,V>(new HashMap<K, V>());
     }
+    
+    /**
+     * Wraps a given map into out {@link MapUtil}.  
+     * 
+     * @param <K> The type of the key.
+     * @param <V> The type of the value.
+     * @param map The map to wrap.
+     * @return Returns a wrapped map.
+     */
+    public <K, V> MapUtil<K, V> map(Map<K, V> map) {
+        return new MapUtil<K,V>(map);
+    }
+
+    
+    /**
+     * Ensures the value <code>x</code> is between a and b, so that
+     * <code>a <= x <= b</code>. If x is larger or smaller, it will be 
+     * limited to the given  bounds.
+     *  
+     * @param a The lower bound. 
+     * @param x The value.
+     * @param b The upper bound.
+     * 
+     * @since 1.0
+     * @return The new list.
+     */
+    public double limit(double a, double x, double b) {
+        if(x < a) return a;
+        if(x > b) return b;
+        return x;
+    }
+    
+    
+    /**
+     * Ensures the value <code>x</code> is between a and b, so that
+     * <code>a <= x <= b</code>. If x is larger or smaller, it will be 
+     * limited to the given  bounds.
+     *  
+     * @param a The lower bound. 
+     * @param x The value.
+     * @param b The upper bound.
+     * 
+     * @since 1.0
+     * @return The new list.
+     */
+    public int limit(int a, int x, int b) {
+        if(x < a) return a;
+        if(x > b) return b;
+        return x;
+    }
+    
 
     /**
      * Returns a new (linked) {@link List} when the number of elements to 

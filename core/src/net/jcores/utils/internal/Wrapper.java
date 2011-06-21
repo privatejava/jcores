@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import net.jcores.interfaces.functions.F1;
-import net.jcores.utils.MapEntry;
+import net.jcores.utils.map.MapEntry;
 
 /**
  * Wraps a number of collections to arrays. You do not need this.

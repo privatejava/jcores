@@ -1,5 +1,5 @@
 /*
- * CoreNumberTest.java
+ * CoreCSV.java
  * 
  * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
@@ -25,29 +25,57 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package junit;
+package net.jcores.cores;
 
-import static net.jcores.CoreKeeper.$;
+import net.jcores.CommonCore;
+import net.jcores.interfaces.functions.F1;
+import net.jcores.utils.CSVLine;
 
-import org.junit.Assert;
-import org.junit.Test;
 
 /**
+ * Wraps a number of {@link CSVLine} objects and exposes some convenience functions.<br/><br/>
+ * 
  * @author Ralf Biedert
+ * 
+ * @since 1.0
  */
-public class CoreNumberTest {
+public class CoreCSV extends CoreObject<CSVLine> {
 
-    /** */
-    @Test
-    public void testMinMax() {
-        Assert.assertEquals(0.0, $.range(101).min(), 0.0);
-        Assert.assertEquals(100.0, $.range(101).max(), 0.0);
+    /** Used for serialization */
+    private static final long serialVersionUID = 7366734773387957013L;
+
+    /**
+     * Creates an {@link CSVLine} core.
+     * 
+     * @param supercore The common core.
+     * @param objects The CSVLines to wrap.
+     */
+    public CoreCSV(CommonCore supercore, CSVLine... objects) {
+        super(supercore, objects);
     }
 
-    /** */
-    @Test
-    public void testSum() {
-        int n = 10000;
-        Assert.assertEquals(n*(n-1)/2, $.range(n).sum(), 0.0);
+    
+    /**
+     * Returns the <code>ith</code> column of this {@link CSVLine}s.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(lines).column(0).number().sum()</code> - Computes the sum of the values in the first column.</li>
+     * </ul> 
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @param i The column to select. 
+     * @return A CoreString object with all strings of the first column.
+     */
+    public CoreString column(final int i) {
+        return new CoreString(this.commonCore, map(new F1<CSVLine, String>() {
+            public String f(CSVLine x) {
+               return x.s(i);
+            }
+        }).array(String.class));
     }
+
 }

@@ -150,17 +150,16 @@ public class CoreString extends CoreObject<String> {
      * Single-threaded. <br/>
      * <br/>
      * 
-     * @return A {@link CoreObject} with an {@link CSVLine} object for each line of the 
-     * CSV file. 
+     * @return A {@link CoreCSV} object. 
      * 
      */
-    public CoreObject<CSVLine> csv() {
-        return split("\n").map(new F1<String, CSVLine>() {
+    public CoreCSV csv() {
+        return new CoreCSV(this.commonCore, split("\n").map(new F1<String, CSVLine>() {
             @Override
             public CSVLine f(String x) {
                 return new CSVLine($(x.split(",")).trim().t);
             }
-        });
+        }).array(CSVLine.class));
     }  
 
     
@@ -711,6 +710,40 @@ public class CoreString extends CoreObject<String> {
                 return x.length() == 0 ? null : x;
             }
         }).unsafearray());
+    }
+
+
+    /**
+     * Returns a {@link CoreNumber} object where each string is converted to a <code>Number</code>, or <code>null</code>, if it 
+     * was not convertable.
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("1", "3").number().sum()</code> - Computes 4.</li>
+     * </ul>    
+     * 
+     * Multi-threaded.<br/>
+     * <br/>
+     * 
+     * @param type The type of the number object. Should be <code>Double.class</code> or 
+     * <code>Integer.class</code>. Being forced to provide a type is a bit ugly, we know. However, otherwise
+     * some comparisons might fail, as for example (Double) 3.0 is not equal to (Integer) 3. 
+     * @return A new {@link CoreNumber} with all strings converted to numbers. 
+     */
+    public CoreNumber number(final Class<? extends Number> type) {
+        return new CoreNumber(this.commonCore, map(new F1<String, Number>() {
+            public Number f(final String x) {
+                try {
+                    if(Integer.class.equals(type))
+                        return Integer.valueOf(x);
+                    if(Double.class.equals(type))
+                        return Double.valueOf(x);
+                } catch (Exception e) {
+                }
+                return null;
+            }
+        }).array(type));
     }
 
 

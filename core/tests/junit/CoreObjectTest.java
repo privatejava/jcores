@@ -285,6 +285,10 @@ public class CoreObjectTest {
     @Test
     public void testSlice() {
         Assert.assertEquals("goodbyecruelworld", $("goodbye", "cruel", "world").slice(0, 3).string().join());
+        Assert.assertEquals("a", $("a", "b", "c", "d").slice(0.0, 0.25).string().join());
+        Assert.assertEquals("ab", $("a", "b", "c", "d").slice(0.0, 0.50).string().join());
+        Assert.assertEquals("abcd", $("a", "b", "c", "d").slice(0.0, 1.0).string().join());
+
     }
 
     /** */

@@ -416,7 +416,7 @@ public class CoreFile extends CoreObject<File> {
      * 
      * @return A CoreBufferedImage with the loaded images.
      */
-    public CoreBufferedImage images() {
+    public CoreBufferedImage image() {
         return new CoreBufferedImage(this.commonCore, map(new F1<File, BufferedImage>() {
             public BufferedImage f(File x) {
                 try {
@@ -481,7 +481,31 @@ public class CoreFile extends CoreObject<File> {
         return this;
     }
 
-
+    /**
+     * Creates all enclosed directories and return this object again.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("output").file().mkdir()</code> - Creates the folder <code>output</code>.</li>
+     * </ul>
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @return This Core again.
+     */
+    public CoreFile mkdir() {
+        for (int i = 0; i < size(); i++) {
+            final File file = get(i);
+            if(file == null) continue;
+            file.mkdirs();
+        }
+        
+        return this;
+    }
+    
+    
     /**
      * Returns all lines of all files joint. A core will be returned in which each
      * entry is a String containing the specific file's content. This is a shorthand

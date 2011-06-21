@@ -1,5 +1,5 @@
 /*
- * CoreNumberTest.java
+ * VanillaUtil.java
  * 
  * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
@@ -25,29 +25,34 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package junit;
-
-import static net.jcores.CoreKeeper.$;
-
-import org.junit.Assert;
-import org.junit.Test;
+package net.jcores.utils;
 
 /**
+ * Vanilla util (aka decorator).
+ * 
  * @author Ralf Biedert
+ * @param <T> The type of the object to decorate.
+ * @since 1.0
  */
-public class CoreNumberTest {
-
-    /** */
-    @Test
-    public void testMinMax() {
-        Assert.assertEquals(0.0, $.range(101).min(), 0.0);
-        Assert.assertEquals(100.0, $.range(101).max(), 0.0);
-    }
-
-    /** */
-    @Test
-    public void testSum() {
-        int n = 10000;
-        Assert.assertEquals(n*(n-1)/2, $.range(n).sum(), 0.0);
+public abstract class VanillaUtil<T> {
+    /** The contained object */
+    protected final T object;
+    
+    /**
+     * Construct a wrapper for the given object.
+     * 
+     * @param object The object to wrap.
+     */
+    public VanillaUtil(T object) {
+        this.object = object;
+    } 
+    
+    /**
+     * Returns the wrapped object.
+     * 
+     * @return The wrapped object.
+     */
+    public T getObject() {
+        return this.object;
     }
 }

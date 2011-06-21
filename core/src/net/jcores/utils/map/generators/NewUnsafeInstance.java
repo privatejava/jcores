@@ -1,5 +1,5 @@
 /*
- * CoreNumberTest.java
+ * NewInstance.java
  * 
  * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
@@ -25,29 +25,26 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package junit;
+package net.jcores.utils.map.generators;
 
-import static net.jcores.CoreKeeper.$;
-
-import org.junit.Assert;
-import org.junit.Test;
 
 /**
+ * A generator that creates new instances of the given type.
+ * 
  * @author Ralf Biedert
+ * @param <K> The type of the key.
+ * @param <V> The type of the value.
+ * @since 1.0
  */
-public class CoreNumberTest {
-
-    /** */
-    @Test
-    public void testMinMax() {
-        Assert.assertEquals(0.0, $.range(101).min(), 0.0);
-        Assert.assertEquals(100.0, $.range(101).max(), 0.0);
-    }
-
-    /** */
-    @Test
-    public void testSum() {
-        int n = 10000;
-        Assert.assertEquals(n*(n-1)/2, $.range(n).sum(), 0.0);
+public class NewUnsafeInstance<K, V> extends NewInstance<K, V> {
+    
+    /**
+     * Constructs a NewUnsafeInstance object. 
+     * 
+     * @param clazz
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public NewUnsafeInstance(Class clazz) {
+        super(clazz);
     }
 }

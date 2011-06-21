@@ -32,10 +32,10 @@ import java.util.Collection;
 
 import net.jcores.interfaces.functions.F0;
 import net.jcores.interfaces.functions.F1;
-import net.jcores.script.JCoresScript;
 import benchmarks.benchmarker.Benchmark;
 import benchmarks.benchmarker.BenchmarkResults;
 import benchmarks.benchmarker.Benchmarker;
+import benchmarks.benchmarks.SimpleClone;
 import benchmarks.benchmarks.SimpleTest;
 import benchmarks.benchmarks.mappinglooping.ComplexLoopingStringArray;
 import benchmarks.benchmarks.mappinglooping.SimpleLoopingStringArray;
@@ -54,13 +54,14 @@ public class BenchmarkMain {
      */
     @SuppressWarnings("unchecked")
     public static void main(String[] args) {
-    	JCoresScript.SCRIPT("Benchmark", args).console().pack();
+    	//JCoresScript.SCRIPT("Benchmark", args).console().pack();
     	
         // Prepare benchmarks contianer
         final Collection<Class<? extends Benchmark<?>>> classes = new ArrayList<Class<? extends Benchmark<?>>>();
         
         // Add bechmarks
         classes.add(SimpleTest.class);
+        classes.add(SimpleClone.class);
         classes.add(SimpleLoopingStringArray.class);
         classes.add(ComplexLoopingStringArray.class);
         classes.add(RegExDNA.class);
@@ -96,7 +97,7 @@ public class BenchmarkMain {
                     System.out.print(results.average(15) + "µs (");
                     long[] values = results.values();
                     for (int i = 0; i < values.length; i++) {
-                        //System.out.print(values[i] + "µs");
+                        System.out.print(values[i] + "µs");
                         if(i < values.length - 1) System.out.print(" ");
                     }
                     System.out.println(")");

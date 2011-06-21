@@ -27,7 +27,10 @@
  */
 package net.jcores.cores;
 
+import java.text.DecimalFormat;
+
 import net.jcores.CommonCore;
+import net.jcores.interfaces.functions.F1;
 import net.jcores.interfaces.functions.F2ReduceObjects;
 
 /**
@@ -67,6 +70,7 @@ public class CoreNumber extends CoreObject<Number> {
      * Single-threaded.<br/>
      * <br/>
      * 
+     * @since 1.0
      * @return The average of all enclosed numbers. If no numbers are enclosed, <code>0</code> is returned.
      */
     public double average() {
@@ -102,6 +106,7 @@ public class CoreNumber extends CoreObject<Number> {
      * Single-threaded.<br/>
      * <br/>
      * 
+     * @since 1.0
      * @param index The index to get the number for.
      * @return The double value of the number or <code>NaN</code> if it was null.
      */
@@ -110,6 +115,33 @@ public class CoreNumber extends CoreObject<Number> {
         return this.t[index].doubleValue();
     }
 
+    
+    /**
+     * Returns all contained numbers as a true double array.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(100, 200).ds</code> - Returns <code>[100.0, 200.0]</code>.</li>
+     * </ul> 
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @since 1.0
+     * @return An array of doubles to return. Null objects are converted to <code>Double.NaN</code>.
+     */
+    public double[] ds() {
+        double rval[] = new double[size()];
+        for (int i = 0; i < rval.length; i++) {
+            rval[i] = get(i) == null ? Double.NaN : get(i).doubleValue();
+        }
+        
+        return rval;
+    }
+    
+    
+    
     /**
      * Returns the number at the given position as an integer, or
      * returns <code>0</code> if the object was null.<br/>
@@ -123,6 +155,7 @@ public class CoreNumber extends CoreObject<Number> {
      * Single-threaded.<br/>
      * <br/>
      * 
+     * @since 1.0
      * @param index The index to get the number for.
      * @return The integer value of the number or <code>0</code> if it was null.
      */
@@ -130,6 +163,31 @@ public class CoreNumber extends CoreObject<Number> {
         if (get(index) == null) return 0;
         return this.t[index].intValue();
     }
+    
+    
+    /**
+     * Returns all contained numbers as a true integer array.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(100, 200).is</code> - Returns <code>[100, 200]</code>.</li>
+     * </ul> 
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @since 1.0
+     * @return An array of integers to return. Null objects are converted to <code>0</code>.
+     */
+    public int[] is() {
+        int rval[] = new int[size()];
+        for (int i = 0; i < rval.length; i++) {
+            rval[i] = get(i) == null ? 0 : get(i).intValue();
+        }
+        return rval;
+    }
+
 
     /**
      * Returns the maximum value.<br/>
@@ -143,6 +201,7 @@ public class CoreNumber extends CoreObject<Number> {
      * Single-threaded.<br/>
      * <br/>
      * 
+     * @since 1.0
      * @return The maximum value enclosed in this core.
      */
     @SuppressWarnings("boxing")
@@ -178,6 +237,53 @@ public class CoreNumber extends CoreObject<Number> {
             }
         }).get((Double) Double.NaN).doubleValue();
     }
+    
+    
+    /**
+     * Returns the number at the given position as a String.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(100.26, 200.33).s(0)</code> - Returns "100.26"</li>
+     * </ul> 
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @since 1.0
+     * @param index The index to get the number for.
+     * @return The String value of the number or <code>"null"</code> if it was null.
+     */
+    public String s(int index) {
+        if (get(index) == null) return "null";
+        return this.t[index].toString();
+    }
+
+    
+    /**
+     * Returns the number at the given position as a String, formatted using the given {@link DecimalFormat}.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(100.26, 200.33).s(0, ".0")</code> - Returns "100.3"</li>
+     * </ul> 
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @since 1.0
+     * @param index The index to get the number for.
+     * @param format The format {@link DecimalFormat} format.
+     * @return The String value of the number or <code>"null"</code> if it was null.
+     */
+    public String s(int index, String format) {
+        if (get(index) == null) return "null";
+        final DecimalFormat fmt = new DecimalFormat(format);
+        return fmt.format(get(index).doubleValue());
+    }
+
 
     /**
      * Returns the standard deviation of all enclosed numbers.<br/>
@@ -191,11 +297,39 @@ public class CoreNumber extends CoreObject<Number> {
      * Single-threaded.<br/>>
      * <br/>
      * 
+     * @since 1.0
      * @return The standard deviation of all enclosed numbers. If no numbers are
      * enclosed, <code>0</code> is returned.
      */
     public double standarddeviation() {
         return Math.sqrt(variance());
+    }
+    
+    
+
+    /**
+     * Returns a {@link CoreString} with all numbers converted using the given {@link DecimalFormat}.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(100.26, 200.33).string(".0").get(1)</code> - Returns 200.3.</li>
+     * </ul> 
+     * 
+     * Single-threaded.<br/>>
+     * <br/>
+     * 
+     * @since 1.0
+     * @param format The {@link DecimalFormat} to apply. 
+     * @return A {@link CoreString} with all numbers formatted.
+     */    
+    public CoreString string(String format) {
+        final DecimalFormat fmt = new DecimalFormat(format);
+        return map(new F1<Number, String>() {
+            public String f(Number x) {
+                return fmt.format(x.doubleValue());
+            }
+        }).as(CoreString.class);
     }
 
     /**
@@ -210,6 +344,7 @@ public class CoreNumber extends CoreObject<Number> {
      * Single-threaded.<br/>>
      * <br/>
      * 
+     * @since 1.0
      * @return The sum of all enclosed numbers. If no numbers are
      * enclosed, <code>0</code> is returned.
      */
@@ -240,6 +375,7 @@ public class CoreNumber extends CoreObject<Number> {
      * Single-threaded.<br/>>
      * <br/>
      * 
+     * @since 1.0
      * @return The variance of all enclosed numbers. If no numbers are enclosed, <code>0</code> is returned.
      */
     public double variance() {

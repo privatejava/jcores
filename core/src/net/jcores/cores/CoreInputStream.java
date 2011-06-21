@@ -29,11 +29,13 @@ package net.jcores.cores;
 
 import static net.jcores.CoreKeeper.$;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.zip.ZipInputStream;
 
+import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
 
 import net.jcores.CommonCore;
@@ -245,6 +247,38 @@ public class CoreInputStream extends CoreObject<InputStream> {
         }).as(CoreZipInputStream.class);
     }
 
+    
+    
+    /**
+     * Returns a {@link CoreBufferedImage} for the input streams enclosed in this core.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(inputstream).images().get(0)</code> - Loads the image from the given {@link InputStream}.</li>
+     * </ul>
+     * 
+     * Multi-threaded.<br/>
+     * <br/>
+     * 
+     * @return A CoreBufferedImage object.
+     */
+    public CoreBufferedImage image() {
+        return new CoreBufferedImage(this.commonCore, map(new F1<InputStream, BufferedImage>() {
+            public BufferedImage f(InputStream x) {
+                try {
+                    return ImageIO.read(x);
+                } catch (IOException e) {
+                    CoreInputStream.this.commonCore.report(MessageType.EXCEPTION, "Error loading image from stream " + x);
+                }
+                
+                return null;
+            }
+        }).array(BufferedImage.class));
+    }
+
+    
+    
     /**
      * Returns all lines of all files joint. A core will be returned in which each
      * entry is a String containing the specific file's content.<br/>

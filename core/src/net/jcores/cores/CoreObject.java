@@ -1891,6 +1891,41 @@ public class CoreObject<T> extends Core {
 
         return new CoreObject<T>(this.commonCore, Arrays.copyOfRange(this.t, i, i + l));
     }
+    
+    
+
+    /**
+     * Returns a slice of this core. Element inside this slice start at the relative <code>start</code>
+     * and end at the relative <code>end</code>. It must hold <code>0.0 <= start <= end <= 1.0</code>.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("a", "b", "c", "d").slice(0.0, 0.5)</code> - Returns <code>$("a", "b")</code>.</li> 
+     * </ul>  
+     * 
+     * Single-threaded. <br/>
+     * <br/>
+     * 
+     * @param start The relative start position.
+     * @param end The relative end.
+     * starting position from the end (-1 equals the last position)
+     * @return A ObjectCore wrapping all sliced elements.
+     */
+    public CoreObject<T> slice(final double start, final double end) {
+        if (size() == 0) return this;
+        if (start > end) return slice(0, 0);
+        
+        final double s = $.limit(0, start, 1.0);
+        final double e = $.limit(0, end, 1.0);
+
+        int size = size();
+        int a = (int) (s * size);
+        int b = (int) (e * size);
+        
+        return slice(a, b-a);
+    }
+
 
     /**
      * Returns a new, sorted core using the given {@link Comparator}.<br/>

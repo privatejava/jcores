@@ -1,5 +1,5 @@
 /**
- * Various helper functions and classes. 
+ * Various general helper functions and classes. 
  *
  * @since 1.0
  */

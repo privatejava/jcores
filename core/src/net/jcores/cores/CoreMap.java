@@ -29,7 +29,7 @@ package net.jcores.cores;
 
 import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F1;
-import net.jcores.utils.MapEntry;
+import net.jcores.utils.map.MapEntry;
 
 /**
  * Wraps a single Map. This core is currently experimental. <br/><br/>

@@ -29,9 +29,13 @@ package junit;
 
 import static net.jcores.CoreKeeper.$;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import net.jcores.interfaces.functions.F0;
+import net.jcores.utils.map.MapUtil;
+import net.jcores.utils.map.generators.NewUnsafeInstance;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -79,4 +83,17 @@ public class CommonCoreTest {
         
         Assert.assertEquals(120 - 1, i);
      }
+    
+    
+    /** */
+    @SuppressWarnings("boxing")
+    @Test
+    public void testMap() {
+        final MapUtil<String, List<Integer>> m1 = $.map();
+        m1.generator(new NewUnsafeInstance<String, List<Integer>>(ArrayList.class));
+        
+        m1.get("a").add(1);
+        Assert.assertEquals(m1.get("a").get(0), Integer.valueOf(1)); 
+    }
+
 }
