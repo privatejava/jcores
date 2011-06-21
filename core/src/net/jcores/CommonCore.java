@@ -67,6 +67,7 @@ import net.jcores.options.MessageType;
 import net.jcores.options.Option;
 import net.jcores.utils.internal.Reporter;
 import net.jcores.utils.internal.system.ProfileInformation;
+import net.jcores.utils.map.ConcurrentMapUtil;
 import net.jcores.utils.map.MapUtil;
 
 /**
@@ -245,6 +246,32 @@ public class CommonCore {
         return Arrays.copyOf(object, object.length);
     }
 
+    
+    
+    /**
+     * Returns a new and empty {@link ConcurrentMapUtil}.  
+     * 
+     * @param <K> The type of the key.
+     * @param <V> The type of the value.
+     * @since 1.0
+     * @return Returns a new map.
+     */
+    public <K, V> ConcurrentMapUtil<K, V> concurrentMap() {
+        return new ConcurrentMapUtil<K,V>(new ConcurrentHashMap<K, V>());
+    }
+    
+    /**
+     * Wraps a given map into out {@link ConcurrentMapUtil}.  
+     * 
+     * @param <K> The type of the key.
+     * @param <V> The type of the value.
+     * @param map The map to wrap.
+     * @return Returns a wrapped map.
+     */
+    public <K, V> ConcurrentMapUtil<K, V> concurrentMap(ConcurrentMap<K, V> map) {
+        return new ConcurrentMapUtil<K,V>(map);
+    }
+
 
     /**
      * Clones the given collection and returns a <b>shallow</b> copy (i.e., the elements themselves 
@@ -363,7 +390,7 @@ public class CommonCore {
     
     
     /**
-     * Returns a new and empty (hash) {@link Map}.  
+     * Returns a new and empty (hash) {@link MapUtil}.  
      * 
      * @param <K> The type of the key.
      * @param <V> The type of the value.
