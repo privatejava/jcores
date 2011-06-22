@@ -31,9 +31,6 @@ import static net.jcores.CoreKeeper.$;
 
 import java.awt.Robot;
 
-import net.jcores.cores.CoreClass;
-import net.jcores.cores.CoreObject;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -43,15 +40,9 @@ import org.junit.Test;
 public class CoreClassTest {
 
     /** */
-    @SuppressWarnings({ "unchecked", "unused" })
     @Test
     public void testSpawn() {
         Assert.assertNotNull($(Robot.class).spawn().get(0));
         Assert.assertNull($(Robot.class).spawn(new Object()).get(0));
-        
-        CoreClass<Robot> a = $(Robot.class, Robot.class);
-        CoreObject<Class<? extends Object>> b = $(Robot.class, Object.class);
-        
-        Assert.assertEquals(1, $(Robot.class).spawned().compact().size());
     }
 }

@@ -1,5 +1,5 @@
 /*
- * ClassManager.java
+ * Thread.java
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
@@ -25,44 +25,13 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.managers;
-
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+package net.jcores.annotations;
 
 /**
- * Manager for classes, contains week references to spawned objects. 
+ * Methods annotated with @Beta are unstable or buggy and might change in the future.    
  * 
- * @since 1.0
  * @author Ralf Biedert
  */
-public class ManagerClass extends Manager {
-
-    /** Maps interfaces to classes */
-    private final ConcurrentMap<Class<?>, Class<?>> implementors = new ConcurrentHashMap<Class<?>, Class<?>>();
-
-
-    /**
-     * Registers an implementor (class implementing the given interface).
-     * 
-     * @param <T> Type. 
-     * @param iface The interface.
-     * @param implementor Class implementing the given interface.
-     */
-    public <T> void registerImplementor(Class<?> iface, Class<?> implementor) {
-        this.implementors.put(iface, implementor);
-    }
-
-    /**
-     * Returns all implementors for the given interface.
-     * 
-     * @param <T> Type.
-     * @param iface Interface to request.
-     * @return Array of all implementors.
-     */
-    public <T> Class<?>[] getImplementors(Class<T> iface) {
-        Class<?> class1 = this.implementors.get(iface);
-        if (class1 == null) return new Class[0];
-        return new Class[] { class1 };
-    }
+public @interface Beta {
+    //
 }

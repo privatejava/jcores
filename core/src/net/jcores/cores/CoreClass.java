@@ -29,7 +29,6 @@ package net.jcores.cores;
 
 import static net.jcores.CoreKeeper.$;
 
-import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
@@ -142,7 +141,7 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
                 // Quick pass for most common option
                 if (args == null || args.length == 0) {
                     try {
-                        return CoreClass.this.manager.registerObject(x, toSpawn.newInstance());
+                        toSpawn.newInstance();
                     } catch (InstantiationException e) {
                         CoreClass.this.commonCore.report(MessageType.EXCEPTION, "Error instantiating type " + x);
                     } catch (IllegalAccessException e) {
@@ -198,7 +197,7 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
                         }
                     }
 
-                    return CoreClass.this.manager.registerObject(x, constructor.newInstance(args));
+                    return constructor.newInstance(args);
 
                     // NOTE: We do not swallow all execptions silently, becasue spawn() is a bit
                     // special and we cannot return anything that would still be usable.
@@ -249,26 +248,4 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
         this.manager.registerImplementor(clazz, implemenetor);
     }
 
-    /**
-     * Returns all objects that have been spawned of this type. The objects are kept in 
-     * a {@link WeakReference}, so we don't prevent them from being GCed.<br/>
-     * <br/>
-     *
-     * Examples:
-     * <ul>
-     * <li><code>$(SomeInterface.class).spawned()</code> - Returns all classes that have been spawned with <code>spawn()</code>.</li>
-     * </ul>
-     * 
-     * Single-threaded, size-of-one.<br/>
-     * <br/>
-     * 
-     * @return A core object with all classes jCores has spawned (using <code>spawn()</code>) of the enclosed class
-     * (get(0)).
-     */
-    @SuppressWarnings("unchecked")
-    public CoreObject<T> spawned() {
-        if (get(null) == null)
-            return new CoreObject<T>(this.commonCore, (T[]) new Object[0]);
-        return new CoreObject<T>(this.commonCore, this.manager.getAllObjectsFor(get(0)));
-    }
 }

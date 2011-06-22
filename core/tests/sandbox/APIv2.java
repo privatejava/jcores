@@ -34,7 +34,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import net.jcores.interfaces.functions.F0;
 import sandbox.dummys.F0Impl;
-import sandbox.extensions.ExtensionCore;
 
 /**
  * @author rb
@@ -81,14 +80,14 @@ public class APIv2 {
             }
         }).call("hash").each(F0.class).f();*/
 
-        APIv2 api = $(APIv2.class).spawned().get(0);
+        //APIv2 api = $(APIv2.class).spawned().get(0);
 
         // Evtl gg. was tauschen? send auf objekt ist schon sehr invasiv / bzw. speziell
         // $(APIv2.class).spawned().send("myChannel", new Object());
        
-        $(APIv2.class).spawned().each(Runnable.class).run();
+        //$(APIv2.class).spawned().each(Runnable.class).run();
 
-        $(api).call("toString");
+        //$(api).call("toString");
 
         $("Everything Successful").log();
         $("logs/mylog.text").file().append("");
@@ -104,7 +103,7 @@ public class APIv2 {
             }
         });*/
         
-        $(api).as(ExtensionCore.class).yoyo();
+        //$(api).as(ExtensionCore.class).yoyo();
     }
 
 }

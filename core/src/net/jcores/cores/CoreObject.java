@@ -2145,6 +2145,47 @@ public class CoreObject<T> extends Core {
         return this.t.clone();
     }
 
+    
+    /**
+     * For each of the contained elements an object of the type <code>wrapper</code> is 
+     * being created with the element passed as the first argument to the constructor.<br/>
+     * <br/>
+     * 
+     * Single-threaded. Heavyweight.<br/>
+     * <br/>
+     * 
+     * @param wrapper The class to spawn for each element.
+     * @param <W> The type of the wrapper.
+     *  
+     * @return A {@link CoreObject} with the wrapped objects. Elements which could not be wrapped are set to <code>null</code>.
+     */
+    public <W> CoreObject<W> wrap(Class<W> wrapper) {
+        final CoreClass<W> w = $(wrapper);
+        
+        return forEach(new F1<T, W>() {
+            @Override
+            public W f(T x) {
+                return w.spawn(x).get(0);
+            }
+        });
+    }
+
+    
+    /**
+     * Finds the first element that is not null.
+     * 
+     * @return The first element that was not null, or null, if all elements were null. 
+     */
+    protected T findFirst() {
+        if(this.t == null) return null;
+        for(int i=0; i<this.t.length; i++) {
+            if(this.t[i] != null) return this.t[i];
+        }
+        
+        return null;
+    }
+    
+    
     /**
      * Converts an index to an offset.
      * 
@@ -2167,7 +2208,6 @@ public class CoreObject<T> extends Core {
 
     @SuppressWarnings("rawtypes")
     protected final <R> Mapper mapper(final F1<T, R> f, final Option... options) {
-
         return new Mapper<T, R>(this, options) {
             @SuppressWarnings("unchecked")
             @Override

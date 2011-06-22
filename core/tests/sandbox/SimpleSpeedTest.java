@@ -259,7 +259,7 @@ public class SimpleSpeedTest {
         System.out.println("--- Iteration over Created ---");
         System.out.println(benchmark(new F0() { // 278347 
             public void f() {
-                $(F0Impl.class).spawned().each(F0.class).f();
+                //$(F0Impl.class).spawned().each(F0.class).f();
             }
         }, 10) + "µs");
         System.out.println(benchmark(new F0() {

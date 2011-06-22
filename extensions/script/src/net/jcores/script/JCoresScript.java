@@ -27,6 +27,7 @@
  */
 package net.jcores.script;
 
+import net.jcores.annotations.Beta;
 import net.jcores.script.input.Input;
 import net.jcores.script.scriptmodes.JCoresScriptDevtime;
 import net.jcores.script.scriptmodes.JCoresScriptRuntime;
@@ -135,9 +136,9 @@ public abstract class JCoresScript {
      * @param string
      * @return
      */
-    public JCoresScript src(String string) {
+    @Beta
+    protected JCoresScript src(String string) {
         // TODO Auto-generated method stub
         return null;
     }
-
 }

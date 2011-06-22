@@ -100,7 +100,7 @@ public class APIv3 {
         for (int i = 0; i < 100000; i++) {
            // F0 spawn = $(F0.class).spawn();
             if (i % 1000 == 0) {
-                size = $(F0.class).spawned().size();
+                //size = $(F0.class).spawned().size();
                 //System.out.println(size);
             }
         }
