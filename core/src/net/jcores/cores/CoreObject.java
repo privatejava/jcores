@@ -1892,8 +1892,8 @@ public class CoreObject<T> extends Core {
         if (size() == 0) return this;
         if (start > end) return slice(0, 0);
         
-        final double s = $.limit(0, start, 1.0);
-        final double e = $.limit(0, end, 1.0);
+        final double s = $.alg.limit(0, start, 1.0);
+        final double e = $.alg.limit(0, end, 1.0);
 
         int size = size();
         int a = (int) (s * size);

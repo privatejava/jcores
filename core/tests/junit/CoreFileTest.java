@@ -53,7 +53,7 @@ public class CoreFileTest {
         // its content must look like afterwards.
         int sum = 667;
 
-        final File testFile = $.tempfile();
+        final File testFile = $.sys.tempfile();
         $(testFile).append(sum + "\n"); // This line must always be present in the file
 
         for (int i = 0; i < 1000; i++) {
@@ -104,7 +104,7 @@ public class CoreFileTest {
     /** */
     @Test
     public void testZip() {
-        final String path = $.tempfile().getAbsolutePath();
+        final String path = $.sys.tempfile().getAbsolutePath();
         
         final CoreFile source = $("documentation").file();
         final int srcsize = source.dir().size();
@@ -126,8 +126,8 @@ public class CoreFileTest {
     /** */
     @Test
     public void testCopy() {
-        final File file = $.tempfile();
-        final File dir = $.tempdir();
+        final File file = $.sys.tempfile();
+        final File dir = $.sys.tempdir();
         
         $("core/tests/junit/data/ranges.zip").file().copy(file.getAbsolutePath());
         Assert.assertEquals($("core/tests/junit/data/ranges.zip").file().get(0).length(), file.length());

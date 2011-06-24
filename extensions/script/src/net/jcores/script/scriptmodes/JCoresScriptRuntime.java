@@ -81,7 +81,7 @@ public class JCoresScriptRuntime extends JCoresScript {
 		if (System.console() == null && this.console) {
 
 			// In case we need a console, create it in the EDT
-			$.edtnow(new F0() {
+			$.ui.edtnow(new F0() {
 				@Override
 				public void f() {
 					initUI();

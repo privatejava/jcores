@@ -44,7 +44,7 @@ public class CoreZipInputStreamTest {
     /** */
     @Test
     public void testUnzip() {
-        File tempdir = $.tempdir();
+        File tempdir = $.sys.tempdir();
         $(Data.class.getResourceAsStream("jIntellitype.zip")).zipstream().unzip(tempdir.getAbsolutePath());
         Assert.assertTrue($(tempdir).dir().get(0).getName().equals("JIntellitype.dll"));
     }

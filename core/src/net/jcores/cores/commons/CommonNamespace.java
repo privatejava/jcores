@@ -1,7 +1,7 @@
 /*
- * Channel.java
+ * CommonNamespace.java
  * 
- * Copyright (c) 2010, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,21 +25,21 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.options;
+package net.jcores.cores.commons;
+
+import net.jcores.CommonCore;
 
 /**
- * Channel for messages.
- * 
+ * The common namespace is the base class for all name spaces in the common core.  
+ *  
  * @author Ralf Biedert
- *
+ * @since 1.0
  */
-public enum MessageType {
-    /** Specifies messages that deal with using the library in 'wrong' ways. */
-    MISUSE,
+public class CommonNamespace {
+    /** Pointer to our common core */
+    protected CommonCore commonCore;
 
-    /** Specifies messages that deal performance issues. */
-    PERFORMANCE,
-
-    /** Specifies messages resulting from swalloed exceptions */
-    EXCEPTION,
+    public CommonNamespace(CommonCore commonCore) {
+        this.commonCore = commonCore;
+    }
 }

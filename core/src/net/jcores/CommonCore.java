@@ -29,9 +29,6 @@ package net.jcores;
 
 import static net.jcores.CoreKeeper.$;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,9 +38,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.UUID;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -53,10 +47,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.logging.Level;
 
-import javax.swing.SwingUtilities;
 
 import net.jcores.cores.Core;
 import net.jcores.cores.CoreNumber;
+import net.jcores.cores.commons.CommonAlgorithmic;
+import net.jcores.cores.commons.CommonSys;
+import net.jcores.cores.commons.CommonUI;
 import net.jcores.interfaces.functions.F0;
 import net.jcores.managers.Manager;
 import net.jcores.managers.ManagerClass;
@@ -64,7 +60,6 @@ import net.jcores.managers.ManagerDebugGUI;
 import net.jcores.managers.ManagerDeveloperFeedback;
 import net.jcores.managers.ManagerLogging;
 import net.jcores.options.MessageType;
-import net.jcores.options.Option;
 import net.jcores.utils.internal.Reporter;
 import net.jcores.utils.internal.system.ProfileInformation;
 import net.jcores.utils.map.ConcurrentMapUtil;
@@ -72,9 +67,8 @@ import net.jcores.utils.map.MapUtil;
 
 /**
  * The common core is a singleton object shared by (thus common to) all created {@link Core} instances. It mainly
- * contains helper and utility methods and takes care
- * of the {@link Manager} objects. For example, to but the current thread to sleep (without the
- * ugly try/catch), you would write:<br/>
+ * contains helper and utility methods and takes care of the {@link Manager} objects. For example, to but the 
+ * current thread to sleep (without the ugly try/catch), you would write:<br/>
  * <br/>
  * 
  * <code>$.sleep(1000);</code> <br/>
@@ -105,7 +99,17 @@ public class CommonCore {
 
     /** Method to clone objects */
     private Method cloneMethod;
+    
+    /** Common system utilities */
+    public final CommonSys sys = new CommonSys(this); 
 
+    /** Common algorithmic utilities */
+    public final CommonAlgorithmic alg = new CommonAlgorithmic(this); 
+
+    /** Common ui utilities */
+    public final CommonUI ui = new CommonUI(this); 
+
+    
     /**
      * Constructs the common core.
      */
@@ -309,44 +313,6 @@ public class CommonCore {
 
     
     /**
-     * Executes the given function in the Event Dispatch Thread (EDT) at some
-     * point in the future.
-     * 
-     * @since 1.0
-     * @param f0 The function to execute.
-     */
-    public void edt(final F0 f0) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                f0.f();
-            }
-        });
-    }
-
-    /**
-     * Executes the given function in the Event Dispatch Thread (EDT) now, waiting until
-     * the function was executed.
-     * 
-     * @since 1.0
-     * @param f0 The function to execute.
-     */
-    public void edtnow(final F0 f0) {
-        try {
-            SwingUtilities.invokeAndWait(new Runnable() {
-                @Override
-                public void run() {
-                    f0.f();
-                }
-            });
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Executes the given runnable count times. Call this method with your
      * given workers and a number of threads (usually number of CPUs).
      *
@@ -415,44 +381,6 @@ public class CommonCore {
 
     
     /**
-     * Ensures the value <code>x</code> is between a and b, so that
-     * <code>a <= x <= b</code>. If x is larger or smaller, it will be 
-     * limited to the given  bounds.
-     *  
-     * @param a The lower bound. 
-     * @param x The value.
-     * @param b The upper bound.
-     * 
-     * @since 1.0
-     * @return The new list.
-     */
-    public double limit(double a, double x, double b) {
-        if(x < a) return a;
-        if(x > b) return b;
-        return x;
-    }
-    
-    
-    /**
-     * Ensures the value <code>x</code> is between a and b, so that
-     * <code>a <= x <= b</code>. If x is larger or smaller, it will be 
-     * limited to the given  bounds.
-     *  
-     * @param a The lower bound. 
-     * @param x The value.
-     * @param b The upper bound.
-     * 
-     * @since 1.0
-     * @return The new list.
-     */
-    public int limit(int a, int x, int b) {
-        if(x < a) return a;
-        if(x > b) return b;
-        return x;
-    }
-    
-
-    /**
      * Returns a new (linked) {@link List} when the number of elements to 
      * store is not known.
      * 
@@ -490,23 +418,6 @@ public class CommonCore {
     }
 
     /**
-     * Executes the given function after at the given rate
-     * indefinitely.
-     * 
-     * @param f0 The function to execute
-     * @param rate The rate at which the function will be executed.
-     */
-    public void manyTimes(final F0 f0, long rate) {
-        final Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                f0.f();
-            }
-        }, 0, rate);
-    }
-
-    /**
      * Measures how long the execution of the given function took. The result will be returned in nanoseconds.
      * 
      * @param f The function to execute.
@@ -517,64 +428,6 @@ public class CommonCore {
         f.f();
         final long end = System.nanoTime();
         return end - start;
-    }
-
-    /**
-     * Executes the given function once after the given delay.
-     * 
-     * @param f0 The function to execute
-     * @param delay The delay after which the function will be executed.
-     */
-    public void oneTime(final F0 f0, long delay) {
-        final Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                f0.f();
-            }
-        }, delay);
-    }
-
-    /**
-     * Permutes the given <b>sorted</b> list of objects. With each invocation the next
-     * possible permutation will be constructed. You can call this method multiple times
-     * on the same array, which iteratively creates the next permutation until <code>false</code> is being returned. In
-     * that case, the array was not permuted
-     * and no other permutations exist.
-     * 
-     * @since 1.0
-     * @param <T> The type of the array.
-     * @param objects The array to permute.
-     * @return True if the array was successfully permuted, false if not. Once this method
-     * returns false, subsequent calls on the same array will always return false.
-     */
-    public <T extends Comparable<T>> boolean permute(T objects[]) {
-        // Pseudocode from Wikipedia
-        // Find the largest index k such that a[k] < a[k + 1]. If no such index exists, the permutation is the last
-        // permutation.
-        int kk = -1, ll = -1, n = objects.length;
-        for (int k = 0; k < n - 1; k++) {
-            if (objects[k].compareTo(objects[k + 1]) < 0) kk = k;
-        }
-        if (kk < 0) return false;
-
-        // Find the largest index l such that a[k] < a[l]. Since k + 1 is such an index, l is well defined and satisfies
-        // k < l.
-        for (int l = 0; l < n; l++) {
-            if (objects[kk].compareTo(objects[l]) < 0) ll = l;
-        }
-
-        // Swap a[k] with a[l].
-        swap(objects, kk, ll);
-
-        // Reverse the sequence from a[k + 1] up to and including the final element a[n].
-        int c = 1;
-        for (int i = kk + 1; i < n; i++) {
-            if (i >= n - c) break;
-            swap(objects, i, n - c++);
-        }
-
-        return true;
     }
 
     /**
@@ -667,66 +520,6 @@ public class CommonCore {
     }
 
     /**
-     * Puts the current thread to sleep for some time, without the need for any try/catch block.
-     * 
-     * @param time The time to sleep.
-     * @return <code>true</code> if the sleep was interrupted, <code>false</code> if not.
-     */
-    public boolean sleep(long time) {
-        try {
-            Thread.sleep(time);
-        } catch (InterruptedException e) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Swaps two elements in an array.
-     * 
-     * @since 1.0
-     * @param <T> The type of the object array.
-     * @param objects The array to swap the elements in.
-     * @param i The index i to swap with j.
-     * @param j The index j to swap with i.
-     */
-    @SuppressWarnings("unchecked")
-    public <T> void swap(T objects[], int i, int j) {
-        Object tmp = objects[i];
-        objects[i] = objects[j];
-        objects[j] = (T) tmp;
-    }
-
-    /**
-     * Returns a temporary file.
-     * 
-     * @return A File object for a temporary file.
-     */
-    public File tempfile() {
-        try {
-            return File.createTempFile("jcores.", ".tmp");
-        } catch (IOException e) {
-            //
-        }
-
-        return new File("/tmp/jcores.failedtmp." + System.nanoTime() + ".tmp");
-    }
-
-    /**
-     * Returns a temporary directory.
-     * 
-     * @return A File object for a temporary directory.
-     */
-    public File tempdir() {
-        final File file = new File(tempfile().getAbsoluteFile() + ".dir/");
-        if (!file.mkdirs()) {
-            report(MessageType.EXCEPTION, "Unable to create directory " + file);
-        }
-        return file;
-    }
-
-    /**
      * Unboxes a number of Integers.
      * 
      * @param object The numbers to unbox.
@@ -741,16 +534,5 @@ public class CommonCore {
             myIntegers[i++] = val;
 
         return myIntegers;
-    }
-
-    /**
-     * Creates a unique ID. If nothing is specified each call delivers a
-     * new, unique ID. TODO: Option.UID_SYSTEM, .UID_USER, .UID_APP, ...
-     * 
-     * @param options
-     * @return Returns a unique ID.
-     */
-    public String uniqueID(Option... options) {
-        return UUID.randomUUID().toString();
     }
 }

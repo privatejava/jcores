@@ -4,9 +4,6 @@ import static net.jcores.CoreKeeper.$;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.KeyEventDispatcher;
-import java.awt.KeyboardFocusManager;
-import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -67,7 +64,7 @@ public class JCoresConsole extends JFrame {
 	}
 
 	public void addTerminationHook(final Thread thread) {
-		$.manyTimes(new F0() {
+		$.sys.manyTimes(new F0() {
 			boolean warned = false;
 
 			@Override

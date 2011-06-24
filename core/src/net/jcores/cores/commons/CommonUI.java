@@ -1,7 +1,7 @@
 /*
- * CoreStringTest.java
+ * CommonFile.java
  * 
- * Copyright (c) 2010, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,75 +25,69 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package junit;
+package net.jcores.cores.commons;
 
-import static net.jcores.CoreKeeper.$;
+import java.lang.reflect.InvocationTargetException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import javax.swing.SwingUtilities;
 
+import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F0;
-import net.jcores.utils.map.MapUtil;
-import net.jcores.utils.map.generators.NewUnsafeInstance;
-
-import org.junit.Assert;
-import org.junit.Test;
 
 /**
+ * Contains common ui  utilities. 
+ * 
  * @author Ralf Biedert
+ * @since 1.0
+ *
  */
-public class CommonCoreTest {
+public class CommonUI extends CommonNamespace {
 
-    /** */
-    @Test
-    public void testTimer() {
-        final AtomicInteger i = new AtomicInteger(333);
-        
-        $.sys.oneTime(new F0() {
-            public void f() {
-                i.set(666);
-            }
-        }, 250);
-        
-        $.sys.sleep(400);
-        
-        Assert.assertEquals(666, i.get());
-        
-        $.sys.oneTime(new F0() {
-            public void f() {
-                i.set(667);
-            }
-        }, 400);
-        
-        $.sys.sleep(200);
-
-        Assert.assertEquals(666, i.get());
-    }
-    
-    
-    /** */
-    @Test
-    public void testPermute() {
-        final String x[] = $("a", "b", "c", "d", "e").unsafearray();
-        
-        int i = 0;
-        while($.alg.permute(x))
-            i++;
-        
-        Assert.assertEquals(120 - 1, i);
-     }
-    
-    
-    /** */
-    @SuppressWarnings("boxing")
-    @Test
-    public void testMap() {
-        final MapUtil<String, List<Integer>> m1 = $.map();
-        m1.generator(new NewUnsafeInstance<String, List<Integer>>(ArrayList.class));
-        
-        m1.get("a").add(1);
-        Assert.assertEquals(m1.get("a").get(0), Integer.valueOf(1)); 
+    /** 
+     * Creates a common ui object.
+     * 
+     * @param commonCore 
+     */
+    public CommonUI(CommonCore commonCore) {
+        super(commonCore);
     }
 
+    /**
+     * Executes the given function in the Event Dispatch Thread (EDT) at some
+     * point in the future.
+     * 
+     * @since 1.0
+     * @param f0 The function to execute.
+     */
+    public void edt(final F0 f0) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                f0.f();
+            }
+        });
+    }
+
+    /**
+     * Executes the given function in the Event Dispatch Thread (EDT) now, waiting until
+     * the function was executed.
+     * 
+     * @since 1.0
+     * @param f0 The function to execute.
+     */
+    public void edtnow(final F0 f0) {
+        try {
+            SwingUtilities.invokeAndWait(new Runnable() {
+                @Override
+                public void run() {
+                    f0.f();
+                }
+            });
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+    
 }
