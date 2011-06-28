@@ -385,11 +385,11 @@ public class SimpleSpeedTest {
         System.out.println(benchmark(new F0() {
             public void f() {
 
-                $(intobjs).staple(0, new F2ReduceObjects<Integer>() {
+                /*$(intobjs).staple(0, new F2ReduceObjects<Integer>() {
                     public Integer f(Integer left, Integer right) {
                         return left + right;
                     }
-                });
+                });*/
 
             }
         }, 10) + "µs");

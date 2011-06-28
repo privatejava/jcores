@@ -124,6 +124,26 @@ public class CommonAlgorithmic extends CommonNamespace {
     
         return true;
     }
+    
+    
+
+    /**
+     * Returns the relative value of x with respect to the bounds of a and b. If <code>a == x</code> 
+     * then <code>0</code> is being returned, if <code>b == x</code>  then <code>1</code> is being 
+     * returned, if it is in between, the relative amount will be returned. If <code>x</code> lies
+     * outside the bounds, values outside the range <code>0 ... 1</code> will be returned.
+     * 
+     * @since 1.0
+     *  
+     * @param a The lower bound. 
+     * @param x The value.
+     * @param b The upper bound.
+     * @return The relative value.
+     */
+    public double relative(double a, double x, double b) {
+        return (x - a) / (b - a);
+    }
+
 
     /**
      * Swaps two elements in an array.

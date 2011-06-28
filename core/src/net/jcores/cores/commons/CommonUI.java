@@ -27,6 +27,9 @@
  */
 package net.jcores.cores.commons;
 
+import static net.jcores.CoreKeeper.$;
+
+import java.awt.Color;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.SwingUtilities;
@@ -35,21 +38,27 @@ import net.jcores.CommonCore;
 import net.jcores.interfaces.functions.F0;
 
 /**
- * Contains common ui  utilities. 
+ * Contains common ui utilities.
  * 
  * @author Ralf Biedert
  * @since 1.0
- *
+ * 
  */
 public class CommonUI extends CommonNamespace {
-
-    /** 
+    /** The colors we need for heat maps */
+    private Color heatmapColors[] = new Color[256];
+    
+    /**
      * Creates a common ui object.
      * 
-     * @param commonCore 
+     * @param commonCore
      */
     public CommonUI(CommonCore commonCore) {
         super(commonCore);
+        
+        for (int i = 0; i < this.heatmapColors.length; i++) {
+            this.heatmapColors[i] = Color.getHSBColor((float) i / (float) this.heatmapColors.length, 0.85f, 1.0f);
+        }
     }
 
     /**
@@ -89,5 +98,16 @@ public class CommonUI extends CommonNamespace {
             e.printStackTrace();
         }
     }
-    
+
+    /**
+     * Creates a heat-color for the given relative value. A value of <code>0</code> means cold, a value
+     * of <code>1</code> means hot. Values outside the scope are limited to these values.
+     * 
+     * @param rel A value between <code>0</code> and <code>1</code>.
+     * @return A heatmap color.
+     */
+    public Color heat(double rel) {
+        final double d = $.alg.limit(0, rel, 1);
+        return this.heatmapColors[(int) (d * this.heatmapColors.length)];
+    }
 }

@@ -1,7 +1,7 @@
 /*
- * Average.java
+ * AbstractAdapter.java
  * 
- * Copyright (c) 2010, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,50 +25,37 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.utils;
+package net.jcores.cores.adapter;
 
-/**
- * A staple of the given type. A staple is the result of an operation that operated on a number of objects and returned a 
- * single output value. See <code>CoreObject.staple()</code>.
- * 
- * @author Ralf Biedert
- *
- * @param <T> Type of stapled object.
- */
-public class Staple<T> {
 
-    /** */
-    private final int size;
-
-    /** */
-    private final T t;
-
-    /**
-     * Creates a new staple.
-     * 
-     * @param t Stapled value.
-     * @param size Number of elements that contributed.
-     */
-    public Staple(T t, int size) {
-        this.t = t;
-        this.size = size;
+public abstract class AbstractAdapter<T> {
+    public static interface AIterator<T> {
+        public T next();
+        public boolean hasNext();
+        public int nextIndex();
     }
-
-    /**
-     * Returns the number of objects that were stapled.
-     * 
-     * @return The number of objects.
+    
+    /** 
+     * Returns this size of this adapter
+     *  
+     * @return . 
      */
-    public int size() {
-        return this.size;
-    }
-
+    public abstract int size();
+    
     /**
-     * Returns the stapled value.
+     * Returns the element at position i.
      * 
-     * @return The stapled value.
+     * @param i
+     * 
+     * @return .
      */
-    public T staple() {
-        return this.t;
-    }
+    public abstract T get(int i);
+    
+    
+    /**
+     * Creates an iterator to iterate over all elements.
+     * 
+     * @return An iterator.
+     */
+    public abstract AIterator<T> iterator();
 }

@@ -47,7 +47,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.logging.Level;
 
-
 import net.jcores.cores.Core;
 import net.jcores.cores.CoreNumber;
 import net.jcores.cores.commons.CommonAlgorithmic;
@@ -71,7 +70,7 @@ import net.jcores.utils.map.MapUtil;
  * current thread to sleep (without the ugly try/catch), you would write:<br/>
  * <br/>
  * 
- * <code>$.sleep(1000);</code> <br/>
+ * <code>$.sys.sleep(1000);</code> <br/>
  * <br/>
  * 
  * Methods and object commonly required by the other cores. All methods in here are (and must be!)

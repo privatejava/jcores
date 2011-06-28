@@ -42,6 +42,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -61,7 +62,6 @@ import net.jcores.managers.ManagerDeveloperFeedback;
 import net.jcores.options.MessageType;
 import net.jcores.options.Option;
 import net.jcores.options.OptionMapType;
-import net.jcores.utils.Staple;
 import net.jcores.utils.internal.Folder;
 import net.jcores.utils.internal.Mapper;
 import net.jcores.utils.internal.Wrapper;
@@ -89,7 +89,7 @@ import net.jcores.utils.map.Compound;
  * 
  * @param <T> Type of the objects to wrap.
  */
-public class CoreObject<T> extends Core {
+public class CoreObject<T> extends Core implements Iterable<T> {
 
     /** */
     private static final long serialVersionUID = -6436821141631907999L;
@@ -1960,42 +1960,7 @@ public class CoreObject<T> extends Core {
         return new CoreObject<T>(this.commonCore, copyOf);
     }
 
-    /**
-     * Staples all elements. Assists, for example, in computing the average of a number
-     * of elements. <code>staple()</code> is similar to <code>reduce()</code>, with the
-     * exception that a given neutral element is used as a starting point, and some some 
-     * derived value of each contained element might be connected with it. In the end a 
-     * <code>Staple</code> will be returned, containing the stapled value and the actual 
-     * number of elements used.<br/>
-     * <br/>
-     * 
-     * Single-threaded. <br/>
-     * <br/>
-     * 
-     * @param neutralElement The initial element.
-     * @param sumAndNext A reduce function. Left will be the current sum, right will
-     * be the next element.
-     * 
-     * @return A <code>Staple</code> object, with the current sum and the size.
-     */
-    public Staple<T> staple(T neutralElement, F2ReduceObjects<T> sumAndNext) {
-        final int size = size();
-        if (size == 0) return new Staple<T>(neutralElement, 1);
-
-        int count = 0;
-        T sum = neutralElement;
-
-        for (int i = 0; i < size; i++) {
-            if (this.t[i] == null) continue;
-
-            sum = sumAndNext.f(sum, this.t[i]);
-
-            count++;
-        }
-
-        return new Staple<T>(sum, count);
-    }
-
+    
     /**
      * Converts all elements to strings by calling <code>.toString()</code> on each
      * element.<br/>
@@ -2230,6 +2195,33 @@ public class CoreObject<T> extends Core {
 
                 // Eventually set the out value
                 a[i] = out;
+            }
+        };
+    }
+
+    
+    /* (non-Javadoc)
+     * @see java.lang.Iterable#iterator()
+     */
+    @Override
+    public Iterator<T> iterator() {
+        return new Iterator<T>() {
+            int i = 0; 
+            
+            @Override
+            public boolean hasNext() {
+                if(this.i < size()) return true;
+                return false;
+            }
+
+            @Override
+            public T next() {
+                return CoreObject.this.t[this.i++];
+            }
+
+            @Override
+            public void remove() {
+                CoreObject.this.commonCore.report(MessageType.MISUSE, "Must not try to remove() elements on a CoreObject.iterator() ");
             }
         };
     }
