@@ -27,17 +27,12 @@
  */
 package net.jcores.cores.adapter;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.ListIterator;
 
 
-public final class ArrayAdapter<T> extends AbstractAdapter<T> {
+public final class EmptyAdapter<T> extends AbstractAdapter<T> {
     /** */
-    final T[] array;
-
-    public ArrayAdapter(T... array) {
-        this.array = array;
+    public EmptyAdapter() {
     }
     
     /* (non-Javadoc)
@@ -45,7 +40,7 @@ public final class ArrayAdapter<T> extends AbstractAdapter<T> {
      */
     @Override
     public int size() {
-        return this.array.length;
+        return 0;
     }
 
     /* (non-Javadoc)
@@ -53,12 +48,7 @@ public final class ArrayAdapter<T> extends AbstractAdapter<T> {
      */
     @Override
     public T get(int i) {
-        return this.array[i];
-    }
-    
-    @Override
-    public Class<?> clazz() {
-        return this.array.getClass().getComponentType();
+        return null;
     }
 
     /* (non-Javadoc)
@@ -67,14 +57,12 @@ public final class ArrayAdapter<T> extends AbstractAdapter<T> {
     @Override
     public ListIterator<T> iterator() {
         return new ListIterator<T>() {
-            int i = 0;
             
             /* (non-Javadoc)
              * @see java.util.ListIterator#hasNext()
              */
             @Override
             public boolean hasNext() {
-                if(this.i < ArrayAdapter.this.array.length) return true;
                 return false;
             }
 
@@ -83,29 +71,27 @@ public final class ArrayAdapter<T> extends AbstractAdapter<T> {
              */
             @Override
             public T next() {
-                return ArrayAdapter.this.array[this.i++];
+                return null;
             }
 
             @Override
             public boolean hasPrevious() {
-                if(this.i - 1 >= 0) return true;
                 return false;
             }
 
             @Override
             public T previous() {
-                this.i -= 1;
-                return ArrayAdapter.this.array[this.i--];
+                return null;
             }
 
             @Override
             public int nextIndex() {
-                return this.i;
+                return 0;
             }
 
             @Override
             public int previousIndex() {
-                return this.i - 1;
+                return 0;
             }
 
             @Override
@@ -123,16 +109,5 @@ public final class ArrayAdapter<T> extends AbstractAdapter<T> {
                 //
             }
         };
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public <N> N[] array(Class<N> in) {
-        final N[] n = (N[]) Array.newInstance(in, 0);
-
-        if (this.array != null)
-            return (N[]) Arrays.copyOf(this.array, this.array.length, n.getClass());
-
-        return (N[]) Array.newInstance(in, 0);   
     }
 }

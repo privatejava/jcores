@@ -44,6 +44,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicReferenceArray;
@@ -51,6 +52,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.jcores.CommonCore;
+import net.jcores.cores.adapter.AbstractAdapter;
+import net.jcores.cores.adapter.ArrayAdapter;
+import net.jcores.cores.adapter.EmptyAdapter;
 import net.jcores.interfaces.functions.F0;
 import net.jcores.interfaces.functions.F1;
 import net.jcores.interfaces.functions.F1Object2Bool;
@@ -95,7 +99,9 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     private static final long serialVersionUID = -6436821141631907999L;
 
     /** The array we work on. */
-    protected final T[] t;
+    // protected final T[] _t;
+
+    protected final AbstractAdapter<T> t;
 
     /**
      * Creates the core object for the given single object.
@@ -111,10 +117,9 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         // Check if we have an object. If not, and if there is no type, use an
         // empty Object array
         if (object != null) {
-            this.t = (T[]) Array.newInstance(type, 1);
-            this.t[0] = object;
+            this.t = new ArrayAdapter<T>(object);
         } else {
-            this.t = (T[]) new Object[0];
+            this.t = new EmptyAdapter<T>();
         }
     }
 
@@ -126,8 +131,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      */
     public CoreObject(CommonCore supercore, T... objects) {
         super(supercore);
-
-        this.t = objects;
+        this.t = new ArrayAdapter<T>(objects);
     }
 
     /**
@@ -154,10 +158,20 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         if (size() == 0) return toAdd;
         if (toAdd.size() == 0) return this;
 
-        final T[] copy = (T[]) Array.newInstance(this.t.getClass().getComponentType(), this.t.length + toAdd.t.length);
-        System.arraycopy(this.t, 0, copy, 0, this.t.length);
-        System.arraycopy(toAdd.t, 0, copy, this.t.length, toAdd.t.length);
-
+        final int offset = size(); 
+        final T[] copy = (T[]) Array.newInstance(this.t.clazz(), offset + toAdd.size());
+        
+        final ListIterator<T> a = this.t.iterator();
+        final ListIterator<T> b = toAdd.t.iterator();
+        
+        while(a.hasNext()) {
+            copy[a.nextIndex()] = a.next();
+        }
+        while(b.hasNext()) {
+            copy[offset + b.nextIndex()] = b.next();
+        }
+        
+        
         return new CoreObject<T>(this.commonCore, copy);
     }
 

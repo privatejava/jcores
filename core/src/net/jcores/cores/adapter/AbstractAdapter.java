@@ -31,6 +31,8 @@ import java.util.ListIterator;
 
 
 public abstract class AbstractAdapter<T> {
+    /** */
+    public abstract <N> N[] array(Class<N> in);
     
     /** 
      * Returns this size of this adapter
@@ -55,4 +57,23 @@ public abstract class AbstractAdapter<T> {
      * @return An iterator.
      */
     public abstract ListIterator<T> iterator();
+    
+    
+    /**
+     * Returns the clazz of the adapter.
+     * 
+     * @return Clazz
+     */
+    public Class<?> clazz() {
+        final ListIterator<T> it = iterator();
+        
+        while(it.hasNext()) {
+            T next = it.next();
+            if(next == null) continue;
+            return next.getClass();
+        }
+        
+        return Object.class;
+    }
+
 }
