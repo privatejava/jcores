@@ -27,6 +27,8 @@
  */
 package net.jcores.cores.adapter;
 
+import java.util.ListIterator;
+
 
 public final class ArrayAdapter<T> extends AbstractAdapter<T> {
     /** */
@@ -56,34 +58,62 @@ public final class ArrayAdapter<T> extends AbstractAdapter<T> {
      * @see net.jcores.cores.adapter.AbstractAdapter#iterator()
      */
     @Override
-    public AIterator<T> iterator() {
-        return new AIterator<T>() {
-            
+    public ListIterator<T> iterator() {
+        return new ListIterator<T>() {
             int i = 0;
-
+            
             /* (non-Javadoc)
-             * @see net.jcores.cores.adapter.AbstractAdapter.AIterator#hasNext()
+             * @see java.util.ListIterator#hasNext()
              */
             @Override
             public boolean hasNext() {
-                if(this.i < ArrayAdapter.this.array.length - 1) return true;
+                if(this.i < ArrayAdapter.this.array.length) return true;
                 return false;
             }
 
             /* (non-Javadoc)
-             * @see net.jcores.cores.adapter.AbstractAdapter.AIterator#next()
+             * @see java.util.ListIterator#next()
              */
             @Override
             public T next() {
                 return ArrayAdapter.this.array[this.i++];
             }
 
-            /* (non-Javadoc)
-             * @see net.jcores.cores.adapter.AbstractAdapter.AIterator#nextIndex()
-             */
+            @Override
+            public boolean hasPrevious() {
+                if(this.i - 1 >= 0) return true;
+                return false;
+            }
+
+            @Override
+            public T previous() {
+                this.i -= 1;
+                return ArrayAdapter.this.array[this.i--];
+            }
+
             @Override
             public int nextIndex() {
                 return this.i;
+            }
+
+            @Override
+            public int previousIndex() {
+                return this.i - 1;
+            }
+
+            @Override
+            public void remove() {
+                // 
+            }
+
+            @Override
+            public void set(T e) {
+                // 
+            }
+
+            @Override
+            public void add(T e) {
+                //
             }
         };
     }

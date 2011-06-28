@@ -27,8 +27,8 @@
  */
 package net.jcores.cores.adapter;
 
-import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 public final class ListAdapter<T> extends AbstractAdapter<T> {
     /** */
@@ -58,36 +58,7 @@ public final class ListAdapter<T> extends AbstractAdapter<T> {
      * @see net.jcores.cores.adapter.AbstractAdapter#iterator()
      */
     @Override
-    public AIterator<T> iterator() {
-        return new AIterator<T>() {
-
-            Iterator<T> it = ListAdapter.this.list.iterator();
-            int i = 0;
-            
-            /* (non-Javadoc)
-             * @see net.jcores.cores.adapter.AbstractAdapter.AIterator#next()
-             */
-            @Override
-            public T next() {
-                this.i++;
-                return this.it.next();
-            }
-
-            /* (non-Javadoc)
-             * @see net.jcores.cores.adapter.AbstractAdapter.AIterator#hasNext()
-             */
-            @Override
-            public boolean hasNext() {
-                return this.it.hasNext();
-            }
-
-            /* (non-Javadoc)
-             * @see net.jcores.cores.adapter.AbstractAdapter.AIterator#nextIndex()
-             */
-            @Override
-            public int nextIndex() {
-                return this.i;
-            }
-        };
+    public ListIterator<T> iterator() {
+        return this.list.listIterator();
     }
 }

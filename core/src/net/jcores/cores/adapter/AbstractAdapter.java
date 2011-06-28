@@ -27,13 +27,10 @@
  */
 package net.jcores.cores.adapter;
 
+import java.util.ListIterator;
+
 
 public abstract class AbstractAdapter<T> {
-    public static interface AIterator<T> {
-        public T next();
-        public boolean hasNext();
-        public int nextIndex();
-    }
     
     /** 
      * Returns this size of this adapter
@@ -57,5 +54,5 @@ public abstract class AbstractAdapter<T> {
      * 
      * @return An iterator.
      */
-    public abstract AIterator<T> iterator();
+    public abstract ListIterator<T> iterator();
 }
