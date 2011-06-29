@@ -32,6 +32,7 @@ import java.util.Collection;
 
 import net.jcores.interfaces.functions.F0;
 import net.jcores.interfaces.functions.F1;
+import net.jcores.script.JCoresScript;
 import benchmarks.benchmarker.Benchmark;
 import benchmarks.benchmarker.BenchmarkResults;
 import benchmarks.benchmarker.Benchmarker;
@@ -54,7 +55,7 @@ public class BenchmarkMain {
      */
     @SuppressWarnings("unchecked")
     public static void main(String[] args) {
-    	//JCoresScript.SCRIPT("Benchmark", args).console().pack();
+    	JCoresScript.SCRIPT("Benchmark", args).console().pack();
     	
         // Prepare benchmarks contianer
         final Collection<Class<? extends Benchmark<?>>> classes = new ArrayList<Class<? extends Benchmark<?>>>();

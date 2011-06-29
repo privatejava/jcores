@@ -116,7 +116,6 @@ public abstract class AbstractAdapter<T> implements Iterable<T>, Serializable {
         return array();
     }
     
-
     
     /**
      * Returns a slice of the given adapter.

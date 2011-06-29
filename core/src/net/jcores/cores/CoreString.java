@@ -261,7 +261,7 @@ public class CoreString extends CoreObject<String> {
                 
                 return null;
             }
-        }).array(String.class));
+        }).adapter);
     }
 
     
@@ -290,7 +290,7 @@ public class CoreString extends CoreObject<String> {
                 
                 return null;
             }
-        }).array(String.class));
+        }).adapter);
     }
     
     
@@ -337,7 +337,7 @@ public class CoreString extends CoreObject<String> {
                 
                 return null;
             }
-        }).array(String.class));
+        }).adapter);
     }
    
     
@@ -641,7 +641,7 @@ public class CoreString extends CoreObject<String> {
                 return sb.toString();
             }
         
-        }).unsafelist());
+        }).adapter);
     }
 
  
