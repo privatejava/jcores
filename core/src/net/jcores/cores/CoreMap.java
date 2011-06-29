@@ -28,8 +28,10 @@
 package net.jcores.cores;
 
 import java.util.HashMap;
+import java.util.List;
 
 import net.jcores.CommonCore;
+import net.jcores.cores.adapter.AbstractAdapter;
 import net.jcores.interfaces.functions.F1;
 import net.jcores.utils.map.MapEntry;
 import net.jcores.utils.map.MapUtil;
@@ -57,6 +59,25 @@ public class CoreMap<K, V> extends CoreObject<MapEntry<K, V>> {
     public CoreMap(CommonCore supercore, MapEntry<K, V>... entries) {
         super(supercore, entries);
     }
+    
+    /**
+     * Wraps a map.
+     * 
+     * @param supercore The shared CommonCore.
+     * @param entries The entries to wrap.
+     */
+    public CoreMap(CommonCore supercore, List<MapEntry<K, V>> entries) {
+        super(supercore, entries);
+    }
+
+    /**
+     * @param supercore The shared CommonCore.
+     * @param adapter The adapter.
+     */
+    public CoreMap(CommonCore supercore, AbstractAdapter<MapEntry<K, V>> adapter) {
+        super(supercore, adapter);
+    }
+
 
     /**
      * Returns the inverse core of this core, i.e., mapping from values to keys.
@@ -70,7 +91,7 @@ public class CoreMap<K, V> extends CoreObject<MapEntry<K, V>> {
                 return new MapEntry<V, K>(x.value(), x.key());
             }
 
-        }).unsafearray());
+        }).unsafelist());
     }
 
     /**
@@ -90,9 +111,10 @@ public class CoreMap<K, V> extends CoreObject<MapEntry<K, V>> {
      * @return The key for the given value, or null if no matching value was found.
      */
     public K key(V value) {
-        for (int i = 0; i < this.t.length; i++) {
-            if (this.t[i] == null) continue;
-            if (this.t[i].value().equals(value)) return this.t[i].key();
+        for(MapEntry<K, V> m : this) {
+            if (m == null) continue;
+            if (m.value().equals(value)) return m.key();
+            
         }
 
         return null;
@@ -119,7 +141,7 @@ public class CoreMap<K, V> extends CoreObject<MapEntry<K, V>> {
             public K f(MapEntry<K, V> x) {
                 return x.key();
             }
-        }).unsafearray());
+        }).unsafelist());
     }
 
     /**
@@ -140,10 +162,8 @@ public class CoreMap<K, V> extends CoreObject<MapEntry<K, V>> {
     public MapUtil<K, V> map() {
         final MapUtil<K, V> rval = new MapUtil<K, V>(new HashMap<K, V>());
 
-        for (int i = 0; i < size(); i++) {
-            final MapEntry<K, V> mapEntry = get(i);
+        for(MapEntry<K, V> mapEntry : this) {
             if (mapEntry == null) continue;
-            
             rval.put(mapEntry.key(), mapEntry.value());
         }
 
@@ -172,7 +192,7 @@ public class CoreMap<K, V> extends CoreObject<MapEntry<K, V>> {
             public V f(MapEntry<K, V> x) {
                 return x.value();
             }
-        }).unsafearray());
+        }).unsafelist());
     }
 
     /**
@@ -192,9 +212,9 @@ public class CoreMap<K, V> extends CoreObject<MapEntry<K, V>> {
      * @return The value for the given key, or null if no matching key was found.
      */
     public V value(K key) {
-        for (int i = 0; i < this.t.length; i++) {
-            if (this.t[i] == null) continue;
-            if (this.t[i].key().equals(key)) return this.t[i].value();
+        for(MapEntry<K, V> t : this) {
+            if (t == null) continue;
+            if (t.key().equals(key)) return t.value();
         }
 
         return null;

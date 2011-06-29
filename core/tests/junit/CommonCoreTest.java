@@ -75,7 +75,7 @@ public class CommonCoreTest {
     /** */
     @Test
     public void testPermute() {
-        final String x[] = $("a", "b", "c", "d", "e").unsafearray();
+        final String x[] = $("a", "b", "c", "d", "e").array(String.class);
         
         int i = 0;
         while($.alg.permute(x))

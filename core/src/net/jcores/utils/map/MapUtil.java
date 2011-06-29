@@ -209,9 +209,9 @@ public class MapUtil<K, V> extends VanillaUtil<Map<K, V>> implements Map<K, V> {
      * @param key The key to put.
      * @param value The integer value to put.
      */
-    @SuppressWarnings("boxing")
+    @SuppressWarnings({"unchecked" })
     public void put(K key, int value) {
-        put(key, Integer.valueOf(value));
+        put(key, (V) Integer.valueOf(value));
     }
 
     /**
@@ -220,9 +220,9 @@ public class MapUtil<K, V> extends VanillaUtil<Map<K, V>> implements Map<K, V> {
      * @param key The key to put.
      * @param value THe double value to put.
      */
-    @SuppressWarnings("boxing")
-    public void put(String key, double value) {
-        put(key, Double.valueOf(value));
+    @SuppressWarnings({ "unchecked" })
+    public void put(K key, double value) {
+        put(key, (V) Double.valueOf(value));
     }
 
     /* (non-Javadoc)

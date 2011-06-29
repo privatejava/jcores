@@ -30,6 +30,7 @@ package net.jcores.cores;
 import java.text.DecimalFormat;
 
 import net.jcores.CommonCore;
+import net.jcores.cores.adapter.AbstractAdapter;
 import net.jcores.interfaces.functions.F1;
 import net.jcores.interfaces.functions.F2ReduceObjects;
 
@@ -58,6 +59,16 @@ public class CoreNumber extends CoreObject<Number> {
         super(supercore, objects);
     }
 
+
+    /**
+     * @param supercore The shared CommonCore.
+     * @param adapter The adapter.
+     */
+    public CoreNumber(CommonCore supercore, AbstractAdapter<Number> adapter) {
+        super(supercore, adapter);
+    }
+
+    
     /**
      * Returns the average of all enclosed numbers.<br/>
      * <br/>
@@ -112,7 +123,7 @@ public class CoreNumber extends CoreObject<Number> {
      */
     public double d(int index) {
         if (get(index) == null) return Double.NaN;
-        return this.t[index].doubleValue();
+        return this.adapter.get(index).doubleValue();
     }
 
     
@@ -161,7 +172,7 @@ public class CoreNumber extends CoreObject<Number> {
      */
     public int i(int index) {
         if (get(index) == null) return 0;
-        return this.t[index].intValue();
+        return this.adapter.get(index).intValue();
     }
     
     
@@ -257,7 +268,7 @@ public class CoreNumber extends CoreObject<Number> {
      */
     public String s(int index) {
         if (get(index) == null) return "null";
-        return this.t[index].toString();
+        return this.adapter.get(index).toString();
     }
 
     

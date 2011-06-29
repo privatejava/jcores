@@ -28,18 +28,30 @@
 package net.jcores.cores.adapter;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
 
-public final class ListAdapter<T> extends AbstractAdapter<T> {
-    /** */
-    private static final long serialVersionUID = -5292390771798957764L;
+
+/**
+ * TODO: Add logic that an array is created on demand which is being used for get() operations 
+ * up to a value until elements have already been extracted by an iterator (or by previous get() 
+ * operataions starting from 0).
+ * 
+ * @author Ralf Biedert
+ *
+ * @param <T>
+ */
+public final class CollectionAdapter<T> extends AbstractAdapter<T> {
+    /**  */
+    private static final long serialVersionUID = 7010286694628298017L;
     
     /** */
-    final List<T> list;
+    final Collection<T> collection;
 
-    public ListAdapter(List<T> list) {
-        this.list = list;
+    public CollectionAdapter(Collection<T> collection) {
+        this.collection = collection;
     }
     
     /* (non-Javadoc)
@@ -47,7 +59,7 @@ public final class ListAdapter<T> extends AbstractAdapter<T> {
      */
     @Override
     public int size() {
-        return this.list.size();
+        return this.collection.size();
     }
 
     /* (non-Javadoc)
@@ -55,7 +67,7 @@ public final class ListAdapter<T> extends AbstractAdapter<T> {
      */
     @Override
     public T get(int i) {
-        return this.list.get(i);
+        return null;        // return this.list.get(i);
     }
 
     /* (non-Javadoc)
@@ -63,7 +75,7 @@ public final class ListAdapter<T> extends AbstractAdapter<T> {
      */
     @Override
     public ListIterator<T> iterator() {
-        return this.list.listIterator();
+        return null; // return this.list.listIterator();
     }
 
     /* (non-Javadoc)
@@ -72,15 +84,15 @@ public final class ListAdapter<T> extends AbstractAdapter<T> {
     @SuppressWarnings("unchecked")
     @Override
     public <N> N[] array(Class<N> in) {
-        return (N[]) this.list.toArray((T[]) Array.newInstance(in, 0));
+        return (N[]) this.collection.toArray((T[]) Array.newInstance(in, 0));
     }
-    
+
     /* (non-Javadoc)
      * @see net.jcores.cores.adapter.AbstractAdapter#unsafelist()
      */
     @Override
     public List<T> unsafelist() {
-        return this.list;
+        return new ArrayList<T>(this.collection);
     }
 
     /* (non-Javadoc)
@@ -88,6 +100,6 @@ public final class ListAdapter<T> extends AbstractAdapter<T> {
      */
     @Override
     public List<T> slice(int start, int end) {
-        return this.list.subList(start, end);
+        return new ArrayList<T>();
     }
 }

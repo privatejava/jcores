@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.zip.ZipInputStream;
 
 import net.jcores.CommonCore;
+import net.jcores.cores.adapter.AbstractAdapter;
 import net.jcores.interfaces.functions.F1;
 import net.jcores.options.MessageType;
 import net.jcores.utils.internal.io.InputStreamWrapper;
@@ -66,6 +67,14 @@ public class CoreZipInputStream extends CoreObject<ZipInputStream> {
      */
     public CoreZipInputStream(CommonCore supercore, ZipInputStream... objects) {
         super(supercore, objects);
+    }
+
+    /**
+     * @param supercore The shared CommonCore.
+     * @param adapter The adapter.
+     */
+    public CoreZipInputStream(CommonCore supercore, AbstractAdapter<ZipInputStream> adapter) {
+        super(supercore, adapter);
     }
 
     /**

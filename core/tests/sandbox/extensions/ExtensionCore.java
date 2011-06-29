@@ -32,9 +32,11 @@ import net.jcores.cores.CoreObject;
 
 /**
  * @author rb
- *
  */
 public class ExtensionCore extends CoreObject<Object> {
+
+    /** */
+    private static final long serialVersionUID = -5585244319163466296L;
 
     /**
      * @param supercore
@@ -48,6 +50,6 @@ public class ExtensionCore extends CoreObject<Object> {
      * Mjammjam  
      */
     public void yoyo() {
-        System.out.println("yoyo " + this.t.length);
+        System.out.println("yoyo " + size());
     }
 }

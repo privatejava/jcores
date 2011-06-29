@@ -45,6 +45,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.jcores.CommonCore;
+import net.jcores.cores.adapter.AbstractAdapter;
 import net.jcores.interfaces.functions.F1;
 import net.jcores.interfaces.functions.F1Object2Bool;
 import net.jcores.options.MessageType;
@@ -79,7 +80,26 @@ public class CoreString extends CoreObject<String> {
         super(supercore, objects);
     }
     
+    /**
+     * Wraps a map.
+     * 
+     * @param supercore The shared CommonCore.
+     * @param entries The entries to wrap.
+     */
+    public CoreString(CommonCore supercore, List<String> entries) {
+        super(supercore, entries);
+    }
 
+    /**
+     * @param supercore The shared CommonCore.
+     * @param adapter The adapter.
+     */
+    public CoreString(CommonCore supercore, AbstractAdapter<String> adapter) {
+        super(supercore, adapter);
+    }
+
+
+    
     /**
      * Returns the (UTF-8) byte data of the enclosed strings.<br/>
      * <br/>
@@ -127,10 +147,9 @@ public class CoreString extends CoreObject<String> {
      * @return True if the substring was found in one of the strings, false if not.
      */
     public boolean containssubstr(final String substring) {
-        for (int i = 0; i < size(); i++) {
-            if (this.t[i] != null && this.t[i].contains(substring)) return true;
+        for(String t: this) {
+            if (t != null && t.contains(substring)) return true;
         }
-
         return false;
     }
     
@@ -154,14 +173,38 @@ public class CoreString extends CoreObject<String> {
      * 
      */
     public CoreCSV csv() {
+       return csv(",");
+    }  
+
+    
+
+    /**
+     * Treats this core as the content of one or more CSV (comma-separated values) files 
+     * and returns a core where each {@link CSVLine} object represents one line.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("data.csv").file().text().csv(";").get(5).i(2)</code> - Returns the integer 
+     * in the 6th line at the 3rd position in the file <code>data.csv</code> when the data was separated by <code>;</code></li>
+     * </ul> 
+     * 
+     * Single-threaded. <br/>
+     * <br/>
+     * 
+     * @param delim The delimiter to use. 
+     * @return A {@link CoreCSV} object. 
+     * 
+     */
+    public CoreCSV csv(final String delim) {
         return new CoreCSV(this.commonCore, split("\n").map(new F1<String, CSVLine>() {
             @Override
             public CSVLine f(String x) {
-                return new CSVLine($(x.split(",")).trim().t);
+                return new CSVLine($(x.split(delim)).trim().adapter.array());
             }
         }).array(CSVLine.class));
     }  
-
+    
     
 
     /**
@@ -184,7 +227,7 @@ public class CoreString extends CoreObject<String> {
         if (get(index) == null) return Double.NaN;
         
         try {
-            return Double.parseDouble(this.t[index]);
+            return Double.parseDouble(this.adapter.get(index));
         } catch (Exception e) {
         }
         
@@ -344,7 +387,7 @@ public class CoreString extends CoreObject<String> {
                 
                 return null;
             }
-        }).array(String.class));
+        }).adapter);
     }
     
     
@@ -368,7 +411,7 @@ public class CoreString extends CoreObject<String> {
             public File f(String x) {
                 return new File(x);
             }
-        }).array(File.class));
+        }).adapter);
     }
 
     /**
@@ -397,7 +440,7 @@ public class CoreString extends CoreObject<String> {
                 final Matcher matcher = p.matcher(x);
                 return matcher.matches();
             }
-        }, options).array(String.class));
+        }, options).adapter);
     }
     
     
@@ -474,7 +517,7 @@ public class CoreString extends CoreObject<String> {
         if (get(index) == null) return 0;
         
         try {
-            return Integer.parseInt(this.t[index]);
+            return Integer.parseInt(this.adapter.get(index));
         } catch (Exception e) {
         }
         
@@ -598,7 +641,7 @@ public class CoreString extends CoreObject<String> {
                 return sb.toString();
             }
         
-        }).unsafearray());
+        }).unsafelist());
     }
 
  
@@ -642,7 +685,7 @@ public class CoreString extends CoreObject<String> {
     public CoreString print() {
         if (size() == 0) return this;
 
-        for (String s : this.t) {
+        for (String s : this) {
             if (s == null) continue;
             System.out.println(s);
         }
@@ -705,11 +748,11 @@ public class CoreString extends CoreObject<String> {
      * @return A new core with all empty strings nulled. 
      */
     public CoreString nullempty() {
-        return new CoreString(this.commonCore, (String[]) map(new F1<String, Object>() {
-            public Object f(final String x) {
+        return new CoreString(this.commonCore, map(new F1<String, String>() {
+            public String f(final String x) {
                 return x.length() == 0 ? null : x;
             }
-        }).unsafearray());
+        }).unsafelist());
     }
 
 
@@ -773,7 +816,7 @@ public class CoreString extends CoreObject<String> {
             public String f(String x) {
                 return p.matcher(x).replaceAll(with);
             }
-        }).array(String.class));
+        }).adapter);
     }
 
 
@@ -796,7 +839,7 @@ public class CoreString extends CoreObject<String> {
             public String f(final String x) {
                 return x.trim();
             }
-        }).array(String.class));
+        }).adapter);
     }
 
     

@@ -61,7 +61,7 @@ public class CoreSerializer extends CoreObject<Object> {
         try {
             final XStream xstream = new XStream();
             final OutputStream os = new FileOutputStream(destination);
-            xstream.toXML(this.t, os);
+            xstream.toXML(this.adapter, os);
         } catch (FileNotFoundException e) {
             this.commonCore.report(MessageType.EXCEPTION, "File not found " + destination);
         }

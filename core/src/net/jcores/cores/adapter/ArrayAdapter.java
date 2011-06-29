@@ -27,23 +27,41 @@
  */
 package net.jcores.cores.adapter;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.List;
 import java.util.ListIterator;
 
 
 public final class ArrayAdapter<T> extends AbstractAdapter<T> {
+    /**  */
+    private static final long serialVersionUID = 8808538840410854684L;
+
     /** */
     final T[] array;
+    
+    final int size;
 
     public ArrayAdapter(T... array) {
-        this.array = array;
+        this(array.length, array);
     }
+    
+    /**
+     * @param size
+     * @param array
+     */
+    public ArrayAdapter(int size, T... array) {
+        this.array = array;
+        this.size = size;
+    }
+    
     
     /* (non-Javadoc)
      * @see net.jcores.cores.adapter.AbstractAdapter#size()
      */
     @Override
     public int size() {
-        return this.array.length;
+        return this.size;
     }
 
     /* (non-Javadoc)
@@ -67,7 +85,7 @@ public final class ArrayAdapter<T> extends AbstractAdapter<T> {
              */
             @Override
             public boolean hasNext() {
-                if(this.i < ArrayAdapter.this.array.length) return true;
+                if(this.i < ArrayAdapter.this.size) return true;
                 return false;
             }
 
@@ -116,5 +134,60 @@ public final class ArrayAdapter<T> extends AbstractAdapter<T> {
                 //
             }
         };
+    }
+    
+    
+    /* (non-Javadoc)
+     * @see net.jcores.cores.adapter.AbstractAdapter#clazz()
+     */
+    @Override
+    public Class<?> clazz() {
+        return this.array.getClass().getComponentType();
+    }
+
+    /* (non-Javadoc)
+     * @see net.jcores.cores.adapter.AbstractAdapter#array(java.lang.Class)
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public <N> N[] array(Class<N> in) {
+        final N[] n = (N[]) Array.newInstance(in, 0);
+
+        if (this.array != null)
+            return (N[]) Arrays.copyOf(this.array, this.array.length, n.getClass());
+
+        return n;   
+    }
+    
+    /* (non-Javadoc)
+     * @see net.jcores.cores.adapter.AbstractAdapter#array()
+     */
+    @Override
+    public T[] array() {
+        return Arrays.copyOf(this.array, this.array.length);
+    }
+    
+    /**
+     * @return .
+     */
+    @Override
+    public T[] unsafearray() {
+        return this.array;
+    }
+
+    /* (non-Javadoc)
+     * @see net.jcores.cores.adapter.AbstractAdapter#list()
+     */
+    @Override
+    public List<T> unsafelist() {
+        return Arrays.asList(this.array);
+    }
+
+    /* (non-Javadoc)
+     * @see net.jcores.cores.adapter.AbstractAdapter#slice(int, int)
+     */
+    @Override
+    public List<T> slice(int start, int end) {
+        return Arrays.asList(Arrays.copyOfRange(this.array, start, end));
     }
 }

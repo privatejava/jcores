@@ -28,18 +28,17 @@
 package net.jcores.cores.adapter;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-public final class ListAdapter<T> extends AbstractAdapter<T> {
-    /** */
-    private static final long serialVersionUID = -5292390771798957764L;
-    
-    /** */
-    final List<T> list;
 
-    public ListAdapter(List<T> list) {
-        this.list = list;
+public final class EmptyAdapter<T> extends AbstractAdapter<T> {
+
+    /** */
+    private static final long serialVersionUID = 3490313697090606615L;
+
+    public EmptyAdapter() {
     }
     
     /* (non-Javadoc)
@@ -47,7 +46,7 @@ public final class ListAdapter<T> extends AbstractAdapter<T> {
      */
     @Override
     public int size() {
-        return this.list.size();
+        return 0;
     }
 
     /* (non-Javadoc)
@@ -55,7 +54,7 @@ public final class ListAdapter<T> extends AbstractAdapter<T> {
      */
     @Override
     public T get(int i) {
-        return this.list.get(i);
+        return null;
     }
 
     /* (non-Javadoc)
@@ -63,7 +62,59 @@ public final class ListAdapter<T> extends AbstractAdapter<T> {
      */
     @Override
     public ListIterator<T> iterator() {
-        return this.list.listIterator();
+        return new ListIterator<T>() {
+            
+            /* (non-Javadoc)
+             * @see java.util.ListIterator#hasNext()
+             */
+            @Override
+            public boolean hasNext() {
+                return false;
+            }
+
+            /* (non-Javadoc)
+             * @see java.util.ListIterator#next()
+             */
+            @Override
+            public T next() {
+                return null;
+            }
+
+            @Override
+            public boolean hasPrevious() {
+                return false;
+            }
+
+            @Override
+            public T previous() {
+                return null;
+            }
+
+            @Override
+            public int nextIndex() {
+                return 0;
+            }
+
+            @Override
+            public int previousIndex() {
+                return 0;
+            }
+
+            @Override
+            public void remove() {
+                // 
+            }
+
+            @Override
+            public void set(T e) {
+                // 
+            }
+
+            @Override
+            public void add(T e) {
+                //
+            }
+        };
     }
 
     /* (non-Javadoc)
@@ -72,7 +123,7 @@ public final class ListAdapter<T> extends AbstractAdapter<T> {
     @SuppressWarnings("unchecked")
     @Override
     public <N> N[] array(Class<N> in) {
-        return (N[]) this.list.toArray((T[]) Array.newInstance(in, 0));
+        return (N[]) Array.newInstance(in, 0);
     }
     
     /* (non-Javadoc)
@@ -80,7 +131,7 @@ public final class ListAdapter<T> extends AbstractAdapter<T> {
      */
     @Override
     public List<T> unsafelist() {
-        return this.list;
+        return new ArrayList<T>();
     }
 
     /* (non-Javadoc)
@@ -88,6 +139,6 @@ public final class ListAdapter<T> extends AbstractAdapter<T> {
      */
     @Override
     public List<T> slice(int start, int end) {
-        return this.list.subList(start, end);
+        return new ArrayList<T>();
     }
 }

@@ -36,8 +36,6 @@ import java.util.Map;
 import javax.swing.JPanel;
 
 import sandbox.dummys.DiagnosisChannelID;
-import sandbox.dummys.LoggingChannel1;
-import sandbox.dummys.TestChannel;
 
 /**
  * @author rb
@@ -70,7 +68,8 @@ public class SimpleCastTest {
     }
     
     public Class<? extends DiagnosisChannelID<?>>[] observedChannels() {
-        return $(TestChannel.class, LoggingChannel1.class).unsafearray();
+        return new Class[0];
+        /// return $(TestChannel.class, LoggingChannel1.class).unsafearray();
         //CoreObject<Class<? extends DiagnosisChannelID<?>>> xx = $;
     }
 }

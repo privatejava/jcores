@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import javax.sound.sampled.AudioInputStream;
@@ -231,6 +232,25 @@ public class CoreKeeper {
     public static <T> CoreObject<T> $(Collection<T> collection) {
         return new CoreObject<T>($, (T[]) Wrapper.convert(collection, Object.class));
     }
+    
+
+    /**
+     * Wraps a generic Collection objects. Please note that the Collection is
+     * transformed into an array, so for performance reasons usage of this
+     * wrapper should be minimized. Also note that this function always returns
+     * a parameterized, but vanilla CoreObject, which has to be cast using
+     * <code>.as()</code> again.
+     * 
+     * @param collection The collection to transform and wrap.
+     * @param <T> Type of the collection.
+     * 
+     * @return A CoreObject of the given type wrapping a converted array of the
+     * collection.
+     */
+    public static <T> CoreObject<T> $(List<T> collection) {
+        return new CoreObject<T>($, collection);
+    }
+
     
     /**
      * Wraps a map.

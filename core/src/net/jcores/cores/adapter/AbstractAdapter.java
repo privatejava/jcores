@@ -27,10 +27,35 @@
  */
 package net.jcores.cores.adapter;
 
+import java.io.Serializable;
+import java.util.List;
 import java.util.ListIterator;
 
 
-public abstract class AbstractAdapter<T> {
+public abstract class AbstractAdapter<T> implements Iterable<T>, Serializable {
+    
+    /** */
+    private static final long serialVersionUID = 4367018268996427422L;
+
+    /** 
+     * Returns an array copy for this adapter.
+     * 
+     * @param in The class of the array.
+     * @param <N> The type 
+     * @return An array of the given type.
+     * 
+     */
+    public abstract <N> N[] array(Class<N> in);
+    
+    /**
+     * Returns an array copy.
+     * 
+     * @return A copy.
+     */
+    @SuppressWarnings("unchecked")
+    public T[] array() {
+        return (T[]) array(clazz());
+    }
     
     /** 
      * Returns this size of this adapter
@@ -55,4 +80,50 @@ public abstract class AbstractAdapter<T> {
      * @return An iterator.
      */
     public abstract ListIterator<T> iterator();
+    
+    
+    /**
+     * Returns the clazz of the adapter.
+     * 
+     * @return Clazz
+     */
+    public Class<?> clazz() {
+        final ListIterator<T> it = iterator();
+        
+        while(it.hasNext()) {
+            T next = it.next();
+            if(next == null) continue;
+            return next.getClass();
+        }
+        
+        return Object.class;
+    }
+    
+    /**
+     * Returns a list for this adapter.
+     * 
+     * @return The list for this adapter.
+     */
+    public abstract List<T> unsafelist();
+    
+    
+    /**
+     * Returns an array for this adapter.
+     * 
+     * @return The list for this adapter.
+     */
+    public T[] unsafearray() {
+        return array();
+    }
+    
+
+    
+    /**
+     * Returns a slice of the given adapter.
+     * 
+     * @param start
+     * @param end
+     * @return The slice.
+     */
+    public abstract List<T> slice(int start, int end);
 }

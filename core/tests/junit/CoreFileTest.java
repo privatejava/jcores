@@ -72,7 +72,7 @@ public class CoreFileTest {
                 }
 
                 int removed = Integer.parseInt($(text).split("\n").get(-1));
-                String rest = $(text).split("\n").slice(0, -2).as(CoreString.class).join("\n").concat("\n");
+                String rest = $(text).split("\n").slice(0, -2).as(CoreString.class).as(CoreString.class).join("\n").concat("\n");
 
                 $(testFile).delete().append(rest);
 

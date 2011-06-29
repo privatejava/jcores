@@ -42,8 +42,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicReferenceArray;
@@ -51,6 +51,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.jcores.CommonCore;
+import net.jcores.cores.adapter.AbstractAdapter;
+import net.jcores.cores.adapter.ArrayAdapter;
+import net.jcores.cores.adapter.EmptyAdapter;
+import net.jcores.cores.adapter.ListAdapter;
 import net.jcores.interfaces.functions.F0;
 import net.jcores.interfaces.functions.F1;
 import net.jcores.interfaces.functions.F1Object2Bool;
@@ -95,7 +99,10 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     private static final long serialVersionUID = -6436821141631907999L;
 
     /** The array we work on. */
-    protected final T[] t;
+    //protected final T[] _t;
+    
+    /** The adapter we work on */
+    protected final AbstractAdapter<T> adapter;
 
     /**
      * Creates the core object for the given single object.
@@ -111,10 +118,9 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         // Check if we have an object. If not, and if there is no type, use an
         // empty Object array
         if (object != null) {
-            this.t = (T[]) Array.newInstance(type, 1);
-            this.t[0] = object;
+            this.adapter = new ArrayAdapter<T>(object);
         } else {
-            this.t = (T[]) new Object[0];
+            this.adapter = new EmptyAdapter<T>();
         }
     }
 
@@ -126,10 +132,34 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      */
     public CoreObject(CommonCore supercore, T... objects) {
         super(supercore);
+        this.adapter = new ArrayAdapter<T>(objects);
+    }
+    
 
-        this.t = objects;
+    /**
+     * Creates the core object for the given array.
+     * 
+     * @param supercore CommonCore to use.
+     * @param objects Object to wrap.
+     */
+    public CoreObject(CommonCore supercore, List<T> objects) {
+        super(supercore);
+        this.adapter = new ListAdapter<T>(objects);
     }
 
+    
+    /**
+     * Creates the core object for the given array.
+     * 
+     * @param supercore CommonCore to use.
+     * @param objects Object to wrap.
+     */
+    protected CoreObject(CommonCore supercore, AbstractAdapter<T> adapter) {
+        super(supercore);
+        this.adapter = adapter;
+    }
+
+    
     /**
      * Returns a core containing all elements of this core and the other core.
      * Elements that are in both cores will appear twice.<br/>
@@ -154,9 +184,14 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         if (size() == 0) return toAdd;
         if (toAdd.size() == 0) return this;
 
-        final T[] copy = (T[]) Array.newInstance(this.t.getClass().getComponentType(), this.t.length + toAdd.t.length);
-        System.arraycopy(this.t, 0, copy, 0, this.t.length);
-        System.arraycopy(toAdd.t, 0, copy, this.t.length, toAdd.t.length);
+        Class<?> clazz = this.adapter.clazz();
+        
+        final T[] copy = (T[]) Array.newInstance(clazz, size() + toAdd.size());
+        final Object[] a = this.adapter.array(clazz);
+        final Object[] b = this.adapter.array(clazz);
+        
+        System.arraycopy(a, 0, copy, 0, a.length);
+        System.arraycopy(b, 0, copy, a.length, b.length);
 
         return new CoreObject<T>(this.commonCore, copy);
     }
@@ -205,14 +240,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * @return An array containing the all assignable elements.
      */
-    @SuppressWarnings("unchecked")
     public <N> N[] array(Class<N> in) {
-        final N[] n = (N[]) Array.newInstance(in, 0);
-
-        if (this.t != null)
-            return (N[]) Arrays.copyOf(this.t, this.t.length, n.getClass());
-
-        return (N[]) Array.newInstance(in, 0);
+        return this.adapter.array(in);
     }
 
     /**
@@ -253,27 +282,18 @@ public class CoreObject<T> extends Core implements Iterable<T> {
             for (Constructor<?> c : constructors) {
                 if (c.getParameterTypes().length != 2) continue;
                 if (!c.getParameterTypes()[0].equals(CommonCore.class)) continue;
+                if (!c.getParameterTypes()[1].equals(AbstractAdapter.class)) continue;
 
+                
                 // Sanity check.
                 if (constructor != null)
-                    System.err.println("There should only be one constructor per core! And here comes your exception ... ;-)");
+                    System.err.println("There should only be one constructor with (CommonCore.class, AbstractAdapter.class) per core! And here comes your exception ... ;-)");
 
                 constructor = (Constructor<C>) c;
             }
 
-            Object newT[] = null;
-            Class<? extends Object[]> requestedType = null;
 
-            // Try to convert our array. If that fails, create an empty one ...
-            try {
-                requestedType = (Class<? extends Object[]>) constructor.getParameterTypes()[1];
-                newT = Arrays.copyOf(this.t, size(), requestedType);
-            } catch (ArrayStoreException e) {
-                this.commonCore.report(MessageType.EXCEPTION, "Unable to convert our array " + this.t + " to the requested type " + requestedType + ". Returning empty core.");
-                newT = (Object[]) Array.newInstance(requestedType.getComponentType(), 0);
-            }
-
-            return constructor.newInstance(this.commonCore, newT);
+            return constructor.newInstance(this.commonCore, this.adapter);
 
             // NOTE: We do not swallow all execptions, because as() is a bit special and
             // we cannot return
@@ -430,17 +450,15 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         // No size == no fun.
         if (size() == 0) return this;
 
-        final T[] tmp = Arrays.copyOf(this.t, this.t.length);
+        final T[] tmp = this.adapter.array();
         int dst = 0;
 
-        // Now process our array
-        for (int i = 0; i < this.t.length; i++) {
-            if (this.t[i] == null) continue;
-
-            tmp[dst++] = this.t[i];
+        for (T element : this) {
+            if (element == null) continue;
+            tmp[dst++] = element;
         }
 
-        return new CoreObject<T>(this.commonCore, Arrays.copyOf(tmp, dst));
+        return new CoreObject<T>(this.commonCore, new ArrayAdapter<T>(dst, tmp));
     }
 
     /**
@@ -463,7 +481,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * @return A new {@link Compound} with this core's content.
      */
     public Compound compound() {
-        return Compound.create(this.t);
+        return Compound.create(this.adapter.array());
     }
 
     /**
@@ -486,15 +504,15 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * Single-threaded. <br/>
      * <br/>
      * 
-     * @param object The object to search for. A search for null will always return false.
+     * @param object The object to search for.
      * @return True if the object is there, false if not.
      */
     public boolean contains(final T object) {
-        // TODO: Parallelize me.
-        for (int i = 0; i < size(); i++) {
-            if (this.t[i] != null && this.t[i].equals(object)) return true;
+        for (T next : this) {
+            if (next != null && next.equals(object)) return true;
+            if (next == null && object == null) return true;
         }
-
+        
         return false;
     }
     
@@ -519,16 +537,15 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     	final Map<T, Integer> results = new HashMap<T, Integer>();
     	
     	// Now generate the histogram.
-    	for(int i = 0; i < size(); i++) {
-    	    final T e = this.t[i];
-    	    if(e == null) continue;
-    	    
-    	    if(results.containsKey(e)) {
-    	        results.put(e, results.get(e) + 1);
-    	    } else {
-    	        results.put(e, 1);
-    	    }
-    	}
+        for (T e : this) {
+            if(e == null) continue;
+            
+            if(results.containsKey(e)) {
+                results.put(e, results.get(e) + 1);
+            } else {
+                results.put(e, 1);
+            }
+        }
     	
     	// Eventually return the results
     	return new CoreMap<T, Integer>(this.commonCore, Wrapper.convert(results));
@@ -601,8 +618,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
                 R[] a = this.returnArray.get();
 
                 // Get the in-value from the source-array
-                final T ii = CoreObject.this.t[i];
-                final T jj = CoreObject.this.t[i + 1];
+                final T ii = CoreObject.this.adapter.get(i);
+                final T jj = CoreObject.this.adapter.get(i + 1);
 
                 // Convert
                 if (ii == null || jj == null) return;
@@ -696,12 +713,30 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
+    @SuppressWarnings("null")
     public boolean equals(Object obj) {
         if (obj == null || !(obj instanceof CoreObject)) return false;
 
         final CoreObject<?> other = (CoreObject<?>) obj;
-
-        return Arrays.deepEquals(this.t, other.t);
+        
+        if(size() != other.size()) return false;
+        
+        ListIterator<T> i1 = this.adapter.iterator();
+        ListIterator<?> i2 = other.iterator();
+        
+        while(i1.hasNext()) {
+            T a = i1.next();
+            Object b = i2.next();
+            
+            if(a == null && b != null) return false;
+            if(a == null && b == null) continue;
+            
+            boolean equals = a.equals(b);
+            if(!equals) return false;
+        }
+        
+        
+        return true;
     }
 
     /**
@@ -733,7 +768,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         if (size() == 0) return new CoreObject<N>(this.commonCore, class1, null);
 
         // Compute overall size
-        for (T x : this.t) {
+        for (T x : this) {
             if (x == null) continue;
 
             // Is it a collection?
@@ -765,7 +800,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         int offset = 0;
 
         // Copy to array
-        for (T x : this.t) {
+        for (T x : this) {
             if (x == null) continue;
 
             // Is it a collection?
@@ -844,7 +879,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     public CoreObject<T> fill(T fillValue) {
         if (size() == 0) return this;
 
-        final T[] copy = Arrays.copyOf(this.t, size());
+        final T[] copy = this.adapter.array();
 
         for (int i = 0; i < copy.length; i++) {
             copy[i] = copy[i] == null ? fillValue : copy[i];
@@ -935,34 +970,32 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         sb.append("; innerSize:");
 
         // Append inner size
-        if (this.t != null) {
-            Object first = null;
-            int ctr = 0;
+        Object first = null;
+        int ctr = 0;
 
-            // Count elements and extract first nonnull element.
-            for (int i = 0; i < this.t.length; i++) {
-                if (this.t[i] != null) {
-                    ctr++;
-                    if (first == null) first = this.t[i];
-                }
+        // Count elements and extract first nonnull element.
+        for (T next : this) {
+            if (next != null) {
+                ctr++;
+                if (first == null) first = next;
             }
-            sb.append(ctr);
+        }
+        
+        sb.append(ctr);
 
-            // Append type of first element (disabled)
-            if (first != null && detailed) {
-                sb.append("; firstElement:");
-                sb.append(first.getClass().getSimpleName());
-            }
-        } else {
-            sb.append("null");
+        // Append type of first element (disabled)
+        if (first != null && detailed) {
+            sb.append("; firstElement:");
+            sb.append(first.getClass().getSimpleName());
         }
 
         // Append fingerprint
-        if (this.t != null && this.t.length <= 16) {
+        if (size() <= 16) {
             sb.append("; fingerprint:");
-            for (int i = 0; i < this.t.length; i++) {
-                if (this.t[i] != null) {
-                    sb.append(this.t[i].getClass().getSimpleName().charAt(0));
+            
+            for (T next : this) {
+                if (next != null) {
+                    sb.append(next.getClass().getSimpleName().charAt(0));
                 } else
                     sb.append(".");
             }
@@ -1008,7 +1041,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         // In case we only have zero or one elements, don't do anything
         if (size() <= 1) return this;
 
-        final AtomicReferenceArray array = new AtomicReferenceArray(this.t);
+        final AtomicReferenceArray array = new AtomicReferenceArray(this.adapter.array());
         final Folder<T> folder = new Folder<T>(this) {
             @Override
             public void handle(int i, int j, int destination) {
@@ -1036,7 +1069,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         // Now do fold ...
         fold(folder, options);
         
-        T[] target = Arrays.copyOf(this.t, 1);
+        T[] target = (T[]) Array.newInstance(this.adapter.clazz(), 1); //Arrays.copyOf(this.t, 1);
         target[0] = (T) array.get(0);
 
         // ... and return result.
@@ -1103,14 +1136,14 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         if(size() == 0) return new CoreObject<R>(this.commonCore, null, null);
         
         R[] rval = null;
-        T[] slice = Arrays.copyOf(this.t, n);
+        T[] slice = (T[]) Array.newInstance(this.adapter.clazz(), n); // Arrays.copyOf(this.t, n);
         
         int ptr = 0;
         int tptr = 0;
         
         // Now go over the array
         for (int i = 0; i < size(); i++) {
-            T e = this.t[i];
+            T e = this.adapter.get(i);
             
             // When our current element is null, do nothing.
             if(e == null) continue;
@@ -1175,9 +1208,9 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         if (size() == 0) return dflt;
 
         int offset = (int) (percent * size());
-        if (offset >= this.t.length) return dflt;
+        if (offset >= size()) return dflt;
 
-        return this.t[offset];
+        return this.adapter.get(offset);
     }
 
     /**
@@ -1223,10 +1256,14 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      */
     @SuppressWarnings("unchecked")
     public <X extends T> X get(Class<X> request, X dflt) {
-        for (int i = 0; i < size(); i++) {
-            if (this.t[i] != null && request.isAssignableFrom(this.t[i].getClass()))
-                return (X) this.t[i];
+        final ListIterator<T> iterator = this.adapter.iterator();
+        while(iterator.hasNext()) {
+            final T next = iterator.next();
+            if (next != null && request.isAssignableFrom(next.getClass()))
+                return (X) next;
+            
         }
+        
         return dflt;
     }
 
@@ -1250,10 +1287,10 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      */
     public T get(int i) {
         final int offset = indexToOffset(i);
+        
+        if (offset < 0 || offset > size()) return null;
 
-        if (this.t == null || offset < 0) return null;
-
-        return this.t[offset];
+        return this.adapter.get(offset);
     }
 
     /**
@@ -1309,7 +1346,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      */
     @Override
     public int hashCode() {
-        return Arrays.deepHashCode(this.t);
+        return this.adapter.hashCode();
     }
 
     /**
@@ -1327,12 +1364,10 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * @return True if all elements are not null, false if a single element was null.
      */
     public boolean hasAll() {
-        if (this.t == null) return false;
-
-        for (int i = 0; i < this.t.length; i++) {
-            if (this.t[i] == null) return false;
+        for (T t : this) {
+            if (t == null) return false;
         }
-
+        
         return true;
     }
 
@@ -1351,12 +1386,10 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * @return True if any element is set. False if all elements are null.
      */
     public boolean hasAny() {
-        if (this.t == null) return false;
-
-        for (int i = 0; i < this.t.length; i++) {
-            if (this.t[i] != null) return true;
+        for (T t : this) {
+            if (t != null) return true;
         }
-
+        
         return false;
     }
 
@@ -1407,10 +1440,13 @@ public class CoreObject<T> extends Core implements Iterable<T> {
             final T obj = objects[i];
             if (obj == null) continue;
 
-            // If there is a match in our core
-            for (int j = 0; j < size(); j++) {
-                // If there is, store the index of our object at the corresponding query position.
-                if (obj.equals(get(j))) {
+
+            final ListIterator<T> iterator = iterator();
+            while(iterator.hasNext()) {
+                final int j = iterator.nextIndex();
+                final T next = iterator.next();
+
+                if (obj.equals(next)) {
                     indices[i] = j;
                     break;
                 }
@@ -1439,7 +1475,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         if (size() == 0) return this;
         if (other.size() == 0) return other;
 
-        final T[] copy = Arrays.copyOf(this.t, size());
+        final T[] copy = this.adapter.array();
 
         // Remove every element we in the other core
         for (int i = 0; i < copy.length; i++) {
@@ -1449,8 +1485,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
             boolean found = false;
 
             // Check if the copy contains the element
-            for (int j = 0; j < other.size(); j++) {
-                final T x = other.get(j);
+            for (T x : other) {
                 if (x == null || !x.equals(element)) continue;
                 found = true;
                 break;
@@ -1502,8 +1537,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * @return A list containing all elements. Null values should be preserved.
      */
     public List<T> list() {
-        if (this.t == null) return new ArrayList<T>();
-        return new ArrayList<T>(Arrays.asList(this.t));
+       return new ArrayList<T>(this.adapter.unsafelist());
     }
 
     /**
@@ -1580,7 +1614,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     public CoreObject<T> print() {
         if (size() == 0) return this;
 
-        for (Object s : this.t) {
+        for (Object s : this) {
             if (s == null) continue;
             System.out.println(s);
         }
@@ -1628,10 +1662,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      */
     public T random() {
         final int size = size();
-
         if (size == 0) return null;
-
-        return this.t[this.commonCore.random().nextInt(size)];
+        return this.adapter.get(this.commonCore.random().nextInt(size));
     }
 
     /**
@@ -1687,7 +1719,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         if (size == 0) return this;
 
         // Create a shuffletable
-        final T[] copyOf = Arrays.copyOf(this.t, size);
+        final T[] copyOf = this.adapter.array();
 
         // Shuffle the copy
         for (int i = copyOf.length - 1; i >= 1; i--) {
@@ -1730,9 +1762,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     public CoreObject<T> reduce(final F2ReduceObjects<T> f, Option... options) {
         T stack = null;
 
-        for (int i = 0; i < size(); i++) {
-            T current = this.t[i];
-
+        
+        for (T current : this) {
             // Nothing to do for null elements
             if (current == null) continue;
 
@@ -1768,11 +1799,12 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * @return A CoreObject with reversed element order.
      */
     public CoreObject<T> reverse() {
-        if(size() == 0) return this;
+        final int size = size();
+        if(size == 0) return this;
         
-        final T[] c = Arrays.copyOf(this.t, this.t.length);
-        for (int i = 0; i < size(); i++) {
-            c[i] = this.t[this.t.length - i];
+        final T[] c = this.adapter.array();
+        for (int i = 0; i < size; i++) {
+            c[size - i] = this.adapter.get(i);
         }
 
         return new CoreObject<T>(this.commonCore, c);
@@ -1825,8 +1857,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      */
     @Override
     public int size() {
-        if (this.t == null) return 0;
-        return this.t.length;
+        return this.adapter.size();
     }
 
     /**
@@ -1858,14 +1889,14 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         
         if (i < 0 || i >= size()) {
             this.commonCore.report(MessageType.MISUSE, "slice() - converted parameter start(" + start + " -> " + i + ") is outside bounds.");
-            return new CoreObject<T>(this.commonCore, Arrays.copyOfRange(this.t, 0, 0));
+            return new CoreObject<T>(this.commonCore, new EmptyAdapter<T>());
         }
         if (l < 0 || l > size()) {
             this.commonCore.report(MessageType.MISUSE, "slice() - converted parameter length(" + length + " -> " + l + ") is outside bounds.");
-            return new CoreObject<T>(this.commonCore, Arrays.copyOfRange(this.t, 0, 0));
+            return new CoreObject<T>(this.commonCore, new EmptyAdapter<T>());
         }
 
-        return new CoreObject<T>(this.commonCore, Arrays.copyOfRange(this.t, i, i + l));
+        return new CoreObject<T>(this.commonCore, this.adapter.slice(i, i + l));
     }
     
     
@@ -1923,7 +1954,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     public CoreObject<T> sort(Comparator<T> c) {
         if (size() == 0) return this;
 
-        final T[] copyOf = Arrays.copyOf(this.t, size());
+        final T[] copyOf = this.adapter.array();
         Arrays.sort(copyOf, c);
 
         return new CoreObject<T>(this.commonCore, copyOf);
@@ -1948,7 +1979,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     public CoreObject<T> sort() {
         if (size() == 0) return this;
 
-        final T[] copyOf = Arrays.copyOf(this.t, size());
+        final T[] copyOf = this.adapter.array();
 
         try {
             Arrays.sort(copyOf);
@@ -2005,7 +2036,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     public CoreObject<T> subtract(CoreObject<T> toSubtract) {
         if (size() == 0 || toSubtract.size() == 0) return this;
 
-        final T[] copy = Arrays.copyOf(this.t, size());
+        final T[] copy = this.adapter.array();
 
         // Remove every element we in the other core
         for (int i = 0; i < toSubtract.size(); i++) {
@@ -2064,7 +2095,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     public CoreObject<T> unique() {
         if (size() == 0) return this;
 
-        final T[] copy = Arrays.copyOf(this.t, size());
+        final T[] copy = this.adapter.array();
 
         // Now check for each element
         for (int i = 1; i < copy.length; i++) {
@@ -2086,6 +2117,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         return new CoreObject<T>(this.commonCore, copy).compact();
     }
 
+    
+
     /**
      * Returns the core's array. Use of this method is strongly discouraged and 
      * usually only needed in a few very special cases. Do not change the array! <br/>
@@ -2106,8 +2139,21 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * @return A clone of our array.
      */
     public T[] unsafearray() {
-        if (this.t == null) return null;
-        return this.t.clone();
+        return this.adapter.unsafearray();
+    }
+    
+    /**
+     * Returns an unsafe list for this core. Use of this method discouraged but may speed up many 
+     * operations when used sensibly. The list <b>must not</b> be altered in any way.<br/>
+     * <br/>
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @return A list representation of our core.
+     */
+    public List<T> unsafelist() {
+        return this.adapter.unsafelist();
     }
 
     
@@ -2142,9 +2188,9 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * @return The first element that was not null, or null, if all elements were null. 
      */
     protected T findFirst() {
-        if(this.t == null) return null;
-        for(int i=0; i<this.t.length; i++) {
-            if(this.t[i] != null) return this.t[i];
+        
+        for(T t : this) {
+            if(t != null) return t;
         }
         
         return null;
@@ -2181,7 +2227,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
                 R[] a = this.returnArray.get();
 
                 // Get the in-value from the source-array
-                final T in = CoreObject.this.t[i];
+                final T in = CoreObject.this.adapter.get(i);
 
                 // Convert
                 if (in == null) return;
@@ -2204,25 +2250,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * @see java.lang.Iterable#iterator()
      */
     @Override
-    public Iterator<T> iterator() {
-        return new Iterator<T>() {
-            int i = 0; 
-            
-            @Override
-            public boolean hasNext() {
-                if(this.i < size()) return true;
-                return false;
-            }
-
-            @Override
-            public T next() {
-                return CoreObject.this.t[this.i++];
-            }
-
-            @Override
-            public void remove() {
-                CoreObject.this.commonCore.report(MessageType.MISUSE, "Must not try to remove() elements on a CoreObject.iterator() ");
-            }
-        };
+    public ListIterator<T> iterator() {
+        return this.adapter.iterator();
     }
 }

@@ -75,7 +75,6 @@ public class Wrapper {
         // TODO: Parallelize me! 
         // TODO: Make me work without size 
         final Object[] converted = (Object[]) Array.newInstance(mapType == null ? Object.class : mapType, list.size());
-
         int i = 0;
 
         for (T x : list) {

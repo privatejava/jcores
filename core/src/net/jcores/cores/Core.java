@@ -28,6 +28,7 @@
 package net.jcores.cores;
 
 import java.io.Serializable;
+import java.util.ListIterator;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -105,10 +106,14 @@ public abstract class Core implements Serializable {
         // a certain threshold, parallelize, otherwise map sequentially. However, in here we 
         // only test the first one
         long delta = 0;
-        
-        for (int i = 0; i < size; i++) {
+
+        final ListIterator iterator = mapper.core().iterator();
+        while(iterator.hasNext()) {
+            final int i = iterator.nextIndex();
+            final Object o = iterator.next();
+            
             // Skipp all null elements
-            if(mapper.core().t[i] == null) continue;
+            if(o == null) continue;
             
             // Set the base count to the next position we should consider (in case we break the look)
             index.set(i + 1);
@@ -133,7 +138,9 @@ public abstract class Core implements Serializable {
         // also, we only spawn something if there is more than one element still to go.
         if(estTime < 2 * profileInfo.forkTime && toGo > 1) {
             // In this case, we go single threaded
-            for(int i=index.get(); i<size; i++) {
+            while(iterator.hasNext()) {
+                final int i = iterator.nextIndex();
+                iterator.next(); // We need to get the next() that the nextIndex increases. 
                 mapper.handle(i);
             }
             

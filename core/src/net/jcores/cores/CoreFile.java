@@ -53,6 +53,7 @@ import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
 
 import net.jcores.CommonCore;
+import net.jcores.cores.adapter.AbstractAdapter;
 import net.jcores.interfaces.functions.F1;
 import net.jcores.interfaces.functions.F1Object2Bool;
 import net.jcores.options.MessageType;
@@ -86,6 +87,16 @@ public class CoreFile extends CoreObject<File> {
     public CoreFile(CommonCore supercore, File... files) {
         super(supercore, files);
     }
+    
+
+    /**
+     * @param supercore The shared CommonCore.
+     * @param adapter The adapter.
+     */
+    public CoreFile(CommonCore supercore, AbstractAdapter<File> adapter) {
+        super(supercore, adapter);
+    }
+
 
     /**
      * Appends the object.toString() to all given files. The files will be created if they don't 
@@ -477,7 +488,7 @@ public class CoreFile extends CoreObject<File> {
      * @return This Core again.
      */
     public CoreFile jar(String target, Manifest manifest, Option... options) {
-        FileUtils.jarFiles(new File(target), manifest, this.t);
+        FileUtils.jarFiles(new File(target), manifest, this.adapter.array());
         return this;
     }
 
@@ -572,7 +583,7 @@ public class CoreFile extends CoreObject<File> {
      * @return This Core again.
      */
     public CoreFile zip(String target, Option... options) {
-        FileUtils.zipFiles(new File(target), this.t);
+        FileUtils.zipFiles(new File(target), this.adapter.array());
         return this;
     }
 }
