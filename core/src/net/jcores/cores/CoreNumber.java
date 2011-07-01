@@ -85,22 +85,18 @@ public class CoreNumber extends CoreObject<Number> {
      * @return The average of all enclosed numbers. If no numbers are enclosed, <code>0</code> is returned.
      */
     public double average() {
-        final int size = size();
         int cnt = 0;
         double sum = 0.0;
 
         // Compute the average of all values
-        for (int i = 0; i < size; i++) {
-            final Number number = get(i);
+        for (Number number : this) {
             if (number == null) continue;
-
             sum += number.doubleValue();
             cnt++;
         }
 
         // If we haven't had any element, return 0
         if (cnt == 0) return 0;
-
         return sum / cnt;
     }
 

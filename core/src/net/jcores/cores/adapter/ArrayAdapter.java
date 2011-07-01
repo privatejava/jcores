@@ -33,6 +33,14 @@ import java.util.List;
 import java.util.ListIterator;
 
 
+/**
+ * Adapts arrays. 
+ * 
+ * @author Ralf Biedert
+ *
+ * @since 1.0
+ * @param <T>
+ */
 public final class ArrayAdapter<T> extends AbstractAdapter<T> {
     /**  */
     private static final long serialVersionUID = 8808538840410854684L;
@@ -154,7 +162,7 @@ public final class ArrayAdapter<T> extends AbstractAdapter<T> {
         final N[] n = (N[]) Array.newInstance(in, 0);
 
         if (this.array != null)
-            return (N[]) Arrays.copyOf(this.array, this.array.length, n.getClass());
+            return (N[]) Arrays.copyOf(this.array, this.size, n.getClass());
 
         return n;   
     }
@@ -164,7 +172,7 @@ public final class ArrayAdapter<T> extends AbstractAdapter<T> {
      */
     @Override
     public T[] array() {
-        return Arrays.copyOf(this.array, this.array.length);
+        return Arrays.copyOf(this.array, this.size);
     }
     
     /**
@@ -180,7 +188,7 @@ public final class ArrayAdapter<T> extends AbstractAdapter<T> {
      */
     @Override
     public List<T> unsafelist() {
-        return Arrays.asList(this.array);
+        return Arrays.asList(this.array).subList(0, this.size);
     }
 
     /* (non-Javadoc)

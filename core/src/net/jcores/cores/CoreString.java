@@ -842,6 +842,31 @@ public class CoreString extends CoreObject<String> {
         }).adapter);
     }
 
+
+    /**
+     * Trims the specified amount of characters in each string.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(" a ", " b ").trim(1).join()</code> - Returns <code>"ab"</code>.</li>
+     * </ul>
+     *          
+     * Multi-threaded.<br/>
+     * <br/>
+     * 
+     * @param n The number of characters to trim. 
+     * @return A CoreString with trimmed values. 
+     */
+    public CoreString trim(final int n) {
+        return new CoreString(this.commonCore, map(new F1<String, String>() {
+            public String f(final String x) {
+                if(x.length() < 2*n) return "";
+                return x.substring(n, x.length() - n);
+            }
+        }).adapter);
+    }
+
     
     /**
      * Creates URIs for all enclosed Strings.<br/>

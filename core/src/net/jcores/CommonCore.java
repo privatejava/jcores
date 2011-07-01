@@ -45,6 +45,7 @@ import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
 import net.jcores.cores.Core;
@@ -98,6 +99,9 @@ public class CommonCore {
 
     /** Method to clone objects */
     private Method cloneMethod;
+
+    /** The number of free CPUs */
+    private AtomicInteger freeCPUs = new AtomicInteger();
     
     /** Common system utilities */
     public final CommonSys sys = new CommonSys(this); 
@@ -138,6 +142,7 @@ public class CommonCore {
         
         // Test how long it takes to execute a thread in the background
         this.profileInformation = profile();
+        this.freeCPUs.set(this.profileInformation.numCPUs);
     }
 
     /**
@@ -508,6 +513,63 @@ public class CommonCore {
     public void report() {
         this.reporter.printRecords();
     }
+    
+    
+    /**
+     * Requests a number of CPUs. The system will check how many CPUs are available 
+     * and allocate up to <code>request</code> units. The number of allocated CPUs is 
+     * returned.<br/><br/>
+     * 
+     * This function is only used internally. Also note that it is essential to call 
+     * <code>releaseCPUs</code> after the application stopped using them.
+     *  
+     * @param request The number of CPUs to request. 
+     * 
+     * @return The actual number of CPUs available.
+     */
+    public int requestCPUs(int request) {
+        // When looking at our benchmarks, it seems this does not speed up things, see Issue #12.
+        return Math.min(profileInformation().numCPUs, request);
+        
+        /*
+        synchronized (this.freeCPUs) {
+            final int free = this.freeCPUs.get();
+            
+            // No free CPUs means to party
+            if(free == 0) return 0;
+            
+            // More requested than free, return what we have
+            if(request > free) {
+                this.freeCPUs.set(0);
+                return free;
+            } 
+
+            // In other cases, subtract what we have
+            this.freeCPUs.set(free - request);
+            return request;
+        }
+        */
+    }
+    
+    
+    /**
+     * Releases a number of CPUSs previously allocated.<br/><br/>
+     * 
+     * This function is only used internally. Also note that it is essential to call 
+     * <code>releaseCPUs</code> after the application stopped using them.
+     *  
+     * @param toRelease The number of CPUs to release. 
+     */
+    public void releaseCPUs(int toRelease) {
+        // When looking at our benchmarks, it seems this does not speed up things, see Issue #12.
+        /*
+        synchronized (this.freeCPUs) {
+            final int free = this.freeCPUs.get();
+            this.freeCPUs.set(Math.min(this.profileInformation.numCPUs, free + toRelease));
+        }
+        */
+    }
+
 
     /**
      * Returns our shared {@link Random} object, initialized some time ago.

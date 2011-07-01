@@ -88,6 +88,7 @@ public abstract class Core implements Serializable {
     @SuppressWarnings("rawtypes")
     protected void map(final Mapper mapper, final Option... options) {
         final int size = mapper.core().size();
+        final CommonCore cc = this.commonCore;
 
         // Quick pass for the probably most common events
         if (size <= 0) return;
@@ -97,9 +98,8 @@ public abstract class Core implements Serializable {
         }
         
         // Compute the later step size and the number of threads.
-        final ProfileInformation profileInfo = this.commonCore.profileInformation();
+        final ProfileInformation profileInfo = cc.profileInformation();
         final int STEP_SIZE = Math.max(size() / 10, 1);
-        final int NUM_THREADS = this.commonCore.profileInformation().numCPUs;
         final AtomicInteger index = new AtomicInteger();
         
         // Test-convert the first item and measure time. If time and size are above
@@ -126,17 +126,22 @@ public abstract class Core implements Serializable {
             break;
         }
         
-        
         // Next, we check if have a speed gain when we move parallel. In general, we do not 
         // have a speed gain when the time it takes to spawn threads takes longer than it would 
         // take to finish the loop single-threaded
         final int toGo = size - index.get();
         final long estTime = delta * toGo;
-        
+
+        // Request a CPU for each element we have (in case we have many, we only receive maxCPU, in case we have 
+        // very few, we don't block all CPUs.
+        final int NUM_THREADS = cc.requestCPUs(toGo);
         
         // We use a safetey factor of 2 for the fork time (FIXME: Should investigate what's the best factor),
         // also, we only spawn something if there is more than one element still to go.
-        if(estTime < 2 * profileInfo.forkTime && toGo > 1) {
+        if((estTime < 2 * profileInfo.forkTime && toGo > 1) || NUM_THREADS < 2) {
+            // Instantly release all CPUs when we go singlethreaded
+            this.commonCore.releaseCPUs(NUM_THREADS);
+            
             // In this case, we go single threaded
             while(iterator.hasNext()) {
                 final int i = iterator.nextIndex();
@@ -189,7 +194,7 @@ public abstract class Core implements Serializable {
             }
         };
 
-        this.commonCore.execute(runner, NUM_THREADS);
+        cc.execute(runner, NUM_THREADS);
 
         // Wait for all threads to finish ...
         try {
@@ -199,6 +204,9 @@ public abstract class Core implements Serializable {
         } catch (BrokenBarrierException e) {
             e.printStackTrace();
         }
+        
+        // Release all CPUs we used
+        cc.releaseCPUs(NUM_THREADS);
     }
 
     /**

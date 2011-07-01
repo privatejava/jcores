@@ -78,7 +78,7 @@ public class MapEntry<K, V> implements Comparable<MapEntry<K, V>> {
 	 */
 	@Override
 	public String toString() {
-		return this.key.toString() + ": " + this.value.toString();
+		return this.key + ": " + this.value;
 	}
 
 	/* (non-Javadoc)

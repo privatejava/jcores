@@ -55,4 +55,30 @@ public abstract class VanillaUtil<T> {
     public T getObject() {
         return this.object;
     }
+    
+    
+    /**
+     * Casts the object to the given type.
+     * 
+     * @param <C>
+     * @param c
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    protected <C> C cast(Class<C> c) {
+        return (C) this.object;
+    }
+    
+    
+    /**
+     * Casts the object to the given type.
+     * 
+     * @param <C>
+     * @param c
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    protected <C> C cast() {
+        return (C) this.object;
+    }
 }

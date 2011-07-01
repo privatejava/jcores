@@ -32,6 +32,15 @@ import java.util.List;
 import java.util.ListIterator;
 
 
+/**
+ * The base class of all adapters. Each adapter should care to be as fast as 
+ * possible, parameter should, in most cases, not be performed.
+ * 
+ * @author Ralf Biedert
+ *
+ * @since 1.0
+ * @param <T>
+ */
 public abstract class AbstractAdapter<T> implements Iterable<T>, Serializable {
     
     /** */

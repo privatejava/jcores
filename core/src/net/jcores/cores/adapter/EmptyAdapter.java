@@ -33,6 +33,13 @@ import java.util.List;
 import java.util.ListIterator;
 
 
+/**
+ * Wraps nothing.
+ * 
+ * @author Ralf Biedert
+ * @since 1.0
+ * @param <T>
+ */
 public final class EmptyAdapter<T> extends AbstractAdapter<T> {
 
     /** */

@@ -45,7 +45,7 @@ import net.jcores.interfaces.functions.F0;
  * 
  */
 public class CommonUI extends CommonNamespace {
-    /** The colors we need for heat maps */
+    /** The colors we need for heat maps  (0 == cold, 255 == hot) */
     private Color heatmapColors[] = new Color[256];
     
     /**
@@ -57,7 +57,11 @@ public class CommonUI extends CommonNamespace {
         super(commonCore);
         
         for (int i = 0; i < this.heatmapColors.length; i++) {
-            this.heatmapColors[i] = Color.getHSBColor((float) i / (float) this.heatmapColors.length, 0.85f, 1.0f);
+            double hue = 0;
+            hue = ((float) i / (float) this.heatmapColors.length);
+            hue = (hue / 2) + 0.5;
+            
+            this.heatmapColors[i] = Color.getHSBColor((float) hue, 0.85f, 1.0f);
         }
     }
 
@@ -108,6 +112,19 @@ public class CommonUI extends CommonNamespace {
      */
     public Color heat(double rel) {
         final double d = $.alg.limit(0, rel, 1);
-        return this.heatmapColors[(int) (d * this.heatmapColors.length)];
+        return this.heatmapColors[(int) (d * (this.heatmapColors.length - 1))];
+    }
+
+    
+    /**
+     * Changes the transparency of the given color.
+     * 
+     * @param color The color to change. 
+     * @param transparency The new transparency to use. 
+     * 
+     * @return Color with the given transparency..
+     */
+    public Color transparency(Color color, double transparency) {
+        return new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (transparency * 255));
     }
 }

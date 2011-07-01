@@ -31,6 +31,15 @@ import java.lang.reflect.Array;
 import java.util.List;
 import java.util.ListIterator;
 
+/**
+ * Wraps (random access) lists. This adapter should <b>not</b> be used with 
+ * LinkedLists and similar data structures. Use the {@link CollectionAdapter} for them
+ * if possible. 
+ * 
+ * @author Ralf Biedert
+ * @since 1.0
+ * @param <T>
+ */
 public final class ListAdapter<T> extends AbstractAdapter<T> {
     /** */
     private static final long serialVersionUID = -5292390771798957764L;

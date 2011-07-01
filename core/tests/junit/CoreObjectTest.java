@@ -335,4 +335,24 @@ public class CoreObjectTest {
     public void testCount() {
         Assert.assertEquals(4, 0 + $("a", "b", "a", "c", "a", "d", "a").count().value("a"));
     }
+    
+    
+    /** */
+    @Test
+    public void testArray() {
+        String[] array = $("a", "b", "a", "c", "a", "d", "a").slice(1, 4).array(String.class);
+        Assert.assertEquals(4, array.length);
+        Assert.assertEquals("b", array[0]);
+        Assert.assertEquals("a", array[1]);
+        Assert.assertEquals("c", array[2]);
+        Assert.assertEquals("a", array[3]);
+        
+        Object[] array2 = $("a", "b", "a", "c", "a", "d", "a").slice(1, 4).array(Object.class);
+        Assert.assertEquals(4, array2.length);
+        Assert.assertEquals("b", array2[0]);
+        Assert.assertEquals("a", array2[1]);
+        Assert.assertEquals("c", array2[2]);
+        Assert.assertEquals("a", array2[3]);
+    }
+
 }

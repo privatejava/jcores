@@ -98,11 +98,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     /** */
     private static final long serialVersionUID = -6436821141631907999L;
 
-    /** The array we work on. */
-    //protected final T[] _t;
-    
     /** The adapter we work on */
-    protected final AbstractAdapter<T> adapter;
+    protected final  AbstractAdapter<T> adapter;
 
     /**
      * Creates the core object for the given single object.
@@ -154,7 +151,40 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * @param supercore CommonCore to use.
      * @param objects Object to wrap.
      */
-    protected CoreObject(CommonCore supercore, AbstractAdapter<T> adapter) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public CoreObject(CommonCore supercore, Collection<T> objects) {
+        super(supercore);
+        
+        if(objects instanceof ArrayList) {
+            this.adapter = new ListAdapter<T>((List<T>) objects);
+        } else {
+            this.adapter = new ListAdapter<T>(new ArrayList(objects));
+        }
+    }
+
+    
+    
+    /**
+     * Creates the core object for the given array.
+     * 
+     * @param supercore CommonCore to use.
+     * @param core Core to wrap.
+     */
+    public CoreObject(CommonCore supercore, CoreObject<T> core) {
+        super(supercore);
+        this.adapter = core.adapter;
+    }
+    
+    
+    
+    /**
+     * Creates the core object for the given adapter. This is the main constructor each 
+     * subclass <b>must</b> implement, otherwise <code>object.as()</code> will not work.
+     * 
+     * @param supercore CommonCore to use.
+     * @param adapter The adapter to wrap.
+     */
+    public CoreObject(CommonCore supercore, AbstractAdapter<T> adapter) {
         super(supercore);
         this.adapter = adapter;
     }
@@ -188,7 +218,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         
         final T[] copy = (T[]) Array.newInstance(clazz, size() + toAdd.size());
         final Object[] a = this.adapter.array(clazz);
-        final Object[] b = this.adapter.array(clazz);
+        final Object[] b = toAdd.adapter.array(clazz);
         
         System.arraycopy(a, 0, copy, 0, a.length);
         System.arraycopy(b, 0, copy, a.length, b.length);
@@ -954,6 +984,31 @@ public class CoreObject<T> extends Core implements Iterable<T> {
             }
         }, options);
     }
+    
+    
+    /**
+     * Finds the first element that is not null.<br/>
+     * <br/>
+     * 
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(null, "a", "b").first()</code> - Returns <code>"a"</code>.</li> 
+     * </ul>  
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @return The first element that was not null, or null, if all elements 
+     * were null. 
+     */
+    public T first() {
+        for(T t : this) {
+            if(t != null) return t;
+        }
+        return null;
+    }
+
 
     /**
      * Generates a textual fingerprint for this element for debugging purporses.
@@ -1883,17 +1938,23 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      */
     public CoreObject<T> slice(final int start, final int length) {
         if (size() == 0) return this;
+        if (length == 0) return new CoreObject<T>(this.commonCore, new EmptyAdapter<T>());
 
-        final int i = indexToOffset(start);
-        final int l = length > 0 ? length : indexToOffset(length) - i + 1;
+        int i = indexToOffset(start);
+        int l = length > 0 ? length : indexToOffset(length) - i + 1;
         
         if (i < 0 || i >= size()) {
-            this.commonCore.report(MessageType.MISUSE, "slice() - converted parameter start(" + start + " -> " + i + ") is outside bounds.");
+            this.commonCore.report(MessageType.MISUSE, "slice() - converted parameter start(" + start + " -> " + i + ") is outside bounds. Returning empty slice.");
             return new CoreObject<T>(this.commonCore, new EmptyAdapter<T>());
         }
-        if (l < 0 || l > size()) {
-            this.commonCore.report(MessageType.MISUSE, "slice() - converted parameter length(" + length + " -> " + l + ") is outside bounds.");
-            return new CoreObject<T>(this.commonCore, new EmptyAdapter<T>());
+        if (l < 0 || i + l > size()) {
+            if ( l < 0 ) {
+                this.commonCore.report(MessageType.MISUSE, "slice() - converted parameter length(" + length + " -> " + l + ") is outside bounds. Returning empty slice.");
+                return new CoreObject<T>(this.commonCore, new EmptyAdapter<T>());
+            }
+            
+            this.commonCore.report(MessageType.MISUSE, "slice() - converted parameter length(" + length + " -> " + l + ") is outside bounds. Truncating.");
+            l -= i + l - size();
         }
 
         return new CoreObject<T>(this.commonCore, this.adapter.slice(i, i + l));
@@ -2120,8 +2181,9 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     
 
     /**
-     * Returns the core's array. Use of this method is strongly discouraged and 
-     * usually only needed in a few very special cases. Do not change the array! <br/>
+     * Returns the core's array, extremely fast when the original objects wrapped in this core were an array. 
+     * Use of this method is strongly discouraged and usually only needed in a few very special cases. Do not 
+     * change the array! <br/>
      * <br/>
      * 
      * Also, even though the method is parameterized, in some cases it does not return 
@@ -2143,7 +2205,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     }
     
     /**
-     * Returns an unsafe list for this core. Use of this method discouraged but may speed up many 
+     * Returns an unsafe list for this core, always very fast. Use of this method discouraged but may speed up many 
      * operations when used sensibly. The list <b>must not</b> be altered in any way.<br/>
      * <br/>
      * 
@@ -2159,7 +2221,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     
     /**
      * For each of the contained elements an object of the type <code>wrapper</code> is 
-     * being created with the element passed as the first argument to the constructor.<br/>
+     * being created with the element passed as the first argument to the constructor. If the element is 
+     * already of the type <code>wrapper</code>, nothing is being done for that element.<br/>
      * <br/>
      * 
      * Single-threaded. Heavyweight.<br/>
@@ -2170,32 +2233,21 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      *  
      * @return A {@link CoreObject} with the wrapped objects. Elements which could not be wrapped are set to <code>null</code>.
      */
-    public <W> CoreObject<W> wrap(Class<W> wrapper) {
+    public <W> CoreObject<W> wrap(final Class<W> wrapper) {
         final CoreClass<W> w = $(wrapper);
         
         return forEach(new F1<T, W>() {
+            @SuppressWarnings("unchecked")
             @Override
             public W f(T x) {
+                // Check if the object is already assignable
+                if(wrapper.isAssignableFrom(x.getClass())) return (W) x;
+                
                 return w.spawn(x).get(0);
             }
         });
     }
 
-    
-    /**
-     * Finds the first element that is not null.
-     * 
-     * @return The first element that was not null, or null, if all elements were null. 
-     */
-    protected T findFirst() {
-        
-        for(T t : this) {
-            if(t != null) return t;
-        }
-        
-        return null;
-    }
-    
     
     /**
      * Converts an index to an offset.
