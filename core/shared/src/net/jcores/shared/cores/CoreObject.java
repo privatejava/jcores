@@ -1868,6 +1868,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         return this;
     }
 
+    
     /**
      * Returns how many slots are in this core, counting null elements.<br/>
      * <br/>

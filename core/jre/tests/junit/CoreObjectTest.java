@@ -296,6 +296,7 @@ public class CoreObjectTest {
     public void testSerialize() {
         $("hello", "world").serialize("test.jcores");
         final CoreString converted = $("test.jcores").file().deserialize(String.class).string();
+        $.report();
         Assert.assertEquals("helloworld", converted.join());
 
         $(Data.strings(10000)).serialize("big.file");

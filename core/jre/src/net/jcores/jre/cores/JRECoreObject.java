@@ -28,7 +28,6 @@
 package net.jcores.jre.cores;
 
 import net.jcores.jre.CoreKeeper;
-import net.jcores.jre.JRECommonCore;
 import net.jcores.shared.CommonCore;
 import net.jcores.shared.cores.CoreObject;
 import net.jcores.shared.cores.adapter.AbstractAdapter;
@@ -53,7 +52,7 @@ public class JRECoreObject<T> extends CoreObject<T> {
      * @param supercore
      * @param object
      */
-    public JRECoreObject(JRECommonCore supercore, T... object) {
+    public JRECoreObject(CommonCore supercore, T... object) {
         super(supercore, object);
     }
 
@@ -115,5 +114,4 @@ public class JRECoreObject<T> extends CoreObject<T> {
             }
         }).array(Class.class));
     }
-
 }

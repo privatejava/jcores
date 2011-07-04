@@ -80,7 +80,7 @@ import net.jcores.shared.utils.internal.sound.SoundUtils;
  * @author Ralf Biedert
  * @since 1.0
  */
-public class JRECoreFile extends CoreObject<File> {
+public class JRECoreFile extends JRECoreObject<File> {
 
     /** Used for serialization */
     private static final long serialVersionUID = -8743359735096052185L;
@@ -331,7 +331,7 @@ public class JRECoreFile extends CoreObject<File> {
         try {
             final CoreObject<T> core = StreamUtils.deserializeCore(type, new FileInputStream(get(0)));
             if (core != null) {
-                final Field field = CoreObject.class.getField("commonCore");
+                final Field field = Core.class.getDeclaredField("commonCore");
                 field.setAccessible(true);
                 field.set(core, this.commonCore);
                 return core;

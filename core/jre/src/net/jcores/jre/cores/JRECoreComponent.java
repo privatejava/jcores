@@ -33,7 +33,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import net.jcores.shared.CommonCore;
-import net.jcores.shared.cores.CoreObject;
 import net.jcores.shared.interfaces.java.KeyStroke;
 
 /**
@@ -46,7 +45,7 @@ import net.jcores.shared.interfaces.java.KeyStroke;
  * 
  * @since 1.0
  */
-public class JRECoreComponent extends CoreObject<Component> {
+public class JRECoreComponent extends JRECoreObject<Component> {
 
     /** Used for serialization */
     private static final long serialVersionUID = -6859431347201006730L;

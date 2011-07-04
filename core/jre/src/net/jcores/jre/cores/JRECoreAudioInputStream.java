@@ -31,7 +31,6 @@ import javax.sound.sampled.AudioInputStream;
 
 import net.jcores.shared.CommonCore;
 import net.jcores.shared.cores.CoreInputStream;
-import net.jcores.shared.cores.CoreObject;
 import net.jcores.shared.interfaces.functions.F1;
 import net.jcores.shared.utils.internal.sound.SoundUtils;
 
@@ -47,7 +46,7 @@ import net.jcores.shared.utils.internal.sound.SoundUtils;
  * @author Ralf Biedert
  * @since 1.0
  */
-public class JRECoreAudioInputStream extends CoreObject<AudioInputStream> {
+public class JRECoreAudioInputStream extends JRECoreObject<AudioInputStream> {
 
     /** Used for serialization */
     private static final long serialVersionUID = -7643964446329787050L;

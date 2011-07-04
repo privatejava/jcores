@@ -52,7 +52,7 @@ import net.jcores.shared.utils.internal.io.StreamUtils;
  * @since 1.0
  * @param <T> Type of the classes' objects.
  */
-public class JRECoreClass<T> extends CoreObject<Class<T>> {
+public class JRECoreClass<T> extends JRECoreObject<Class<T>> {
     /** Used for serialization */
     private static final long serialVersionUID = -5054890786513339808L;
 
