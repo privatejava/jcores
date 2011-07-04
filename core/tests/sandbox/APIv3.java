@@ -45,17 +45,17 @@
 
 package sandbox;
 
-import static net.jcores.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.jcores.cores.CoreObject;
-import net.jcores.cores.CoreString;
 import net.jcores.extensions.serialization.CoreSerializer;
-import net.jcores.interfaces.functions.F0;
-import net.jcores.interfaces.functions.F1;
+import net.jcores.shared.cores.CoreObject;
+import net.jcores.shared.cores.CoreString;
+import net.jcores.shared.interfaces.functions.F0;
+import net.jcores.shared.interfaces.functions.F1;
 import sandbox.dummys.F0Impl;
 import sandbox.extensions.ExtensionCore;
 

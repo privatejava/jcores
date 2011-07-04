@@ -27,7 +27,7 @@
  */
 package sandbox;
 
-import static net.jcores.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,11 +37,11 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import net.jcores.cores.CoreClass;
-import net.jcores.interfaces.functions.F0;
-import net.jcores.interfaces.functions.F1;
-import net.jcores.interfaces.functions.F2DeltaObjects;
-import net.jcores.interfaces.functions.F2ReduceObjects;
+import net.jcores.jre.cores.JRECoreClass;
+import net.jcores.shared.interfaces.functions.F0;
+import net.jcores.shared.interfaces.functions.F1;
+import net.jcores.shared.interfaces.functions.F2DeltaObjects;
+import net.jcores.shared.interfaces.functions.F2ReduceObjects;
 import sandbox.dummys.F0Impl;
 
 /**
@@ -159,7 +159,7 @@ public class SimpleSpeedTest {
             // 331769
             // 14166 (optimized)
             public void f() {
-                CoreClass<F0Impl> $2 = $(F0Impl.class);
+                JRECoreClass<F0Impl> $2 = $(F0Impl.class);
                 for (int i = 0; i < size; i++)
                     o1.add($2.spawn());
             }

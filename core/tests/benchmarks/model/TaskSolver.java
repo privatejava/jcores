@@ -27,7 +27,7 @@
  */
 package benchmarks.model;
 
-import net.jcores.interfaces.functions.F1;
+import net.jcores.shared.interfaces.functions.F1;
 
 /**
  * Solves a task.

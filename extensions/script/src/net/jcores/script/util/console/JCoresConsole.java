@@ -1,6 +1,6 @@
 package net.jcores.script.util.console;
 
-import static net.jcores.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -14,7 +14,7 @@ import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
-import net.jcores.interfaces.functions.F0;
+import net.jcores.shared.interfaces.functions.F0;
 
 /**
  * We use this console to output what has been printed on the actual console ...

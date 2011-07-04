@@ -7,7 +7,7 @@
  */
 package benchmarks.benchmarks.regexdna;
 
-import static net.jcores.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.jcores.interfaces.functions.F1;
+import net.jcores.shared.interfaces.functions.F1;
 
 public final class SolverJCores2 {
 

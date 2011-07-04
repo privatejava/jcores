@@ -27,7 +27,7 @@
  */
 package net.jcores.script.scriptmodes;
 
-import static net.jcores.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
 
 import java.io.File;
 import java.net.URL;
@@ -52,7 +52,7 @@ public class JCoresScriptDevtime extends JCoresScript {
     /*
      * (non-Javadoc)
      * 
-     * @see net.jcores.script.JCoresScript#pack()
+     * @see net.jcores.shared.script.JCoresScript#pack()
      */
     public JCoresScriptDevtime(String name, String[] args) {
         super(name, args);
@@ -61,7 +61,7 @@ public class JCoresScriptDevtime extends JCoresScript {
     /*
      * (non-Javadoc)
      * 
-     * @see net.jcores.script.JCoresScript#pack()
+     * @see net.jcores.shared.script.JCoresScript#pack()
      */
     @Override
     public void pack() {

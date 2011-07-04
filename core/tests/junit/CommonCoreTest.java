@@ -27,15 +27,15 @@
  */
 package junit;
 
-import static net.jcores.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import net.jcores.interfaces.functions.F0;
-import net.jcores.utils.map.MapUtil;
-import net.jcores.utils.map.generators.NewUnsafeInstance;
+import net.jcores.shared.interfaces.functions.F0;
+import net.jcores.shared.utils.map.MapUtil;
+import net.jcores.shared.utils.map.generators.NewUnsafeInstance;
 
 import org.junit.Assert;
 import org.junit.Test;

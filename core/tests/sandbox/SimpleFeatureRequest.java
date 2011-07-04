@@ -27,7 +27,8 @@
  */
 package sandbox;
 
-import static net.jcores.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
+
 
 /**
  * @author Ralf Biedert
@@ -37,6 +38,5 @@ public class SimpleFeatureRequest {
     public static void main(String[] args) {
         $("test").featurerequest(".reverse() -- The string core should support reversing.");
         $("test").featurerequest(".reverse() -- The string core should support reversing.");
-
     }
 }

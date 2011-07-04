@@ -27,7 +27,7 @@
  */
 package junit;
 
-import static net.jcores.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
 
 import java.io.InputStream;
 import java.util.Map;
@@ -35,10 +35,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 import junit.data.Data;
-import net.jcores.cores.CoreObject;
-import net.jcores.interfaces.internal.logging.LoggingHandler;
-import net.jcores.managers.ManagerLogging;
-import net.jcores.utils.CSVLine;
+import net.jcores.shared.cores.CoreObject;
+import net.jcores.shared.interfaces.internal.logging.LoggingHandler;
+import net.jcores.shared.managers.ManagerLogging;
+import net.jcores.shared.utils.CSVLine;
 
 import org.junit.Assert;
 import org.junit.Test;

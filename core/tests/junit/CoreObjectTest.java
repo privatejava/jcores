@@ -27,21 +27,21 @@
  */
 package junit;
 
-import static net.jcores.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.data.Data;
-import net.jcores.cores.CoreNumber;
-import net.jcores.cores.CoreString;
-import net.jcores.interfaces.functions.F1;
-import net.jcores.interfaces.functions.F2DeltaObjects;
-import net.jcores.interfaces.functions.F2ReduceObjects;
-import net.jcores.interfaces.functions.Fn;
-import net.jcores.options.Option;
-import net.jcores.options.OptionIndexer;
+import net.jcores.shared.cores.CoreNumber;
+import net.jcores.shared.cores.CoreString;
+import net.jcores.shared.interfaces.functions.F1;
+import net.jcores.shared.interfaces.functions.F2DeltaObjects;
+import net.jcores.shared.interfaces.functions.F2ReduceObjects;
+import net.jcores.shared.interfaces.functions.Fn;
+import net.jcores.shared.options.Option;
+import net.jcores.shared.options.OptionIndexer;
 
 import org.junit.Assert;
 import org.junit.Test;

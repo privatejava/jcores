@@ -5,7 +5,7 @@
  */
 package benchmarks.benchmarks.regexdna;
 
-import static net.jcores.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
 
 import java.io.IOException;
 import java.io.InputStream;

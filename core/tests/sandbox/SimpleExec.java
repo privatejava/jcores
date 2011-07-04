@@ -27,7 +27,7 @@
  */
 package sandbox;
 
-import static net.jcores.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
 
 import java.io.IOException;
 import java.util.Random;
@@ -48,7 +48,6 @@ public class SimpleExec {
         // $.exec("ls -la")
         // $(".").file().dir().filter(".*java$").string().replace("^(.*)$", "ls $1").exec().print();
         $(".").file().dir().filter(".*java$").string().exec("ls $1").print();
-
     }
 
 }

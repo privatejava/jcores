@@ -27,8 +27,8 @@
  */
 package sandbox.extensions;
 
-import net.jcores.CommonCore;
-import net.jcores.cores.CoreObject;
+import net.jcores.shared.CommonCore;
+import net.jcores.shared.cores.CoreObject;
 
 /**
  * @author rb

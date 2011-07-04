@@ -31,8 +31,8 @@ import static sandbox.oldversions.net.jcores.v1.Core.$;
 
 import java.util.List;
 
-import net.jcores.interfaces.functions.F0;
-import net.jcores.interfaces.functions.F1;
+import net.jcores.shared.interfaces.functions.F0;
+import net.jcores.shared.interfaces.functions.F1;
 import sandbox.dummys.F0Impl;
 
 /**

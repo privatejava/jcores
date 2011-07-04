@@ -27,10 +27,10 @@
  */
 package net.jcores.script;
 
-import net.jcores.annotations.Beta;
 import net.jcores.script.input.Input;
 import net.jcores.script.scriptmodes.JCoresScriptDevtime;
 import net.jcores.script.scriptmodes.JCoresScriptRuntime;
+import net.jcores.shared.annotations.Beta;
 
 /**
  * JCores scripting allows you to quickly hack a small (script-like) Java / jCores application

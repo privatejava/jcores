@@ -27,7 +27,7 @@
  */
 package net.jcores.script.launcher;
 
-import static net.jcores.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
 
 import java.io.File;
 import java.io.IOException;

@@ -27,14 +27,14 @@
  */
 package benchmarks.benchmarks.mappinglooping;
 
-import static net.jcores.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.data.Data;
-import net.jcores.interfaces.functions.F1;
+import net.jcores.shared.interfaces.functions.F1;
 import benchmarks.benchmarker.Benchmark;
 import benchmarks.model.TaskData;
 import benchmarks.model.TaskSolver;

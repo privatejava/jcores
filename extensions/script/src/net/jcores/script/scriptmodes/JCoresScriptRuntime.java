@@ -27,7 +27,7 @@
  */
 package net.jcores.script.scriptmodes;
 
-import static net.jcores.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
 
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
@@ -38,10 +38,10 @@ import java.util.Set;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import net.jcores.interfaces.functions.F0;
 import net.jcores.script.JCoresScript;
 import net.jcores.script.util.console.JCoresConsole;
-import net.jcores.utils.internal.system.ProfileInformation;
+import net.jcores.shared.interfaces.functions.F0;
+import net.jcores.shared.utils.internal.system.ProfileInformation;
 
 /**
  * Development time scripting environment.
@@ -60,7 +60,7 @@ public class JCoresScriptRuntime extends JCoresScript {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see net.jcores.script.JCoresScript#pack()
+	 * @see net.jcores.shared.script.JCoresScript#pack()
 	 */
 	public JCoresScriptRuntime(String name, String[] args) {
 		super(name, args);
@@ -73,7 +73,7 @@ public class JCoresScriptRuntime extends JCoresScript {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see net.jcores.script.JCoresScript#pack()
+	 * @see net.jcores.shared.script.JCoresScript#pack()
 	 */
 	@Override
 	public void pack() {

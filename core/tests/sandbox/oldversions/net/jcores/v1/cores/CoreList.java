@@ -29,8 +29,8 @@ package sandbox.oldversions.net.jcores.v1.cores;
 
 import java.util.List;
 
-import net.jcores.interfaces.functions.F1;
-import net.jcores.options.Option;
+import net.jcores.shared.interfaces.functions.F1;
+import net.jcores.shared.options.Option;
 
 /**
  * @author rb

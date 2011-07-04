@@ -27,8 +27,8 @@
  */
 package sandbox;
 
-import static net.jcores.CoreKeeper.$;
-import net.jcores.cores.CoreString;
+import static net.jcores.jre.CoreKeeper.$;
+import net.jcores.shared.cores.CoreString;
 
 public class Renamer {
     public static void main(String[] args) {

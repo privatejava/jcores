@@ -27,7 +27,7 @@
  */
 package junit;
 
-import static net.jcores.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
 import junit.data.Data;
 
 import org.junit.Test;

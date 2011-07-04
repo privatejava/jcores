@@ -27,8 +27,8 @@
  */
 package sandbox;
 
-import static net.jcores.CoreKeeper.$;
-import net.jcores.cores.CoreNumber;
+import static net.jcores.jre.CoreKeeper.$;
+import net.jcores.shared.cores.CoreNumber;
 
 /**
  * @author rb

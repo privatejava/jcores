@@ -33,9 +33,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import net.jcores.CommonCore;
-import net.jcores.cores.CoreObject;
-import net.jcores.options.MessageType;
+import net.jcores.shared.CommonCore;
+import net.jcores.shared.cores.CoreObject;
+import net.jcores.shared.options.MessageType;
 
 import com.thoughtworks.xstream.XStream;
 

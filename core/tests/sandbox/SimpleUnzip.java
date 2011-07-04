@@ -27,7 +27,7 @@
  */
 package sandbox;
 
-import static net.jcores.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -42,7 +42,7 @@ import java.util.Random;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import net.jcores.cores.CoreZipInputStream;
+import net.jcores.shared.cores.CoreZipInputStream;
 
 /**
  * @author rb

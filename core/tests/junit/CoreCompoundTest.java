@@ -27,8 +27,8 @@
  */
 package junit;
 
-import static net.jcores.CoreKeeper.$;
-import net.jcores.utils.map.Compound;
+import static net.jcores.jre.CoreKeeper.$;
+import net.jcores.shared.utils.map.Compound;
 
 import org.junit.Assert;
 import org.junit.Test;

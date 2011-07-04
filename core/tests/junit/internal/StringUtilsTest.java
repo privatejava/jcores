@@ -27,7 +27,7 @@
  */
 package junit.internal;
 
-import net.jcores.utils.internal.lang.StringUtils;
+import net.jcores.shared.utils.internal.lang.StringUtils;
 
 import org.junit.Assert;
 import org.junit.Test;

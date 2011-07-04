@@ -29,11 +29,10 @@ package sandbox.oldversions.net.jcores.v1.cores;
 
 import java.util.Collection;
 
+import net.jcores.shared.interfaces.functions.F0;
+import net.jcores.shared.interfaces.functions.F1;
+import net.jcores.shared.options.Option;
 import sandbox.oldversions.net.jcores.v1.Core;
-
-import net.jcores.interfaces.functions.F0;
-import net.jcores.interfaces.functions.F1;
-import net.jcores.options.Option;
 
 public class CoreCollection<T> extends CoreObject<Collection<T>> {
 
