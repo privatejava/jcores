@@ -32,10 +32,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import net.jcores.cores.adapter.CollectionAdapter;
+
 public class SubList<T> implements List<T> {
 
     /** */
-    private List<T> list;
+    private CollectionAdapter<T> list;
     
     /** */
     private int start;
@@ -43,7 +45,7 @@ public class SubList<T> implements List<T> {
     /** */
     private int end;
 
-    public SubList(List<T> orig, int start, int end) {
+    public SubList(CollectionAdapter<T> orig, int start, int end) {
         this.list = orig;
         this.start = start;
         this.end = end;

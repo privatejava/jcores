@@ -368,6 +368,7 @@ public final class CollectionAdapter<T> extends AbstractAdapter<T> implements Li
 
     @Override
     public List<T> subList(int fromIndex, int toIndex) {
+        cacheUntil(toIndex);
         return new SubList<T>(this, fromIndex, toIndex);
     }
 }
