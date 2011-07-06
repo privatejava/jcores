@@ -31,15 +31,18 @@ import static net.jcores.jre.CoreKeeper.$;
 
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import junit.data.Data;
 import junit.framework.Assert;
 import net.jcores.jre.cores.CoreObjectJRE;
 import net.jcores.shared.cores.CoreMap;
+import net.jcores.shared.cores.CoreNumber;
 import net.jcores.shared.cores.CoreObject;
 import net.jcores.shared.cores.adapter.CollectionAdapter;
 import net.jcores.shared.cores.adapter.MapAdapter;
+import net.jcores.shared.interfaces.functions.F1;
 import net.jcores.shared.utils.map.MapEntry;
 
 import org.junit.Test;
@@ -54,39 +57,59 @@ public class AdapterTest {
     public void testCollectionAdapter() {
         final LinkedList<String> linked = new LinkedList<String>(Arrays.asList(Data.sn));
         final CoreObjectJRE<String> x = $(linked);
-        
+
         Assert.assertTrue(x.unsafeadapter() instanceof CollectionAdapter);
-        
+
         final CoreObject<String> slice = x.slice(40, 60).slice(5, 20).slice(5, 5);
         Assert.assertEquals(5, slice.size());
         Assert.assertEquals("50", slice.get(0));
 
-        
         final StringBuilder sb = new StringBuilder();
-        for(String s : slice) {
+        for (String s : slice) {
             sb.append(s);
         }
-        
+
         Assert.assertEquals("5051525354", sb.toString());
     }
-    
+
+    /** */
+    @Test
+    public void testCollectionsParallization() {
+        // Repeat the last test a number of times
+        for (int c = 0; c < 100; c++) {
+            final List<String> linked = new LinkedList<String>(Arrays.asList(Data.sn));
+            final CoreObjectJRE<String> x = $(linked);
+            final CoreNumber as = x.map(new F1<String, Integer>() {
+                @Override
+                public Integer f(String xx) {
+                    return $(xx).I(0);
+                }
+            }).as(CoreNumber.class);
+
+            Assert.assertEquals(Data.sn.length, as.size());
+            Assert.assertEquals(Data.sn.length, as.compact().size());
+
+            final long i = Data.sn.length - 1;
+            Assert.assertEquals(i * (i + 1) / 2, (long) as.sum());
+        }
+    }
+
     /** */
     @SuppressWarnings("boxing")
     @Test
     public void testMapAdapter() {
         final Map<String, Integer> map = $.map();
-        for(String s:Data.sn) {
+        for (String s : Data.sn) {
             map.put(s, $(s).i(0));
         }
-        
+
         final CoreMap<String, Integer> x = $(map);
         Assert.assertTrue(x.unsafeadapter() instanceof MapAdapter);
-        
-        for(MapEntry<String, Integer> e : x) {
+
+        for (MapEntry<String, Integer> e : x) {
             Assert.assertEquals(e.key(), e.value().toString());
-            
+
         }
-        
     }
 
 }

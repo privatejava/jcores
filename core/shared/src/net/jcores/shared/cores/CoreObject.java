@@ -1388,14 +1388,19 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         // Check all objects ...
         for (int i = 0; i < objects.length; i++) {
             final T obj = objects[i];
-            if (obj == null) continue;
 
             final ListIterator<T> iterator = iterator();
             while (iterator.hasNext()) {
                 final int j = iterator.nextIndex();
                 final T next = iterator.next();
 
-                if (obj.equals(next)) {
+                
+                if (obj != null && obj.equals(next)) {
+                    indices[i] = j;
+                    break;
+                }
+                
+                if (obj == null && next == null) {
                     indices[i] = j;
                     break;
                 }

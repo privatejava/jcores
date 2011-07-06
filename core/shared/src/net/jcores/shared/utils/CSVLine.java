@@ -71,6 +71,17 @@ public class CSVLine {
         return Integer.parseInt(s(index));
     }
 
+    /**
+     * Returns the string at the given index position converted 
+     * as an Integer. 
+     * 
+     * @param index The index to retrieve.
+     * @return The Integer value. 
+     */
+    public Integer I(int index) {
+        return Integer.valueOf(index);
+    }
+
 
     /**
      * Returns the string at the given index position converted 
@@ -83,6 +94,16 @@ public class CSVLine {
         return Double.parseDouble(s(index));
     }
 
+    /**
+     * Returns the string at the given index position converted 
+     * as an Double. 
+     * 
+     * @param index The index to retrieve.
+     * @return The Double value. 
+     */
+    public Double D(int index) {
+        return Double.valueOf(index);
+    }
     
     /**
      * Returns the size of this line (the number of entries).

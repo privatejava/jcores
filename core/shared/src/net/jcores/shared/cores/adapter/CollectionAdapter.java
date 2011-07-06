@@ -87,6 +87,7 @@ public class CollectionAdapter<I, O> extends AbstractAdapter<O> implements List<
      * @param i
      * @return
      */
+    @SuppressWarnings("unchecked")
     protected O converter(I i) {
         return (O) i;
     }
@@ -110,7 +111,11 @@ public class CollectionAdapter<I, O> extends AbstractAdapter<O> implements List<
     public O get(int i) {
         final int ii = i + this.start;
         cacheUntil(ii);
-        return this.array.get(ii);
+        return _get(ii);
+    }
+    
+    private final O _get(int i) {
+        return this.array.get(i);
     }
 
     /*
@@ -121,7 +126,7 @@ public class CollectionAdapter<I, O> extends AbstractAdapter<O> implements List<
     @Override
     public ListIterator<O> iterator() {
         return new ListIterator<O>() {
-            int i = 0;
+            volatile int i = 0;
             
             @Override
             public boolean hasNext() {
@@ -181,7 +186,7 @@ public class CollectionAdapter<I, O> extends AbstractAdapter<O> implements List<
 
         final N[] rval = (N[]) Array.newInstance(in, size());
         for (int i = this.start; i < rval.length; i++) {
-            rval[i] = (N) this.array.get(i);
+            rval[i] = (N) _get(i);
         }
 
         return rval;
@@ -224,21 +229,23 @@ public class CollectionAdapter<I, O> extends AbstractAdapter<O> implements List<
     /**
      * Cache the collection until the given element 
      * 
-     * @param limit
+     * @param request
      */
-    protected void cacheUntil(int limit) {
+    protected void cacheUntil(int request) {
         // When the cached value already exceeds the limit we dont have to do anything
-        if (this.inCache.intValue() >= limit) return;
+        if (this.inCache.intValue() >= request) return;
 
         this.collectionLock.lock();
         try {
+            //System.out.println(Thread.currentThread() + ": " + this.inCache + " -> " + request);
             // Iterator might have been gone due to another thread that just exited the lock while we entered
             if (this.iterator == null) return;
-
+            
             while (this.iterator.hasNext()) {
-                int i = this.inCache.incrementAndGet();
-                this.array.set(i, converter(this.iterator.next()));
-                if (i > limit) break;
+                int i = this.inCache.get();
+                this.array.set(i + 1, converter(this.iterator.next()));
+                this.inCache.set(i + 1);
+                if (i > request) break;
             }
 
             // Eventually dump the iterator to free up space
@@ -285,7 +292,7 @@ public class CollectionAdapter<I, O> extends AbstractAdapter<O> implements List<
 
         final Object[] rval = (Object[]) Array.newInstance(Object.class, size());
         for (int i = this.start; i < rval.length; i++) {
-            rval[i] = this.array.get(i);
+            rval[i] = _get(i);
         }
 
         return rval;
@@ -311,7 +318,7 @@ public class CollectionAdapter<I, O> extends AbstractAdapter<O> implements List<
 
         // Fill the array
         for (int i = this.start; i < rval.length; i++) {
-            rval[i] = (T) this.array.get(i);
+            rval[i] = (T) _get(i);
         }
 
         return rval;

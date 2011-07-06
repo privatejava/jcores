@@ -235,6 +235,34 @@ public class CoreString extends CoreObject<String> {
     }
 
 
+
+    /**
+     * Tries to parse the String at the given position as a double, or
+     * returns <code>Double.NaN</code> if the object was null or not convertible.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("0.4").d(0)</code> - Returns 0.4</li>
+     * </ul> 
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @param index The index to get the number for.
+     * @return The integer value of the number or <code>Double.NaN</code> if it was null.
+     */
+    public Double D(int index) {
+        if (get(index) == null) return null;
+        
+        try {
+            return Double.valueOf(get(index));
+        } catch (Exception e) {
+        }
+        
+        return null;
+    }
+
     
     /**
      * Decodes all strings from the application/x-www-form-urlencoded format.<br/>
@@ -498,7 +526,7 @@ public class CoreString extends CoreObject<String> {
 
 
     /**
-     * Tries to parse the String at the given position as an integer, or
+     * Tries to parse the String at the given position as an int, or
      * returns <code>0</code> if the object was null or not convertible.<br/>
      * <br/>
      * 
@@ -511,18 +539,47 @@ public class CoreString extends CoreObject<String> {
      * <br/>
      * 
      * @param index The index to get the number for.
-     * @return The integer value of the number or <code>0</code> if it was null.
+     * @return The int value of the number or <code>0</code> if it was null.
      */
     public int i(int index) {
         if (get(index) == null) return 0;
         
         try {
-            return Integer.parseInt(this.adapter.get(index));
+            return Integer.parseInt(get(index));
+        } catch (Exception e) {
+        }
+        return 0;
+    }
+    
+
+    /**
+     * Tries to parse the String at the given position as an Integer, or
+     * returns <code>null</code> if the object was null or not convertible.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("1").I(0)</code> - Returns 1 (as an Integer object)</li>
+     * </ul> 
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @param index The index to get the number for.
+     * @return The Integer of the number or <code>null</code> if it was null.
+     */
+    public Integer I(int index) {
+        if (get(index) == null) return null;
+        
+        try {
+            return Integer.valueOf(get(index));
         } catch (Exception e) {
         }
         
-        return 0;
+        return null;
     }
+
+
 
     
     /**
