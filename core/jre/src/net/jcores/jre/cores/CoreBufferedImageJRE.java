@@ -52,7 +52,7 @@ import net.jcores.shared.options.MessageType;
  * 
  * @since 1.0
  */
-public class JRECoreBufferedImage extends CoreObject<BufferedImage> {
+public class CoreBufferedImageJRE extends CoreObject<BufferedImage> {
 
     /** Used for serialization */
     private static final long serialVersionUID = -9069210371713045372L;
@@ -63,7 +63,7 @@ public class JRECoreBufferedImage extends CoreObject<BufferedImage> {
      * @param supercore The common core.
      * @param objects The BufferedImage to wrap.
      */
-    public JRECoreBufferedImage(CommonCore supercore, BufferedImage... objects) {
+    public CoreBufferedImageJRE(CommonCore supercore, BufferedImage... objects) {
         super(supercore, objects);
     }
 
@@ -82,8 +82,8 @@ public class JRECoreBufferedImage extends CoreObject<BufferedImage> {
      * 
      * @return A CoreBufferedImage containing the copies.
      */
-    public JRECoreBufferedImage copy() {
-        return new JRECoreBufferedImage(this.commonCore, map(new F1<BufferedImage, BufferedImage>() {
+    public CoreBufferedImageJRE copy() {
+        return new CoreBufferedImageJRE(this.commonCore, map(new F1<BufferedImage, BufferedImage>() {
             public BufferedImage f(final BufferedImage bi) {
                 // Code shamelessly stolen from stackoverflow.com
                 ColorModel cm = bi.getColorModel();
@@ -111,8 +111,8 @@ public class JRECoreBufferedImage extends CoreObject<BufferedImage> {
      * 
      * @return A CoreBufferedImage containing the scaled images.
      */
-    public JRECoreBufferedImage scale(final float factor) {
-        return new JRECoreBufferedImage(this.commonCore, map(new F1<BufferedImage, BufferedImage>() {
+    public CoreBufferedImageJRE scale(final float factor) {
+        return new CoreBufferedImageJRE(this.commonCore, map(new F1<BufferedImage, BufferedImage>() {
             public BufferedImage f(final BufferedImage bi) {
                 // Code shamelessly stolen from stackoverflow.com
                 final AffineTransform af = new AffineTransform();
@@ -145,10 +145,10 @@ public class JRECoreBufferedImage extends CoreObject<BufferedImage> {
      * 
      * @return A CoreBufferedImage containing the scaled images.
      */
-    public JRECoreBufferedImage scale(final int width, final int height) {
+    public CoreBufferedImageJRE scale(final int width, final int height) {
         if(width == 0 && height == 0) return this;
                 
-        return new JRECoreBufferedImage(this.commonCore, map(new F1<BufferedImage, BufferedImage>() {
+        return new CoreBufferedImageJRE(this.commonCore, map(new F1<BufferedImage, BufferedImage>() {
             public BufferedImage f(final BufferedImage bi) {
                 final AffineTransform af = new AffineTransform();
 
@@ -196,7 +196,7 @@ public class JRECoreBufferedImage extends CoreObject<BufferedImage> {
      * @param file The file to write the image get(0) to.
      * @return This CoreBufferedImage object.
      */
-    public JRECoreBufferedImage write(String file) {
+    public CoreBufferedImageJRE write(String file) {
         if (file == null) return this;
 
         if (size() != 1) {

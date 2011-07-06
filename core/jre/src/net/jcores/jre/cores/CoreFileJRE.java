@@ -80,7 +80,7 @@ import net.jcores.shared.utils.internal.sound.SoundUtils;
  * @author Ralf Biedert
  * @since 1.0
  */
-public class JRECoreFile extends JRECoreObject<File> {
+public class CoreFileJRE extends CoreObjectJRE<File> {
 
     /** Used for serialization */
     private static final long serialVersionUID = -8743359735096052185L;
@@ -91,7 +91,7 @@ public class JRECoreFile extends JRECoreObject<File> {
      * @param supercore The common core.
      * @param files The files to wrap.
      */
-    public JRECoreFile(CommonCore supercore, File... files) {
+    public CoreFileJRE(CommonCore supercore, File... files) {
         super(supercore, files);
     }
     
@@ -100,7 +100,7 @@ public class JRECoreFile extends JRECoreObject<File> {
      * @param supercore The shared CommonCore.
      * @param adapter The adapter.
      */
-    public JRECoreFile(CommonCore supercore, AbstractAdapter<File> adapter) {
+    public CoreFileJRE(CommonCore supercore, AbstractAdapter<File> adapter) {
         super(supercore, adapter);
     }
 
@@ -124,7 +124,7 @@ public class JRECoreFile extends JRECoreObject<File> {
      * 
      * @return The same core file object (<code>this</code>).
      */
-    public JRECoreFile append(Object object) {
+    public CoreFileJRE append(Object object) {
         if (object == null) return this;
 
         final CommonCore cc = this.commonCore;
@@ -151,7 +151,7 @@ public class JRECoreFile extends JRECoreObject<File> {
     
     
     /**
-     * Treats the given files as audio files and returns a {@link JRECoreAudioInputStream} for them.<br/>
+     * Treats the given files as audio files and returns a {@link CoreAudioInputStreamJRE} for them.<br/>
      * <br/>
      * 
      * Examples:
@@ -164,8 +164,8 @@ public class JRECoreFile extends JRECoreObject<File> {
      * 
      * @return The new core for the {@link AudioInputStream} objects.
      */
-    public JRECoreAudioInputStream audio() {
-        return new JRECoreAudioInputStream(this.commonCore, map(new F1<File, AudioInputStream>() {
+    public CoreAudioInputStreamJRE audio() {
+        return new CoreAudioInputStreamJRE(this.commonCore, map(new F1<File, AudioInputStream>() {
             @Override
             public AudioInputStream f(File x) {
                 return SoundUtils.getStream(x);
@@ -196,7 +196,7 @@ public class JRECoreFile extends JRECoreObject<File> {
      * 
      * @return The new core file object, containing all files that have been copied..
      */
-    public JRECoreFile copy(String destination) {
+    public CoreFileJRE copy(String destination) {
         if (destination == null) {
             this.commonCore.report(MessageType.MISUSE, "Destination null for copy().");
             return this;
@@ -205,7 +205,7 @@ public class JRECoreFile extends JRECoreObject<File> {
         final File dest = new File(destination);
         final CommonCore cc = this.commonCore;
         
-        return new JRECoreFile(this.commonCore, map(new F1<File, File[]>() {
+        return new CoreFileJRE(this.commonCore, map(new F1<File, File[]>() {
             @Override
             public File[] f(File x) {
                 return FileUtils.copy(cc, x, dest);
@@ -273,7 +273,7 @@ public class JRECoreFile extends JRECoreObject<File> {
      * 
      * @return The same core file object (<code>this</code>).
      */
-    public JRECoreFile delete() {
+    public CoreFileJRE delete() {
         final CommonCore cc = this.commonCore;
         map(new F1<File, Void>() {
             public Void f(File x) {
@@ -368,7 +368,7 @@ public class JRECoreFile extends JRECoreObject<File> {
      * 
      * @return A CoreFile with all found files (and, if selected, directories).
      */
-    public JRECoreFile dir(Option... options) {
+    public CoreFileJRE dir(Option... options) {
 
         // Check if we should emit diretories
         final boolean listDirs = net.jcores.jre.CoreKeeper.$(options).contains(Option.LIST_DIRECTORIES);
@@ -378,7 +378,7 @@ public class JRECoreFile extends JRECoreObject<File> {
             public File[] f(File x) {
                 return FileUtils.dir(x, listDirs);
             }
-        }).expand(File.class).unique().as(JRECoreFile.class);
+        }).expand(File.class).unique().as(CoreFileJRE.class);
     }
 
     /**
@@ -422,9 +422,9 @@ public class JRECoreFile extends JRECoreObject<File> {
      * @return A CoreFile containing a filtered subset of our elements.
      */
     @Override
-    public JRECoreFile filter(final String regex, Option... options) {
+    public CoreFileJRE filter(final String regex, Option... options) {
         final Pattern p = Pattern.compile(regex);
-        return new JRECoreFile(this.commonCore, filter(new F1Object2Bool<File>() {
+        return new CoreFileJRE(this.commonCore, filter(new F1Object2Bool<File>() {
             public boolean f(File x) {
                 final Matcher matcher = p.matcher(x.getAbsolutePath());
                 return matcher.matches();
@@ -447,9 +447,9 @@ public class JRECoreFile extends JRECoreObject<File> {
      * 
      * @return A CoreBufferedImage with the loaded images.
      */
-    public JRECoreBufferedImage image() {
+    public CoreBufferedImageJRE image() {
         final CommonCore cc = this.commonCore;
-        return new JRECoreBufferedImage(this.commonCore, map(new F1<File, BufferedImage>() {
+        return new CoreBufferedImageJRE(this.commonCore, map(new F1<File, BufferedImage>() {
             public BufferedImage f(File x) {
                 try {
                     return ImageIO.read(x);
@@ -508,7 +508,7 @@ public class JRECoreFile extends JRECoreObject<File> {
      * @param options Currently none used.
      * @return This Core again.
      */
-    public JRECoreFile jar(String target, Manifest manifest, Option... options) {
+    public CoreFileJRE jar(String target, Manifest manifest, Option... options) {
         FileUtils.jarFiles(new File(target), manifest, this.adapter.array());
         return this;
     }
@@ -527,7 +527,7 @@ public class JRECoreFile extends JRECoreObject<File> {
      * 
      * @return This Core again.
      */
-    public JRECoreFile mkdir() {
+    public CoreFileJRE mkdir() {
         for (int i = 0; i < size(); i++) {
             final File file = get(i);
             if(file == null) continue;
@@ -604,7 +604,7 @@ public class JRECoreFile extends JRECoreObject<File> {
      * @param options Currently none used.
      * @return This Core again.
      */
-    public JRECoreFile zip(String target, Option... options) {
+    public CoreFileJRE zip(String target, Option... options) {
         FileUtils.zipFiles(new File(target), this.adapter.array());
         return this;
     }

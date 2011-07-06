@@ -33,6 +33,7 @@ import net.jcores.shared.CommonCore;
 import net.jcores.shared.cores.adapter.AbstractAdapter;
 import net.jcores.shared.interfaces.functions.F1;
 import net.jcores.shared.interfaces.functions.F2ReduceObjects;
+import net.jcores.shared.options.Option;
 
 /**
  * Wraps a number of Numbers and exposes some convenience functions. For example,
@@ -59,7 +60,6 @@ public class CoreNumber extends CoreObject<Number> {
         super(supercore, objects);
     }
 
-
     /**
      * @param supercore The shared CommonCore.
      * @param adapter The adapter.
@@ -68,7 +68,6 @@ public class CoreNumber extends CoreObject<Number> {
         super(supercore, adapter);
     }
 
-    
     /**
      * Returns the average of all enclosed numbers.<br/>
      * <br/>
@@ -76,7 +75,7 @@ public class CoreNumber extends CoreObject<Number> {
      * Examples:
      * <ul>
      * <li><code>$(1, 3).average()</code> - Returns the average of 1 and 3, which is 2.</li>
-     * </ul> 
+     * </ul>
      * 
      * Single-threaded.<br/>
      * <br/>
@@ -85,21 +84,49 @@ public class CoreNumber extends CoreObject<Number> {
      * @return The average of all enclosed numbers. If no numbers are enclosed, <code>0</code> is returned.
      */
     public double average() {
+        return average(0.0);
+    }
+
+
+    /**
+     * Returns the average of all enclosed numbers or <code>alternative</code> if there 
+     * were no elements in this core.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(null).average(Double.NaN)</code> - Returns <code>NaN</code>.</li>
+     * </ul>
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @param alternative The alternative to return if no, or only <code>NaN</code> / 
+     * <code>null</code> elements are enclosed. 
+     * 
+     * @since 1.0
+     * @return The average of all enclosed numbers. If no numbers (or no actual numbers) are enclosed, 
+     * <code>alternative</code> is returned.
+     */
+    public double average(double alternative) {
         int cnt = 0;
         double sum = 0.0;
 
         // Compute the average of all values
         for (Number number : this) {
             if (number == null) continue;
+            if (Double.isNaN(number.doubleValue())) continue;
+
             sum += number.doubleValue();
             cnt++;
         }
 
         // If we haven't had any element, return 0
-        if (cnt == 0) return 0;
+        if (cnt == 0) return alternative;
         return sum / cnt;
     }
 
+    
     /**
      * Returns the number at the given position as a double, or
      * returns <code>Double.NaN</code> if the object was null.<br/>
@@ -108,7 +135,7 @@ public class CoreNumber extends CoreObject<Number> {
      * Examples:
      * <ul>
      * <li><code>$(100, 200).d(0)</code> - Returns the first value (100) in this core as a double value (100.0).</li>
-     * </ul> 
+     * </ul>
      * 
      * Single-threaded.<br/>
      * <br/>
@@ -122,7 +149,6 @@ public class CoreNumber extends CoreObject<Number> {
         return this.adapter.get(index).doubleValue();
     }
 
-    
     /**
      * Returns all contained numbers as a true double array.<br/>
      * <br/>
@@ -130,7 +156,7 @@ public class CoreNumber extends CoreObject<Number> {
      * Examples:
      * <ul>
      * <li><code>$(100, 200).ds</code> - Returns <code>[100.0, 200.0]</code>.</li>
-     * </ul> 
+     * </ul>
      * 
      * Single-threaded.<br/>
      * <br/>
@@ -143,12 +169,10 @@ public class CoreNumber extends CoreObject<Number> {
         for (int i = 0; i < rval.length; i++) {
             rval[i] = get(i) == null ? Double.NaN : get(i).doubleValue();
         }
-        
+
         return rval;
     }
-    
-    
-    
+
     /**
      * Returns the number at the given position as an integer, or
      * returns <code>0</code> if the object was null.<br/>
@@ -157,7 +181,7 @@ public class CoreNumber extends CoreObject<Number> {
      * Examples:
      * <ul>
      * <li><code>$(100.26, 200.33).i(1)</code> - Returns the second value (200.33) in this core as an int value (200).</li>
-     * </ul> 
+     * </ul>
      * 
      * Single-threaded.<br/>
      * <br/>
@@ -170,8 +194,7 @@ public class CoreNumber extends CoreObject<Number> {
         if (get(index) == null) return 0;
         return this.adapter.get(index).intValue();
     }
-    
-    
+
     /**
      * Returns all contained numbers as a true integer array.<br/>
      * <br/>
@@ -179,7 +202,7 @@ public class CoreNumber extends CoreObject<Number> {
      * Examples:
      * <ul>
      * <li><code>$(100, 200).is</code> - Returns <code>[100, 200]</code>.</li>
-     * </ul> 
+     * </ul>
      * 
      * Single-threaded.<br/>
      * <br/>
@@ -195,7 +218,6 @@ public class CoreNumber extends CoreObject<Number> {
         return rval;
     }
 
-
     /**
      * Returns the maximum value.<br/>
      * <br/>
@@ -203,49 +225,116 @@ public class CoreNumber extends CoreObject<Number> {
      * Examples:
      * <ul>
      * <li><code>$(3, 1, 2).max()</code> - Returns 3.0.</li>
-     * </ul> 
+     * </ul>
      * 
      * Single-threaded.<br/>
      * <br/>
      * 
      * @since 1.0
-     * @return The maximum value enclosed in this core.
+     * @return The maximum value enclosed in this core, or <code>0</code> if no value was found.
      */
-    @SuppressWarnings("boxing")
     public double max() {
-        return reduce(new F2ReduceObjects<Number>() {
-            @Override
-            public Number f(Number left, Number right) {
-                return Math.max(left.doubleValue(), right.doubleValue());
-            }
-        }).get((Double) Double.NaN).doubleValue();
+        return max(0.0);
     }
+    
 
     /**
-     * Returns the maximum value.<br/>
+     * Returns the maximum value or the alternative, if the result were undefined (only <code>null</code> /
+     * <code>NaN</code> in the core).<br/>
      * <br/>
      * 
      * Examples:
      * <ul>
-     * <li><code>$(3, 1, -2).max()</code> - Returns -2.0.</li>
-     * </ul> 
+     * <li><code>$(null, Double.NaN).min(1.0)</code> - Returns 1.0</li>
+     * </ul>
      * 
      * Single-threaded.<br/>
      * <br/>
      * 
-     * @return The maximum value enclosed in this core.
+     * @param alternative The alternative to return when the result would otherwise be <code>null</code> /
+     * <code>NaN</code>. 
+     * @return The maximum value enclosed in this core, or <code>0</code> if no value was found.
      */
     @SuppressWarnings("boxing")
+    public double max(final double alternative) {
+        double value = reduce(new F2ReduceObjects<Number>() {
+            @Override
+            public Number f(Number left, Number right) {
+                return Math.max(left.doubleValue(), right.doubleValue());
+            }
+        }).get(Double.valueOf(alternative)).doubleValue();
+
+        return Double.isNaN(value) ? alternative : value;
+    }
+
+
+    /**
+     * Returns the minimum value.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(3, 1, -2).min()</code> - Returns -2.0.</li>
+     * </ul>
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @return The maximum value enclosed in this core, or <code>0</code> if no value was found.
+     */
     public double min() {
-        return reduce(new F2ReduceObjects<Number>() {
+        return min(0.0);
+    }
+
+    /**
+     * Returns the minimum value or the alternative, if the result were undefined (only <code>null</code> /
+     * <code>NaN</code> in the core).<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(null, Double.NaN).min(1.0)</code> - Returns 1.0</li>
+     * </ul>
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @param alternative The alternative to return when the result would otherwise be <code>null</code> /
+     * <code>NaN</code>. 
+     * @return The minimum value enclosed in this core, or <code>0</code> if no value was found.
+     */
+    @SuppressWarnings("boxing")
+    public double min(final double alternative) {
+        double value = reduce(new F2ReduceObjects<Number>() {
             @Override
             public Number f(Number left, Number right) {
                 return Math.min(left.doubleValue(), right.doubleValue());
             }
-        }).get((Double) Double.NaN).doubleValue();
+        }).get(Double.valueOf(alternative)).doubleValue();
+
+        return Double.isNaN(value) ? alternative : value;
     }
-    
-    
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see net.jcores.shared.cores.CoreObject#reduce(net.jcores.shared.interfaces.functions.F2ReduceObjects,
+     * net.jcores.shared.options.Option[])
+     */
+    @Override
+    public CoreObject<Number> reduce(final F2ReduceObjects<Number> f,
+                                     final Option... options) {
+        // We call super.reduce, but we don't consider NaN numbers.
+        return super.reduce(new F2ReduceObjects<Number>() {
+            @Override
+            public Number f(Number left, Number right) {
+                if (Double.isNaN(left.doubleValue())) return right;
+                if (Double.isNaN(right.doubleValue())) return left;
+                return f.f(left, right);
+            }
+        }, options);
+    }
+
     /**
      * Returns the number at the given position as a String.<br/>
      * <br/>
@@ -253,7 +342,7 @@ public class CoreNumber extends CoreObject<Number> {
      * Examples:
      * <ul>
      * <li><code>$(100.26, 200.33).s(0)</code> - Returns "100.26"</li>
-     * </ul> 
+     * </ul>
      * 
      * Single-threaded.<br/>
      * <br/>
@@ -267,7 +356,6 @@ public class CoreNumber extends CoreObject<Number> {
         return this.adapter.get(index).toString();
     }
 
-    
     /**
      * Returns the number at the given position as a String, formatted using the given {@link DecimalFormat}.<br/>
      * <br/>
@@ -275,7 +363,7 @@ public class CoreNumber extends CoreObject<Number> {
      * Examples:
      * <ul>
      * <li><code>$(100.26, 200.33).s(0, ".0")</code> - Returns "100.3"</li>
-     * </ul> 
+     * </ul>
      * 
      * Single-threaded.<br/>
      * <br/>
@@ -291,7 +379,6 @@ public class CoreNumber extends CoreObject<Number> {
         return fmt.format(get(index).doubleValue());
     }
 
-
     /**
      * Returns the standard deviation of all enclosed numbers.<br/>
      * <br/>
@@ -299,7 +386,7 @@ public class CoreNumber extends CoreObject<Number> {
      * Examples:
      * <ul>
      * <li><code>$(2, -2, 2, -2).standarddeviation()</code> - Returns 2.0.</li>
-     * </ul> 
+     * </ul>
      * 
      * Single-threaded.<br/>>
      * <br/>
@@ -311,8 +398,6 @@ public class CoreNumber extends CoreObject<Number> {
     public double standarddeviation() {
         return Math.sqrt(variance());
     }
-    
-    
 
     /**
      * Returns a {@link CoreString} with all numbers converted using the given {@link DecimalFormat}.<br/>
@@ -321,15 +406,15 @@ public class CoreNumber extends CoreObject<Number> {
      * Examples:
      * <ul>
      * <li><code>$(100.26, 200.33).string(".0").get(1)</code> - Returns 200.3.</li>
-     * </ul> 
+     * </ul>
      * 
      * Single-threaded.<br/>>
      * <br/>
      * 
      * @since 1.0
-     * @param format The {@link DecimalFormat} to apply. 
+     * @param format The {@link DecimalFormat} to apply.
      * @return A {@link CoreString} with all numbers formatted.
-     */    
+     */
     public CoreString string(String format) {
         final DecimalFormat fmt = new DecimalFormat(format);
         return map(new F1<Number, String>() {
@@ -346,7 +431,7 @@ public class CoreNumber extends CoreObject<Number> {
      * Examples:
      * <ul>
      * <li><code>$(1, 2, 3).sum()</code> - Returns 6.0.</li>
-     * </ul>  
+     * </ul>
      * 
      * Single-threaded.<br/>>
      * <br/>
@@ -363,6 +448,7 @@ public class CoreNumber extends CoreObject<Number> {
         for (int i = 0; i < size; i++) {
             final Number number = get(i);
             if (number == null) continue;
+            if (Double.isNaN(number.doubleValue())) continue;
 
             sum += number.doubleValue();
         }
@@ -377,7 +463,7 @@ public class CoreNumber extends CoreObject<Number> {
      * Examples:
      * <ul>
      * <li><code>$(2, -2, 2, -2).variance()</code> - Returns 4.0.</li>
-     * </ul> 
+     * </ul>
      * 
      * Single-threaded.<br/>>
      * <br/>
@@ -396,6 +482,7 @@ public class CoreNumber extends CoreObject<Number> {
         for (int i = 0; i < size; i++) {
             final Number number = get(i);
             if (number == null) continue;
+            if (Double.isNaN(number.doubleValue())) continue;
 
             rval += (average - number.doubleValue()) * (average - number.doubleValue());
             cnt++;

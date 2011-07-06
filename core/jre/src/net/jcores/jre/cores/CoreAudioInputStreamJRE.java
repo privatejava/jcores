@@ -1,8 +1,7 @@
 /*
- * CoreJComponent
+ * CoreAudioInputStream
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
- * 
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -28,80 +27,62 @@
  */
 package net.jcores.jre.cores;
 
-import java.awt.Component;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import javax.sound.sampled.AudioInputStream;
 
 import net.jcores.shared.CommonCore;
-import net.jcores.shared.interfaces.java.KeyStroke;
+import net.jcores.shared.cores.CoreInputStream;
+import net.jcores.shared.interfaces.functions.F1;
+import net.jcores.shared.utils.internal.sound.SoundUtils;
 
 /**
- * Wraps a number of Component and exposes some convenience functions. For example, 
- * to assign a key listener to some component, write:<br/><br/>
+ * Wraps a number of AudioInputStream and exposes some convenience functions. For example, 
+ * to play an audio file, write:<br/><br/>
  * 
- * <code>$(panel).keypress(KeyEvent.VK_ESCAPE, handler).</code>
+ * <code>$("sound.wav").file().audio().play()</code><br/>
+ * <br/>
+ * 
+ * <b>Important note: See {@link CoreInputStream} regarding <i>consuming</i> methods.</b>
  * 
  * @author Ralf Biedert
- * 
  * @since 1.0
  */
-public class JRECoreComponent extends JRECoreObject<Component> {
+public class CoreAudioInputStreamJRE extends CoreObjectJRE<AudioInputStream> {
 
     /** Used for serialization */
-    private static final long serialVersionUID = -6859431347201006730L;
+    private static final long serialVersionUID = -7643964446329787050L;
 
     /**
-     * Creates an Component core.
+     * Creates an AudioInputStream core.
      * 
      * @param supercore The common core.
-     * @param objects The Component to wrap.
+     * @param objects The strings to wrap.
      */
-    public JRECoreComponent(CommonCore supercore, Component... objects) {
+    public CoreAudioInputStreamJRE(CommonCore supercore, AudioInputStream... objects) {
         super(supercore, objects);
     }
 
     /**
-     * Adds a key-press handler to the given components.<br/>
+     * Plays all enclosed audio streams on the standard sound device.<br/>
      * <br/>
      * 
-     *  
      * Examples:
      * <ul>
-     * <li><code>$(component).keypress(KeyEvent.VK_ESCAPE, handler)</code> - Adds a keypress listener to the given component that will fire on ESCAPE.</li>
+     * <li><code>$("sound.wav").file().audio().play()</code> - Plays the file <code>sound.wav</code>.</li>
      * </ul>
      * 
-     * Single-threaded.<br/>
+     * Multi-threaded. Consuming.<br/>
      * <br/>
      * 
-     * @param keyEvent The event to listen for.
-     * @param handler The handler to call when the event was observed.
-     * 
-     * @return This object again.
+     * @return Return <code>this</code>.
      */
-    public JRECoreComponent keypress(final int keyEvent, final KeyStroke handler) {
-        for (int i = 0; i < size(); i++) {
-            final Component component = get(i);
-            if (component == null) continue;
-
-            component.addKeyListener(new KeyListener() {
-
-                @Override
-                public void keyTyped(KeyEvent e) {
-                      //
-                }
-                
-                @Override
-                public void keyReleased(KeyEvent e) {
-                      //
-                  }
-
-                @Override
-                public void keyPressed(KeyEvent e) {
-                    if (e.getKeyCode() != keyEvent) return;
-                    handler.keystroke(e);
-                }
-            });
-        }
+    public CoreAudioInputStreamJRE play() {
+        map(new F1<AudioInputStream, Void>() {
+            @Override
+            public Void f(AudioInputStream x) {
+                SoundUtils.playSound(x);
+                return null;
+            }
+        });
 
         return this;
     }

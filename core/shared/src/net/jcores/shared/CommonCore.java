@@ -48,6 +48,8 @@ import java.util.logging.Level;
 
 import net.jcores.shared.cores.Core;
 import net.jcores.shared.cores.CoreNumber;
+import net.jcores.shared.cores.CoreObject;
+import net.jcores.shared.cores.adapter.ListAdapter;
 import net.jcores.shared.cores.commons.CommonAlgorithmic;
 import net.jcores.shared.cores.commons.CommonSys;
 import net.jcores.shared.interfaces.functions.F0;
@@ -273,6 +275,26 @@ public class CommonCore {
         return new ConcurrentMapUtil<K,V>(map);
     }
 
+    
+    /**
+     * Returns a core consisting of <code>n</code> times the given object.
+     * 
+     * @param object The object to fill the core with. 
+     * @param n The number of times we put the object into the core.
+     * @param <T> The type of the object.
+     * @since 1.0 
+     * @return A core of size <code>n</code> filled with the given object.
+     * 
+     */
+    public <T> CoreObject<T> create(T object, int n) {
+        final ArrayList<T> list = new ArrayList<T>(n);
+        for (int i = 0; i < n; i++) {
+            list.add(object);
+        }
+        return new CoreObject<T>(this, new ListAdapter<T>(list));
+    }
+
+
 
     /**
      * Clones the given collection and returns a <b>shallow</b> copy (i.e., the elements themselves 
@@ -427,6 +449,7 @@ public class CommonCore {
         return end - start;
     }
 
+    
     /**
      * Returns the profiling information gathered at startup. Only required internally.
      * 

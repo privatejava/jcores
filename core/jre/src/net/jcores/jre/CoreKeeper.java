@@ -40,24 +40,26 @@ import java.util.Map;
 import javax.sound.sampled.AudioInputStream;
 import javax.swing.JComponent;
 
-import net.jcores.jre.cores.JRECoreAudioInputStream;
-import net.jcores.jre.cores.JRECoreBufferedImage;
-import net.jcores.jre.cores.JRECoreClass;
-import net.jcores.jre.cores.JRECoreComponent;
-import net.jcores.jre.cores.JRECoreFile;
-import net.jcores.jre.cores.JRECoreJComponent;
-import net.jcores.jre.cores.JRECoreObject;
-import net.jcores.jre.cores.JRECoreString;
-import net.jcores.jre.cores.JRECoreURI;
+import net.jcores.jre.cores.CoreAudioInputStreamJRE;
+import net.jcores.jre.cores.CoreBufferedImageJRE;
+import net.jcores.jre.cores.CoreClassJRE;
+import net.jcores.jre.cores.CoreComponentJRE;
+import net.jcores.jre.cores.CoreFileJRE;
+import net.jcores.jre.cores.CoreJComponentJRE;
+import net.jcores.jre.cores.CoreObjectJRE;
+import net.jcores.jre.cores.CoreStringJRE;
+import net.jcores.jre.cores.CoreURIJRE;
 import net.jcores.shared.cores.CoreInputStream;
 import net.jcores.shared.cores.CoreMap;
 import net.jcores.shared.cores.CoreNumber;
-import net.jcores.shared.cores.CoreObject;
+import net.jcores.shared.cores.adapter.AbstractAdapter;
+import net.jcores.shared.cores.adapter.MapAdapter;
 import net.jcores.shared.interfaces.functions.F1;
 import net.jcores.shared.options.Option;
 import net.jcores.shared.options.OptionMapType;
 import net.jcores.shared.utils.internal.Wrapper;
 import net.jcores.shared.utils.internal.io.URIUtils;
+import net.jcores.shared.utils.map.MapEntry;
 
 /**
  * Keeps the common core and contains all <code>$</code>-operators for all our cores. This
@@ -74,7 +76,7 @@ import net.jcores.shared.utils.internal.io.URIUtils;
  */
 public class CoreKeeper {
     /** The common core shared by all other cores. */
-    public final static JRECommonCore $ = new JRECommonCore(); 
+    public final static CommonCoreJRE $ = new CommonCoreJRE(); 
 
     
     /**
@@ -86,8 +88,8 @@ public class CoreKeeper {
      * @param object A single object or object array to wrap.
      * @return A CoreObject wrapping the set of objects.
      */
-    public static <T extends Object> JRECoreObject<T> $(T... object) {
-        return new JRECoreObject<T>($, object);
+    public static <T extends Object> CoreObjectJRE<T> $(T... object) {
+        return new CoreObjectJRE<T>($, object);
     }
 
 
@@ -97,8 +99,8 @@ public class CoreKeeper {
      * @param object The AudioInputStreams to wrap..
      * @return A CoreAudioInputStream wrapping the set of objects.
      */
-    public static JRECoreAudioInputStream $(AudioInputStream... object) {
-        return new JRECoreAudioInputStream($, object);
+    public static CoreAudioInputStreamJRE $(AudioInputStream... object) {
+        return new CoreAudioInputStreamJRE($, object);
     }
     
     /**
@@ -119,8 +121,8 @@ public class CoreKeeper {
      * @return A CoreClass wrapping the given classes.
      */
     @SuppressWarnings("unchecked")
-    public static <T> JRECoreClass<T> $(Class<T> clsses) {
-        return new JRECoreClass<T>($, new Class[] { clsses });
+    public static <T> CoreClassJRE<T> $(Class<T> clsses) {
+        return new CoreClassJRE<T>($, new Class[] { clsses });
     }
 
     /**
@@ -131,8 +133,8 @@ public class CoreKeeper {
      * @param clsses The classes to wrap.
      * @return A CoreClass wrapping the given classes.
      */
-    public static <T> JRECoreClass<T> $(Class<T>... clsses) {
-        return new JRECoreClass<T>($, clsses);
+    public static <T> CoreClassJRE<T> $(Class<T>... clsses) {
+        return new CoreClassJRE<T>($, clsses);
     }
     
     /**
@@ -141,8 +143,8 @@ public class CoreKeeper {
      * @param object The Strings to wrap.
      * @return A CoreString wrapping the given strings.
      */
-    public static JRECoreString $(String... object) {
-        return new JRECoreString($, object);
+    public static CoreStringJRE $(String... object) {
+        return new CoreStringJRE($, object);
     }
 
     /**
@@ -151,8 +153,8 @@ public class CoreKeeper {
      * @param object The URIs to wrap.
      * @return A CoreString wrapping the given URIs.
      */
-    public static JRECoreURI $(URI... object) {
-        return new JRECoreURI($, object);
+    public static CoreURIJRE $(URI... object) {
+        return new CoreURIJRE($, object);
     }
     
     /**
@@ -161,8 +163,8 @@ public class CoreKeeper {
      * @param object The URLs to wrap.
      * @return A CoreString wrapping the given URLs.
      */
-    public static JRECoreURI $(URL... object) {
-        return new JRECoreURI($, URIUtils.URIs(object));
+    public static CoreURIJRE $(URL... object) {
+        return new CoreURIJRE($, URIUtils.URIs(object));
     }
 
     /**
@@ -171,8 +173,8 @@ public class CoreKeeper {
      * @param object The Files to wrap.
      * @return A CoreFile wrapping the given Files.
      */
-    public static JRECoreFile $(File... object) {
-        return new JRECoreFile($, object);
+    public static CoreFileJRE $(File... object) {
+        return new CoreFileJRE($, object);
     }
 
     /**
@@ -191,8 +193,8 @@ public class CoreKeeper {
      * @param object The BufferedImage to wrap.
      * @return A CoreBufferedImage wrapping the given BufferedImages.
      */
-    public static JRECoreBufferedImage $(BufferedImage... object) {
-        return new JRECoreBufferedImage($, object);
+    public static CoreBufferedImageJRE $(BufferedImage... object) {
+        return new CoreBufferedImageJRE($, object);
     }
 
     /**
@@ -201,8 +203,8 @@ public class CoreKeeper {
      * @param object The Components to wrap.
      * @return A CoreComponent wrapping the given Components.
      */
-    public static JRECoreComponent $(Component... object) {
-        return new JRECoreComponent($, object);
+    public static CoreComponentJRE $(Component... object) {
+        return new CoreComponentJRE($, object);
     }
     
     /**
@@ -211,8 +213,8 @@ public class CoreKeeper {
      * @param object The JComponents to wrap.
      * @return A CoreJComponent wrapping the given Components.
      */
-    public static JRECoreJComponent $(JComponent... object) {
-        return new JRECoreJComponent($, object);
+    public static CoreJComponentJRE $(JComponent... object) {
+        return new CoreJComponentJRE($, object);
     }
 
 
@@ -230,8 +232,8 @@ public class CoreKeeper {
      * collection.
      */
     @SuppressWarnings("unchecked")
-    public static <T> CoreObject<T> $(Collection<T> collection) {
-        return new CoreObject<T>($, (T[]) Wrapper.convert(collection, Object.class));
+    public static <T> CoreObjectJRE<T> $(Collection<T> collection) {
+        return new CoreObjectJRE<T>($, (T[]) Wrapper.convert(collection, Object.class));
     }
     
 
@@ -248,8 +250,8 @@ public class CoreKeeper {
      * @return A CoreObject of the given type wrapping a converted array of the
      * collection.
      */
-    public static <T> CoreObject<T> $(List<T> collection) {
-        return new CoreObject<T>($, collection);
+    public static <T> CoreObjectJRE<T> $(List<T> collection) {
+        return new CoreObjectJRE<T>($, collection);
     }
 
     
@@ -264,7 +266,7 @@ public class CoreKeeper {
      * collection.
      */
     public static <K, V> CoreMap<K, V> $(Map<K, V> map) {
-        return new CoreMap<K, V>($, Wrapper.convert(map));
+        return new CoreMap<K, V>($, (AbstractAdapter<MapEntry<K, V>>) new MapAdapter<K, V>(map));
     }
     
 
@@ -283,7 +285,7 @@ public class CoreKeeper {
      * collection.
      */
     @SuppressWarnings({ "unchecked", "cast" })
-    public static <Y, T> CoreObject<Y> $(Collection<T> collection, F1<T, Y> converter,
+    public static <Y, T> CoreObjectJRE<Y> $(Collection<T> collection, F1<T, Y> converter,
                                          Option... options) {
 
         // Destination type we use.
@@ -296,6 +298,6 @@ public class CoreKeeper {
             }
         }
 
-        return new CoreObject<Y>($, (Y[]) Wrapper.convert(collection, converter, (Class<Y>) mapType));
+        return new CoreObjectJRE<Y>($, (Y[]) Wrapper.convert(collection, converter, (Class<Y>) mapType));
     }
 }

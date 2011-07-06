@@ -42,7 +42,7 @@ import net.jcores.shared.interfaces.functions.F1;
 import net.jcores.shared.options.MessageType;
 import net.jcores.shared.utils.internal.io.StreamUtils;
 
-public class JRECoreURI extends CoreURI {
+public class CoreURIJRE extends CoreURI {
 
     /**  */
     private static final long serialVersionUID = 6578218083250783L;
@@ -53,7 +53,7 @@ public class JRECoreURI extends CoreURI {
      * @param supercore The common core.
      * @param objects The adapter to wrap.
      */
-    public JRECoreURI(CommonCore supercore, URI... objects) {
+    public CoreURIJRE(CommonCore supercore, URI... objects) {
         super(supercore, objects);
     }
     
@@ -63,7 +63,7 @@ public class JRECoreURI extends CoreURI {
      * @param supercore The common core.
      * @param adapter The adapter to wrap.
      */
-    public JRECoreURI(CommonCore supercore, AbstractAdapter<URI> adapter) {
+    public CoreURIJRE(CommonCore supercore, AbstractAdapter<URI> adapter) {
         super(supercore, adapter);
     }
 
@@ -82,10 +82,10 @@ public class JRECoreURI extends CoreURI {
      * 
      * @return A CoreFile object enclosing the files of all downloaded URIs.
      */
-    public JRECoreFile download() {
+    public CoreFileJRE download() {
         final CommonCore cc = this.commonCore;
 
-        return new JRECoreFile(this.commonCore, map(new F1<URI, File>() {
+        return new CoreFileJRE(this.commonCore, map(new F1<URI, File>() {
             public File f(URI x) {
                 try {
                     final URL url = x.toURL();
@@ -125,12 +125,12 @@ public class JRECoreURI extends CoreURI {
      * 
      * @return A CoreFile object enclosing the files of all downloaded URIs.
      */
-    public JRECoreFile download(final String path) {
+    public CoreFileJRE download(final String path) {
         // Create output directory 
         new File(path).mkdirs();
         final CommonCore cc = this.commonCore;
 
-        return new JRECoreFile(this.commonCore, map(new F1<URI, File>() {
+        return new CoreFileJRE(this.commonCore, map(new F1<URI, File>() {
             public File f(URI x) {
                 try {
                     final String filepath = CoreKeeper.$(x.getPath()).split("/").get(-1);
@@ -169,8 +169,8 @@ public class JRECoreURI extends CoreURI {
      * 
      * @return A CoreFile object enclosing all successfully converted file handles
      */
-    public JRECoreFile file() {
-        return new JRECoreFile(this.commonCore, map(new F1<URI, File>() {
+    public CoreFileJRE file() {
+        return new CoreFileJRE(this.commonCore, map(new F1<URI, File>() {
             public File f(URI x) {
                 try {
                     return new File(x);

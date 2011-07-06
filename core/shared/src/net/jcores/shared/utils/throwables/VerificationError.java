@@ -1,5 +1,5 @@
 /*
- * JRECoreString.java
+ * VerificationError.java
  * 
  * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
@@ -25,42 +25,16 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.jre.cores;
+package net.jcores.shared.utils.throwables;
 
-import net.jcores.shared.CommonCore;
-import net.jcores.shared.cores.CoreString;
-import net.jcores.shared.cores.adapter.AbstractAdapter;
-
-public class JRECoreString extends CoreString {
-
+public class VerificationError extends Error {
     /** */
-    private static final long serialVersionUID = 1050943834374663676L;
-
-    /**
-     * @param supercore
-     * @param adapter
-     */
-    public JRECoreString(CommonCore supercore, AbstractAdapter<String> adapter) {
-        super(supercore, adapter);
-    }
+    private static final long serialVersionUID = -4497153906647459050L;
     
-
     /**
-     * Creates an string core.
-     * 
-     * @param supercore The common core.
-     * @param objects The strings to wrap.
+     * @param message
      */
-    public JRECoreString(CommonCore supercore, String... objects) {
-        super(supercore, objects);
-    }
-
-    
-    /* (non-Javadoc)
-     * @see net.jcores.shared.cores.CoreString#uri()
-     */
-    @Override
-    public JRECoreURI uri() {
-        return new JRECoreURI(this.commonCore, super.uri().unsafeadapter());
+    public VerificationError(String message) {
+        super(message);
     }
 }

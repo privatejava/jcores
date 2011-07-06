@@ -37,19 +37,22 @@ import java.util.Map;
 
 import javax.sound.sampled.AudioInputStream;
 
-import net.jcores.jre.cores.JRECoreAudioInputStream;
-import net.jcores.jre.cores.JRECoreFile;
+import net.jcores.jre.cores.CoreAudioInputStreamJRE;
+import net.jcores.jre.cores.CoreFileJRE;
 import net.jcores.shared.cores.CoreInputStream;
 import net.jcores.shared.cores.CoreMap;
 import net.jcores.shared.cores.CoreNumber;
 import net.jcores.shared.cores.CoreObject;
 import net.jcores.shared.cores.CoreString;
 import net.jcores.shared.cores.CoreURI;
+import net.jcores.shared.cores.adapter.AbstractAdapter;
+import net.jcores.shared.cores.adapter.MapAdapter;
 import net.jcores.shared.interfaces.functions.F1;
 import net.jcores.shared.options.Option;
 import net.jcores.shared.options.OptionMapType;
 import net.jcores.shared.utils.internal.Wrapper;
 import net.jcores.shared.utils.internal.io.URIUtils;
+import net.jcores.shared.utils.map.MapEntry;
 
 /**
  * Keeps the common core and contains all <code>$</code>-operators for all our cores. This
@@ -89,8 +92,8 @@ public class CoreKeeper {
      * @param object The AudioInputStreams to wrap..
      * @return A CoreAudioInputStream wrapping the set of objects.
      */
-    public static JRECoreAudioInputStream $(AudioInputStream... object) {
-        return new JRECoreAudioInputStream($, object);
+    public static CoreAudioInputStreamJRE $(AudioInputStream... object) {
+        return new CoreAudioInputStreamJRE($, object);
     }
     
     /**
@@ -139,8 +142,8 @@ public class CoreKeeper {
      * @param object The Files to wrap.
      * @return A CoreFile wrapping the given Files.
      */
-    public static JRECoreFile $(File... object) {
-        return new JRECoreFile($, object);
+    public static CoreFileJRE $(File... object) {
+        return new CoreFileJRE($, object);
     }
 
     /**
@@ -203,7 +206,7 @@ public class CoreKeeper {
      * collection.
      */
     public static <K, V> CoreMap<K, V> $(Map<K, V> map) {
-        return new CoreMap<K, V>($, Wrapper.convert(map));
+        return new CoreMap<K, V>($, (AbstractAdapter<MapEntry<K, V>>) new MapAdapter<K, V>(map));
     }
     
 

@@ -36,8 +36,8 @@ import java.util.zip.ZipInputStream;
 import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
 
-import net.jcores.jre.cores.JRECoreAudioInputStream;
-import net.jcores.jre.cores.JRECoreBufferedImage;
+import net.jcores.jre.cores.CoreAudioInputStreamJRE;
+import net.jcores.jre.cores.CoreBufferedImageJRE;
 import net.jcores.shared.CommonCore;
 import net.jcores.shared.CoreKeeper;
 import net.jcores.shared.interfaces.functions.F1;
@@ -115,7 +115,7 @@ public class CoreInputStream extends CoreObject<InputStream> {
 
     
     /**
-     * Returns a {@link JRECoreAudioInputStream} for the input streams enclosed in this core.<br/>
+     * Returns a {@link CoreAudioInputStreamJRE} for the input streams enclosed in this core.<br/>
      * <br/>
      * 
      * Examples:
@@ -128,8 +128,8 @@ public class CoreInputStream extends CoreObject<InputStream> {
      * 
      * @return A CoreAudioInputStream object.
      */
-    public JRECoreAudioInputStream audio() {
-        return new JRECoreAudioInputStream(this.commonCore, map(new F1<InputStream, AudioInputStream>() {
+    public CoreAudioInputStreamJRE audio() {
+        return new CoreAudioInputStreamJRE(this.commonCore, map(new F1<InputStream, AudioInputStream>() {
             public AudioInputStream f(InputStream x) {
                 return SoundUtils.getStream(x);
             }
@@ -251,7 +251,7 @@ public class CoreInputStream extends CoreObject<InputStream> {
     
     
     /**
-     * Returns a {@link JRECoreBufferedImage} for the input streams enclosed in this core.<br/>
+     * Returns a {@link CoreBufferedImageJRE} for the input streams enclosed in this core.<br/>
      * <br/>
      * 
      * Examples:
@@ -264,8 +264,8 @@ public class CoreInputStream extends CoreObject<InputStream> {
      * 
      * @return A CoreBufferedImage object.
      */
-    public JRECoreBufferedImage image() {
-        return new JRECoreBufferedImage(this.commonCore, map(new F1<InputStream, BufferedImage>() {
+    public CoreBufferedImageJRE image() {
+        return new CoreBufferedImageJRE(this.commonCore, map(new F1<InputStream, BufferedImage>() {
             public BufferedImage f(InputStream x) {
                 try {
                     return ImageIO.read(x);

@@ -339,6 +339,24 @@ public class CoreObjectTest {
     
     
     /** */
+    @SuppressWarnings("boxing")
+    @Test
+    public void testCall() {
+        class X {
+            int a = 1;
+            @SuppressWarnings("unused")
+            double b() {
+                return this.a * 2;
+            }
+        }
+        
+        Assert.assertEquals(1, $(new X()).call("a").get(0));
+        Assert.assertEquals(2.0, $(new X()).call("b()").get(0));
+    }
+
+    
+    
+    /** */
     @Test
     public void testArray() {
         String[] array = $("a", "b", "a", "c", "a", "d", "a").slice(1, 4).array(String.class);

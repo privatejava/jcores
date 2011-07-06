@@ -43,7 +43,7 @@ import net.jcores.shared.interfaces.functions.F0;
  * @since 1.0
  * 
  */
-public class JRECommonUI extends CommonNamespace {
+public class CommonUIJRE extends CommonNamespace {
     /** The colors we need for heat maps  (0 == cold, 255 == hot) */
     private Color heatmapColors[] = new Color[256];
     
@@ -52,7 +52,7 @@ public class JRECommonUI extends CommonNamespace {
      * 
      * @param commonCore
      */
-    public JRECommonUI(CommonCore commonCore) {
+    public CommonUIJRE(CommonCore commonCore) {
         super(commonCore);
         
         for (int i = 0; i < this.heatmapColors.length; i++) {
@@ -123,7 +123,8 @@ public class JRECommonUI extends CommonNamespace {
      * 
      * @return Color with the given transparency..
      */
-    public Color transparency(Color color, double transparency) {
-        return new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (transparency * 255));
+    public Color opacity(Color color, double transparency) {
+        int t = (int) (transparency * 255);
+        return new Color(color.getRed(), color.getGreen(), color.getBlue(), t);
     }
 }

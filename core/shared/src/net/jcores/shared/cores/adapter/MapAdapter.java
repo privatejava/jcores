@@ -1,5 +1,5 @@
 /*
- * NewInstance.java
+ * ArrayAdapter.java
  * 
  * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
@@ -25,59 +25,60 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.shared.utils.map.generators;
+package net.jcores.shared.cores.adapter;
 
-import java.util.ArrayList;
+import java.util.Map;
 
-import net.jcores.shared.annotations.Beta;
-import net.jcores.shared.interfaces.functions.F1;
+import net.jcores.shared.utils.map.MapEntry;
 
 /**
- * A generator that creates new instances of the given type.
+ * Wraps arbitrary collections.
+ * 
+ * TODO: Add logic that an array is created on demand which is being used for get() operations
+ * up to a value until elements have already been extracted by an iterator (or by previous get()
+ * operataions starting from 0).
  * 
  * @author Ralf Biedert
+ * 
  * @param <K> The type of the key.
  * @param <V> The type of the value.
  * @since 1.0
  */
-public class NewInstance<K, V> implements F1<K, V> {
-    /** The class to spawn */
-    private Class<? extends V> clazz;
-    
-    
-    /**
-     * Creates a new instance generator that creates lists in demand. Does not work as it should (generics mess). 
-     * 
-     * @param <A> The type of the key.
-     * @param <B> The type of the value (will always be list).
-     * @return A new generator that returns lists.
-     */
-    @Beta
-    @SuppressWarnings("unchecked")
-    public static <A, B> NewInstance<A, B> LIST() {
-        return new NewInstance<A, B>((Class<? extends B>) ArrayList.class);
+public final class MapAdapter<K, V> extends CollectionAdapter<K, MapEntry<K, V>> {
+    /**  */
+    private static final long serialVersionUID = -7801489204260137868L;
+
+    /** Our map, which we need to resolve values */
+    Map<K, V> map;
+
+    public MapAdapter(Map<K, V> map) {
+        super(map.keySet());
+
+        this.map = map;
     }
-    
-    
-    /**
-     * Constructs a NewInstance object. 
+
+    /*
+     * (non-Javadoc)
      * 
-     * @param clazz
+     * @see net.jcores.shared.cores.adapter.CollectionAdapter#converter(java.lang.Object)
      */
-    public NewInstance(Class<? extends V> clazz) {
-        this.clazz = clazz;
-    }
-    
     @Override
-    public V f(K x) {
-        try {
-            return this.clazz.newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        
-        return null;
+    protected MapEntry<K, V> converter(final K i) {
+        return new MapEntry<K, V>(i, null) {
+
+            V cache = null;
+
+            /* (non-Javadoc)
+             * @see net.jcores.shared.utils.map.MapEntry#value()
+             */
+            @Override
+            public V value() {
+                if (this.cache == null) {
+                    this.cache = MapAdapter.this.map.get(i);
+                }
+
+                return this.cache;
+            }
+        };
     }
 }

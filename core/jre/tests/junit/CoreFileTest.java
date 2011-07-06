@@ -31,7 +31,7 @@ import static net.jcores.jre.CoreKeeper.$;
 
 import java.io.File;
 
-import net.jcores.jre.cores.JRECoreFile;
+import net.jcores.jre.cores.CoreFileJRE;
 import net.jcores.shared.cores.CoreString;
 import net.jcores.shared.interfaces.functions.F1;
 import net.jcores.shared.interfaces.functions.F2ReduceObjects;
@@ -106,7 +106,7 @@ public class CoreFileTest {
     public void testZip() {
         final String path = $.sys.tempfile().getAbsolutePath();
         
-        final JRECoreFile source = $("documentation").file();
+        final CoreFileJRE source = $("documentation").file();
         final int srcsize = source.dir().size();
         
         // Zip by path

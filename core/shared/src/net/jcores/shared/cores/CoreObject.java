@@ -48,10 +48,11 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.jcores.jre.cores.JRECoreFile;
+import net.jcores.jre.cores.CoreFileJRE;
 import net.jcores.shared.CommonCore;
 import net.jcores.shared.cores.adapter.AbstractAdapter;
 import net.jcores.shared.cores.adapter.ArrayAdapter;
+import net.jcores.shared.cores.adapter.CollectionAdapter;
 import net.jcores.shared.cores.adapter.EmptyAdapter;
 import net.jcores.shared.cores.adapter.ListAdapter;
 import net.jcores.shared.interfaces.functions.F0;
@@ -130,7 +131,6 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         super(supercore);
         this.adapter = new ArrayAdapter<T>(objects);
     }
-    
 
     /**
      * Creates the core object for the given array.
@@ -140,29 +140,30 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      */
     public CoreObject(CommonCore supercore, List<T> objects) {
         super(supercore);
-        this.adapter = new ListAdapter<T>(objects);
+        
+        if (objects instanceof ArrayList) {
+            this.adapter = new ListAdapter<T>(objects);
+        } else {
+            this.adapter = new CollectionAdapter<T, T>(objects);
+        }
     }
 
-    
     /**
      * Creates the core object for the given array.
      * 
      * @param supercore CommonCore to use.
      * @param objects Object to wrap.
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     public CoreObject(CommonCore supercore, Collection<T> objects) {
         super(supercore);
-        
-        if(objects instanceof ArrayList) {
+
+        if (objects instanceof ArrayList) {
             this.adapter = new ListAdapter<T>((List<T>) objects);
         } else {
-            this.adapter = new ListAdapter<T>(new ArrayList(objects));
+            this.adapter = new CollectionAdapter<T, T>(objects);
         }
     }
 
-    
-    
     /**
      * Creates the core object for the given array.
      * 
@@ -173,11 +174,9 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         super(supercore);
         this.adapter = core.adapter;
     }
-    
-    
-    
+
     /**
-     * Creates the core object for the given adapter. This is the main constructor each 
+     * Creates the core object for the given adapter. This is the main constructor each
      * subclass <b>must</b> implement, otherwise <code>object.as()</code> will not work.
      * 
      * @param supercore CommonCore to use.
@@ -188,7 +187,6 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         this.adapter = adapter;
     }
 
-    
     /**
      * Returns a core containing all elements of this core and the other core.
      * Elements that are in both cores will appear twice.<br/>
@@ -196,8 +194,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$("a", "b").add($("c"))</code> - The resulting core contains 
-     * <code>a</code>, <code>b</code> and <code>c</code>.</li>
+     * <li><code>$("a", "b").add($("c"))</code> - The resulting core contains <code>a</code>, <code>b</code> and
+     * <code>c</code>.</li>
      * </ul>
      * 
      * Single-threaded. <br/>
@@ -214,11 +212,11 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         if (toAdd.size() == 0) return this;
 
         Class<?> clazz = this.adapter.clazz();
-        
+
         final T[] copy = (T[]) Array.newInstance(clazz, size() + toAdd.size());
         final Object[] a = this.adapter.array(clazz);
         final Object[] b = toAdd.adapter.array(clazz);
-        
+
         System.arraycopy(a, 0, copy, 0, a.length);
         System.arraycopy(b, 0, copy, a.length, b.length);
 
@@ -232,8 +230,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$("a", "b").add("c")</code> - The resulting core contains <code>a</code>, 
-     * <code>b</code> and <code>c</code>.</li>
+     * <li><code>$("a", "b").add("c")</code> - The resulting core contains <code>a</code>, <code>b</code> and
+     * <code>c</code>.</li>
      * </ul>
      * 
      * Single-threaded. <br/>
@@ -256,8 +254,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$(list).array(String.class)</code> - Returns a String array for the given 
-     * list. Elements that are no String will be returned as null.</li>
+     * <li><code>$(list).array(String.class)</code> - Returns a String array for the given list. Elements that are no
+     * String will be returned as null.</li>
      * </ul>
      * 
      * 
@@ -275,21 +273,19 @@ public class CoreObject<T> extends Core implements Iterable<T> {
 
     /**
      * Returns a core that tries to treat all elements as being of the given type.
-     * Elements which don't match are ignored. Can also be used to load extensions 
-     * (e.g., <code>somecore.as(CoreString.class)</code>). This function should not 
+     * Elements which don't match are ignored. Can also be used to load extensions
+     * (e.g., <code>somecore.as(CoreString.class)</code>). This function should not
      * be called within hot-spots (functions called millions of times a second)
      * as it relies heavily on reflection.<br/>
      * <br/>
      * 
      * Examples:
      * <ul>
-     * <li><code>$(objects).as(MyExtensionCore.class).method()</code> - If you wrote a jCores 
-     * extension this is how  you could activate the extension for a given set of objects and 
-     * execute one of its methods.</li>
-     * <li><code>$("a", null, "c").compact().as(CoreString.class)</code> - Sometimes you call 
-     * methods from a parent Core (like <code>compact()</code>, which is part of CoreObject, 
-     * not of {@link CoreString}) that does returns a more general return type then what you 
-     * want. Using <code>as()</code> you can cast the Core back.</li>
+     * <li><code>$(objects).as(MyExtensionCore.class).method()</code> - If you wrote a jCores extension this is how you
+     * could activate the extension for a given set of objects and execute one of its methods.</li>
+     * <li><code>$("a", null, "c").compact().as(CoreString.class)</code> - Sometimes you call methods from a parent Core
+     * (like <code>compact()</code>, which is part of CoreObject, not of {@link CoreString}) that does returns a more
+     * general return type then what you want. Using <code>as()</code> you can cast the Core back.</li>
      * </ul>
      * 
      * 
@@ -313,14 +309,12 @@ public class CoreObject<T> extends Core implements Iterable<T> {
                 if (!c.getParameterTypes()[0].equals(CommonCore.class)) continue;
                 if (!c.getParameterTypes()[1].equals(AbstractAdapter.class)) continue;
 
-                
                 // Sanity check.
                 if (constructor != null)
                     System.err.println("There should only be one constructor with (CommonCore.class, AbstractAdapter.class) per core! And here comes your exception ... ;-)");
 
                 constructor = (Constructor<C>) c;
             }
-
 
             return constructor.newInstance(this.commonCore, this.adapter);
 
@@ -343,62 +337,6 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         }
 
         return null;
-    }
-
-    /**
-     * Performs a generic call on each element of this core (for
-     * example <code>core.call("toString")</code>). The return values will 
-     * be stored in a {@link CoreObject}. This is a dirty but shorthand way
-     * to call the same function on objects that don't share a common superclass. Should not be
-     * called within hot-spots (functions called millions of times a second) as it relies heavily on reflection.<br/>
-     * <br/>
-     * 
-     * 
-     * Examples:
-     * <ul>
-     * <li><code>$(tA, tB, tC, tD).call("method").unique().size()</code> - Calls a method 
-     * <code>method()</code> on some objects that have no common supertype (except {@link Object}),
-     * and returns the number of distinct objects returned</li>
-     * </ul>
-     * 
-     * Multi-threaded. Heavyweight.<br/>
-     * <br/>
-     * 
-     * @param string The call to perform, e.g. <code>toString</code>
-     * @param params Parameters the call takes
-     * 
-     * @return A CoreObject wrapping the results of each invocation.
-     */
-    @SuppressWarnings("null")
-    public CoreObject<Object> call(final String string, final Object... params) {
-        final int len = params == null ? 0 : params.length;
-        final Class<?>[] types = new Class[len];
-
-        // Convert classes.
-        for (int i = 0; i < len; i++) {
-            types[i] = params[i].getClass();
-        }
-
-        return new CoreObject<Object>(this.commonCore, map(new F1<T, Object>() {
-            public Object f(T x) {
-                try {
-                    final Method method = x.getClass().getMethod(string, types);
-                    return method.invoke(x, params);
-                } catch (SecurityException e) {
-                    CoreObject.this.commonCore.report(MessageType.EXCEPTION, "SecurityException for " + x + " (method was " + string + ")");
-                } catch (NoSuchMethodException e) {
-                    CoreObject.this.commonCore.report(MessageType.EXCEPTION, "NoSuchMethodException for " + x + " (method was " + string + ")");
-                } catch (IllegalArgumentException e) {
-                    CoreObject.this.commonCore.report(MessageType.EXCEPTION, "IllegalArgumentException for " + x + " (method was " + string + ")");
-                } catch (IllegalAccessException e) {
-                    CoreObject.this.commonCore.report(MessageType.EXCEPTION, "IllegalAccessException for " + x + " (method was " + string + ")");
-                } catch (InvocationTargetException e) {
-                    CoreObject.this.commonCore.report(MessageType.EXCEPTION, "InvocationTargetException for " + x + " (method was " + string + ")");
-                }
-
-                return null;
-            }
-        }).array(Object.class));
     }
 
     /**
@@ -430,7 +368,6 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         }, new OptionMapType(target));
     }
 
-
     /**
      * Returns a compacted core whose underlying array does not
      * contain null anymore, therefore the positions of elements will be moved to the left to
@@ -439,10 +376,9 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$("a", null, "b").compact()</code> - Returns a core that
-     * only contains the elements <code>a</code> and <code>b</code> and has a 
-     * size of <code>2</code> (the original core also contains <code>null</code> 
-     * and has a size of <code>3</code>). </li>
+     * <li><code>$("a", null, "b").compact()</code> - Returns a core that only contains the elements <code>a</code> and
+     * <code>b</code> and has a size of <code>2</code> (the original core also contains <code>null</code> and has a size
+     * of <code>3</code>).</li>
      * </ul>
      * 
      * Single-threaded. <br/>
@@ -467,16 +403,15 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     }
 
     /**
-     * Creates a {@link Compound} out of this core's content. A Compound is a String -> Object 
-     * map, which is useful for quickly creating complex objects which should be handled by the 
+     * Creates a {@link Compound} out of this core's content. A Compound is a String -> Object
+     * map, which is useful for quickly creating complex objects which should be handled by the
      * framework.<br/>
      * <br/>
-     *     
+     * 
      * Examples:
      * <ul>
-     * <li><code>$("name", name, "age", age).compound()</code> - Quickly creates an 
-     * untyped {@link Compound} with the keys <code>name</code> and <code>age</code> and 
-     * the corresponding values.</li>
+     * <li><code>$("name", name, "age", age).compound()</code> - Quickly creates an untyped {@link Compound} with the
+     * keys <code>name</code> and <code>age</code> and the corresponding values.</li>
      * </ul>
      * 
      * 
@@ -495,13 +430,13 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * <br/>
      * 
      * Note that on a {@link CoreString} this method
-     * does <b>not behave as</b> <code>String.contains()</code> (which checks for substrings). 
+     * does <b>not behave as</b> <code>String.contains()</code> (which checks for substrings).
      * If you want to do a substring search, use <code>CoreString.containssubstr()</code>.<br/>
      * <br/>
      * 
      * Examples:
      * <ul>
-     * <li><code>$(a, b, c, d).contains(c)</code> - Returns <code>true</code>.</li> 
+     * <li><code>$(a, b, c, d).contains(c)</code> - Returns <code>true</code>.</li>
      * <li><code>$("aa", "bb", "cc").contains("bb")</code> - Returns <code>true</code>.</li>
      * <li><code>$("aa", "bb", "cc").contains("b")</code> - Returns <b><code>false</code></b>!</li>
      * </ul>
@@ -517,13 +452,12 @@ public class CoreObject<T> extends Core implements Iterable<T> {
             if (next != null && next.equals(object)) return true;
             if (next == null && object == null) return true;
         }
-        
+
         return false;
     }
-    
-    
+
     /**
-     * Counts how many times each unique item is contained in this core (i.e., computes a 
+     * Counts how many times each unique item is contained in this core (i.e., computes a
      * histogram). <br/>
      * <br/>
      * 
@@ -539,23 +473,22 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      */
     @SuppressWarnings("boxing")
     public CoreMap<T, Integer> count() {
-    	final Map<T, Integer> results = new HashMap<T, Integer>();
-    	
-    	// Now generate the histogram.
+        final Map<T, Integer> results = new HashMap<T, Integer>();
+
+        // Now generate the histogram.
         for (T e : this) {
-            if(e == null) continue;
-            
-            if(results.containsKey(e)) {
+            if (e == null) continue;
+
+            if (results.containsKey(e)) {
                 results.put(e, results.get(e) + 1);
             } else {
                 results.put(e, 1);
             }
         }
-    	
-    	// Eventually return the results
-    	return new CoreMap<T, Integer>(this.commonCore, Wrapper.convert(results));
-    }
 
+        // Eventually return the results
+        return new CoreMap<T, Integer>(this.commonCore, Wrapper.convert(results));
+    }
 
     /**
      * Prints debug output to the console. Useful for figuring out what's going wrong in a
@@ -564,8 +497,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>...somecore.debug().map(f).debug()... </code> - Typical pattern to 
-     * figure out why a function (<code>map()</code> in this case) might go wrong.</li> 
+     * <li><code>...somecore.debug().map(f).debug()... </code> - Typical pattern to figure out why a function (
+     * <code>map()</code> in this case) might go wrong.</li>
      * </ul>
      * 
      * Single-threaded. <br/>
@@ -595,10 +528,9 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$("a", "b", "c").delta(joiner)</code> - If the given delta function
-     * joins two elements then the resulting core contains <code>"ab"</code> and 
-     * <code>"bc"</code>.</li> 
-     * </ul>  
+     * <li><code>$("a", "b", "c").delta(joiner)</code> - If the given delta function joins two elements then the
+     * resulting core contains <code>"ab"</code> and <code>"bc"</code>.</li>
+     * </ul>
      * 
      * Multi-threaded. <br/>
      * <br/>
@@ -653,20 +585,19 @@ public class CoreObject<T> extends Core implements Iterable<T> {
 
     /**
      * Returns a single object that, if any of its functions is executed, the
-     * corresponding function is executed on all enclosed elements. Only works 
-     * if <code>c</code> is an interface and only on enclosed elements implementing 
-     * <code>c</code>. From a performance perspective this method only makes sense 
-     * if the requested operation is complex, as on simple methods the reflection 
+     * corresponding function is executed on all enclosed elements. Only works
+     * if <code>c</code> is an interface and only on enclosed elements implementing <code>c</code>. From a performance
+     * perspective this method only makes sense
+     * if the requested operation is complex, as on simple methods the reflection
      * costs will outweigh all benefits. Also note that all return values are skipped. <br/>
      * <br/>
      * 
      * Examples:
      * <ul>
-     * <li><code>$(x1, x2, x3, x4, x5).each(XInterface.class).x()</code> - Given all 
-     * objects implement <code>XInterface</code> the function <code>each()</code> returns
-     * a new <code>X</code> object that, when <code>x()</code> is executed on it, the function
-     * is executed on all enclosed objects in parallel.</li> 
-     * </ul>  
+     * <li><code>$(x1, x2, x3, x4, x5).each(XInterface.class).x()</code> - Given all objects implement
+     * <code>XInterface</code> the function <code>each()</code> returns a new <code>X</code> object that, when
+     * <code>x()</code> is executed on it, the function is executed on all enclosed objects in parallel.</li>
+     * </ul>
      * 
      * Multi-threaded. Heavyweight.<br/>
      * <br/>
@@ -723,41 +654,40 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         if (obj == null || !(obj instanceof CoreObject)) return false;
 
         final CoreObject<?> other = (CoreObject<?>) obj;
-        
-        if(size() != other.size()) return false;
-        
+
+        if (size() != other.size()) return false;
+
         ListIterator<T> i1 = this.adapter.iterator();
         ListIterator<?> i2 = other.iterator();
-        
-        while(i1.hasNext()) {
+
+        while (i1.hasNext()) {
             T a = i1.next();
             Object b = i2.next();
-            
-            if(a == null && b != null) return false;
-            if(a == null && b == null) continue;
-            
+
+            if (a == null && b != null) return false;
+            if (a == null && b == null) continue;
+
             boolean equals = a.equals(b);
-            if(!equals) return false;
+            if (!equals) return false;
         }
-        
-        
+
         return true;
     }
 
     /**
-     * Expands contained arrays into a single array of the given type. This means, 
-     * if this core wraps a number of cores, collections, lists or arrays, each of 
-     * which are containing elements on their own, <code>expand()</code> will break 
-     * up all of these lists and return a single CoreObject wrapping the union of 
+     * Expands contained arrays into a single array of the given type. This means,
+     * if this core wraps a number of cores, collections, lists or arrays, each of
+     * which are containing elements on their own, <code>expand()</code> will break
+     * up all of these lists and return a single CoreObject wrapping the union of
      * everything that was previously held in them.<br/>
      * <br/>
      * 
      * Examples:
      * <ul>
-     * <li><code>$("a", $("b", "c"), new String[]{"d", "e"}).expand(String.class)</code>
-     *  - Returns a core of size <code>5</code>, directly containing the elements 
-     * <code>a</code>, <code>b</code>, <code>c</code>,  <code>d</code> and <code>e</code>.</li> 
-     * </ul>  
+     * <li><code>$("a", $("b", "c"), new String[]{"d", "e"}).expand(String.class)</code> - Returns a core of size
+     * <code>5</code>, directly containing the elements <code>a</code>, <code>b</code>, <code>c</code>, <code>d</code>
+     * and <code>e</code>.</li>
+     * </ul>
      * 
      * Single-threaded.<br/>
      * <br/>
@@ -852,9 +782,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$("abba").featurerequest(".palindrome() -- Should be supported!")</code>
-     * </li> 
-     * </ul>  
+     * <li><code>$("abba").featurerequest(".palindrome() -- Should be supported!")</code></li>
+     * </ul>
      * 
      * @param functionName Call this function for example like this
      * $(myobjects).featurerequest(".compress() -- Should compress the given objects.");
@@ -864,15 +793,15 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     }
 
     /**
-     * Returns a new core with all null elements set to <code>fillValue</code>, the other 
+     * Returns a new core with all null elements set to <code>fillValue</code>, the other
      * elements are transferred unchanged.<br/>
      * <br/>
      * 
      * Examples:
      * <ul>
-     * <li><code>$("a", null, "b").fill("x")</code> - Returns a core where the 
-     * <code>null</code> element is set to <code>"x"</code></li> 
-     * </ul>  
+     * <li><code>$("a", null, "b").fill("x")</code> - Returns a core where the <code>null</code> element is set to
+     * <code>"x"</code></li>
+     * </ul>
      * 
      * Single-threaded.<br/>
      * <br/>
@@ -900,10 +829,9 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$("a", "bb", "ccc").filter(f)</code> - Given the filter function returns
-     * true for all elements with a length <code>&gt;=2</code> the resulting core contains
-     * <code>"bb"</code> and <code>"ccc"</code>.</li> 
-     * </ul>  
+     * <li><code>$("a", "bb", "ccc").filter(f)</code> - Given the filter function returns true for all elements with a
+     * length <code>&gt;=2</code> the resulting core contains <code>"bb"</code> and <code>"ccc"</code>.</li>
+     * </ul>
      * 
      * Multi-threaded.<br/>
      * <br/>
@@ -936,9 +864,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$("ax", "bx", "cy").filter(".y")</code> - Returns a core containing
-     * <code>"cy"</code>.</li> 
-     * </ul>  
+     * <li><code>$("ax", "bx", "cy").filter(".y")</code> - Returns a core containing <code>"cy"</code>.</li>
+     * </ul>
      * 
      * Multi-threaded.<br/>
      * <br/>
@@ -959,8 +886,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
             }
         }, options);
     }
-    
-    
+
     /**
      * Finds the first element that is not null.<br/>
      * <br/>
@@ -968,22 +894,21 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$(null, "a", "b").first()</code> - Returns <code>"a"</code>.</li> 
-     * </ul>  
+     * <li><code>$(null, "a", "b").first()</code> - Returns <code>"a"</code>.</li>
+     * </ul>
      * 
      * Single-threaded.<br/>
      * <br/>
      * 
-     * @return The first element that was not null, or null, if all elements 
-     * were null. 
+     * @return The first element that was not null, or null, if all elements
+     * were null.
      */
     public T first() {
-        for(T t : this) {
-            if(t != null) return t;
+        for (T t : this) {
+            if (t != null) return t;
         }
         return null;
     }
-
 
     /**
      * Generates a textual fingerprint for this element for debugging purporses.
@@ -1010,7 +935,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
                 if (first == null) first = next;
             }
         }
-        
+
         sb.append(ctr);
 
         // Append type of first element (disabled)
@@ -1022,7 +947,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         // Append fingerprint
         if (size() <= 16) {
             sb.append("; fingerprint:");
-            
+
             for (T next : this) {
                 if (next != null) {
                     sb.append(next.getClass().getSimpleName().charAt(0));
@@ -1050,13 +975,13 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * synchronization overhead, while <code>fold()</code> has advantages especially
      * with very complex <code>f</code> operators.<br/>
      * <br/>
-     *
+     * 
      * 
      * Examples:
      * <ul>
-     * <li><code>$(1, 2, 3, 4).fold(fmax)</code> - When <code>fmax</code> returns the larger
-     * of both objects the resulting core will contain <code>4</code>.</li> 
-     * </ul>  
+     * <li><code>$(1, 2, 3, 4).fold(fmax)</code> - When <code>fmax</code> returns the larger of both objects the
+     * resulting core will contain <code>4</code>.</li>
+     * </ul>
      * 
      * Multi-threaded. Heavyweight.<br/>
      * <br/>
@@ -1095,11 +1020,10 @@ public class CoreObject<T> extends Core implements Iterable<T> {
             }
         };
 
-        
         // Now do fold ...
         fold(folder, options);
-        
-        T[] target = (T[]) Array.newInstance(this.adapter.clazz(), 1); //Arrays.copyOf(this.t, 1);
+
+        T[] target = (T[]) Array.newInstance(this.adapter.clazz(), 1); // Arrays.copyOf(this.t, 1);
         target[0] = (T) array.get(0);
 
         // ... and return result.
@@ -1114,9 +1038,9 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$("a", "b", null, "c").forEach(f)</code> - Performs the operation <code>f</code> on each
-     * element of the core, except <code>null</code>.</li> 
-     * </ul>  
+     * <li><code>$("a", "b", null, "c").forEach(f)</code> - Performs the operation <code>f</code> on each element of the
+     * core, except <code>null</code>.</li>
+     * </ul>
      * 
      * Single-threaded.<br/>
      * <br/>
@@ -1139,22 +1063,22 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         // ... and return result.
         return new CoreObject<R>(this.commonCore, mapper.getFinalReturnArray());
     }
-    
+
     /**
-     * Performs the given operation for each <code>n</code> elements of this core. 
-     * Elements will only be used once, so for example <code>forEach(f, 2)</code> means 
-     * that <code>f</code> will be called with elements <code>f(0, 1)</code>,  
-     * <code>f(2, 3)</code> ... Remaining elements are ignored. This function also acts on
-     * <code>null</code> elements. If you don't want that, <code>compact()</code> the core. 
+     * Performs the given operation for each <code>n</code> elements of this core.
+     * Elements will only be used once, so for example <code>forEach(f, 2)</code> means
+     * that <code>f</code> will be called with elements <code>f(0, 1)</code>, <code>f(2, 3)</code> ... Remaining
+     * elements are ignored. This function also acts on <code>null</code> elements. If you don't want that,
+     * <code>compact()</code> the core.
      * 
      * Examples:
      * <ul>
-     * <li><code>$("a", "b", null, "c").forEach(f)</code> - Performs the operation <code>f</code> on each
-     * element of the core, except <code>null</code>.</li> 
+     * <li><code>$("a", "b", null, "c").forEach(f)</code> - Performs the operation <code>f</code> on each element of the
+     * core, except <code>null</code>.</li>
      * </ul>
      * 
      * Single-threaded.<br/>
-     * <br/> 
+     * <br/>
      * 
      * @param <R> The return type.
      * @param f The function to execute for each <code>n</code> elements.
@@ -1163,41 +1087,41 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      */
     @SuppressWarnings("unchecked")
     public <R> CoreObject<R> forEach(final Fn<T, R> f, int n) {
-        if(size() == 0) return new CoreObject<R>(this.commonCore, null, null);
-        
+        if (size() == 0) return new CoreObject<R>(this.commonCore, null, null);
+
         R[] rval = null;
         T[] slice = (T[]) Array.newInstance(this.adapter.clazz(), n); // Arrays.copyOf(this.t, n);
-        
+
         int ptr = 0;
         int tptr = 0;
-        
+
         // Now go over the array
         for (int i = 0; i < size(); i++) {
             T e = this.adapter.get(i);
-            
+
             // When our current element is null, do nothing.
-            if(e == null) continue;
-            
+            if (e == null) continue;
+
             // Store element to slice
             slice[ptr++] = e;
-            
+
             // If the slice is not full, continue
-            if(ptr < n) continue;
-            
+            if (ptr < n) continue;
+
             // Execute the call
             R result = f.f(slice);
-            
+
             // If we have a result, create result array
-            if(rval == null && result != null) {
+            if (rval == null && result != null) {
                 rval = (R[]) Array.newInstance(result.getClass(), size() / n);
             }
-            
+
             // If we have the arry, store the result
-            if(rval != null) {
+            if (rval != null) {
                 rval[tptr] = result;
             }
-            
-            // Increase the target ptr in any case and reset the source ptr 
+
+            // Increase the target ptr in any case and reset the source ptr
             tptr++;
             ptr = 0;
         }
@@ -1205,19 +1129,16 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         // ... and return result.
         return new CoreObject<R>(this.commonCore, rval);
     }
-    
-        
 
     /**
-     * Return the element at the the given relative position (0 <= x <= 1) or return 
-     * <code>dflt</code> if that element
+     * Return the element at the the given relative position (0 <= x <= 1) or return <code>dflt</code> if that element
      * is null.<br/>
      * <br/>
      * 
      * 
      * Examples:
      * <ul>
-     * <li><code>$("a", null, "c").get(0.5, "b")</code> - Returns <code>"b"</code>.</li> 
+     * <li><code>$("a", null, "c").get(0.5, "b")</code> - Returns <code>"b"</code>.</li>
      * </ul>
      * 
      * Single-threaded. <br/>
@@ -1249,7 +1170,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$("a", "b", "c", "d", "e").get(0.75)</code> - Returns <code>"d"</code>.</li> 
+     * <li><code>$("a", "b", "c", "d", "e").get(0.75)</code> - Returns <code>"d"</code>.</li>
      * </ul>
      * 
      * Single-threaded. <br/>
@@ -1270,7 +1191,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$(1, new Object(), "Hi").get(String.class, "Oops")</code> - Returns <code>"Hi"</code>.</li> 
+     * <li><code>$(1, new Object(), "Hi").get(String.class, "Oops")</code> - Returns <code>"Hi"</code>.</li>
      * </ul>
      * 
      * 
@@ -1287,13 +1208,13 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     @SuppressWarnings("unchecked")
     public <X extends T> X get(Class<X> request, X dflt) {
         final ListIterator<T> iterator = this.adapter.iterator();
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             final T next = iterator.next();
             if (next != null && request.isAssignableFrom(next.getClass()))
                 return (X) next;
-            
+
         }
-        
+
         return dflt;
     }
 
@@ -1303,7 +1224,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$("a", "b", "c").get(-1)</code> - Returns <code>"c"</code>.</li> 
+     * <li><code>$("a", "b", "c").get(-1)</code> - Returns <code>"c"</code>.</li>
      * </ul>
      * 
      * 
@@ -1317,7 +1238,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      */
     public T get(int i) {
         final int offset = indexToOffset(i);
-        
+
         if (offset < 0 || offset > size()) return null;
 
         return this.adapter.get(offset);
@@ -1330,7 +1251,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$("a", "b", null).get(2, "c")</code> - Returns <code>"c"</code>.</li> 
+     * <li><code>$("a", "b", null).get(2, "c")</code> - Returns <code>"c"</code>.</li>
      * </ul>
      * 
      * Single-threaded. <br/>
@@ -1354,8 +1275,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$(name).get("Unknown")</code> - Returns <code>"Unknown"</code> 
-     * if <code>name</code> is <code>null</code>.</li> 
+     * <li><code>$(name).get("Unknown")</code> - Returns <code>"Unknown"</code> if <code>name</code> is
+     * <code>null</code>.</li>
      * </ul>
      * 
      * Single-threaded. <br/>
@@ -1385,7 +1306,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$("a", null, "b").hasAll()</code> - Returns <code>false</code>.</li> 
+     * <li><code>$("a", null, "b").hasAll()</code> - Returns <code>false</code>.</li>
      * </ul>
      * 
      * Single-threaded. <br/>
@@ -1397,7 +1318,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         for (T t : this) {
             if (t == null) return false;
         }
-        
+
         return true;
     }
 
@@ -1407,7 +1328,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$(null, "b").hasAny()</code> - Returns <code>true</code>.</li> 
+     * <li><code>$(null, "b").hasAny()</code> - Returns <code>true</code>.</li>
      * </ul>
      * 
      * Single-threaded. <br/>
@@ -1419,7 +1340,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         for (T t : this) {
             if (t != null) return true;
         }
-        
+
         return false;
     }
 
@@ -1429,7 +1350,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$(null, "b").ifAll(f)</code> - Does not execute f.</li> 
+     * <li><code>$(null, "b").ifAll(f)</code> - Does not execute f.</li>
      * </ul>
      * 
      * Single-threaded. <br/>
@@ -1450,7 +1371,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$("a", "c", "b").index("c", "b", "a")</code> - Returns a core <code>$(1, 2, 0)</code>.</li> 
+     * <li><code>$("a", "c", "b").index("c", "b", "a")</code> - Returns a core <code>$(1, 2, 0)</code>.</li>
      * </ul>
      * 
      * Single-threaded. <br/>
@@ -1464,15 +1385,13 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         if (objects == null) return new CoreNumber(this.commonCore, new Number[0]);
         Integer indices[] = new Integer[objects.length];
 
-        
         // Check all objects ...
         for (int i = 0; i < objects.length; i++) {
             final T obj = objects[i];
             if (obj == null) continue;
 
-
             final ListIterator<T> iterator = iterator();
-            while(iterator.hasNext()) {
+            while (iterator.hasNext()) {
                 final int j = iterator.nextIndex();
                 final T next = iterator.next();
 
@@ -1482,7 +1401,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
                 }
             }
         }
-        
+
         return new CoreNumber(this.commonCore, indices);
     }
 
@@ -1492,7 +1411,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$("x", "y", "z").intersect($("y", "z"))</code> - Returns a core <code>$("y", "z")</code>.</li> 
+     * <li><code>$("x", "y", "z").intersect($("y", "z"))</code> - Returns a core <code>$("y", "z")</code>.</li>
      * </ul>
      * 
      * Single-threaded. <br/>
@@ -1538,7 +1457,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$("x", "y", "z").intersect("a", "x", "b")</code> - Returns a core <code>$("x")</code>.</li> 
+     * <li><code>$("x", "y", "z").intersect("a", "x", "b")</code> - Returns a core <code>$("x")</code>.</li>
      * </ul>
      * 
      * Single-threaded. <br/>
@@ -1555,10 +1474,10 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     /**
      * Returns the wrapped collection as a list.<br/>
      * <br/>
-     *
+     * 
      * Examples:
      * <ul>
-     * <li><code>$(array).list()</code> - Returns a typed {@link List} for the given array.</li> 
+     * <li><code>$(array).list()</code> - Returns a typed {@link List} for the given array.</li>
      * </ul>
      * 
      * Single-threaded. <br/>
@@ -1567,45 +1486,44 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * @return A list containing all elements. Null values should be preserved.
      */
     public List<T> list() {
-       return new ArrayList<T>(this.adapter.unsafelist());
+        return new ArrayList<T>(this.adapter.unsafelist());
     }
 
     /**
      * Maps the core's content with the given function and returns the result. This is the
-     * most fundamental function of jCores. If the core is of size 0 nothing is done, if it is of size 1 
-     * <code>f</code> is executed directly. In all other cases <code>map</code> (at least in the 
-     * current implementation) will go parallel <i>on demand</i>. It takes a test run for the 
-     * first element and measures the time to process it. If the estimated time it takes to 
-     * complete the rest of the core is less than the measured time it takes to go parallel (which 
+     * most fundamental function of jCores. If the core is of size 0 nothing is done, if it is of size 1 <code>f</code>
+     * is executed directly. In all other cases <code>map</code> (at least in the
+     * current implementation) will go parallel <i>on demand</i>. It takes a test run for the
+     * first element and measures the time to process it. If the estimated time it takes to
+     * complete the rest of the core is less than the measured time it takes to go parallel (which
      * has some overhead), no parallelization is being performed.<br/>
      * <br/>
      * 
-     * As a general rule of thumb, <code>map</code> 
-     * works relatively best on large cores (number of elements) and time-consuming <code>f</code>- 
-     * operations and it works worst on small cores and very simple <code>f</code>. However, 
-     * the good message is that these disadvantageous cores/functions only impact your 
-     * application's performance in case you call <code>map</code> on them hundreds of 
+     * As a general rule of thumb, <code>map</code> works relatively best on large cores (number of elements) and
+     * time-consuming <code>f</code>-
+     * operations and it works worst on small cores and very simple <code>f</code>. However,
+     * the good message is that these disadvantageous cores/functions only impact your
+     * application's performance in case you call <code>map</code> on them hundreds of
      * thousands times a second, as the absolute overhead is still very small.<br/>
      * <br/>
      * 
-     *
+     * 
      * Examples:
      * <ul>
-     * <li><code>$.range(1000).map(convert)</code> - Given <code>convert</code> performs some conversion, 
-     * this would convert the numbers from 0 to 999 in parallel (using as many CPUs as there are 
-     * available).</li> 
+     * <li><code>$.range(1000).map(convert)</code> - Given <code>convert</code> performs some conversion, this would
+     * convert the numbers from 0 to 999 in parallel (using as many CPUs as there are available).</li>
      * </ul>
      * 
      * Multi-threaded.<br/>
      * <br/>
      * 
-     * <b>Warning:</b> The larger the core (number of objects) the more you should make sure 
-     * that <code>f</code> is as <i>isolated</i> as possible, since sharing even a single object 
-     * (e.g., a shared {@link Random} object like <code>$.random()</code>) among different mapper 
-     * threads can have a dramatic performance impact. In some cases (e.g., many CPUs (>2), large 
-     * core (<code>size >> 1000</code>), simple <code>f</code> with shared, synchronized variable 
-     * access) the performance of <code>map</code> can even drop below the performance of 
-     * <code>forEach</code>.<br/> <br/>
+     * <b>Warning:</b> The larger the core (number of objects) the more you should make sure
+     * that <code>f</code> is as <i>isolated</i> as possible, since sharing even a single object
+     * (e.g., a shared {@link Random} object like <code>$.random()</code>) among different mapper
+     * threads can have a dramatic performance impact. In some cases (e.g., many CPUs (>2), large
+     * core (<code>size >> 1000</code>), simple <code>f</code> with shared, synchronized variable
+     * access) the performance of <code>map</code> can even drop below the performance of <code>forEach</code>.<br/>
+     * <br/>
      * 
      * 
      * @param <R> Return type.
@@ -1632,8 +1550,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$("a", "b", "c").print().intersect("a").print()</code> - The first output
-     * will be <code>a b c</code>, then again <code>a</code>.</li> 
+     * <li><code>$("a", "b", "c").print().intersect("a").print()</code> - The first output will be <code>a b c</code>,
+     * then again <code>a</code>.</li>
      * </ul>
      * 
      * Single-threaded.<br/>
@@ -1651,30 +1569,26 @@ public class CoreObject<T> extends Core implements Iterable<T> {
 
         return this;
     }
-    
 
     /**
-     * Prints all strings to the console in a single line with the given joiner. 
-     * <br/>
+     * Prints all strings to the console in a single line with the given joiner. <br/>
      * 
      * Examples:
      * <ul>
-     * <li><code>$("a", "b", "c").print(",")</code> - Prints 
-     * <code>a,b,c</code></li> 
+     * <li><code>$("a", "b", "c").print(",")</code> - Prints <code>a,b,c</code></li>
      * </ul>
      * 
      * Single-threaded.<br/>
      * <br/>
      * 
      * @since 1.0
-     * @param joiner The string to put in between the elements. 
+     * @param joiner The string to put in between the elements.
      * @return Returns this CoreObject object again.
      */
     public CoreObject<T> print(String joiner) {
         System.out.println(string().join(joiner));
         return this;
     }
-    
 
     /**
      * Returns a randomly selected object, including null values.<br/>
@@ -1682,7 +1596,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$("a", "b", "c").random()</code> - Returns ... well, we don't know yet.</li> 
+     * <li><code>$("a", "b", "c").random()</code> - Returns ... well, we don't know yet.</li>
      * </ul>
      * 
      * Single-threaded.<br/>
@@ -1704,8 +1618,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$("a", "b", "c", "d").random(0.5)</code> - Could return <code>$("c", "a")</code>, 
-     * but never <code>$("b", "b")</code>.</li> 
+     * <li><code>$("a", "b", "c", "d").random(0.5)</code> - Could return <code>$("c", "a")</code>, but never
+     * <code>$("b", "b")</code>.</li>
      * </ul>
      * 
      * 
@@ -1731,8 +1645,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$("a", "b", "c", "d").random(2)</code> - Same as <code>.random(0.5)</code>
-     * in the example above.</li> 
+     * <li><code>$("a", "b", "c", "d").random(2)</code> - Same as <code>.random(0.5)</code> in the example above.</li>
      * </ul>
      * 
      * Single-threaded.<br/>
@@ -1777,9 +1690,9 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$("a", "b", null, "c", "d").reduce(fjoin)</code> - When <code>fjoin</code> joins the left
-     * and right String the resulting core will be <code>$("abcd")</code>.</li> 
-     * </ul>  
+     * <li><code>$("a", "b", null, "c", "d").reduce(fjoin)</code> - When <code>fjoin</code> joins the left and right
+     * String the resulting core will be <code>$("abcd")</code>.</li>
+     * </ul>
      * 
      * Single-threaded.<br/>
      * <br/>
@@ -1792,7 +1705,6 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     public CoreObject<T> reduce(final F2ReduceObjects<T> f, Option... options) {
         T stack = null;
 
-        
         for (T current : this) {
             // Nothing to do for null elements
             if (current == null) continue;
@@ -1813,15 +1725,14 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         return new CoreObject<T>(this.commonCore, type, stack);
     }
 
-    
     /**
      * Returns a Core with the element order reversed.<br/>
      * <br/>
      * 
      * Examples:
      * <ul>
-     * <li><code>$("a", "b", "c").reverse()</code> - Returns a core <code>$("c", "b", "a")</code>.</li> 
-     * </ul>  
+     * <li><code>$("a", "b", "c").reverse()</code> - Returns a core <code>$("c", "b", "a")</code>.</li>
+     * </ul>
      * 
      * Single-threaded.<br/>
      * <br/>
@@ -1830,8 +1741,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      */
     public CoreObject<T> reverse() {
         final int size = size();
-        if(size == 0) return this;
-        
+        if (size == 0) return this;
+
         final T[] c = this.adapter.array();
         for (int i = 0; i < size; i++) {
             c[size - i] = this.adapter.get(i);
@@ -1839,18 +1750,16 @@ public class CoreObject<T> extends Core implements Iterable<T> {
 
         return new CoreObject<T>(this.commonCore, c);
     }
-    
-    
+
     /**
      * Serializes this core into the given file. Objects that are not serializable
-     * are ignored. The file can later be restored with the function 
-     * <code>deserialize()</code> in {@link JRECoreFile}.<br/>
+     * are ignored. The file can later be restored with the function <code>deserialize()</code> in {@link CoreFileJRE}.<br/>
      * <br/>
      * 
      * Examples:
      * <ul>
-     * <li><code>$("Hello", "World").serialize("data.ser")</code> - Writes the core to a file.</li> 
-     * </ul>  
+     * <li><code>$("Hello", "World").serialize("data.ser")</code> - Writes the core to a file.</li>
+     * </ul>
      * 
      * Single-threaded.<br/>
      * <br/>
@@ -1868,17 +1777,16 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         return this;
     }
 
-    
     /**
      * Returns how many slots are in this core, counting null elements.<br/>
      * <br/>
      * 
      * Examples:
      * <ul>
-     * <li><code>$("a", "b").size()</code> - Returns 2.</li> 
-     * <li><code>$("c", null, "d").size()</code> - Returns 3.</li> 
-     * <li><code>$(null, "e", "f").compact().size()</code> - Returns 2.</li> 
-     * </ul>  
+     * <li><code>$("a", "b").size()</code> - Returns 2.</li>
+     * <li><code>$("c", null, "d").size()</code> - Returns 3.</li>
+     * <li><code>$(null, "e", "f").compact().size()</code> - Returns 2.</li>
+     * </ul>
      * 
      * Single-threaded. <br/>
      * <br/>
@@ -1893,16 +1801,16 @@ public class CoreObject<T> extends Core implements Iterable<T> {
 
     /**
      * Returns a slice of this core. Element inside this slice start at <code>start</code>.
-     * If <code>length</code> is positive it is treated as a length, if it is negative, it 
+     * If <code>length</code> is positive it is treated as a length, if it is negative, it
      * is treated as a (inclusive) end-index.<br/>
      * <br/>
      * 
      * Examples:
      * <ul>
-     * <li><code>$("a", "b", "c", "d").slice(0, 2)</code> - Returns <code>$("a", "b")</code>.</li> 
-     * <li><code>$("a", "b", "c", "d").slice(1, -1)</code> - Returns <code>$("b", "c", "d")</code>.</li> 
-     * <li><code>$("a", "b", "c", "d").slice(-2, 2)</code> - Returns <code>$("c", "d")</code>.</li> 
-     * </ul>  
+     * <li><code>$("a", "b", "c", "d").slice(0, 2)</code> - Returns <code>$("a", "b")</code>.</li>
+     * <li><code>$("a", "b", "c", "d").slice(1, -1)</code> - Returns <code>$("b", "c", "d")</code>.</li>
+     * <li><code>$("a", "b", "c", "d").slice(-2, 2)</code> - Returns <code>$("c", "d")</code>.</li>
+     * </ul>
      * 
      * Single-threaded. <br/>
      * <br/>
@@ -1912,41 +1820,48 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * starting position from the end (-1 equals the last position)
      * @return A ObjectCore wrapping all sliced elements.
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public CoreObject<T> slice(final int start, final int length) {
         if (size() == 0) return this;
-        if (length == 0) return new CoreObject<T>(this.commonCore, new EmptyAdapter<T>());
+        if (length == 0)
+            return new CoreObject<T>(this.commonCore, new EmptyAdapter<T>());
 
         int i = indexToOffset(start);
         int l = length > 0 ? length : indexToOffset(length) - i + 1;
-        
+
         if (i < 0 || i >= size()) {
             this.commonCore.report(MessageType.MISUSE, "slice() - converted parameter start(" + start + " -> " + i + ") is outside bounds. Returning empty slice.");
             return new CoreObject<T>(this.commonCore, new EmptyAdapter<T>());
         }
         if (l < 0 || i + l > size()) {
-            if ( l < 0 ) {
+            if (l < 0) {
                 this.commonCore.report(MessageType.MISUSE, "slice() - converted parameter length(" + length + " -> " + l + ") is outside bounds. Returning empty slice.");
                 return new CoreObject<T>(this.commonCore, new EmptyAdapter<T>());
             }
-            
+
             this.commonCore.report(MessageType.MISUSE, "slice() - converted parameter length(" + length + " -> " + l + ") is outside bounds. Truncating.");
             l -= i + l - size();
         }
 
-        return new CoreObject<T>(this.commonCore, this.adapter.slice(i, i + l));
+        // Check if the result of the slice is actually an adapter, in that case, we use it directly.
+        final List<T> slice = this.adapter.slice(i, i + l);
+        if(slice instanceof AbstractAdapter) {
+            return new CoreObject<T>(this.commonCore, (AbstractAdapter) slice);            
+        }
+        
+        // Return a new core with the given result list.
+        return new CoreObject<T>(this.commonCore, slice);
     }
-    
-    
 
     /**
-     * Returns a slice of this core. Element inside this slice start at the relative <code>start</code>
-     * and end at the relative <code>end</code>. It must hold <code>0.0 <= start <= end <= 1.0</code>.<br/>
+     * Returns a slice of this core. Element inside this slice start at the relative <code>start</code> and end at the
+     * relative <code>end</code>. It must hold <code>0.0 <= start <= end <= 1.0</code>.<br/>
      * <br/>
      * 
      * Examples:
      * <ul>
-     * <li><code>$("a", "b", "c", "d").slice(0.0, 0.5)</code> - Returns <code>$("a", "b")</code>.</li> 
-     * </ul>  
+     * <li><code>$("a", "b", "c", "d").slice(0.0, 0.5)</code> - Returns <code>$("a", "b")</code>.</li>
+     * </ul>
      * 
      * Single-threaded. <br/>
      * <br/>
@@ -1959,17 +1874,16 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     public CoreObject<T> slice(final double start, final double end) {
         if (size() == 0) return this;
         if (start > end) return slice(0, 0);
-        
+
         final double s = this.commonCore.alg.limit(0, start, 1.0);
         final double e = this.commonCore.alg.limit(0, end, 1.0);
 
         int size = size();
         int a = (int) (s * size);
         int b = (int) (e * size);
-        
-        return slice(a, b-a);
-    }
 
+        return slice(a, b - a);
+    }
 
     /**
      * Returns a new, sorted core using the given {@link Comparator}.<br/>
@@ -1977,8 +1891,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$(x, y, z).sort(s)</code> - Returns a sorted core with an order specified by <code>s</code>.</li> 
-     * </ul>  
+     * <li><code>$(x, y, z).sort(s)</code> - Returns a sorted core with an order specified by <code>s</code>.</li>
+     * </ul>
      * 
      * Single-threaded. <br/>
      * <br/>
@@ -1999,14 +1913,14 @@ public class CoreObject<T> extends Core implements Iterable<T> {
 
     /**
      * Returns a new, sorted core. If the elements of this core are not sortable
-     * (i.e, implementing {@link Comparable}), simply this core will be returned 
+     * (i.e, implementing {@link Comparable}), simply this core will be returned
      * again.<br/>
      * <br/>
      * 
      * Examples:
      * <ul>
-     * <li><code>$("c", "a", "b").sort()</code> - Returns <code>$("a", "b", "c")</code>.</li> 
-     * </ul>  
+     * <li><code>$("c", "a", "b").sort()</code> - Returns <code>$("a", "b", "c")</code>.</li>
+     * </ul>
      * 
      * Single-threaded. <br/>
      * <br/>
@@ -2028,7 +1942,6 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         return new CoreObject<T>(this.commonCore, copyOf);
     }
 
-    
     /**
      * Converts all elements to strings by calling <code>.toString()</code> on each
      * element.<br/>
@@ -2036,8 +1949,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$(1, 2).string()</code> - Returns <code>$("1", "2")</code>.</li> 
-     * </ul>  
+     * <li><code>$(1, 2).string()</code> - Returns <code>$("1", "2")</code>.</li>
+     * </ul>
      * 
      * Multi-threaded. <br/>
      * <br/>
@@ -2059,8 +1972,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$("a", "b", "c").subtract($("b"))</code> - Returns <code>$("a", "c")</code>.</li> 
-     * </ul>  
+     * <li><code>$("a", "b", "c").subtract($("b"))</code> - Returns <code>$("a", "c")</code>.</li>
+     * </ul>
      * 
      * Single-threaded. <br/>
      * <br/>
@@ -2098,8 +2011,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$("a", "c").subtract("a", "c")</code> - Returns an empty core <code>$()</code>.</li> 
-     * </ul>  
+     * <li><code>$("a", "c").subtract("a", "c")</code> - Returns an empty core <code>$()</code>.</li>
+     * </ul>
      * 
      * Single-threaded. <br/>
      * <br/>
@@ -2115,14 +2028,14 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     }
 
     /**
-     * Returns a core containing only unique objects, i.e., object 
+     * Returns a core containing only unique objects, i.e., object
      * mutually un- <code>equal()</code>.<br/>
      * <br/>
      * 
      * Examples:
      * <ul>
-     * <li><code>$("a", "c", "a", "b").unique()</code> - Returns <code>$("a", "c", "b")</code>.</li> 
-     * </ul>  
+     * <li><code>$("a", "c", "a", "b").unique()</code> - Returns <code>$("a", "c", "b")</code>.</li>
+     * </ul>
      * 
      * Single-threaded. <br/>
      * <br/>
@@ -2154,15 +2067,13 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         return new CoreObject<T>(this.commonCore, copy).compact();
     }
 
-    
-
     /**
-     * Returns the core's array, extremely fast when the original objects wrapped in this core were an array. 
-     * Use of this method is strongly discouraged and usually only needed in a few very special cases. Do not 
+     * Returns the core's array, extremely fast when the original objects wrapped in this core were an array.
+     * Use of this method is strongly discouraged and usually only needed in a few very special cases. Do not
      * change the array! <br/>
      * <br/>
      * 
-     * Also, even though the method is parameterized, in some cases it does not return 
+     * Also, even though the method is parameterized, in some cases it does not return
      * the type of array it indicates due to some black jCores magic (we sometimes haves
      * to 'guess' the type at runtime due to type erasure, which can go wrong when
      * just blindly returning our internal array).<br/>
@@ -2179,9 +2090,9 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     public T[] unsafearray() {
         return this.adapter.unsafearray();
     }
-    
+
     /**
-     * Returns an unsafe list for this core, always very fast. Use of this method discouraged but may speed up many 
+     * Returns an unsafe list for this core, always very fast. Use of this method discouraged but may speed up many
      * operations when used sensibly. The list <b>must not</b> be altered in any way.<br/>
      * <br/>
      * 
@@ -2195,8 +2106,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     }
 
     /**
-     * Returns our internal adapter. The use of this method is strongly discouraged.<br/>.
-     * <br/>
+     * Returns our internal adapter. The use of this method is strongly discouraged.<br/>
+     * . <br/>
      * 
      * Single-threaded.<br/>
      * <br/>
@@ -2206,7 +2117,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     public AbstractAdapter<T> unsafeadapter() {
         return this.adapter;
     }
-    
+
     /**
      * Converts an index to an offset.
      * 
@@ -2255,8 +2166,9 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         };
     }
 
-    
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Iterable#iterator()
      */
     @Override

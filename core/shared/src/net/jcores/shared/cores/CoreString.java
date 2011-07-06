@@ -42,7 +42,7 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.jcores.jre.cores.JRECoreFile;
+import net.jcores.jre.cores.CoreFileJRE;
 import net.jcores.shared.CommonCore;
 import net.jcores.shared.CoreKeeper;
 import net.jcores.shared.cores.adapter.AbstractAdapter;
@@ -406,8 +406,8 @@ public class CoreString extends CoreObject<String> {
      * 
      * @return A CoreFile object with all enclosed files.
      */
-    public JRECoreFile file() {
-        return new JRECoreFile(this.commonCore, map(new F1<String, File>() {
+    public CoreFileJRE file() {
+        return new CoreFileJRE(this.commonCore, map(new F1<String, File>() {
             public File f(String x) {
                 return new File(x);
             }

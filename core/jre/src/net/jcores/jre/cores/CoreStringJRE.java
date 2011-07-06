@@ -1,7 +1,7 @@
 /*
- * CoreAudioInputStream
+ * JRECoreString.java
  * 
- * Copyright (c) 2010, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -27,63 +27,40 @@
  */
 package net.jcores.jre.cores;
 
-import javax.sound.sampled.AudioInputStream;
-
 import net.jcores.shared.CommonCore;
-import net.jcores.shared.cores.CoreInputStream;
-import net.jcores.shared.interfaces.functions.F1;
-import net.jcores.shared.utils.internal.sound.SoundUtils;
+import net.jcores.shared.cores.CoreString;
+import net.jcores.shared.cores.adapter.AbstractAdapter;
 
-/**
- * Wraps a number of AudioInputStream and exposes some convenience functions. For example, 
- * to play an audio file, write:<br/><br/>
- * 
- * <code>$("sound.wav").file().audio().play()</code><br/>
- * <br/>
- * 
- * <b>Important note: See {@link CoreInputStream} regarding <i>consuming</i> methods.</b>
- * 
- * @author Ralf Biedert
- * @since 1.0
- */
-public class JRECoreAudioInputStream extends JRECoreObject<AudioInputStream> {
+public class CoreStringJRE extends CoreString {
 
-    /** Used for serialization */
-    private static final long serialVersionUID = -7643964446329787050L;
+    /** */
+    private static final long serialVersionUID = 1050943834374663676L;
 
     /**
-     * Creates an AudioInputStream core.
+     * @param supercore
+     * @param adapter
+     */
+    public CoreStringJRE(CommonCore supercore, AbstractAdapter<String> adapter) {
+        super(supercore, adapter);
+    }
+    
+
+    /**
+     * Creates an string core.
      * 
      * @param supercore The common core.
      * @param objects The strings to wrap.
      */
-    public JRECoreAudioInputStream(CommonCore supercore, AudioInputStream... objects) {
+    public CoreStringJRE(CommonCore supercore, String... objects) {
         super(supercore, objects);
     }
 
-    /**
-     * Plays all enclosed audio streams on the standard sound device.<br/>
-     * <br/>
-     * 
-     * Examples:
-     * <ul>
-     * <li><code>$("sound.wav").file().audio().play()</code> - Plays the file <code>sound.wav</code>.</li>
-     * </ul>
-     * 
-     * Multi-threaded. Consuming.<br/>
-     * <br/>
-     * 
-     * @return Return <code>this</code>.
+    
+    /* (non-Javadoc)
+     * @see net.jcores.shared.cores.CoreString#uri()
      */
-    public JRECoreAudioInputStream play() {
-        map(new F1<AudioInputStream, Void>() {
-            @Override
-            public Void f(AudioInputStream x) {
-                SoundUtils.playSound(x);
-                return null;
-            }
-        });
-
-        return this;
+    @Override
+    public CoreURIJRE uri() {
+        return new CoreURIJRE(this.commonCore, super.uri().unsafeadapter());
     }
 }

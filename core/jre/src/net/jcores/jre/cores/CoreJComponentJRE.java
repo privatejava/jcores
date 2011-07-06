@@ -50,7 +50,7 @@ import net.jcores.shared.utils.internal.ui.SimpleTransferHandler;
  * 
  * @since 1.0
  */
-public class JRECoreJComponent extends JRECoreComponent {
+public class CoreJComponentJRE extends CoreComponentJRE {
 
     /** Used for serialization */
     private static final long serialVersionUID = -6859431347201006730L;
@@ -61,7 +61,7 @@ public class JRECoreJComponent extends JRECoreComponent {
      * @param supercore The common core.
      * @param objects The Component to wrap.
      */
-    public JRECoreJComponent(CommonCore supercore, JComponent... objects) {
+    public CoreJComponentJRE(CommonCore supercore, JComponent... objects) {
         super(supercore, objects);
     }
 
@@ -82,7 +82,7 @@ public class JRECoreJComponent extends JRECoreComponent {
      * 
      * @return This object again.
      */
-    public JRECoreJComponent onDrop(final F1<CoreObject<Object>, Void> handler, final Option... options) {
+    public CoreJComponentJRE onDrop(final F1<CoreObject<Object>, Void> handler, final Option... options) {
         final CommonCore cc = this.commonCore;
 
         for (int i = 0; i < size(); i++) {

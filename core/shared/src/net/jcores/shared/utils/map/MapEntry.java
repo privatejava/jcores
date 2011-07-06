@@ -40,10 +40,10 @@ package net.jcores.shared.utils.map;
 public class MapEntry<K, V> implements Comparable<MapEntry<K, V>> {
     
 	/** The key of this entry */
-	private K key;
+	private final K key;
 	
 	/** The value of this entry */
-	private V value;
+	private final V value;
 
 	/**
 	 * Creates the key-value entry.
@@ -79,7 +79,7 @@ public class MapEntry<K, V> implements Comparable<MapEntry<K, V>> {
 	 */
 	@Override
 	public String toString() {
-		return this.key + ": " + this.value;
+		return key() + ": " + value();
 	}
 
 	/* (non-Javadoc)
@@ -88,8 +88,8 @@ public class MapEntry<K, V> implements Comparable<MapEntry<K, V>> {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public int compareTo(MapEntry<K, V> o) {
-		if(this.key instanceof Comparable) {
-			return ((Comparable) this.key).compareTo(o);
+		if(key() instanceof Comparable) {
+			return ((Comparable) key()).compareTo(o);
 		}
 		return 0;
 	}
@@ -103,18 +103,18 @@ public class MapEntry<K, V> implements Comparable<MapEntry<K, V>> {
 	    if (obj instanceof MapEntry) {
             final MapEntry e = (MapEntry) obj;
 
-            if(this.key == null && this.value == null && e.key == null && e.value == null) return true;
-            if(this.key == null && this.value == null && (e.key != null || e.value != null)) return false;
-            if(this.key != null && this.value == null) {
+            if(key() == null && value() == null && e.key == null && e.value == null) return true;
+            if(key() == null && value() == null && (e.key != null || e.value != null)) return false;
+            if(key() != null && value() == null) {
                 if(e.value != null) return false;
-                return this.key.equals(e.key);
+                return key().equals(e.key);
             }
-            if(this.key == null && this.value != null) {
+            if(key() == null && value() != null) {
                 if(e.key != null) return false;
-                return this.value.equals(e.value);
+                return value().equals(e.value);
             }
 
-            return this.key.equals(e.key) && this.value.equals(e.value);
+            return key().equals(e.key) && value().equals(e.value);
 	    }
 	    
 	    return false;
@@ -127,8 +127,8 @@ public class MapEntry<K, V> implements Comparable<MapEntry<K, V>> {
 	public int hashCode() {
 	    int rval = 0;
 	    
-	    if(this.key != null) rval = this.key.hashCode() * 13;
-	    if(this.value != null) rval += this.value.hashCode();
+	    if(key() != null) rval = key().hashCode() * 13;
+	    if(value() != null) rval += value().hashCode();
 	    
 	    return rval;
 	}

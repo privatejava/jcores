@@ -36,40 +36,61 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.concurrent.locks.ReentrantLock;
 
-import net.jcores.shared.utils.internal.lang.SubList;
-
 /**
- * Wraps arbitrary collections.
- * 
- * TODO: Add logic that an array is created on demand which is being used for get() operations
- * up to a value until elements have already been extracted by an iterator (or by previous get()
- * operataions starting from 0).
+ * Wraps arbitrary collections with on-demand element access and caching.
  * 
  * @author Ralf Biedert
  * @since 1.0
- * @param <T> The type of the adapter.
+ * @param <I> The type of the incoming collection 
+ * @param <O> The type of the adapter.
  */
-public final class CollectionAdapter<T> extends AbstractAdapter<T> implements List<T> {
+public class CollectionAdapter<I, O> extends AbstractAdapter<O> implements List<O> {
     /** */
     private static final long serialVersionUID = 7010286694628298017L;
 
     /** Our primary collection iterator */
-    Iterator<T> iterator;
+    Iterator<I> iterator;
 
     /** Our cache array */
-    final AtomicReferenceArray<T> array;
+    AtomicReferenceArray<O> array;
 
     /** Specifies up to which index we have elements in our array cache */
-    final AtomicInteger inCache = new AtomicInteger(-1);
+    AtomicInteger inCache;
 
     /** Locks access to the collection's iterator */
-    final ReentrantLock collectionLock = new ReentrantLock();
+    ReentrantLock collectionLock;
+    
+    /** The inclusive start index which we handle */
+    final int start;
+    
+    /** The inclusive end index we handle */
+    final int end;
 
-    public CollectionAdapter(Collection<T> collection) {
+    public CollectionAdapter(Collection<I> collection) {
+        this.inCache = new AtomicInteger(-1);
+        this.collectionLock = new ReentrantLock();
         this.iterator = collection.iterator();
-        this.array = new AtomicReferenceArray<T>(collection.size());
+        this.array = new AtomicReferenceArray<O>(collection.size());
+        this.start = 0;
+        this.end = collection.size() - 1;
     }
 
+    private CollectionAdapter(int start, int end) {
+        this.start = start;
+        this.end = end;
+    }
+
+    
+    /**
+     * Standard converter just converts
+     * 
+     * @param i
+     * @return
+     */
+    protected O converter(I i) {
+        return (O) i;
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -77,7 +98,7 @@ public final class CollectionAdapter<T> extends AbstractAdapter<T> implements Li
      */
     @Override
     public int size() {
-        return this.array.length();
+        return (this.end - this.start) + 1;
     }
 
     /*
@@ -86,9 +107,10 @@ public final class CollectionAdapter<T> extends AbstractAdapter<T> implements Li
      * @see net.jcores.shared.cores.adapter.AbstractAdapter#get(int)
      */
     @Override
-    public T get(int i) {
-        cacheUntil(i);
-        return this.array.get(i);
+    public O get(int i) {
+        final int ii = i + this.start;
+        cacheUntil(ii);
+        return this.array.get(ii);
     }
 
     /*
@@ -97,40 +119,40 @@ public final class CollectionAdapter<T> extends AbstractAdapter<T> implements Li
      * @see net.jcores.shared.cores.adapter.AbstractAdapter#iterator()
      */
     @Override
-    public ListIterator<T> iterator() {
-        return new ListIterator<T>() {
+    public ListIterator<O> iterator() {
+        return new ListIterator<O>() {
             int i = 0;
             
             @Override
             public boolean hasNext() {
-                return this.i < size();
+                return CollectionAdapter.this.start + this.i <= CollectionAdapter.this.end;
             }
 
             @Override
-            public T next() {
-                cacheUntil(this.i);
+            public O next() {
+                cacheUntil(CollectionAdapter.this.start + this.i);
                 return get(this.i++);
             }
 
             @Override
             public boolean hasPrevious() {
-                return this.i > 0;
+                return this.i > CollectionAdapter.this.start;
             }
 
             @Override
-            public T previous() {
+            public O previous() {
                 this.i--;
-                return get(this.i);
+                return get(CollectionAdapter.this.start + this.i);
             }
 
             @Override
             public int nextIndex() {
-                return this.i;
+                return CollectionAdapter.this.start + this.i;
             }
 
             @Override
             public int previousIndex() {
-                return this.i - 1;
+                return CollectionAdapter.this.start + this.i - 1;
             }
 
             @Override
@@ -138,11 +160,11 @@ public final class CollectionAdapter<T> extends AbstractAdapter<T> implements Li
             }
 
             @Override
-            public void set(T e) {
+            public void set(O e) {
             }
 
             @Override
-            public void add(T e) {
+            public void add(O e) {
             }
         };
     }
@@ -158,7 +180,7 @@ public final class CollectionAdapter<T> extends AbstractAdapter<T> implements Li
         cacheAll();
 
         final N[] rval = (N[]) Array.newInstance(in, size());
-        for (int i = 0; i < rval.length; i++) {
+        for (int i = this.start; i < rval.length; i++) {
             rval[i] = (N) this.array.get(i);
         }
 
@@ -171,7 +193,7 @@ public final class CollectionAdapter<T> extends AbstractAdapter<T> implements Li
      * @see net.jcores.shared.cores.adapter.AbstractAdapter#unsafelist()
      */
     @Override
-    public List<T> unsafelist() {
+    public List<O> unsafelist() {
         return this;
     }
 
@@ -181,14 +203,29 @@ public final class CollectionAdapter<T> extends AbstractAdapter<T> implements Li
      * @see net.jcores.shared.cores.adapter.AbstractAdapter#slice(int, int)
      */
     @Override
-    public List<T> slice(int start, int end) {
-        return subList(start, end);
+    public List<O> slice(int a, int b) {
+        final CollectionAdapter<I, O> adapter = new CollectionAdapter<I, O>(this.start + a, this.start + a + (b - a) - 1);
+        adapter.array = this.array;
+        adapter.collectionLock = this.collectionLock;
+        adapter.inCache = this.inCache;
+        adapter.iterator = this.iterator;
+        
+        return adapter;
     }
 
+    /**
+     * Cache all our elemnts
+     */
     protected void cacheAll() {
-        cacheUntil(this.array.length());
+        cacheUntil(this.end);
     }
 
+    
+    /**
+     * Cache the collection until the given element 
+     * 
+     * @param limit
+     */
     protected void cacheUntil(int limit) {
         // When the cached value already exceeds the limit we dont have to do anything
         if (this.inCache.intValue() >= limit) return;
@@ -200,7 +237,7 @@ public final class CollectionAdapter<T> extends AbstractAdapter<T> implements Li
 
             while (this.iterator.hasNext()) {
                 int i = this.inCache.incrementAndGet();
-                this.array.set(i, this.iterator.next());
+                this.array.set(i, converter(this.iterator.next()));
                 if (i > limit) break;
             }
 
@@ -211,7 +248,6 @@ public final class CollectionAdapter<T> extends AbstractAdapter<T> implements Li
         } finally {
             this.collectionLock.unlock();
         }
-
     }
 
     /*
@@ -221,7 +257,7 @@ public final class CollectionAdapter<T> extends AbstractAdapter<T> implements Li
      */
     @Override
     public boolean isEmpty() {
-        return this.size() == 0;
+        return this.end - this.start < 0;
     }
 
     /*
@@ -231,41 +267,50 @@ public final class CollectionAdapter<T> extends AbstractAdapter<T> implements Li
      */
     @Override
     public boolean contains(Object o) {
-        final ListIterator<T> i = iterator();
+        final ListIterator<O> i = iterator();
         while (i.hasNext()) {
-            T next = i.next();
+            O next = i.next();
             if (next == null) continue;
             if (next.equals(o)) return true;
         }
         return false;
     }
 
+    /* (non-Javadoc)
+     * @see java.util.List#toArray()
+     */
     @Override
     public Object[] toArray() {
         cacheAll();
 
         final Object[] rval = (Object[]) Array.newInstance(Object.class, size());
-        for (int i = 0; i < rval.length; i++) {
+        for (int i = this.start; i < rval.length; i++) {
             rval[i] = this.array.get(i);
         }
 
         return rval;
     }
 
-    @SuppressWarnings({ "unchecked", "hiding" })
+    /* (non-Javadoc)
+     * @see java.util.List#toArray(T[])
+     */
+    @SuppressWarnings({ "unchecked" })
     @Override
     public <T> T[] toArray(T[] a) {
         cacheAll();
 
+        // Our return value array
         T[] rval = null;
 
+        // Check if the passed array fits the data
         if (a.length >= this.array.length()) {
             rval = a;
         } else {
             rval = (T[]) Array.newInstance(a.getClass().getComponentType(), size());
         }
 
-        for (int i = 0; i < rval.length; i++) {
+        // Fill the array
+        for (int i = this.start; i < rval.length; i++) {
             rval[i] = (T) this.array.get(i);
         }
 
@@ -273,16 +318,25 @@ public final class CollectionAdapter<T> extends AbstractAdapter<T> implements Li
 
     }
 
+    /* (non-Javadoc)
+     * @see java.util.List#add(java.lang.Object)
+     */
     @Override
-    public boolean add(T e) {
+    public boolean add(O e) {
         return false;
     }
 
+    /* (non-Javadoc)
+     * @see java.util.List#remove(java.lang.Object)
+     */
     @Override
     public boolean remove(Object o) {
         return false;
     }
 
+    /* (non-Javadoc)
+     * @see java.util.List#containsAll(java.util.Collection)
+     */
     @Override
     public boolean containsAll(Collection<?> c) {
         for (Object o : c) {
@@ -291,48 +345,75 @@ public final class CollectionAdapter<T> extends AbstractAdapter<T> implements Li
         return true;
     }
 
+    /* (non-Javadoc)
+     * @see java.util.List#addAll(java.util.Collection)
+     */
     @Override
-    public boolean addAll(Collection<? extends T> c) {
+    public boolean addAll(Collection<? extends O> c) {
         return false;
     }
 
+    /* (non-Javadoc)
+     * @see java.util.List#addAll(int, java.util.Collection)
+     */
     @Override
-    public boolean addAll(int index, Collection<? extends T> c) {
+    public boolean addAll(int index, Collection<? extends O> c) {
         return false;
     }
 
+    /* (non-Javadoc)
+     * @see java.util.List#removeAll(java.util.Collection)
+     */
     @Override
     public boolean removeAll(Collection<?> c) {
         return false;
     }
 
+    /* (non-Javadoc)
+     * @see java.util.List#retainAll(java.util.Collection)
+     */
     @Override
     public boolean retainAll(Collection<?> c) {
         return false;
     }
 
+    /* (non-Javadoc)
+     * @see java.util.List#clear()
+     */
     @Override
     public void clear() {}
 
+    /* (non-Javadoc)
+     * @see java.util.List#set(int, java.lang.Object)
+     */
     @Override
-    public T set(int index, T element) {
+    public O set(int index, O element) {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see java.util.List#add(int, java.lang.Object)
+     */
     @Override
-    public void add(int index, T element) {}
+    public void add(int index, O element) {}
 
+    /* (non-Javadoc)
+     * @see java.util.List#remove(int)
+     */
     @Override
-    public T remove(int index) {
+    public O remove(int index) {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see java.util.List#indexOf(java.lang.Object)
+     */
     @Override
     public int indexOf(Object o) {
-        final ListIterator<T> i = iterator();
+        final ListIterator<O> i = iterator();
         while (i.hasNext()) {
             int index = i.nextIndex();
-            T next = i.next();
+            O next = i.next();
             if (next == null) continue;
             if (next.equals(o)) return index;
         }
@@ -340,25 +421,34 @@ public final class CollectionAdapter<T> extends AbstractAdapter<T> implements Li
         return -1;
     }
 
+    /* (non-Javadoc)
+     * @see java.util.List#lastIndexOf(java.lang.Object)
+     */
     @Override
     public int lastIndexOf(Object o) {
         cacheAll();
-        for (int i = size() - 1; i >= 0; i--) {
-            T next = get(i);
+        for (int i = this.end; i >= this.start; i--) {
+            O next = get(i);
             if (next == null) continue;
             if (next.equals(o)) return i;
         }
         return -1;
     }
 
+    /* (non-Javadoc)
+     * @see java.util.List#listIterator()
+     */
     @Override
-    public ListIterator<T> listIterator() {
+    public ListIterator<O> listIterator() {
         return iterator();
     }
 
+    /* (non-Javadoc)
+     * @see java.util.List#listIterator(int)
+     */
     @Override
-    public ListIterator<T> listIterator(int index) {
-        ListIterator<T> iterator2 = iterator();
+    public ListIterator<O> listIterator(int index) {
+        ListIterator<O> iterator2 = iterator();
         for (int i = 0; i < index; i++) {
             iterator2.next();
         }
@@ -366,9 +456,11 @@ public final class CollectionAdapter<T> extends AbstractAdapter<T> implements Li
         return iterator2;
     }
 
+    /* (non-Javadoc)
+     * @see java.util.List#subList(int, int)
+     */
     @Override
-    public List<T> subList(int fromIndex, int toIndex) {
-        cacheUntil(toIndex);
-        return new SubList<T>(this, fromIndex, toIndex);
+    public List<O> subList(int fromIndex, int toIndex) {
+        return slice(fromIndex, toIndex);
     }
 }

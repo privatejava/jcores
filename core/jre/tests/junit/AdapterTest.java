@@ -1,5 +1,5 @@
 /*
- * CoreNumberTest.java
+ * AdapterTest.java
  * 
  * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
@@ -28,40 +28,65 @@
 package junit;
 
 import static net.jcores.jre.CoreKeeper.$;
-import net.jcores.shared.cores.CoreNumber;
-import net.jcores.shared.cores.CoreObject;
 
-import org.junit.Assert;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Map;
+
+import junit.data.Data;
+import junit.framework.Assert;
+import net.jcores.jre.cores.CoreObjectJRE;
+import net.jcores.shared.cores.CoreMap;
+import net.jcores.shared.cores.CoreObject;
+import net.jcores.shared.cores.adapter.CollectionAdapter;
+import net.jcores.shared.cores.adapter.MapAdapter;
+import net.jcores.shared.utils.map.MapEntry;
+
 import org.junit.Test;
 
 /**
  * @author Ralf Biedert
  */
-public class CoreNumberTest {
+public class AdapterTest {
 
     /** */
     @Test
-    public void testMinMax() {
-        Assert.assertEquals(0.0, $.range(101).min(), 0.0);
-        Assert.assertEquals(100.0, $.range(101).max(), 0.0);
-    }
-
-    /** */
-    @Test
-    public void testSum() {
-        int n = 10000;
-        Assert.assertEquals(n*(n-1)/2, $.range(n).sum(), 0.0);
-    }
-    
-    
-    /** */
-    @SuppressWarnings({ "boxing", "unchecked" })
-    @Test
-    public void testNullNaN() {
-        final CoreObject<Object> mixed = $($.create(1, 100), $.create(null, 100), $.create(Double.NaN, 100)).expand(Object.class); 
-        final CoreNumber number = mixed.random(1.0).as(CoreNumber.class);
+    public void testCollectionAdapter() {
+        final LinkedList<String> linked = new LinkedList<String>(Arrays.asList(Data.sn));
+        final CoreObjectJRE<String> x = $(linked);
         
-        Assert.assertEquals(100, number.sum(), 0.01);
-        Assert.assertEquals(1, number.average(), 0.01);
+        Assert.assertTrue(x.unsafeadapter() instanceof CollectionAdapter);
+        
+        final CoreObject<String> slice = x.slice(40, 60).slice(5, 20).slice(5, 5);
+        Assert.assertEquals(5, slice.size());
+        Assert.assertEquals("50", slice.get(0));
+
+        
+        final StringBuilder sb = new StringBuilder();
+        for(String s : slice) {
+            sb.append(s);
+        }
+        
+        Assert.assertEquals("5051525354", sb.toString());
     }
+    
+    /** */
+    @SuppressWarnings("boxing")
+    @Test
+    public void testMapAdapter() {
+        final Map<String, Integer> map = $.map();
+        for(String s:Data.sn) {
+            map.put(s, $(s).i(0));
+        }
+        
+        final CoreMap<String, Integer> x = $(map);
+        Assert.assertTrue(x.unsafeadapter() instanceof MapAdapter);
+        
+        for(MapEntry<String, Integer> e : x) {
+            Assert.assertEquals(e.key(), e.value().toString());
+            
+        }
+        
+    }
+
 }

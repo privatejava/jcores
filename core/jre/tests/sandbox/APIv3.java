@@ -52,6 +52,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.jcores.extensions.serialization.CoreSerializer;
+import net.jcores.jre.cores.CoreObjectJRE;
 import net.jcores.shared.cores.CoreObject;
 import net.jcores.shared.cores.CoreString;
 import net.jcores.shared.interfaces.functions.F0;
@@ -109,7 +110,7 @@ public class APIv3 {
         CoreString c2 = $($("hello", "world").list()).as(CoreString.class);
         System.out.println(c1.size());
         System.out.println(c2.size());
-        System.out.println($("hello").call("toUpperCase").get(0));
+        System.out.println($("hello").as(CoreObjectJRE.class).call("toUpperCase").get(0));
 
         System.out.println("---");
         CoreObject<String> expand = $("", "", "").map(new F1<String, String[]>() {

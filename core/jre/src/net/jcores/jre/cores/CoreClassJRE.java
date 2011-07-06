@@ -52,7 +52,7 @@ import net.jcores.shared.utils.internal.io.StreamUtils;
  * @since 1.0
  * @param <T> Type of the classes' objects.
  */
-public class JRECoreClass<T> extends JRECoreObject<Class<T>> {
+public class CoreClassJRE<T> extends CoreObjectJRE<Class<T>> {
     /** Used for serialization */
     private static final long serialVersionUID = -5054890786513339808L;
 
@@ -68,7 +68,7 @@ public class JRECoreClass<T> extends JRECoreObject<Class<T>> {
      * @param supercore CommonCore to use.
      * @param clazzes Classes to wrap.
      */
-    public JRECoreClass(CommonCore supercore, Class<T>... clazzes) {
+    public CoreClassJRE(CommonCore supercore, Class<T>... clazzes) {
         super(supercore, clazzes);
 
         this.manager = supercore.manager(ManagerClass.class);
@@ -139,7 +139,7 @@ public class JRECoreClass<T> extends JRECoreObject<Class<T>> {
 
                 // TODO: Selection of implementor could need some improvement
                 if (x.isInterface()) {
-                    toSpawn = (Class<T>) JRECoreClass.this.manager.getImplementors(x)[0];
+                    toSpawn = (Class<T>) CoreClassJRE.this.manager.getImplementors(x)[0];
                 }
 
                 // Quick pass for most common option
@@ -164,8 +164,8 @@ public class JRECoreClass<T> extends JRECoreObject<Class<T>> {
                     Constructor<T> constructor = null;
 
                     // Get constructor from cache ... (try to)
-                    synchronized (JRECoreClass.this.constructors) {
-                        constructor = JRECoreClass.this.constructors.get(types);
+                    synchronized (CoreClassJRE.this.constructors) {
+                        constructor = CoreClassJRE.this.constructors.get(types);
 
                         // Put a new constructor if it wasn't cached before
                         if (constructor == null) {
@@ -197,7 +197,7 @@ public class JRECoreClass<T> extends JRECoreObject<Class<T>> {
                             // If we don't have any constructor at this point, we are in trouble 
                             if(constructor == null) throw new NoSuchMethodException("No constructor found."); 
                                 
-                            JRECoreClass.this.constructors.put(types, constructor);
+                            CoreClassJRE.this.constructors.put(types, constructor);
                         }
                     }
 

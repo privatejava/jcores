@@ -27,16 +27,16 @@
  */
 package net.jcores.jre;
 
-import net.jcores.jre.cores.commons.JRECommonUI;
+import net.jcores.jre.cores.commons.CommonUIJRE;
 import net.jcores.shared.CommonCore;
 
-public class JRECommonCore extends CommonCore {
+public class CommonCoreJRE extends CommonCore {
 
     /** Common ui utilities */
-    public final JRECommonUI ui = new JRECommonUI(this); 
+    public final CommonUIJRE ui = new CommonUIJRE(this); 
 
     /** */
-    JRECommonCore() {
+    CommonCoreJRE() {
         super();
     }
 

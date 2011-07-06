@@ -52,5 +52,11 @@ public class SimpleNumberTest {
         System.out.println($(2, -2, 2, -2).standarddeviation());
         System.out.println($(2, -2, 2, -2).variance());
 
+        
+        System.out.println();
+        Double d = Double.NaN;
+        System.out.println(Math.min(3, Double.NaN));
+        System.out.println(d);
+        System.out.println(d.intValue());
     }
 }
