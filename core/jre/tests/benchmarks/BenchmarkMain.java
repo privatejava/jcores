@@ -94,7 +94,7 @@ public class BenchmarkMain {
                     }, 20);
 
                     // And print results of the last n runs
-                    System.out.print(results.average(15) + "µs (");
+                    System.out.print(results.median(15) + "µs (");
                     long[] values = results.values();
                     for (int i = 0; i < values.length; i++) {
                         System.out.print(values[i] + "µs");

@@ -27,6 +27,8 @@
  */
 package benchmarks.benchmarker;
 
+import static net.jcores.jre.CoreKeeper.$;
+
 /**
  * Stores the results of a given benchmark run.
  * 
@@ -71,5 +73,9 @@ public class BenchmarkResults {
      */
     public long[] values() {
         return this.results;
+    }
+
+    public long median(int i) {
+        return $($.box(this.results)).slice(i, -1).get(0.5).longValue();
     }
 }

@@ -201,18 +201,36 @@ public class CommonCore {
      * @param object The numbers to wrap.
      * @return An Integer array.
      */
-    @SuppressWarnings("boxing")
     public Integer[] box(int... object) {
         int i = 0;
 
         final Integer[] myIntegers = new Integer[object.length];
         for (int val : object)
-            myIntegers[i++] = val;
+            myIntegers[i++] = Integer.valueOf(val);
 
         return myIntegers;
     }
 
 
+    /**
+     * Wraps number of longs and returns an Long array.
+     * 
+     * @since 1.0
+     * @param object The numbers to wrap.
+     * @return An Integer array.
+     */
+    public Long[] box(long... object) {
+        int i = 0;
+
+        final Long[] myIntegers = new Long[object.length];
+        for (long  val: object)
+            myIntegers[i++] = Long.valueOf(val);
+
+        return myIntegers;
+    }
+
+
+    
     /**
      * Clones the given object if it is cloneable. 
      * 

@@ -51,7 +51,7 @@ public final class ArrayAdapter<T> extends AbstractAdapter<T> {
     final int size;
 
     public ArrayAdapter(T... array) {
-        this(array.length, array);
+        this(array == null ? 0 : array.length, array);
     }
     
     /**

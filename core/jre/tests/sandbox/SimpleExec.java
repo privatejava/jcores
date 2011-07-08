@@ -30,7 +30,11 @@ package sandbox;
 import static net.jcores.jre.CoreKeeper.$;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Random;
+
+import net.jcores.shared.cores.CoreMap;
+import net.jcores.shared.utils.map.MapEntry;
 
 /**
  * @author rb
@@ -45,9 +49,28 @@ public class SimpleExec {
      * @throws IOException 
      */
     public static void main(String[] args) throws IOException {
-        // $.exec("ls -la")
+        $("ls -la", "ls -la", "ls -la", "ls -la", "ls -la").exec().print();
         // $(".").file().dir().filter(".*java$").string().replace("^(.*)$", "ls $1").exec().print();
-        $(".").file().dir().filter(".*java$").string().exec("ls $1").print();
+        //$(".").file().dir().filter(".*java$").string().exec("ls $1").print();
+        
+        
+        Map<String, Integer> s = $.map();
+        s.put("a", 1);
+        s.put("b", 2);
+
+        
+        Map compound = $("a", 1, "b", 2).compound();
+        Object object = compound.get("a");
+        System.out.println(object);
+        
+        
+        
+        CoreMap<String, Integer> cc = $(s);
+        cc.get(4);
+        
+        
+        for (MapEntry<String, Integer> me : cc) {
+        }
     }
 
 }
