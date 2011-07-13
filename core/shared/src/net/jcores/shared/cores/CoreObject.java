@@ -2178,7 +2178,20 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      */
     @Override
     public ListIterator<T> iterator() {
+        return iterator(false);
+    }
+    
+    /**
+     * Returns an iterator that iterates over this core. If <code>withNull</code> is set, also 
+     * <code>null</code> elements are being returned, otherwise only non-<code>null</code> objects are being
+     * considered. The standard <code>iterator()</code> method does not consider <code>null</code> elements.
+     * 
+     * @param includeNull Whether <code>null</code> elements should be considered.
+     * @return An iterator.
+     */
+    public ListIterator<T> iterator(boolean includeNull) {
+        if(includeNull) return this.adapter.iterator();
         return new NonNullIterator<T>(this.adapter.iterator());
-        // return this.adapter.iterator();
+
     }
 }

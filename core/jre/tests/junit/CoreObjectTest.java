@@ -35,6 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.data.Data;
+import net.jcores.jre.cores.CoreObjectJRE;
 import net.jcores.jre.cores.CoreStringJRE;
 import net.jcores.shared.cores.CoreNumber;
 import net.jcores.shared.cores.CoreString;
@@ -401,4 +402,24 @@ public class CoreObjectTest {
         Assert.assertEquals(1, it.previousIndex());
         
     }
+    
+    
+    /** Test if the iterator works as expected */
+    @Test
+    public void testAllAny() {
+        final CoreStringJRE c = $(null, "a", "b", null, null, "c", null);
+        Assert.assertTrue(c.hasAny());
+        Assert.assertFalse(c.hasAll());
+
+        CoreObjectJRE<Object> d = $(new Object[] { null });
+        Assert.assertFalse(c.hasAny());
+        Assert.assertFalse(c.hasAll());
+        
+        
+        CoreStringJRE e = $("a", "b");
+        Assert.assertTrue(c.hasAny());
+        Assert.assertTrue(c.hasAll());
+
+    }
+
 }
