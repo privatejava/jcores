@@ -30,10 +30,12 @@ package junit;
 import static net.jcores.jre.CoreKeeper.$;
 
 import java.util.List;
+import java.util.ListIterator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.data.Data;
+import net.jcores.jre.cores.CoreStringJRE;
 import net.jcores.shared.cores.CoreNumber;
 import net.jcores.shared.cores.CoreString;
 import net.jcores.shared.interfaces.functions.F1;
@@ -51,14 +53,14 @@ import org.junit.Test;
  */
 public class CoreObjectTest {
 
-    /** */
+    /** Tests if intersect() works. */
     @Test
     public void testIntersect() {
         Assert.assertEquals("world", $("hello", "world").intersect($("world", "goodbye")).get(0));
         Assert.assertEquals(1, $("world", "hello").intersect($("world", "goodbye")).compact().size());
     }
 
-    /** */
+    /** Tests if forEach() works. */
     @Test
     public void testForEach() {
         Assert.assertEquals("h", $("hello").forEach(new F1<String, String>() {
@@ -119,7 +121,7 @@ public class CoreObjectTest {
 
     }
 
-    /** */
+    /** Tests if map() works. */
     @Test
     public void testMap() {
         Assert.assertEquals("h", $("hello").forEach(new F1<String, String>() {
@@ -187,7 +189,7 @@ public class CoreObjectTest {
 
     }
 
-    /** */
+    /** Tests if delta() works. */
     @SuppressWarnings("boxing")
     @Test
     public void testDelta() {
@@ -326,6 +328,7 @@ public class CoreObjectTest {
     @Test
     public void testRandom() {
         Assert.assertEquals(4, $("a", "b", "c", "d", "e", "f", "g").random(4).size());
+        //Assert.assertTrue($("a", "b", "c", "d", "e", "f", "g").equals($("a", "b", "c", "d", "e", "f", "g").random(1.0).sort()));
         Assert.assertEquals($("a", "b", "c", "d", "e", "f", "g"), $("a", "b", "c", "d", "e", "f", "g").random(1.0).sort());
         Assert.assertEquals(0, $("a", "b", "c", "d", "e", "f", "g").random(0.0).size());
     }
@@ -374,4 +377,28 @@ public class CoreObjectTest {
         Assert.assertEquals("a", array2[3]);
     }
 
+    
+    /** Test if the iterator works as expected */
+    @Test
+    public void testIterator() {
+        final CoreStringJRE c = $(null, "a", "b", null, null, "c", null);
+        final StringBuilder sb = new StringBuilder();
+        
+        for (String string : c) {
+            Assert.assertNotNull(string);
+            sb.append(string);
+        }
+        
+        Assert.assertEquals("abc", sb.toString());
+        
+        final ListIterator<String> it = c.iterator();
+        Assert.assertTrue(it.hasNext());
+        Assert.assertEquals(1, it.nextIndex());
+        Assert.assertEquals("a", it.next());
+        Assert.assertTrue(it.hasNext());
+        Assert.assertEquals(2, it.nextIndex());
+        Assert.assertTrue(it.hasPrevious());
+        Assert.assertEquals(1, it.previousIndex());
+        
+    }
 }

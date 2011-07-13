@@ -70,6 +70,7 @@ import net.jcores.shared.utils.internal.Folder;
 import net.jcores.shared.utils.internal.Mapper;
 import net.jcores.shared.utils.internal.Wrapper;
 import net.jcores.shared.utils.internal.io.StreamUtils;
+import net.jcores.shared.utils.internal.lang.NonNullIterator;
 import net.jcores.shared.utils.internal.lang.ObjectUtils;
 import net.jcores.shared.utils.map.Compound;
 
@@ -319,8 +320,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
             return constructor.newInstance(this.commonCore, this.adapter);
 
             // NOTE: We do not swallow all execptions, because as() is a bit special and
-            // we cannot return
-            // anyhting that would still be usable.
+            // we cannot return anything that would still be usable.
         } catch (SecurityException e) {
             e.printStackTrace();
         } catch (IllegalArgumentException e) {
@@ -658,7 +658,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         if (size() != other.size()) return false;
 
         ListIterator<T> i1 = this.adapter.iterator();
-        ListIterator<?> i2 = other.iterator();
+        ListIterator<?> i2 = other.adapter.iterator();
 
         while (i1.hasNext()) {
             T a = i1.next();
@@ -2178,6 +2178,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      */
     @Override
     public ListIterator<T> iterator() {
-        return this.adapter.iterator();
+        return new NonNullIterator<T>(this.adapter.iterator());
+        // return this.adapter.iterator();
     }
 }
