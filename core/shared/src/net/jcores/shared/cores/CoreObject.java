@@ -1939,6 +1939,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     public CoreObject<T> sort() {
         if (size() == 0) return this;
 
+        
+        // TODO: Can't we be faster if we do the sort on our own?
         final T[] copyOf = this.adapter.array();
 
         try {
@@ -1947,6 +1949,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
             this.commonCore.report(MessageType.EXCEPTION, "Unable to sort core, elements not comparable: " + fingerprint(true));
             return this;
         } catch (NullPointerException e) {
+            this.commonCore.report(MessageType.PERFORMANCE, "Make sure cores are compact() before sorting them: " + fingerprint(true));
             return compact().sort();
         }
 
