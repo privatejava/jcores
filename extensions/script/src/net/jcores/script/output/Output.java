@@ -1,7 +1,7 @@
 /*
- * SimpleScript.java
+ * Input.java
  * 
- * Copyright (c) 2010, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,40 +25,44 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package sandbox;
+package net.jcores.script.output;
 
-import static net.jcores.jre.CoreKeeper.$;
-
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.jcores.script.JCoresScript;
-import net.jcores.script.input.Input;
-import net.jcores.script.input.InputAlternatives;
-import net.jcores.script.input.InputFiles;
+
 
 /**
- * @author rb
- *
+ * The output object describes what kind of output a {@link JCoresScript} 
+ * accepts.
+ * 
+ * @author Ralf Biedert
+ * @since 1.0
  */
-public class SimpleScriptInput {
-
+public class Output {
+    /** List with all our inputs */
+    final List<AbstractOutputType> inputs = new ArrayList<AbstractOutputType>();
+    
     /**
-     * @param args
-     * @throws IOException 
+     * Defines or gets an output parameter with the given name.   
+     * 
+     * @param <T> The type of the output parameter.
+     * @param type The type of the output parameter.
+     * @param name The name of the output parameter.
+     * @return The output object.
      */
-    public static void main(String[] args) throws IOException {
-        // Prepare inputs
-        final Input input = new Input();
-        input.parameter(InputFiles.class, "name").description("Short description", "Long description").dfault("test.txt");
-        input.parameter(InputAlternatives.class, "mode").alternative("1", "Short", "Long").dfault("1") ;
+    public <T extends AbstractOutputType> T parameter(Class<T> type, String name) {
+        T t = null;
+        try {
+            t = type.newInstance();
+            this.inputs.add(t);
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
         
-        // Prepare and pack script
-        JCoresScript.SCRIPT("Blah", args).io(input).transferable().console().pack();
-        
-        // Get actual inputs
-        //File file = input.parameter(InputFile.class, "name").get();
-        
-        
-        $(".").file().dir().print();
+        return t;
     }
 }

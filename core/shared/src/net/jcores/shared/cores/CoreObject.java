@@ -70,7 +70,6 @@ import net.jcores.shared.utils.internal.Folder;
 import net.jcores.shared.utils.internal.Mapper;
 import net.jcores.shared.utils.internal.Wrapper;
 import net.jcores.shared.utils.internal.io.StreamUtils;
-import net.jcores.shared.utils.internal.lang.NonNullIterator;
 import net.jcores.shared.utils.internal.lang.ObjectUtils;
 import net.jcores.shared.utils.map.Compound;
 
@@ -579,7 +578,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         map(mapper, options);
 
         // ... and return result.
-        return new CoreObject<R>(this.commonCore, mapper.getFinalReturnArray());
+        return new CoreObject<R>(this.commonCore, new ArrayAdapter<R>(size - 1, mapper.getFinalReturnArray()));
 
     }
 
@@ -1301,12 +1300,14 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     }
 
     /**
-     * Checks if all elements are not null.<br/>
+     * Checks if all elements are not null. If the core is empty, <code>false</code> is returned as well.<br/>
      * <br/>
      * 
      * Examples:
      * <ul>
      * <li><code>$("a", null, "b").hasAll()</code> - Returns <code>false</code>.</li>
+     * <li><code>$("x").hasAll()</code> - Returns <code>true</code>.</li>
+     * <li><code>$().hasAll()</code> - Returns <code>false</code>.</li>
      * </ul>
      * 
      * Single-threaded. <br/>
@@ -1315,6 +1316,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * @return True if all elements are not null, false if a single element was null.
      */
     public boolean hasAll() {
+        if(size() == 0) return false;
+        
         for (T t : this) {
             if (t == null) return false;
         }
@@ -1323,12 +1326,13 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     }
 
     /**
-     * Checks if the element has any element.<br/>
+     * Checks if the element has any element. If the core is empty, <code>false</code> is returned.<br/>
      * <br/>
      * 
      * Examples:
      * <ul>
      * <li><code>$(null, "b").hasAny()</code> - Returns <code>true</code>.</li>
+     * <li><code>$().hasAny()</code> - Returns <code>false</code>.</li> 
      * </ul>
      * 
      * Single-threaded. <br/>
@@ -1942,6 +1946,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         } catch (ClassCastException e) {
             this.commonCore.report(MessageType.EXCEPTION, "Unable to sort core, elements not comparable: " + fingerprint(true));
             return this;
+        } catch (NullPointerException e) {
+            return compact().sort();
         }
 
         return new CoreObject<T>(this.commonCore, copyOf);
@@ -2178,20 +2184,6 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      */
     @Override
     public ListIterator<T> iterator() {
-        return iterator(false);
-    }
-    
-    /**
-     * Returns an iterator that iterates over this core. If <code>withNull</code> is set, also 
-     * <code>null</code> elements are being returned, otherwise only non-<code>null</code> objects are being
-     * considered. The standard <code>iterator()</code> method does not consider <code>null</code> elements.
-     * 
-     * @param includeNull Whether <code>null</code> elements should be considered.
-     * @return An iterator.
-     */
-    public ListIterator<T> iterator(boolean includeNull) {
-        if(includeNull) return this.adapter.iterator();
-        return new NonNullIterator<T>(this.adapter.iterator());
-
+        return this.adapter.iterator();
     }
 }

@@ -1,7 +1,7 @@
 /*
- * SimpleScript.java
+ * InputFile.java
  * 
- * Copyright (c) 2010, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,40 +25,22 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package sandbox;
+package net.jcores.script.input;
 
-import static net.jcores.jre.CoreKeeper.$;
-
-import java.io.IOException;
-
-import net.jcores.script.JCoresScript;
-import net.jcores.script.input.Input;
-import net.jcores.script.input.InputAlternatives;
-import net.jcores.script.input.InputFiles;
+import java.io.File;
 
 /**
- * @author rb
- *
+ * Input type reflecting a single file.
+ * 
+ * @author Ralf Biedert
  */
-public class SimpleScriptInput {
+public class InputFile extends InputFiles {
 
     /**
-     * @param args
-     * @throws IOException 
+     * @return
      */
-    public static void main(String[] args) throws IOException {
-        // Prepare inputs
-        final Input input = new Input();
-        input.parameter(InputFiles.class, "name").description("Short description", "Long description").dfault("test.txt");
-        input.parameter(InputAlternatives.class, "mode").alternative("1", "Short", "Long").dfault("1") ;
-        
-        // Prepare and pack script
-        JCoresScript.SCRIPT("Blah", args).io(input).transferable().console().pack();
-        
-        // Get actual inputs
-        //File file = input.parameter(InputFile.class, "name").get();
-        
-        
-        $(".").file().dir().print();
+    public File get() {
+        // get
+        return null;
     }
 }

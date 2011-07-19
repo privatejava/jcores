@@ -41,8 +41,12 @@ import com.thoughtworks.xstream.XStream;
 
 /**
  * @author Handles serialization
+ * @deprecated
  */
+@Deprecated
 public class CoreSerializer extends CoreObject<Object> {
+    /** */
+    private static final long serialVersionUID = -5771931497851862694L;
 
     /**
      * @param supercore

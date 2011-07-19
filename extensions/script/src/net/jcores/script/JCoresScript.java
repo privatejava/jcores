@@ -28,6 +28,7 @@
 package net.jcores.script;
 
 import net.jcores.script.input.Input;
+import net.jcores.script.output.Output;
 import net.jcores.script.scriptmodes.JCoresScriptDevtime;
 import net.jcores.script.scriptmodes.JCoresScriptRuntime;
 import net.jcores.shared.annotations.Beta;
@@ -65,6 +66,12 @@ public abstract class JCoresScript {
 	/** The input object containing all the parameters we have */
 	protected Input input = null;
 
+    /** The output object containing all the parameters we have */
+    protected Output output = null;
+
+    /** If set to true, this script is assumed to be transferable */
+    protected boolean transferable = false;
+
     /**
      * Store parameters.
      * 
@@ -93,19 +100,41 @@ public abstract class JCoresScript {
         return new JCoresScriptDevtime(name, args);
     }
     
+    
     /**
-     * Call this method if you want your script to always provide a console. If a terminal
-     * or console is detected at runtime nothing is being done. If no console is detected,
-     * a console window will be spawned.
+     * Call this method to register inputs and outputs to your script.
      * 
-     * @param _input The definition of the input the script accepts.
-     * @return This object.
+     * @param _input The input to accept.
+     * @param _output The output to create.
+     * @return This object
      */
-    public JCoresScript console(Input _input) {
-    	this.console = true;
-    	this.input = _input;
-    	return this;
+    public JCoresScript io(Input _input, Output _output) {
+        this.input = _input;
+        this.output = _output;
+        return this;
     }
+    
+    
+    /**
+     * Call this method to register inputs and outputs to your script.
+     * 
+     * @param _input The input to accept.
+     * @return This object
+     */
+    public JCoresScript io(Input _input) {
+        return io(_input, null);
+    }
+    
+    /**
+     * Call this method to register inputs and outputs to your script.
+     * 
+     * @param _output The output to create.
+     * @return This object
+     */
+    public JCoresScript io(Output _output) {
+        return io(null, _output);
+    }
+    
     
     /**
      * Call this method if you want your script to always provide a console. If a terminal
@@ -115,8 +144,23 @@ public abstract class JCoresScript {
      * @return This object.
      */
     public JCoresScript console() {
-        return console(null);
+    	this.console = true;
+    	return this;
     }
+    
+    
+    /**
+     * Call this method if you want your script to be transferable to another host. In that case,
+     * the script will take all inputs with it, migrate to the other host, execute there, and then 
+     * return with its outputs.
+     * 
+     * @return This object.
+     */
+    public JCoresScript transferable() {
+        this.transferable = true;
+        return this;
+    }
+    
 
     /**
      * Packs the current script into a single file ready for deployment. Check the console 
