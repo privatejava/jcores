@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+
+<!-- General project description -->
+<project name="jcores" default="all">
+    
+    <!-- Define different global variables -->
+    <property name="prefix" value="jcores"/>
+    <property name="version" value="1.0"/>
+    
+    
+    <!-- Define different roots -->
+    <property name="build.root" value="ant.build/"/>
+    <property name="distribution.root" value="dist/"/>
+    
+    
+    <!-- Clear everything up -->
+    <target name="clean" description="Remove all previous build files">
+        <delete dir="${build.root}"/>
+        <delete dir="${distribution.root}"/>
+        <delete dir="documentation/api"/>
+        <mkdir dir="documentation/api"/>
+    </target>
+    
+
+    
+    
+    <!-- Build jCores -->
+    <target name="compile" description="Compile jCores" depends="clean">
+        <!-- Create folders -->    	
+        <mkdir dir="${build.root}/jcores.shared/"/>
+        
+        <!-- Make shared core -->
+        <javac srcdir="core/shared/src" destdir="${build.root}/jcores.shared" source="1.6" target="1.6" />
+        <jar destfile="${distribution.root}/${prefix}.shared-${version}.jar" basedir="${build.root}/jcores.shared"/>
+    </target>
+
+    
+    <!-- Run tests before we're done -->
+    <target name="test" description="Run all testcases">
+        <mkdir dir="${build.root}/tests/"/>
+        
+        <!-- Compile all testcases -->
+        <javac srcdir="tests/src/" destdir="${build.root}/tests/" source="1.6" target="1.6">
+            <classpath>
+                <fileset dir="${distribution.root}/">
+                    <filename name="*.jar"/>
+                </fileset>
+                <fileset dir="tests/dependencies/">
+                    <filename name="*.jar"/>
+                </fileset>
+            </classpath>
+        </javac>
+        
+        <!-- Jar testplugins -->
+        <jar destfile="${distribution.root}/${prefix}.testplugins-${version}.jar" basedir="${build.root}/tests/"/>
+        
+        <!-- Run all testcases -->
+        <junit printsummary="true" haltonfailure="true" fork="true">
+            <formatter type="plain" usefile="false"/>
+            <batchtest>
+                <fileset dir="${build.root}/tests/" includes="**/*Test.class"/>
+            </batchtest>
+            <classpath>
+                <fileset dir="${distribution.root}/">
+                    <include name="*.jar"/>
+                </fileset>
+                <fileset dir="tests/dependencies/">
+                    <filename name="*.jar"/>
+                </fileset>
+            </classpath>
+            <classpath location="${build.root}/tests/"/>
+        </junit>
+    </target>
+    
+    <!-- Documentation -->
+    <target name="documentation"></target>
+    
+    <!-- Prepare distributables -->
+    <target name="preparepublish" description="Generate distributables" >
+        <delete dir="${build.root}"/>
+        
+        <!-- Zip binary -->
+        <zip destfile="${distribution.root}/${prefix}-${version}.bin.zip">
+            <fileset dir=".">
+                <include name="documentation/**/*"/>
+                <include name="${distribution.root}/*core*"/>
+                <include name="${distribution.root}/*remote*"/>
+                <include name="${distribution.root}/*db*"/>
+                <include name="${distribution.root}/diagnosisreader"/>
+            </fileset>
+        </zip>
+        
+        <!-- Zip sources -->
+        <zip destfile="${distribution.root}/${prefix}-${version}.src.zip">
+            <fileset dir=".">
+                <include name="**/*"/>
+            </fileset>
+        </zip>
+    </target>
+
+
+
+    <!-- Pack plugins -->
+    <target name="all" depends="compile"/>
+</project>

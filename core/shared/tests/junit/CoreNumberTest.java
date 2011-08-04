@@ -27,7 +27,7 @@
  */
 package junit;
 
-import static net.jcores.jre.CoreKeeper.$;
+import static net.jcores.shared.CoreKeeper.$;
 import net.jcores.shared.cores.CoreNumber;
 import net.jcores.shared.cores.CoreObject;
 

@@ -53,6 +53,7 @@ import java.util.List;
 
 import net.jcores.extensions.serialization.CoreSerializer;
 import net.jcores.jre.cores.CoreObjectJRE;
+import net.jcores.jre.cores.CoreStringJRE;
 import net.jcores.shared.cores.CoreObject;
 import net.jcores.shared.cores.CoreString;
 import net.jcores.shared.interfaces.functions.F0;
@@ -79,7 +80,7 @@ public class APIv3 {
 
         final CoreString lines = $("test.txt").file().text().split("\n").filter("asd");
         CoreString filter = lines.filter("asd");
-        System.out.println(filter.file());
+        System.out.println(filter.as(CoreStringJRE.class).file());
 
         System.out.println($(" asjl lk saklj dlkasj dlkdj alsdj as").split(" ").size());
 

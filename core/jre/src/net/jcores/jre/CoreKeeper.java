@@ -45,11 +45,11 @@ import net.jcores.jre.cores.CoreBufferedImageJRE;
 import net.jcores.jre.cores.CoreClassJRE;
 import net.jcores.jre.cores.CoreComponentJRE;
 import net.jcores.jre.cores.CoreFileJRE;
+import net.jcores.jre.cores.CoreInputStreamJRE;
 import net.jcores.jre.cores.CoreJComponentJRE;
 import net.jcores.jre.cores.CoreObjectJRE;
 import net.jcores.jre.cores.CoreStringJRE;
 import net.jcores.jre.cores.CoreURIJRE;
-import net.jcores.shared.cores.CoreInputStream;
 import net.jcores.shared.cores.CoreMap;
 import net.jcores.shared.cores.CoreNumber;
 import net.jcores.shared.cores.adapter.AbstractAdapter;
@@ -183,8 +183,8 @@ public class CoreKeeper {
      * @param object The InputStreams to wrap.
      * @return A CoreInputStream wrapping the given InputStreams.
      */
-    public static CoreInputStream $(InputStream... object) {
-        return new CoreInputStream($, object);
+    public static CoreInputStreamJRE $(InputStream... object) {
+        return new CoreInputStreamJRE($, object);
     }
 
     /**

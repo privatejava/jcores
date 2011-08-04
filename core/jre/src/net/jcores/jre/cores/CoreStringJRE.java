@@ -27,9 +27,12 @@
  */
 package net.jcores.jre.cores;
 
+import java.io.File;
+
 import net.jcores.shared.CommonCore;
 import net.jcores.shared.cores.CoreString;
 import net.jcores.shared.cores.adapter.AbstractAdapter;
+import net.jcores.shared.interfaces.functions.F1;
 
 public class CoreStringJRE extends CoreString {
 
@@ -44,6 +47,29 @@ public class CoreStringJRE extends CoreString {
         super(supercore, adapter);
     }
     
+    
+    /**
+     * Treats all strings as filenames and returns a {@link CoreString} object 
+     * with the corresponding files.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("test.txt").file().delete()</code> - Deletes the specified file.</li>
+     * </ul> 
+     * 
+     * Multi-threaded.<br/>
+     * <br/>
+     * 
+     * @return A CoreFile object with all enclosed files.
+     */
+    public CoreFileJRE file() {
+        return new CoreFileJRE(this.commonCore, map(new F1<String, File>() {
+            public File f(String x) {
+                return new File(x);
+            }
+        }).unsafeadapter());
+    }
 
     /**
      * Creates an string core.

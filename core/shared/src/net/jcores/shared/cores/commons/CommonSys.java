@@ -46,7 +46,7 @@ import net.jcores.shared.options.Option;
  *
  */
 public class CommonSys extends CommonNamespace {
-
+    
     /** 
      * Creates a common file object.
      * 
@@ -132,7 +132,9 @@ public class CommonSys extends CommonNamespace {
     
         return false;
     }
-
+    
+    
+    
     /**
      * Creates a unique ID. If nothing is specified each call delivers a
      * new, unique ID. TODO: Option.UID_SYSTEM, .UID_USER, .UID_APP, ...
@@ -143,7 +145,4 @@ public class CommonSys extends CommonNamespace {
     public String uniqueID(Option... options) {
         return UUID.randomUUID().toString();
     }
-
-    
-    
 }

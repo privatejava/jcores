@@ -55,7 +55,7 @@ public abstract class Core implements Serializable {
     private static final long serialVersionUID = 2195880634253143587L;
 
     /** Our 'parent' core. */
-    transient protected CommonCore commonCore;
+    protected transient CommonCore commonCore;
 
     /**
      * Creates the core object for the given collection.

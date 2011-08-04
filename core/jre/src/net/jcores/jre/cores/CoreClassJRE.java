@@ -34,7 +34,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.jcores.shared.CommonCore;
-import net.jcores.shared.cores.CoreByteBuffer;
 import net.jcores.shared.cores.CoreObject;
 import net.jcores.shared.interfaces.functions.F1;
 import net.jcores.shared.managers.ManagerClass;

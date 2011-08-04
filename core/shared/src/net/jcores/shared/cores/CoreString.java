@@ -27,7 +27,6 @@
  */
 package net.jcores.shared.cores;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -42,7 +41,7 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.jcores.jre.cores.CoreFileJRE;
+import net.jcores.jre.cores.CoreByteBuffer;
 import net.jcores.shared.CommonCore;
 import net.jcores.shared.CoreKeeper;
 import net.jcores.shared.cores.adapter.AbstractAdapter;
@@ -418,29 +417,6 @@ public class CoreString extends CoreObject<String> {
         }).adapter);
     }
     
-    
-    /**
-     * Treats all strings as filenames and returns a {@link CoreString} object 
-     * with the corresponding files.<br/>
-     * <br/>
-     * 
-     * Examples:
-     * <ul>
-     * <li><code>$("test.txt").file().delete()</code> - Deletes the specified file.</li>
-     * </ul> 
-     * 
-     * Multi-threaded.<br/>
-     * <br/>
-     * 
-     * @return A CoreFile object with all enclosed files.
-     */
-    public CoreFileJRE file() {
-        return new CoreFileJRE(this.commonCore, map(new F1<String, File>() {
-            public File f(String x) {
-                return new File(x);
-            }
-        }).adapter);
-    }
 
     /**
      * Filters all strings using the given regular expression. <br/>

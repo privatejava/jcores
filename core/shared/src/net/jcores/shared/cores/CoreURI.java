@@ -33,6 +33,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
+import net.jcores.jre.cores.CoreInputStreamJRE;
 import net.jcores.shared.CommonCore;
 import net.jcores.shared.cores.adapter.AbstractAdapter;
 import net.jcores.shared.interfaces.functions.F1;
@@ -88,8 +89,8 @@ public class CoreURI extends CoreObject<URI> {
      * 
      * @return A CoreInputStream object enclosing the opened input streams.
      */
-    public CoreInputStream input() {
-        return new CoreInputStream(this.commonCore, map(new F1<URI, InputStream>() {
+    public CoreInputStreamJRE input() {
+        return new CoreInputStreamJRE(this.commonCore, map(new F1<URI, InputStream>() {
             public InputStream f(URI x) {
                 try {
                     final URL url = x.toURL();

@@ -27,6 +27,9 @@
  */
 package net.jcores.jre.cores;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -39,6 +42,8 @@ import net.jcores.shared.cores.CoreObject;
 import net.jcores.shared.cores.adapter.AbstractAdapter;
 import net.jcores.shared.interfaces.functions.F1;
 import net.jcores.shared.options.MessageType;
+import net.jcores.shared.options.Option;
+import net.jcores.shared.utils.internal.io.StreamUtils;
 
 /**
  * @author Ralf Biedert
@@ -172,6 +177,36 @@ public class CoreObjectJRE<T> extends CoreObject<T> {
             }
         });
     }
+    
+
+    /**
+     * Serializes this core into the given file. Objects that are not serializable
+     * are ignored. The file can later be restored with the function <code>deserialize()</code> in {@link CoreFileJRE}.<br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("Hello", "World").serialize("data.ser")</code> - Writes the core to a file.</li>
+     * </ul>
+     * 
+     * Single-threaded.<br/>
+     * <br/>
+     * 
+     * @param path The location to which this core should be serialized.
+     * @param options Currently not used.
+     * @return This core.
+     */
+    public CoreObject<T> serialize(final String path, Option... options) {
+        try {
+            StreamUtils.serializeCore(this, new FileOutputStream(new File(path)));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return this;
+    }
+
+    
+    
 
     /**
      * For each of the contained elements an object of the type <code>wrapper</code> is

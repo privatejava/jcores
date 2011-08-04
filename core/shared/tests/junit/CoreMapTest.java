@@ -1,7 +1,7 @@
 /*
- * CoreStringTest.java
+ * CoreMapTest.java
  * 
- * Copyright (c) 2010, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -27,15 +27,10 @@
  */
 package junit;
 
-import static net.jcores.jre.CoreKeeper.$;
+import static net.jcores.shared.CoreKeeper.$;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import net.jcores.shared.interfaces.functions.F0;
-import net.jcores.shared.utils.map.MapUtil;
-import net.jcores.shared.utils.map.generators.NewUnsafeInstance;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -43,55 +38,18 @@ import org.junit.Test;
 /**
  * @author Ralf Biedert
  */
-public class CommonCoreTest {
+public class CoreMapTest {
 
     /** */
     @Test
-    public void testTimer() {
-        final AtomicInteger i = new AtomicInteger(333);
-
-        $.sys.oneTime(new F0() {
-            public void f() {
-                i.set(666);
-            }
-        }, 250);
-
-        $.sys.sleep(400);
-
-        Assert.assertEquals(666, i.get());
-
-        $.sys.oneTime(new F0() {
-            public void f() {
-                i.set(667);
-            }
-        }, 400);
-
-        $.sys.sleep(200);
-
-        Assert.assertEquals(666, i.get());
+    public void testKeysAndValues() {
+        final Map<String, String> m = new HashMap<String, String>();
+        m.put("a", "x");
+        m.put("b", "y");
+        
+        Assert.assertEquals("x", $(m).value("a"));
+        Assert.assertEquals("y", $(m).value("b"));
+        Assert.assertEquals("a", $(m).key("x"));
+        Assert.assertEquals("b", $(m).key("y"));
     }
-
-    /** */
-    @Test
-    public void testPermute() {
-        final String x[] = $("a", "b", "c", "d", "e").array(String.class);
-
-        int i = 0;
-        while ($.alg.permute(x))
-            i++;
-
-        Assert.assertEquals(120 - 1, i);
-    }
-
-    /** */
-    @SuppressWarnings("boxing")
-    @Test
-    public void testMap() {
-        final MapUtil<String, List<Integer>> m1 = $.map();
-        m1.generator(new NewUnsafeInstance<String, List<Integer>>(ArrayList.class));
-
-        m1.get("a").add(1);
-        Assert.assertEquals(m1.get("a").get(0), Integer.valueOf(1));
-    }
-
 }

@@ -42,7 +42,7 @@ import java.util.Random;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import net.jcores.shared.cores.CoreZipInputStream;
+import net.jcores.jre.cores.CoreZipInputStreamJRE;
 
 /**
  * @author rb
@@ -60,7 +60,7 @@ public class SimpleUnzip {
         //doUnzip("/tmp/1.zip", "/tmp/unz");
 
         $("/tmp/uunz").file().delete();
-        CoreZipInputStream zipstream = $("/tmp/torate.zip").file().input().zipstream();
+        CoreZipInputStreamJRE zipstream = $("/tmp/torate.zip").file().input().zipstream();
         // zipstream.dir().print();
         System.out.println(zipstream.get("experiment.9.pageThailand.1282134351569.1282134351928.png"));
         System.out.println(zipstream.get("experiment.8.pageHonigbiene.1282131517351.1282131517788.png"));

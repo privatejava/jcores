@@ -27,9 +27,6 @@
  */
 package net.jcores.shared.cores;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
@@ -48,7 +45,6 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.jcores.jre.cores.CoreFileJRE;
 import net.jcores.shared.CommonCore;
 import net.jcores.shared.cores.adapter.AbstractAdapter;
 import net.jcores.shared.cores.adapter.ArrayAdapter;
@@ -69,7 +65,6 @@ import net.jcores.shared.options.OptionMapType;
 import net.jcores.shared.utils.internal.Folder;
 import net.jcores.shared.utils.internal.Mapper;
 import net.jcores.shared.utils.internal.Wrapper;
-import net.jcores.shared.utils.internal.io.StreamUtils;
 import net.jcores.shared.utils.internal.lang.ObjectUtils;
 import net.jcores.shared.utils.map.Compound;
 
@@ -1758,32 +1753,6 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         }
 
         return new CoreObject<T>(this.commonCore, c);
-    }
-
-    /**
-     * Serializes this core into the given file. Objects that are not serializable
-     * are ignored. The file can later be restored with the function <code>deserialize()</code> in {@link CoreFileJRE}.<br/>
-     * <br/>
-     * 
-     * Examples:
-     * <ul>
-     * <li><code>$("Hello", "World").serialize("data.ser")</code> - Writes the core to a file.</li>
-     * </ul>
-     * 
-     * Single-threaded.<br/>
-     * <br/>
-     * 
-     * @param path The location to which this core should be serialized.
-     * @param options Currently not used.
-     * @return This core.
-     */
-    public CoreObject<T> serialize(final String path, Option... options) {
-        try {
-            StreamUtils.serializeCore(this, new FileOutputStream(new File(path)));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        return this;
     }
 
     /**

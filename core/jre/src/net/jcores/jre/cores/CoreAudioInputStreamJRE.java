@@ -30,7 +30,6 @@ package net.jcores.jre.cores;
 import javax.sound.sampled.AudioInputStream;
 
 import net.jcores.shared.CommonCore;
-import net.jcores.shared.cores.CoreInputStream;
 import net.jcores.shared.interfaces.functions.F1;
 import net.jcores.shared.utils.internal.sound.SoundUtils;
 
@@ -41,7 +40,7 @@ import net.jcores.shared.utils.internal.sound.SoundUtils;
  * <code>$("sound.wav").file().audio().play()</code><br/>
  * <br/>
  * 
- * <b>Important note: See {@link CoreInputStream} regarding <i>consuming</i> methods.</b>
+ * <b>Important note: See {@link CoreInputStreamJRE} regarding <i>consuming</i> methods.</b>
  * 
  * @author Ralf Biedert
  * @since 1.0

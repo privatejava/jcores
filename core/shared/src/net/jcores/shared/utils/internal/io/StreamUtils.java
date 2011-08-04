@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -48,8 +49,8 @@ import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import net.jcores.jre.cores.CoreObjectJRE;
 import net.jcores.shared.CommonCore;
-import net.jcores.shared.cores.CoreObject;
 import net.jcores.shared.options.MessageType;
 
 /**
@@ -328,7 +329,7 @@ public class StreamUtils {
      * @param core
      * @param fos
      */
-    public static void serializeCore(CoreObject<?> core, FileOutputStream fos) {
+    public static void serializeCore(CoreObjectJRE<?> core, FileOutputStream fos) {
         try {
             final GZIPOutputStream goz = new GZIPOutputStream(fos);
             final ObjectOutputStream oos = new ObjectOutputStream(goz);
@@ -348,20 +349,35 @@ public class StreamUtils {
      * @param <T> .
      * @param type .
      * @param fis .
+     * @param core
      * @return .
      */
     @SuppressWarnings("unchecked")
-    public static <T> CoreObject<T> deserializeCore(Class<T> type, InputStream fis) {
+    public static <T> CoreObjectJRE<T> deserializeCore(Class<T> type, InputStream fis,
+                                                       CommonCore core) {
         try {
             final GZIPInputStream gis = new GZIPInputStream(fis);
             final ObjectInputStream ois = new ObjectInputStream(gis);
 
-            return (CoreObject<T>) ois.readObject();
+            final CoreObjectJRE<T> rval = (CoreObjectJRE<T>) ois.readObject();
+            final Field field = rval.getClass().getField("commonCore");
+            field.setAccessible(true);
+            field.set(rval, core);
+
+            return rval;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
         return null;

@@ -1,7 +1,7 @@
 /*
- * CoreMapTest.java
+ * CoreStringTest.java
  * 
- * Copyright (c) 2011, Ralf Biedert All rights reserved.
+ * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -28,9 +28,8 @@
 package junit;
 
 import static net.jcores.jre.CoreKeeper.$;
-
-import java.util.HashMap;
-import java.util.Map;
+import junit.data.Data;
+import net.jcores.jre.cores.CoreStringJRE;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -38,18 +37,34 @@ import org.junit.Test;
 /**
  * @author Ralf Biedert
  */
-public class CoreMapTest {
+public class CoreObjectTestJRE {
+
+    /** */
+    @SuppressWarnings("boxing")
+    @Test
+    public void testCall() {
+        class X {
+            int a = 1;
+
+            @SuppressWarnings("unused")
+            double b() {
+                return this.a * 2;
+            }
+        }
+
+        Assert.assertEquals(1, $(new X()).call("a").get(0));
+        Assert.assertEquals(2.0, $(new X()).call("b()").get(0));
+    }
 
     /** */
     @Test
-    public void testKeysAndValues() {
-        final Map<String, String> m = new HashMap<String, String>();
-        m.put("a", "x");
-        m.put("b", "y");
-        
-        Assert.assertEquals("x", $(m).value("a"));
-        Assert.assertEquals("y", $(m).value("b"));
-        Assert.assertEquals("a", $(m).key("x"));
-        Assert.assertEquals("b", $(m).key("y"));
+    public void testSerialize() {
+        $("hello", "world").serialize("test.jcores");
+        final CoreStringJRE converted = $("test.jcores").file().deserialize(String.class).string();
+        $.report();
+        Assert.assertEquals("helloworld", converted.join());
+
+        $(Data.strings(10000)).serialize("big.file");
     }
+
 }

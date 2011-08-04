@@ -39,7 +39,6 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -55,12 +54,8 @@ import net.jcores.jre.CoreKeeper;
 import net.jcores.jre.utils.internal.io.FileUtils;
 import net.jcores.shared.CommonCore;
 import net.jcores.shared.cores.Core;
-import net.jcores.shared.cores.CoreByteBuffer;
-import net.jcores.shared.cores.CoreInputStream;
 import net.jcores.shared.cores.CoreNumber;
 import net.jcores.shared.cores.CoreObject;
-import net.jcores.shared.cores.CoreString;
-import net.jcores.shared.cores.CoreURI;
 import net.jcores.shared.cores.adapter.AbstractAdapter;
 import net.jcores.shared.interfaces.functions.F1;
 import net.jcores.shared.interfaces.functions.F1Object2Bool;
@@ -70,9 +65,10 @@ import net.jcores.shared.utils.internal.io.StreamUtils;
 import net.jcores.shared.utils.internal.sound.SoundUtils;
 
 /**
- * Wraps a number of files and exposes some convenience functions. For example, 
- * to list all files in a given path (denoted by a file-object), 
- * write:<br/><br/>
+ * Wraps a number of files and exposes some convenience functions. For example,
+ * to list all files in a given path (denoted by a file-object),
+ * write:<br/>
+ * <br/>
  * 
  * <code>$(path).dir().print()</code>
  * 
@@ -94,7 +90,6 @@ public class CoreFileJRE extends CoreObjectJRE<File> {
     public CoreFileJRE(CommonCore supercore, File... files) {
         super(supercore, files);
     }
-    
 
     /**
      * @param supercore The shared CommonCore.
@@ -104,16 +99,17 @@ public class CoreFileJRE extends CoreObjectJRE<File> {
         super(supercore, adapter);
     }
 
-
     /**
-     * Appends the object.toString() to all given files. The files will be created if they don't 
+     * Appends the object.toString() to all given files. The files will be created if they don't
      * exist. The function is usually only called with a single enclosed file object. <br/>
      * <br/>
      * 
      * Examples:
      * <ul>
-     * <li><code>$("test.txt").file().append("Hello World")</code> - Appends <code>'Hello World'</code> to the file <code>'test.txt'</code>.</li>
-     * <li><code>$("result.csv").file().delete().append("a,b,c")</code> - Writes a data set into a file, the previous content will have been removed.</li>
+     * <li><code>$("test.txt").file().append("Hello World")</code> - Appends <code>'Hello World'</code> to the file
+     * <code>'test.txt'</code>.</li>
+     * <li><code>$("result.csv").file().delete().append("a,b,c")</code> - Writes a data set into a file, the previous
+     * content will have been removed.</li>
      * </ul>
      * 
      * 
@@ -148,8 +144,7 @@ public class CoreFileJRE extends CoreObjectJRE<File> {
 
         return this;
     }
-    
-    
+
     /**
      * Treats the given files as audio files and returns a {@link CoreAudioInputStreamJRE} for them.<br/>
      * <br/>
@@ -172,7 +167,6 @@ public class CoreFileJRE extends CoreObjectJRE<File> {
             }
         }).array(AudioInputStream.class));
     }
-    
 
     /**
      * Copies all enclosed files to the destination. If <code>destination</code> is a directory all enclosed objects
@@ -184,14 +178,17 @@ public class CoreFileJRE extends CoreObjectJRE<File> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$("source.zip").file().copy("/dest/")</code> - Copies the file <code>source.zip</code> to the toplevel folder <code>/dest</code></li>
-     * <li><code>$("src/").file().copy("bin/")</code> - Copies the directory <code>src</code> to the directory <code>bin</code></li>
+     * <li><code>$("source.zip").file().copy("/dest/")</code> - Copies the file <code>source.zip</code> to the toplevel
+     * folder <code>/dest</code></li>
+     * <li><code>$("src/").file().copy("bin/")</code> - Copies the directory <code>src</code> to the directory
+     * <code>bin</code></li>
      * </ul>
      * 
      * Multi-threaded.<br/>
      * <br/>
      * 
-     * @param destination The destination to write to. Can be a directory or a file. Directories <b>must end with a slash
+     * @param destination The destination to write to. Can be a directory or a file. Directories <b>must end with a
+     * slash
      * (<code>/</code>) or pre-exist</b>, otherwise they will be treated as files!
      * 
      * @return The new core file object, containing all files that have been copied..
@@ -204,7 +201,7 @@ public class CoreFileJRE extends CoreObjectJRE<File> {
 
         final File dest = new File(destination);
         final CommonCore cc = this.commonCore;
-        
+
         return new CoreFileJRE(this.commonCore, map(new F1<File, File[]>() {
             @Override
             public File[] f(File x) {
@@ -267,7 +264,7 @@ public class CoreFileJRE extends CoreObjectJRE<File> {
      * <ul>
      * <li><code>$(".").dir().filter(".*png$").delete()</code> - Deletes all PNG files below the given directory.</li>
      * </ul>
-     *  
+     * 
      * Multi-threaded.<br/>
      * <br/>
      * 
@@ -291,8 +288,8 @@ public class CoreFileJRE extends CoreObjectJRE<File> {
                 }
 
                 // Try to delete the entry
-                if(!x.delete()) {
-                	cc.report(MessageType.EXCEPTION, "Unable to delete " + x);
+                if (!x.delete()) {
+                    cc.report(MessageType.EXCEPTION, "Unable to delete " + x);
                 }
 
                 return null;
@@ -303,14 +300,15 @@ public class CoreFileJRE extends CoreObjectJRE<File> {
     }
 
     /**
-     * De-serializes the previously serialized {@link CoreObject} from the enclosed file. 
+     * De-serializes the previously serialized {@link CoreObject} from the enclosed file.
      * Objects that are not serializable are ignored.<br/>
      * <br/>
      * 
      * 
      * Examples:
      * <ul>
-     * <li><code>$("storage.ser").file().deserialize(String.class)</code> - Restores a {@link Core} that previously contained a number of Strings and that was written with <code>core.serialize("storage.ser")</code>.</li>
+     * <li><code>$("storage.ser").file().deserialize(String.class)</code> - Restores a {@link Core} that previously
+     * contained a number of Strings and that was written with <code>core.serialize("storage.ser")</code>.</li>
      * </ul>
      * 
      * Single-threaded. Size-of-one.<br/>
@@ -329,22 +327,13 @@ public class CoreFileJRE extends CoreObjectJRE<File> {
 
         // Try to restore the core, and don't forget to set the commonCore
         try {
-            final CoreObject<T> core = StreamUtils.deserializeCore(type, new FileInputStream(get(0)));
-            if (core != null) {
-                final Field field = Core.class.getDeclaredField("commonCore");
-                field.setAccessible(true);
-                field.set(core, this.commonCore);
-                return core;
-            }
+            final CoreObject<T> core = StreamUtils.deserializeCore(type, new FileInputStream(get(0)), this.commonCore);
+            if (core != null) return core;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (SecurityException e) {
             e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
 
@@ -387,7 +376,8 @@ public class CoreFileJRE extends CoreObjectJRE<File> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$(".").file().dir().filesize().sum()</code> - Computes how much space all files below this directory consume.</li>
+     * <li><code>$(".").file().dir().filesize().sum()</code> - Computes how much space all files below this directory
+     * consume.</li>
      * </ul>
      * 
      * Multi-threaded.<br/>
@@ -410,7 +400,8 @@ public class CoreFileJRE extends CoreObjectJRE<File> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$(".").file().dir().filter(".*java$").print()</code> - Prints all files that end with <code>.java</code>.</li>
+     * <li><code>$(".").file().dir().filter(".*java$").print()</code> - Prints all files that end with
+     * <code>.java</code>.</li>
      * </ul>
      * 
      * Multi-threaded.<br/>
@@ -432,7 +423,6 @@ public class CoreFileJRE extends CoreObjectJRE<File> {
         }, options).array(File.class));
     }
 
-    
     /**
      * Tries to load all enclosed files as images.<br/>
      * <br/>
@@ -441,7 +431,7 @@ public class CoreFileJRE extends CoreObjectJRE<File> {
      * <ul>
      * <li><code>$("image.jpg").file().images().get(0)</code> - Returns a {@link BufferedImage} for the specified file.</li>
      * </ul>
-     *  
+     * 
      * Multi-threaded.<br/>
      * <br/>
      * 
@@ -461,7 +451,6 @@ public class CoreFileJRE extends CoreObjectJRE<File> {
         }).array(BufferedImage.class));
     }
 
-    
     /**
      * Opens the given file objects as input streams. File stream which could not be
      * opened will be returned as null.<br/>
@@ -477,8 +466,8 @@ public class CoreFileJRE extends CoreObjectJRE<File> {
      * 
      * @return A CoreInputStream with the opened files.
      */
-    public CoreInputStream input() {
-        return new CoreInputStream(this.commonCore, map(new F1<File, InputStream>() {
+    public CoreInputStreamJRE input() {
+        return new CoreInputStreamJRE(this.commonCore, map(new F1<File, InputStream>() {
             public InputStream f(File x) {
                 try {
                     return new BufferedInputStream(new FileInputStream(x));
@@ -487,8 +476,7 @@ public class CoreFileJRE extends CoreObjectJRE<File> {
             }
         }).array(InputStream.class));
     }
-    
-    
+
     /**
      * Puts all enclosed files into the JAR file <code>target</code>. If files are enclosed individually they will be
      * stored as a top-level entry. If directories are enclosed in this core, the relative paths below that directory
@@ -497,7 +485,8 @@ public class CoreFileJRE extends CoreObjectJRE<File> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$("bin").file().jar("application.jar")</code> - Creates a JAR and puts the content of the folder in it.</li>
+     * <li><code>$("bin").file().jar("application.jar")</code> - Creates a JAR and puts the content of the folder in it.
+     * </li>
      * </ul>
      * 
      * Single-threaded.<br/>
@@ -509,7 +498,7 @@ public class CoreFileJRE extends CoreObjectJRE<File> {
      * @return This Core again.
      */
     public CoreFileJRE jar(String target, Manifest manifest, Option... options) {
-        FileUtils.jarFiles(new File(target), manifest, this.adapter.array());
+        FileUtils.jarFiles(new File(target), manifest, this.unsafeadapter().array());
         return this;
     }
 
@@ -530,14 +519,13 @@ public class CoreFileJRE extends CoreObjectJRE<File> {
     public CoreFileJRE mkdir() {
         for (int i = 0; i < size(); i++) {
             final File file = get(i);
-            if(file == null) continue;
+            if (file == null) continue;
             file.mkdirs();
         }
-        
+
         return this;
     }
-    
-    
+
     /**
      * Returns all lines of all files joint. A core will be returned in which each
      * entry is a String containing the specific file's content. This is a shorthand
@@ -555,9 +543,9 @@ public class CoreFileJRE extends CoreObjectJRE<File> {
      * 
      * @return A CoreString object containing the files' contents.
      */
-    public CoreString text() {
+    public CoreStringJRE text() {
         final CommonCore cc = this.commonCore;
-        return new CoreString(this.commonCore, map(new F1<File, String>() {
+        return new CoreStringJRE(this.commonCore, map(new F1<File, String>() {
             public String f(final File x) {
                 return FileUtils.readText(cc, x);
             }
@@ -578,8 +566,8 @@ public class CoreFileJRE extends CoreObjectJRE<File> {
      * 
      * @return A CoreURI object with all converted files.
      */
-    public CoreURI uri() {
-        return new CoreURI(this.commonCore, map(new F1<File, URI>() {
+    public CoreURIJRE uri() {
+        return new CoreURIJRE(this.commonCore, map(new F1<File, URI>() {
             public URI f(File x) {
                 return x.toURI();
             }
@@ -594,7 +582,8 @@ public class CoreFileJRE extends CoreObjectJRE<File> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$("file.a", "file.b").file().zip("archive.zip")</code> - Creates a zip and puts the two given files in it.</li>
+     * <li><code>$("file.a", "file.b").file().zip("archive.zip")</code> - Creates a zip and puts the two given files in
+     * it.</li>
      * </ul>
      * 
      * Single-threaded.<br/>

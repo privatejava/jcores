@@ -25,7 +25,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.shared.cores;
+package net.jcores.jre.cores;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.zip.ZipInputStream;
 
 import net.jcores.shared.CommonCore;
+import net.jcores.shared.cores.CoreObject;
+import net.jcores.shared.cores.CoreString;
 import net.jcores.shared.cores.adapter.AbstractAdapter;
 import net.jcores.shared.interfaces.functions.F1;
 import net.jcores.shared.options.MessageType;
@@ -46,12 +48,12 @@ import net.jcores.shared.utils.internal.io.StreamUtils;
  * <code>$(zipstream).unzip("target")</code><br/>
  * <br/>
  * 
- * <b>Important note: See {@link CoreInputStream} regarding <i>consuming</i> methods.</b>
+ * <b>Important note: See {@link CoreInputStreamJRE} regarding <i>consuming</i> methods.</b>
  * 
  * @author Ralf Biedert
  * @since 1.0
  */
-public class CoreZipInputStream extends CoreObject<ZipInputStream> {
+public class CoreZipInputStreamJRE extends CoreObject<ZipInputStream> {
 
     /** Used for serialization */
     private static final long serialVersionUID = 5934382074823292082L;
@@ -65,7 +67,7 @@ public class CoreZipInputStream extends CoreObject<ZipInputStream> {
      * @param supercore The common core.
      * @param objects The strings to wrap.
      */
-    public CoreZipInputStream(CommonCore supercore, ZipInputStream... objects) {
+    public CoreZipInputStreamJRE(CommonCore supercore, ZipInputStream... objects) {
         super(supercore, objects);
     }
 
@@ -73,7 +75,7 @@ public class CoreZipInputStream extends CoreObject<ZipInputStream> {
      * @param supercore The shared CommonCore.
      * @param adapter The adapter.
      */
-    public CoreZipInputStream(CommonCore supercore, AbstractAdapter<ZipInputStream> adapter) {
+    public CoreZipInputStreamJRE(CommonCore supercore, AbstractAdapter<ZipInputStream> adapter) {
         super(supercore, adapter);
     }
 
@@ -96,7 +98,7 @@ public class CoreZipInputStream extends CoreObject<ZipInputStream> {
      * 
      * @return Return <code>this</code>.
      */
-    public CoreZipInputStream unzip(final String destination) {
+    public CoreZipInputStreamJRE unzip(final String destination) {
         map(new F1<ZipInputStream, Void>() {
             @Override
             public Void f(ZipInputStream x) {
@@ -104,7 +106,7 @@ public class CoreZipInputStream extends CoreObject<ZipInputStream> {
                     StreamUtils.doUnzip(x, destination);
                     x.close();
                 } catch (IOException e) {
-                    CoreZipInputStream.this.commonCore.report(MessageType.EXCEPTION, "IO error processing " + e + ".");
+                    CoreZipInputStreamJRE.this.commonCore.report(MessageType.EXCEPTION, "IO error processing " + e + ".");
                 }
                 return null;
             }
@@ -137,7 +139,7 @@ public class CoreZipInputStream extends CoreObject<ZipInputStream> {
                     x.close();
                     return list;
                 } catch (IOException e) {
-                    CoreZipInputStream.this.commonCore.report(MessageType.EXCEPTION, "IO error processing " + e + ".");
+                    CoreZipInputStreamJRE.this.commonCore.report(MessageType.EXCEPTION, "IO error processing " + e + ".");
                 }
                 return null;
             }

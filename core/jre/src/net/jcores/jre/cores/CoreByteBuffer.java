@@ -25,13 +25,15 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.shared.cores;
+package net.jcores.jre.cores;
 
 import static net.jcores.jre.CoreKeeper.$;
 
 import java.nio.ByteBuffer;
 
 import net.jcores.shared.CommonCore;
+import net.jcores.shared.cores.CoreObject;
+import net.jcores.shared.cores.CoreString;
 import net.jcores.shared.interfaces.functions.F1;
 import net.jcores.shared.options.Option;
 import net.jcores.shared.options.OptionHash;

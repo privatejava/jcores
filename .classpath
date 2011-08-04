@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="core/shared/src"/>
+	<classpathentry kind="src" path="core/shared/tests"/>
 	<classpathentry kind="src" path="core/jre/src"/>
 	<classpathentry kind="src" path="core/jre/tests"/>
 	<classpathentry kind="src" path="extensions/script/src"/>

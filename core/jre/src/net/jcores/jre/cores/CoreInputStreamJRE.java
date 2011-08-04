@@ -25,7 +25,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.shared.cores;
+package net.jcores.jre.cores;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -36,10 +36,11 @@ import java.util.zip.ZipInputStream;
 import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
 
-import net.jcores.jre.cores.CoreAudioInputStreamJRE;
-import net.jcores.jre.cores.CoreBufferedImageJRE;
 import net.jcores.shared.CommonCore;
 import net.jcores.shared.CoreKeeper;
+import net.jcores.shared.cores.CoreObject;
+import net.jcores.shared.cores.CoreString;
+import net.jcores.shared.cores.adapter.EmptyAdapter;
 import net.jcores.shared.interfaces.functions.F1;
 import net.jcores.shared.options.MessageType;
 import net.jcores.shared.options.Option;
@@ -98,7 +99,7 @@ import net.jcores.shared.utils.internal.sound.SoundUtils;
  * @since 1.0
  * @author Ralf Biedert
  */
-public class CoreInputStream extends CoreObject<InputStream> {
+public class CoreInputStreamJRE extends CoreObjectJRE<InputStream> {
 
     /** Used for serialization */
     private static final long serialVersionUID = 1520313333781137198L;
@@ -109,7 +110,7 @@ public class CoreInputStream extends CoreObject<InputStream> {
      * @param supercore The common core.
      * @param objects The input stream to wrap.
      */
-    public CoreInputStream(CommonCore supercore, InputStream... objects) {
+    public CoreInputStreamJRE(CommonCore supercore, InputStream... objects) {
         super(supercore, objects);
     }
 
@@ -179,19 +180,16 @@ public class CoreInputStream extends CoreObject<InputStream> {
      * @return The previously serialized core (using <code>.serialize()</code>).
      * @see CoreObject
      */
-    public <T> CoreObject<T> deserialize(Class<T> type, Option... options) {
+    public <T> CoreObjectJRE<T> deserialize(Class<T> type, Option... options) {
 
         if (size() > 1)
             this.commonCore.report(MessageType.MISUSE, "deserialize() should not be used on cores with more than one class!");
 
         // Try to restore the core, and don't forget to set the commonCore
-        final CoreObject<T> core = StreamUtils.deserializeCore(type, get(0));
-        if (core != null) {
-            core.commonCore = this.commonCore;
-            return core;
-        }
+        final CoreObjectJRE<T> core = StreamUtils.deserializeCore(type, get(0), this.commonCore);
+        if (core != null) return core;
 
-        return new CoreObject<T>(this.commonCore, type, null);
+        return new CoreObjectJRE<T>(this.commonCore, new EmptyAdapter<T>());
     }
 
     /**
@@ -218,7 +216,7 @@ public class CoreInputStream extends CoreObject<InputStream> {
                     StreamUtils.doUnzip(x, destination);
                     x.close();
                 } catch (IOException e) {
-                    CoreInputStream.this.commonCore.report(MessageType.EXCEPTION, "IO error processing " + x + ".");
+                    CoreInputStreamJRE.this.commonCore.report(MessageType.EXCEPTION, "IO error processing " + x + ".");
                 }
                 return null;
             }
@@ -240,12 +238,12 @@ public class CoreInputStream extends CoreObject<InputStream> {
      * 
      * @return A CoreZipInputStream.
      */
-    public CoreZipInputStream zipstream() {
+    public CoreZipInputStreamJRE zipstream() {
         return map(new F1<InputStream, ZipInputStream>() {
             public ZipInputStream f(InputStream x) {
                 return new ZipInputStream(x);
             }
-        }).as(CoreZipInputStream.class);
+        }).as(CoreZipInputStreamJRE.class);
     }
 
     
@@ -270,7 +268,7 @@ public class CoreInputStream extends CoreObject<InputStream> {
                 try {
                     return ImageIO.read(x);
                 } catch (IOException e) {
-                    CoreInputStream.this.commonCore.report(MessageType.EXCEPTION, "Error loading image from stream " + x);
+                    CoreInputStreamJRE.this.commonCore.report(MessageType.EXCEPTION, "Error loading image from stream " + x);
                 }
                 
                 return null;
@@ -298,12 +296,12 @@ public class CoreInputStream extends CoreObject<InputStream> {
     public CoreString text() {
         return new CoreString(this.commonCore, map(new F1<InputStream, String>() {
             public String f(final InputStream x) {
-                String readText = StreamUtils.readText(CoreInputStream.this.commonCore, x);
+                String readText = StreamUtils.readText(CoreInputStreamJRE.this.commonCore, x);
 
                 try {
                     x.close();
                 } catch (IOException e) {
-                    CoreInputStream.this.commonCore.report(MessageType.EXCEPTION, "Error closing stream " + x + ".");
+                    CoreInputStreamJRE.this.commonCore.report(MessageType.EXCEPTION, "Error closing stream " + x + ".");
                 }
 
                 return readText;
@@ -337,7 +335,7 @@ public class CoreInputStream extends CoreObject<InputStream> {
                 try {
                     x.close();
                 } catch (IOException e) {
-                    CoreInputStream.this.commonCore.report(MessageType.EXCEPTION, "Error closing stream " + x + ".");
+                    CoreInputStreamJRE.this.commonCore.report(MessageType.EXCEPTION, "Error closing stream " + x + ".");
                 }
 
                 return generateHash;
@@ -367,7 +365,7 @@ public class CoreInputStream extends CoreObject<InputStream> {
                 try {
                     x.close();
                 } catch (IOException e) {
-                    CoreInputStream.this.commonCore.report(MessageType.EXCEPTION, "Error closing stream " + x + ".");
+                    CoreInputStreamJRE.this.commonCore.report(MessageType.EXCEPTION, "Error closing stream " + x + ".");
                 }
 
                 return byteData;

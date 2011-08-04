@@ -27,16 +27,15 @@
  */
 package junit;
 
-import static net.jcores.jre.CoreKeeper.$;
+import static net.jcores.shared.CoreKeeper.$;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.data.Data;
-import net.jcores.jre.cores.CoreObjectJRE;
-import net.jcores.jre.cores.CoreStringJRE;
 import net.jcores.shared.cores.CoreNumber;
+import net.jcores.shared.cores.CoreObject;
 import net.jcores.shared.cores.CoreString;
 import net.jcores.shared.interfaces.functions.F1;
 import net.jcores.shared.interfaces.functions.F2DeltaObjects;
@@ -295,17 +294,6 @@ public class CoreObjectTest {
 
     /** */
     @Test
-    public void testSerialize() {
-        $("hello", "world").serialize("test.jcores");
-        final CoreString converted = $("test.jcores").file().deserialize(String.class).string();
-        $.report();
-        Assert.assertEquals("helloworld", converted.join());
-
-        $(Data.strings(10000)).serialize("big.file");
-    }
-
-    /** */
-    @Test
     public void testList() {
         List<String> list = $("a", "b", "c").list();
         list.remove(1);
@@ -339,24 +327,6 @@ public class CoreObjectTest {
     public void testCount() {
         Assert.assertEquals(4, 0 + $("a", "b", "a", "c", "a", "d", "a").count().value("a"));
     }
-    
-    
-    /** */
-    @SuppressWarnings("boxing")
-    @Test
-    public void testCall() {
-        class X {
-            int a = 1;
-            @SuppressWarnings("unused")
-            double b() {
-                return this.a * 2;
-            }
-        }
-        
-        Assert.assertEquals(1, $(new X()).call("a").get(0));
-        Assert.assertEquals(2.0, $(new X()).call("b()").get(0));
-    }
-
     
     
     /** */
@@ -407,16 +377,16 @@ public class CoreObjectTest {
     /** Test if the iterator works as expected */
     @Test
     public void testAllAny() {
-        final CoreStringJRE c = $(null, "a", "b", null, null, "c", null);
+        final CoreString c = $(null, "a", "b", null, null, "c", null);
         Assert.assertTrue(c.hasAny());
         Assert.assertFalse(c.hasAll());
 
-        CoreObjectJRE<Object> d = $(new Object[] { null });
+        CoreObject<Object> d = $(new Object[] { null });
         Assert.assertFalse(d.hasAny());
         Assert.assertFalse(d.hasAll());
         
         
-        CoreStringJRE e = $("a", "b");
+        CoreString e = $("a", "b");
         Assert.assertTrue(e.hasAny());
         Assert.assertTrue(e.hasAll());
 

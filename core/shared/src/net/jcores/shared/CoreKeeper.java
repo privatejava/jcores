@@ -27,19 +27,12 @@
  */
 package net.jcores.shared;
 
-import java.io.File;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import javax.sound.sampled.AudioInputStream;
-
-import net.jcores.jre.cores.CoreAudioInputStreamJRE;
-import net.jcores.jre.cores.CoreFileJRE;
-import net.jcores.shared.cores.CoreInputStream;
 import net.jcores.shared.cores.CoreMap;
 import net.jcores.shared.cores.CoreNumber;
 import net.jcores.shared.cores.CoreObject;
@@ -86,15 +79,6 @@ public class CoreKeeper {
     }
 
 
-    /**
-     * Wraps the given AudioInputStreams and returns a CoreAudioInputStream.
-     * 
-     * @param object The AudioInputStreams to wrap..
-     * @return A CoreAudioInputStream wrapping the set of objects.
-     */
-    public static CoreAudioInputStreamJRE $(AudioInputStream... object) {
-        return new CoreAudioInputStreamJRE($, object);
-    }
     
     /**
      * Wraps number of numbers and returns a new CoreNumber.
@@ -135,27 +119,6 @@ public class CoreKeeper {
     public static CoreURI $(URL... object) {
         return new CoreURI($, URIUtils.URIs(object));
     }
-
-    /**
-     * Wraps number of Files and returns a new CoreFile.
-     * 
-     * @param object The Files to wrap.
-     * @return A CoreFile wrapping the given Files.
-     */
-    public static CoreFileJRE $(File... object) {
-        return new CoreFileJRE($, object);
-    }
-
-    /**
-     * Wraps number of InputStreams and returns a new CoreInputStream.
-     * 
-     * @param object The InputStreams to wrap.
-     * @return A CoreInputStream wrapping the given InputStreams.
-     */
-    public static CoreInputStream $(InputStream... object) {
-        return new CoreInputStream($, object);
-    }
-
 
 
     /**
