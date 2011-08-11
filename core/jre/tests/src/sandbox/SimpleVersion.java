@@ -1,5 +1,5 @@
 /*
- * Reporter.java
+ * SimpleSpeedTests.java
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
@@ -25,34 +25,28 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.jre.utils.internal;
+package sandbox;
 
 import static net.jcores.jre.CoreKeeper.$;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.io.IOException;
+import java.util.Random;
 
 /**
- * Manages and keeps internal trouble records. You do not need this.
- * 
- * @author Ralf Biedert
+ * @author rb
+ *
  */
-public class Reporter {
-    ConcurrentLinkedQueue<String> allRecords = new ConcurrentLinkedQueue<String>();
+public class SimpleVersion {
+
+    static Random rnd = new Random();
 
     /**
-     * @param record
+     * @param args
+     * @throws IOException 
      */
-    public void record(String record) {
-        this.allRecords.add(record);
+    public static void main(String[] args) throws IOException {
+        System.out.println($.version());
+        $.report();
     }
 
-    /**
-     * Prints all records.
-     */
-    public void printRecords() {
-        System.out.println(">>> jCores trouble log (" + $.version() + ")");
-        for (String r : this.allRecords) {
-            System.out.println(">>> " + r);
-        }
-    }
 }

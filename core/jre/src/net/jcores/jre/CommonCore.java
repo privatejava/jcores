@@ -27,6 +27,8 @@
  */
 package net.jcores.jre;
 
+import static net.jcores.jre.CoreKeeper.$;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -580,6 +582,16 @@ public class CommonCore {
         return myIntegers;
     }
     
+    /**
+     * Returns jCores' version, for example <code>1.0.4-201108111256</code>. The version string will 
+     * always consist of two parts: the actual version (with usually a major, minor and revision part), 
+     * as well as a dash-separated build number.
+     * 
+     * @return The current version.
+     */
+    public String version() {
+        return $(getClass().getResourceAsStream("jcores.version")).text().split("\n").hashmap().get("build");
+    }
     
     /**
      * Requests a number of CPUs. The system will check how many CPUs are available 
