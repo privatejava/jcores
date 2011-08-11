@@ -50,6 +50,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import net.jcores.jre.CommonCore;
+import net.jcores.jre.cores.Core;
 import net.jcores.jre.cores.CoreObject;
 import net.jcores.jre.options.MessageType;
 
@@ -360,10 +361,9 @@ public class StreamUtils {
             final ObjectInputStream ois = new ObjectInputStream(gis);
 
             final CoreObject<T> rval = (CoreObject<T>) ois.readObject();
-            final Field field = rval.getClass().getField("commonCore");
+            final Field field = Core.class.getDeclaredField("commonCore");
             field.setAccessible(true);
             field.set(rval, core);
-
             return rval;
         } catch (FileNotFoundException e) {
             e.printStackTrace();

@@ -51,7 +51,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.jcores.extensions.serialization.CoreSerializer;
 import net.jcores.jre.cores.CoreObject;
 import net.jcores.jre.cores.CoreString;
 import net.jcores.jre.interfaces.functions.F0;
@@ -93,8 +92,8 @@ public class APIv3 {
         $(f).each(F0.class).f();
 
         $(f).as(ExtensionCore.class).yoyo();
-        $(f).as(CoreSerializer.class).store("test.xml");
-        System.out.println($("test.xml").as(CoreSerializer.class).load().size());
+        //$(f).as(CoreSerializer.class).store("test.xml");
+        //System.out.println($("test.xml").as(CoreSerializer.class).load().size());
 
         $(F0.class).implementor(F0Impl.class);
         for (int i = 0; i < 100000; i++) {

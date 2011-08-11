@@ -41,14 +41,15 @@ import java.util.Map;
  * @author Ralf Biedert
  */
 public class Compound extends MapUtil<String, Object> {
+    /** */
+    @SuppressWarnings("unused")
+    private static final long serialVersionUID = 6962084609409112972L;
 
+    
     /** Creates a new compound */
     private Compound() {
         super(new HashMap<String, Object>());
     }
-
-    /** */
-    private static final long serialVersionUID = 6962084609409112972L;
 
     /**
      * Creates a new compound.
