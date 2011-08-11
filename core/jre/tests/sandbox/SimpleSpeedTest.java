@@ -27,7 +27,7 @@
  */
 package sandbox;
 
-import static net.jcores.shared.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,11 +37,11 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import net.jcores.shared.cores.CoreClass;
-import net.jcores.shared.interfaces.functions.F0;
-import net.jcores.shared.interfaces.functions.F1;
-import net.jcores.shared.interfaces.functions.F2DeltaObjects;
-import net.jcores.shared.interfaces.functions.F2ReduceObjects;
+import net.jcores.jre.cores.CoreClass;
+import net.jcores.jre.interfaces.functions.F0;
+import net.jcores.jre.interfaces.functions.F1;
+import net.jcores.jre.interfaces.functions.F2DeltaObjects;
+import net.jcores.jre.interfaces.functions.F2ReduceObjects;
 import sandbox.dummys.F0Impl;
 
 /**

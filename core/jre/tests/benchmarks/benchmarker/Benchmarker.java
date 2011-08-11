@@ -27,7 +27,7 @@
  */
 package benchmarks.benchmarker;
 
-import net.jcores.shared.interfaces.functions.F0;
+import net.jcores.jre.interfaces.functions.F0;
 
 /**
  * Benchmarks a task with a set of methods

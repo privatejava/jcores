@@ -27,12 +27,12 @@
  */
 package sandbox;
 
-import static net.jcores.shared.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
 
 import java.io.File;
 import java.io.IOException;
 
-import net.jcores.shared.interfaces.functions.F1;
+import net.jcores.jre.interfaces.functions.F1;
 
 /** */
 public class SimpleRutheLoader {

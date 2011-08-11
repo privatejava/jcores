@@ -27,7 +27,7 @@
  */
 package sandbox.dummys;
 
-import net.jcores.shared.interfaces.functions.F0;
+import net.jcores.jre.interfaces.functions.F0;
 
 public class F0Impl implements F0 {
 

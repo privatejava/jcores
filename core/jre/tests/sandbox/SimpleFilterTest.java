@@ -27,7 +27,7 @@
  */
 package sandbox;
 
-import static net.jcores.shared.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

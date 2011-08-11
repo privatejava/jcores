@@ -27,7 +27,7 @@
  */
 package net.jcores.script.scriptmodes;
 
-import static net.jcores.shared.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
 
 import java.io.File;
 import java.net.URL;

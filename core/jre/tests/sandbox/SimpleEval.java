@@ -27,13 +27,13 @@
  */
 package sandbox;
 
-import static net.jcores.shared.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
 
 import java.io.IOException;
 
-import net.jcores.shared.cores.CoreObject;
-import net.jcores.shared.cores.CoreString;
-import net.jcores.shared.interfaces.functions.F1;
+import net.jcores.jre.cores.CoreObject;
+import net.jcores.jre.cores.CoreString;
+import net.jcores.jre.interfaces.functions.F1;
 
 /**
  * @author rb

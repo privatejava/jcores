@@ -27,14 +27,14 @@
  */
 package benchmarks.benchmarks;
 
-import static net.jcores.shared.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
 
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import junit.data.Data;
-import net.jcores.shared.interfaces.functions.F1;
+import net.jcores.jre.interfaces.functions.F1;
 import benchmarks.benchmarker.Benchmark;
 import benchmarks.model.TaskData;
 import benchmarks.model.TaskSolver;

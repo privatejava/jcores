@@ -27,14 +27,14 @@
  */
 package sandbox;
 
-import static net.jcores.shared.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Random;
 
-import net.jcores.shared.cores.CoreMap;
-import net.jcores.shared.utils.map.MapEntry;
+import net.jcores.jre.cores.CoreMap;
+import net.jcores.jre.utils.map.MapEntry;
 
 /**
  * @author rb

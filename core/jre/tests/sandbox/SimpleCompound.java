@@ -27,8 +27,8 @@
  */
 package sandbox;
 
-import static net.jcores.shared.CoreKeeper.$;
-import net.jcores.shared.utils.map.Compound;
+import static net.jcores.jre.CoreKeeper.$;
+import net.jcores.jre.utils.map.Compound;
 
 /**
  * @author rb

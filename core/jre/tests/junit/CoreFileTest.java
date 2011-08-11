@@ -27,14 +27,14 @@
  */
 package junit;
 
-import static net.jcores.shared.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
 
 import java.io.File;
 
-import net.jcores.shared.cores.CoreFile;
-import net.jcores.shared.cores.CoreString;
-import net.jcores.shared.interfaces.functions.F1;
-import net.jcores.shared.interfaces.functions.F2ReduceObjects;
+import net.jcores.jre.cores.CoreFile;
+import net.jcores.jre.cores.CoreString;
+import net.jcores.jre.interfaces.functions.F1;
+import net.jcores.jre.interfaces.functions.F2ReduceObjects;
 
 import org.junit.Assert;
 import org.junit.Test;

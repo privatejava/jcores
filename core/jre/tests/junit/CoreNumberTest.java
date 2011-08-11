@@ -27,9 +27,9 @@
  */
 package junit;
 
-import static net.jcores.shared.CoreKeeper.$;
-import net.jcores.shared.cores.CoreNumber;
-import net.jcores.shared.cores.CoreObject;
+import static net.jcores.jre.CoreKeeper.$;
+import net.jcores.jre.cores.CoreNumber;
+import net.jcores.jre.cores.CoreObject;
 
 import org.junit.Assert;
 import org.junit.Test;

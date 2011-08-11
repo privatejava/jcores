@@ -27,12 +27,12 @@
  */
 package sandbox;
 
-import static net.jcores.shared.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
 
 import java.io.IOException;
 import java.util.Random;
 
-import net.jcores.shared.cores.CoreFile;
+import net.jcores.jre.cores.CoreFile;
 
 /**
  * @author rb

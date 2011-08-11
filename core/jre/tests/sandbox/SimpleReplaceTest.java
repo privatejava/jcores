@@ -27,11 +27,11 @@
  */
 package sandbox;
 
-import static net.jcores.shared.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
 
 import java.util.Comparator;
 
-import net.jcores.shared.cores.CoreString;
+import net.jcores.jre.cores.CoreString;
 
 /**
  * @author rb

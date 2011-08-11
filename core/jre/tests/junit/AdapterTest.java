@@ -27,7 +27,7 @@
  */
 package junit;
 
-import static net.jcores.shared.CoreKeeper.$;
+import static net.jcores.jre.CoreKeeper.$;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -36,13 +36,13 @@ import java.util.Map;
 
 import junit.data.Data;
 import junit.framework.Assert;
-import net.jcores.shared.cores.CoreMap;
-import net.jcores.shared.cores.CoreNumber;
-import net.jcores.shared.cores.CoreObject;
-import net.jcores.shared.cores.adapter.CollectionAdapter;
-import net.jcores.shared.cores.adapter.MapAdapter;
-import net.jcores.shared.interfaces.functions.F1;
-import net.jcores.shared.utils.map.MapEntry;
+import net.jcores.jre.cores.CoreMap;
+import net.jcores.jre.cores.CoreNumber;
+import net.jcores.jre.cores.CoreObject;
+import net.jcores.jre.cores.adapter.CollectionAdapter;
+import net.jcores.jre.cores.adapter.MapAdapter;
+import net.jcores.jre.interfaces.functions.F1;
+import net.jcores.jre.utils.map.MapEntry;
 
 import org.junit.Test;
 

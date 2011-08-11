@@ -30,8 +30,8 @@ package benchmarks;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import net.jcores.shared.interfaces.functions.F0;
-import net.jcores.shared.interfaces.functions.F1;
+import net.jcores.jre.interfaces.functions.F0;
+import net.jcores.jre.interfaces.functions.F1;
 import benchmarks.benchmarker.Benchmark;
 import benchmarks.benchmarker.BenchmarkResults;
 import benchmarks.benchmarker.Benchmarker;
