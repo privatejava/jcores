@@ -67,7 +67,6 @@ public class CoreObjectJRE<T> extends CoreObject<T> {
     public CoreObjectJRE(CommonCore supercore, T... object) {
         super(supercore, object);
     }
-    
 
     /**
      * Creates the core object for the given array.
@@ -88,7 +87,6 @@ public class CoreObjectJRE<T> extends CoreObject<T> {
     public CoreObjectJRE(CommonCore supercore, Collection<T> objects) {
         super(supercore, objects);
     }
-
 
     /** */
     private static final long serialVersionUID = -5306674726982099085L;
@@ -177,7 +175,6 @@ public class CoreObjectJRE<T> extends CoreObject<T> {
             }
         });
     }
-    
 
     /**
      * Serializes this core into the given file. Objects that are not serializable
@@ -204,9 +201,6 @@ public class CoreObjectJRE<T> extends CoreObject<T> {
         }
         return this;
     }
-
-    
-    
 
     /**
      * For each of the contained elements an object of the type <code>wrapper</code> is
