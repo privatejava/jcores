@@ -27,11 +27,11 @@
  */
 package junit;
 
-import static net.jcores.jre.CoreKeeper.$;
+import static net.jcores.shared.CoreKeeper.$;
 
 import java.io.File;
 
-import net.jcores.jre.cores.CoreFileJRE;
+import net.jcores.shared.cores.CoreFile;
 import net.jcores.shared.cores.CoreString;
 import net.jcores.shared.interfaces.functions.F1;
 import net.jcores.shared.interfaces.functions.F2ReduceObjects;
@@ -106,7 +106,7 @@ public class CoreFileTest {
     public void testZip() {
         final String path = $.sys.tempfile().getAbsolutePath();
         
-        final CoreFileJRE source = $("documentation").file();
+        final CoreFile source = $("documentation").file();
         final int srcsize = source.dir().size();
         
         // Zip by path

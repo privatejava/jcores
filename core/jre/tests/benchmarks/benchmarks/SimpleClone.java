@@ -27,7 +27,7 @@
  */
 package benchmarks.benchmarks;
 
-import static net.jcores.jre.CoreKeeper.$;
+import static net.jcores.shared.CoreKeeper.$;
 
 import java.awt.Point;
 import java.util.ArrayList;

@@ -392,4 +392,31 @@ public class CoreObjectTest {
 
     }
 
+    /** */
+    @SuppressWarnings("boxing")
+    @Test
+    public void testCall() {
+        class X {
+            int a = 1;
+
+            @SuppressWarnings("unused")
+            double b() {
+                return this.a * 2;
+            }
+        }
+
+        Assert.assertEquals(1, $(new X()).call("a").get(0));
+        Assert.assertEquals(2.0, $(new X()).call("b()").get(0));
+    }
+
+    /** */
+    @Test
+    public void testSerialize() {
+        $("hello", "world").as(CoreObject.class).serialize("test.jcores");
+        final CoreString converted = $("test.jcores").file().deserialize(String.class).string();
+        $.report();
+        Assert.assertEquals("helloworld", converted.join());
+
+        $(Data.strings(10000)).as(CoreObject.class).serialize("big.file");
+    }
 }

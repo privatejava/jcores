@@ -27,7 +27,7 @@
  */
 package sandbox;
 
-import static net.jcores.jre.CoreKeeper.$;
+import static net.jcores.shared.CoreKeeper.$;
 
 
 public class SimpleCopyTest {

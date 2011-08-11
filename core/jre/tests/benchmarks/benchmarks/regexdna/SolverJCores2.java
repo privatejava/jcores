@@ -7,7 +7,7 @@
  */
 package benchmarks.benchmarks.regexdna;
 
-import static net.jcores.jre.CoreKeeper.$;
+import static net.jcores.shared.CoreKeeper.$;
 
 import java.io.InputStream;
 import java.util.HashMap;

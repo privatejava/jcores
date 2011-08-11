@@ -27,12 +27,12 @@
  */
 package sandbox;
 
-import static net.jcores.jre.CoreKeeper.$;
+import static net.jcores.shared.CoreKeeper.$;
 
 import java.io.IOException;
 import java.util.Random;
 
-import net.jcores.jre.cores.CoreFileJRE;
+import net.jcores.shared.cores.CoreFile;
 
 /**
  * @author rb
@@ -47,6 +47,6 @@ public class SimpleByteBuffer {
      * @throws IOException 
      */
     public static void main(String[] args) throws IOException {
-        $(".").file().dir().slice(0, 1).as(CoreFileJRE.class).input().hash().print();
+        $(".").file().dir().slice(0, 1).as(CoreFile.class).input().hash().print();
     }
 }

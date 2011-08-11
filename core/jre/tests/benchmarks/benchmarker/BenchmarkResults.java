@@ -27,7 +27,7 @@
  */
 package benchmarks.benchmarker;
 
-import static net.jcores.jre.CoreKeeper.$;
+import static net.jcores.shared.CoreKeeper.$;
 
 /**
  * Stores the results of a given benchmark run.

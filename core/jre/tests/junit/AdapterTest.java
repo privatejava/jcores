@@ -27,7 +27,7 @@
  */
 package junit;
 
-import static net.jcores.jre.CoreKeeper.$;
+import static net.jcores.shared.CoreKeeper.$;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -36,7 +36,6 @@ import java.util.Map;
 
 import junit.data.Data;
 import junit.framework.Assert;
-import net.jcores.jre.cores.CoreObjectJRE;
 import net.jcores.shared.cores.CoreMap;
 import net.jcores.shared.cores.CoreNumber;
 import net.jcores.shared.cores.CoreObject;
@@ -56,7 +55,7 @@ public class AdapterTest {
     @Test
     public void testCollectionAdapter() {
         final LinkedList<String> linked = new LinkedList<String>(Arrays.asList(Data.sn));
-        final CoreObjectJRE<String> x = $(linked);
+        final CoreObject<String> x = $(linked);
 
         Assert.assertTrue(x.unsafeadapter() instanceof CollectionAdapter);
 
@@ -78,7 +77,7 @@ public class AdapterTest {
         // Repeat the last test a number of times
         for (int c = 0; c < 100; c++) {
             final List<String> linked = new LinkedList<String>(Arrays.asList(Data.sn));
-            final CoreObjectJRE<String> x = $(linked);
+            final CoreObject<String> x = $(linked);
             final CoreNumber as = x.map(new F1<String, Integer>() {
                 @Override
                 public Integer f(String xx) {

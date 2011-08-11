@@ -27,7 +27,7 @@
  */
 package sandbox;
 
-import static net.jcores.jre.CoreKeeper.$;
+import static net.jcores.shared.CoreKeeper.$;
 
 import java.awt.Panel;
 import java.util.HashMap;

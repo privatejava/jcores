@@ -27,7 +27,7 @@
  */
 package benchmarks.benchmarks;
 
-import static net.jcores.jre.CoreKeeper.$;
+import static net.jcores.shared.CoreKeeper.$;
 
 import java.util.ArrayList;
 import java.util.Collection;

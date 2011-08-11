@@ -27,7 +27,7 @@
  */
 package sandbox;
 
-import static net.jcores.jre.CoreKeeper.$;
+import static net.jcores.shared.CoreKeeper.$;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,7 +37,7 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import net.jcores.jre.cores.CoreClassJRE;
+import net.jcores.shared.cores.CoreClass;
 import net.jcores.shared.interfaces.functions.F0;
 import net.jcores.shared.interfaces.functions.F1;
 import net.jcores.shared.interfaces.functions.F2DeltaObjects;
@@ -159,7 +159,7 @@ public class SimpleSpeedTest {
             // 331769
             // 14166 (optimized)
             public void f() {
-                CoreClassJRE<F0Impl> $2 = $(F0Impl.class);
+                CoreClass<F0Impl> $2 = $(F0Impl.class);
                 for (int i = 0; i < size; i++)
                     o1.add($2.spawn());
             }

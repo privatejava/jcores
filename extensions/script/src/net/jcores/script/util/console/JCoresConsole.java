@@ -1,6 +1,6 @@
 package net.jcores.script.util.console;
 
-import static net.jcores.jre.CoreKeeper.$;
+import static net.jcores.shared.CoreKeeper.$;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
