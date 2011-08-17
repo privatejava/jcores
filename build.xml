@@ -93,6 +93,11 @@
             </classpath>
             <classpath location="${build.root}/tests/"/>
         </junit>
+    	
+        <!-- Delete generated files -->
+    	<delete file="big.file"></delete>
+        <delete file="test.jcores"></delete>
+        <delete file="test.plain.txt"></delete>
     </target>
     
 	
