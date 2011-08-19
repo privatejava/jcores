@@ -31,6 +31,8 @@ import java.awt.Color;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import net.jcores.jre.CommonCore;
 import net.jcores.jre.interfaces.functions.F0;
@@ -43,9 +45,9 @@ import net.jcores.jre.interfaces.functions.F0;
  * 
  */
 public class CommonUI extends CommonNamespace {
-    /** The colors we need for heat maps  (0 == cold, 255 == hot) */
+    /** The colors we need for heat maps (0 == cold, 255 == hot) */
     private Color heatmapColors[] = new Color[256];
-    
+
     /**
      * Creates a common ui object.
      * 
@@ -53,12 +55,12 @@ public class CommonUI extends CommonNamespace {
      */
     public CommonUI(CommonCore commonCore) {
         super(commonCore);
-        
+
         for (int i = 0; i < this.heatmapColors.length; i++) {
             double hue = 0;
             hue = ((float) i / (float) this.heatmapColors.length);
             hue = (hue / 2) + 0.5;
-            
+
             this.heatmapColors[i] = Color.getHSBColor((float) hue, 0.85f, 1.0f);
         }
     }
@@ -77,6 +79,26 @@ public class CommonUI extends CommonNamespace {
                 f0.f();
             }
         });
+    }
+
+    /**
+     * Sets the system look and feel for this application. Call this method at the very
+     * beginning of your application.
+     * 
+     * @since 1.0
+     */
+    public void systemLnF() {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -113,12 +135,11 @@ public class CommonUI extends CommonNamespace {
         return this.heatmapColors[(int) (d * (this.heatmapColors.length - 1))];
     }
 
-    
     /**
      * Changes the transparency of the given color.
      * 
-     * @param color The color to change. 
-     * @param transparency The new transparency to use. 
+     * @param color The color to change.
+     * @param transparency The new transparency to use.
      * 
      * @return Color with the given transparency..
      */

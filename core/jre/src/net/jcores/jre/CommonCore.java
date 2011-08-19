@@ -53,6 +53,7 @@ import net.jcores.jre.cores.CoreNumber;
 import net.jcores.jre.cores.CoreObject;
 import net.jcores.jre.cores.adapter.ListAdapter;
 import net.jcores.jre.cores.commons.CommonAlgorithmic;
+import net.jcores.jre.cores.commons.CommonNet;
 import net.jcores.jre.cores.commons.CommonSys;
 import net.jcores.jre.cores.commons.CommonUI;
 import net.jcores.jre.interfaces.functions.F0;
@@ -112,7 +113,11 @@ public class CommonCore {
     public final CommonAlgorithmic alg = new CommonAlgorithmic(this);
     
     /** Common ui utilities */
-    public final CommonUI ui = new CommonUI(this); 
+    public final CommonUI ui = new CommonUI(this);
+    
+    /** Common net utilities */
+    public final CommonNet net = new CommonNet(this); 
+
 
     
     /**
