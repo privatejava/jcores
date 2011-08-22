@@ -114,6 +114,17 @@ public class CoreKeeper {
     }
 
     /**
+     * Wraps number of numbers and returns a new CoreNumber.
+     * 
+     * @param object The numbers to wrap.
+     * @return A CoreNumber wrapping the given compounds.
+     */
+    public static CoreNumber $(int[] object) {
+        return new CoreNumber($, $.box(object));
+    }
+
+    
+    /**
      * Wraps a single class and returns a new ClassCore. 
      * 
      * @param <T> Parameter of the classes' type.

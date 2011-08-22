@@ -143,6 +143,30 @@ public class CoreFile extends CoreObject<File> {
     }
 
     /**
+     * Appends the object.toString() to all given files plus an additional new line. The files will be created 
+     * if they don't exist. The function is usually only called with a single enclosed file object. <br/>
+     * <br/>
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$("test.txt").file().appendln("Hello World")</code> - Appends <code>'Hello World\n'</code> to the file
+     * <code>'test.txt'</code>.</li>
+     * </ul>
+     * 
+     * Multi-threaded.<br/>
+     * <br/>
+     * 
+     * @param object The object to write to all enclosed files.
+     * 
+     * @return The same core file object (<code>this</code>).
+     */
+    public CoreFile appendln(Object object) {
+        if (object == null) return this;
+        return append(object.toString() + "\n");
+    }
+
+    
+    /**
      * Treats the given files as audio files and returns a {@link CoreAudioInputStream} for them.<br/>
      * <br/>
      * 

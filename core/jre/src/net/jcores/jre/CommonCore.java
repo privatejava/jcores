@@ -67,10 +67,13 @@ import net.jcores.jre.utils.internal.Reporter;
 import net.jcores.jre.utils.internal.system.ProfileInformation;
 import net.jcores.jre.utils.map.ConcurrentMapUtil;
 import net.jcores.jre.utils.map.MapUtil;
+import net.jcores.kernel.DefaultKernel;
+import net.jcores.kernel.InternalService;
+import net.jcores.kernel.Kernel;
 
 /**
  * The common core is a singleton object shared by (thus common to) all created {@link Core} instances. It mainly
- * contains helper and utility methods and takes care of the {@link Manager} objects. For example, to but the 
+ * contains helper and utility methods and takes care of the {@link Manager} objects. For example, to but the
  * current thread to sleep (without the ugly try/catch), you would write:<br/>
  * <br/>
  * 
@@ -92,7 +95,10 @@ public class CommonCore {
     private final Reporter reporter = new Reporter();
 
     /** All managers we have */
-    private final ConcurrentMap<Class<? extends Manager>, Manager> managers = new ConcurrentHashMap<Class<? extends Manager>, Manager>();
+    // private final ConcurrentMap<Class<? extends Manager>, Manager> managers = new ConcurrentHashMap<Class<? extends
+    // Manager>, Manager>();
+
+    private final Kernel kernel = new DefaultKernel();
 
     /** Random variable */
     private final Random random = new Random();
@@ -105,21 +111,19 @@ public class CommonCore {
 
     /** The number of free CPUs */
     private AtomicInteger freeCPUs = new AtomicInteger();
-    
+
     /** Common system utilities */
-    public final CommonSys sys = new CommonSys(this); 
+    public final CommonSys sys = new CommonSys(this);
 
     /** Common algorithmic utilities */
     public final CommonAlgorithmic alg = new CommonAlgorithmic(this);
-    
+
     /** Common ui utilities */
     public final CommonUI ui = new CommonUI(this);
-    
+
     /** Common net utilities */
-    public final CommonNet net = new CommonNet(this); 
+    public final CommonNet net = new CommonNet(this);
 
-
-    
     /**
      * Constructs the common core.
      */
@@ -132,7 +136,7 @@ public class CommonCore {
                 return t;
             }
         });
-        
+
         // Register managers we know
         manager(ManagerClass.class, new ManagerClass());
         manager(ManagerDeveloperFeedback.class, new ManagerDeveloperFeedback());
@@ -144,9 +148,8 @@ public class CommonCore {
             this.cloneMethod.setAccessible(true);
         } catch (Exception e) {
             report(MessageType.EXCEPTION, "Unable to get cloning method for objects. $.clone() will not work: " + e.getMessage());
-        } 
+        }
 
-        
         // Test how long it takes to execute a thread in the background
         this.profileInformation = profile();
         this.freeCPUs.set(this.profileInformation.numCPUs);
@@ -223,7 +226,6 @@ public class CommonCore {
         return myIntegers;
     }
 
-
     /**
      * Wraps number of longs and returns an Long array.
      * 
@@ -235,54 +237,49 @@ public class CommonCore {
         int i = 0;
 
         final Long[] myIntegers = new Long[object.length];
-        for (long  val: object)
+        for (long val : object)
             myIntegers[i++] = Long.valueOf(val);
 
         return myIntegers;
     }
 
-
-    
     /**
-     * Clones the given object if it is cloneable. 
+     * Clones the given object if it is cloneable.
      * 
      * @since 1.0
-     * @param <T> 
+     * @param <T>
      * @param object The object to clone
      * @return A clone of the object, or null if the object could not be cloned.
      */
     @SuppressWarnings("unchecked")
     public <T> T clone(T object) {
-        if(!(object instanceof Cloneable)) return null;
-        
+        if (!(object instanceof Cloneable)) return null;
+
         try {
             return (T) this.cloneMethod.invoke(object);
         } catch (Exception e) {
             report(MessageType.EXCEPTION, "Unable to execute clone() on " + object);
-        } 
-        
+        }
+
         return null;
     }
 
-
     /**
-     * Clones the given array and returns a <b>shallow</b> copy (i.e., the elements themselves 
+     * Clones the given array and returns a <b>shallow</b> copy (i.e., the elements themselves
      * are the same in both arrays).
-     *  
+     * 
      * @since 1.0
-     * @param <T> 
+     * @param <T>
      * @param object The array to clone
      * @return A cloned (copied) array.
      */
     public <T> T[] clone(T[] object) {
-        if(object == null) return null;
+        if (object == null) return null;
         return Arrays.copyOf(object, object.length);
     }
 
-    
-    
     /**
-     * Returns a new and empty {@link ConcurrentMapUtil}.  
+     * Returns a new and empty {@link ConcurrentMapUtil}.
      * 
      * @param <K> The type of the key.
      * @param <V> The type of the value.
@@ -290,11 +287,11 @@ public class CommonCore {
      * @return Returns a new map.
      */
     public <K, V> ConcurrentMapUtil<K, V> concurrentMap() {
-        return new ConcurrentMapUtil<K,V>(new ConcurrentHashMap<K, V>());
+        return new ConcurrentMapUtil<K, V>(new ConcurrentHashMap<K, V>());
     }
-    
+
     /**
-     * Wraps a given map into out {@link ConcurrentMapUtil}.  
+     * Wraps a given map into out {@link ConcurrentMapUtil}.
      * 
      * @param <K> The type of the key.
      * @param <V> The type of the value.
@@ -302,17 +299,16 @@ public class CommonCore {
      * @return Returns a wrapped map.
      */
     public <K, V> ConcurrentMapUtil<K, V> concurrentMap(ConcurrentMap<K, V> map) {
-        return new ConcurrentMapUtil<K,V>(map);
+        return new ConcurrentMapUtil<K, V>(map);
     }
 
-    
     /**
      * Returns a core consisting of <code>n</code> times the given object.
      * 
-     * @param object The object to fill the core with. 
+     * @param object The object to fill the core with.
      * @param n The number of times we put the object into the core.
      * @param <T> The type of the object.
-     * @since 1.0 
+     * @since 1.0
      * @return A core of size <code>n</code> filled with the given object.
      * 
      */
@@ -324,47 +320,44 @@ public class CommonCore {
         return new CoreObject<T>(this, new ListAdapter<T>(list));
     }
 
-
-
     /**
-     * Clones the given collection and returns a <b>shallow</b> copy (i.e., the elements themselves 
+     * Clones the given collection and returns a <b>shallow</b> copy (i.e., the elements themselves
      * are the same in both arrays).
-     *  
+     * 
      * @since 1.0
-     * @param <T> 
+     * @param <T>
      * @param collection The collection to clone
      * @return A cloned (copied) collection.
      */
     public <T> Collection<T> clone(Collection<T> collection) {
-        if(collection == null) return null;
+        if (collection == null) return null;
         return new ArrayList<T>(collection);
     }
-    
+
     /**
-     * Clones the given array and returns a <b>deep</b> copy (i.e., the elements themselves 
+     * Clones the given array and returns a <b>deep</b> copy (i.e., the elements themselves
      * are the cloned in both arrays).
-     *  
+     * 
      * @since 1.0
-     * @param <T> 
+     * @param <T>
      * @param object The array to clone
      * @return A cloned array.
      */
     public <T> T[] deepclone(T[] object) {
-        if(object == null) return null;
-        
+        if (object == null) return null;
+
         final T[] copyOf = Arrays.copyOf(object, object.length);
         for (int i = 0; i < copyOf.length; i++) {
             copyOf[i] = clone(copyOf[i]);
         }
-        
+
         return copyOf;
     }
 
-    
     /**
      * Executes the given runnable count times. Call this method with your
      * given workers and a number of threads (usually number of CPUs).
-     *
+     * 
      * @since 1.0
      * @param r The runnable to execute.
      * @param count Number of threads to spawn.
@@ -372,6 +365,18 @@ public class CommonCore {
     public void execute(Runnable r, int count) {
         for (int i = 0; i < count; i++)
             this.executor.execute(r);
+    }
+
+
+    /**
+     * Returns the default kernel for jCores.
+     *  
+     * @since 1.0
+     * @return The default Kernel used by jCores (which might be used by your 
+     * application as well).  
+     */
+    public Kernel kernel() {
+        return this.kernel;
     }
 
     
@@ -384,12 +389,10 @@ public class CommonCore {
      * @return Return the manager that was already in the list, if there was one, or the current manager which was also
      * set.
      */
-    @SuppressWarnings("unchecked")
     public <T extends Manager> T manager(Class<T> clazz, T manager) {
-        this.managers.putIfAbsent(clazz, manager);
-        return (T) this.managers.get(clazz);
+        this.kernel.register(new InternalService<T>(clazz, manager));
+        return this.kernel.get(clazz);
     }
-    
 
     /**
      * Returns a manager of the given type, only needed for core developers.
@@ -398,14 +401,12 @@ public class CommonCore {
      * @param clazz Manager's class.
      * @return Returns the currently set manager.
      */
-    @SuppressWarnings("unchecked")
     public <T extends Manager> T manager(Class<T> clazz) {
-        return (T) this.managers.get(clazz);
+        return this.kernel.get(clazz);
     }
-    
-    
+
     /**
-     * Returns a new and empty (hash) {@link MapUtil}.  
+     * Returns a new and empty (hash) {@link MapUtil}.
      * 
      * @param <K> The type of the key.
      * @param <V> The type of the value.
@@ -413,11 +414,11 @@ public class CommonCore {
      * @return Returns a new map.
      */
     public <K, V> MapUtil<K, V> map() {
-        return new MapUtil<K,V>(new HashMap<K, V>());
+        return new MapUtil<K, V>(new HashMap<K, V>());
     }
-    
+
     /**
-     * Wraps a given map into out {@link MapUtil}.  
+     * Wraps a given map into out {@link MapUtil}.
      * 
      * @param <K> The type of the key.
      * @param <V> The type of the value.
@@ -425,16 +426,15 @@ public class CommonCore {
      * @return Returns a wrapped map.
      */
     public <K, V> MapUtil<K, V> map(Map<K, V> map) {
-        return new MapUtil<K,V>(map);
+        return new MapUtil<K, V>(map);
     }
 
-    
     /**
-     * Returns a new (linked) {@link List} when the number of elements to 
+     * Returns a new (linked) {@link List} when the number of elements to
      * store is not known.
      * 
      * @since 1.0
-     * @param <T> The type of the list. 
+     * @param <T> The type of the list.
      * @return The new list.
      */
     public <T> List<T> list() {
@@ -442,18 +442,17 @@ public class CommonCore {
     }
 
     /**
-     * Returns a new (array) {@link List} when the number of elements to store is 
+     * Returns a new (array) {@link List} when the number of elements to store is
      * approximately known.
      * 
      * @since 1.0
-     * @param <T> The type of the list. 
+     * @param <T> The type of the list.
      * @param n The approximate number of elements to store.
      * @return The new list.
      */
     public <T> List<T> list(int n) {
         return new ArrayList<T>(n);
     }
-
 
     /**
      * Logs the given string. This method might, but is not required, to use the official Java logging
@@ -479,7 +478,6 @@ public class CommonCore {
         return end - start;
     }
 
-    
     /**
      * Returns the profiling information gathered at startup. Only required internally.
      * 
@@ -559,7 +557,6 @@ public class CommonCore {
     public void report() {
         this.reporter.printRecords();
     }
-    
 
     /**
      * Returns our shared {@link Random} object, initialized some time ago.
@@ -586,10 +583,10 @@ public class CommonCore {
 
         return myIntegers;
     }
-    
+
     /**
-     * Returns jCores' version, for example <code>1.0.4-201108111256</code>. The version string will 
-     * always consist of two parts: the actual version (with usually a major, minor and revision part), 
+     * Returns jCores' version, for example <code>1.0.4-201108111256</code>. The version string will
+     * always consist of two parts: the actual version (with usually a major, minor and revision part),
      * as well as a dash-separated build number.
      * 
      * @return The current version.
@@ -597,60 +594,61 @@ public class CommonCore {
     public String version() {
         return $(getClass().getResourceAsStream("jcores.version")).text().split("\n").hashmap().get("build");
     }
-    
+
     /**
-     * Requests a number of CPUs. The system will check how many CPUs are available 
-     * and allocate up to <code>request</code> units. The number of allocated CPUs is 
-     * returned.<br/><br/>
+     * Requests a number of CPUs. The system will check how many CPUs are available
+     * and allocate up to <code>request</code> units. The number of allocated CPUs is
+     * returned.<br/>
+     * <br/>
      * 
-     * This function is only used internally. Also note that it is essential to call 
-     * <code>releaseCPUs</code> after the application stopped using them.
-     *  
-     * @param request The number of CPUs to request. 
+     * This function is only used internally. Also note that it is essential to call <code>releaseCPUs</code> after the
+     * application stopped using them.
+     * 
+     * @param request The number of CPUs to request.
      * 
      * @return The actual number of CPUs available.
      */
     public int requestCPUs(int request) {
         // When looking at our benchmarks, it seems this does not speed up things, see Issue #12.
         return Math.min(profileInformation().numCPUs, request);
-        
-        /*
-        synchronized (this.freeCPUs) {
-            final int free = this.freeCPUs.get();
-            
-            // No free CPUs means to party
-            if(free == 0) return 0;
-            
-            // More requested than free, return what we have
-            if(request > free) {
-                this.freeCPUs.set(0);
-                return free;
-            } 
 
-            // In other cases, subtract what we have
-            this.freeCPUs.set(free - request);
-            return request;
-        }
-        */
+        /*
+         * synchronized (this.freeCPUs) {
+         * final int free = this.freeCPUs.get();
+         * 
+         * // No free CPUs means to party
+         * if(free == 0) return 0;
+         * 
+         * // More requested than free, return what we have
+         * if(request > free) {
+         * this.freeCPUs.set(0);
+         * return free;
+         * }
+         * 
+         * // In other cases, subtract what we have
+         * this.freeCPUs.set(free - request);
+         * return request;
+         * }
+         */
     }
-    
-    
+
     /**
-     * Releases a number of CPUSs previously allocated.<br/><br/>
+     * Releases a number of CPUSs previously allocated.<br/>
+     * <br/>
      * 
-     * This function is only used internally. Also note that it is essential to call 
-     * <code>releaseCPUs</code> after the application stopped using them.
-     *  
-     * @param toRelease The number of CPUs to release. 
+     * This function is only used internally. Also note that it is essential to call <code>releaseCPUs</code> after the
+     * application stopped using them.
+     * 
+     * @param toRelease The number of CPUs to release.
      */
     public void releaseCPUs(int toRelease) {
         // When looking at our benchmarks, it seems this does not speed up things, see Issue #12.
         /*
-        synchronized (this.freeCPUs) {
-            final int free = this.freeCPUs.get();
-            this.freeCPUs.set(Math.min(this.profileInformation.numCPUs, free + toRelease));
-        }
-        */
+         * synchronized (this.freeCPUs) {
+         * final int free = this.freeCPUs.get();
+         * this.freeCPUs.set(Math.min(this.profileInformation.numCPUs, free + toRelease));
+         * }
+         */
     }
 
 }

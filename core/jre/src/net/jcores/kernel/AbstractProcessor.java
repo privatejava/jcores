@@ -1,7 +1,7 @@
 /*
- * Thread.java
+ * AbstractProcessor.java
  * 
- * Copyright (c) 2010, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert, DFKI. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,15 +25,19 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.jre.annotations;
+package net.jcores.kernel;
 
 /**
- * Methods annotated with @Thread will be executed in their own thread.   
- * 
- * @deprecated Might be used in the future, but right now it is unused. 
  * @author Ralf Biedert
+ * @since 1.0
+ * 
  */
-@Deprecated
-public @interface Thread {
-    //
+public abstract class AbstractProcessor implements Processor {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see net.jcores.kernel.Processor#process(net.jcores.kernel.Service)
+     */
+    @Override
+    public abstract Processor process(Service service);
 }
