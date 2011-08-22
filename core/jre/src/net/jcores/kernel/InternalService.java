@@ -27,6 +27,7 @@
  */
 package net.jcores.kernel;
 
+
 /**
  * @author Ralf Biedert
  * @param <T>
@@ -35,11 +36,9 @@ package net.jcores.kernel;
  */
 public class InternalService<T> extends AbstractService<T> {
     /**
-     * @param clazz
      * @param object
      */
-    public InternalService(Class<T> clazz, T object) {
-        this.clazz = clazz;
-        this.object = object;
+    public InternalService(T object) {
+        super(object);
     }
 }

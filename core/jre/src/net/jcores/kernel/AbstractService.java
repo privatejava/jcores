@@ -33,13 +33,23 @@ package net.jcores.kernel;
  * @since 1.0
  */
 public abstract class AbstractService<T> implements Service {
-    protected Class<T> clazz;
+    /** The actual service object */
     protected T object;
 
-    public Class<T> getServiceClass() {
-        return this.clazz;
+    /**
+     * Constructs an abstract service object with the given service.
+     * 
+     * @param object The object that provides service.
+     */
+    public AbstractService(T object) {
+        this.object = object;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see net.jcores.kernel.Service#getService()
+     */
     public T getService() {
         return this.object;
     }

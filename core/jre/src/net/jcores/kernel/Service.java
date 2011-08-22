@@ -27,12 +27,11 @@
  */
 package net.jcores.kernel;
 
+
 /**
  * @author Ralf Biedert
  * @since 1.0
  */
 public interface Service {
-    public Class<?> getServiceClass();
-
     public Object getService();
 }

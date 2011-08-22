@@ -30,6 +30,7 @@ package net.jcores.kernel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -64,7 +65,17 @@ public class DefaultKernel implements Kernel {
     @Override
     public Kernel deregister(Service service) {
         this.services.remove(service);
-        this.cache.remove(service.getServiceClass());
+        
+        // Scan the cache. If there is any value similar to the service, remove the 
+        // key-value set.
+        final Set<Class<?>> keySet = this.cache.keySet();
+        for (Class<?> c : keySet) {
+            final Object object = this.cache.get(c);
+            if(object.equals(service.getService())) {
+                this.cache.remove(c);
+            }
+        }
+        
         return this;
     }
 
@@ -130,7 +141,7 @@ public class DefaultKernel implements Kernel {
 
         // Find the next best service
         for (Service s : this.services) {
-            if (service.isAssignableFrom(s.getServiceClass())) {
+            if (service.isAssignableFrom(s.getService().getClass())) {
                 this.cache.put(service, s.getService());
                 return (T) s.getService();
             }

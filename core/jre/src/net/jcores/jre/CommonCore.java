@@ -94,10 +94,7 @@ public class CommonCore {
     /** Stores error reports */
     private final Reporter reporter = new Reporter();
 
-    /** All managers we have */
-    // private final ConcurrentMap<Class<? extends Manager>, Manager> managers = new ConcurrentHashMap<Class<? extends
-    // Manager>, Manager>();
-
+    /** Stores our managers and possibly application services */
     private final Kernel kernel = new DefaultKernel();
 
     /** Random variable */
@@ -390,7 +387,7 @@ public class CommonCore {
      * set.
      */
     public <T extends Manager> T manager(Class<T> clazz, T manager) {
-        this.kernel.register(new InternalService<T>(clazz, manager));
+        this.kernel.register(new InternalService<T>(manager));
         return this.kernel.get(clazz);
     }
 
