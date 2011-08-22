@@ -387,7 +387,12 @@ public class CommonCore {
      * set.
      */
     public <T extends Manager> T manager(Class<T> clazz, T manager) {
-        this.kernel.register(new InternalService<T>(manager));
+        // Perpare adding the manager to the kernel
+        final Collection<InternalService<T>> services = new ArrayList<InternalService<T>>();
+        services.add(new InternalService<T>(manager));
+        
+        // And add it 
+        this.kernel.register(services);
         return this.kernel.get(clazz);
     }
 

@@ -44,15 +44,9 @@ public interface Kernel {
         public static final GetAll ALL = new GetAll();
     }
 
-    public Kernel register(Service service);
+    public Kernel register(Collection<? extends Service> service);
 
-    public Kernel register(Collection<Service> service);
-
-    public Kernel deregister(Service service);
-
-    public Kernel deregister(Collection<Service> service);
-
-    public <T> T get(Class<T> service);
+    public Kernel deregister(Collection<? extends Service> service);
 
     public <T> T get(Class<T> service, Get... options);
 

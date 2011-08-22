@@ -51,7 +51,6 @@ public class DefaultKernel implements Kernel {
      * 
      * @see net.jcores.kernel.Kernel#register(net.jcores.kernel.Service)
      */
-    @Override
     public Kernel register(Service service) {
         this.services.add(service);
         return this;
@@ -62,31 +61,20 @@ public class DefaultKernel implements Kernel {
      * 
      * @see net.jcores.kernel.Kernel#deregister(net.jcores.kernel.Service)
      */
-    @Override
     public Kernel deregister(Service service) {
         this.services.remove(service);
-        
-        // Scan the cache. If there is any value similar to the service, remove the 
+
+        // Scan the cache. If there is any value similar to the service, remove the
         // key-value set.
         final Set<Class<?>> keySet = this.cache.keySet();
         for (Class<?> c : keySet) {
             final Object object = this.cache.get(c);
-            if(object.equals(service.getService())) {
+            if (object.equals(service.getService())) {
                 this.cache.remove(c);
             }
         }
-        
-        return this;
-    }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see net.jcores.kernel.Kernel#get(java.lang.Class)
-     */
-    @Override
-    public <T> T get(Class<T> service) {
-        return get(service, new Kernel.Get() {});
+        return this;
     }
 
     /*
@@ -105,7 +93,7 @@ public class DefaultKernel implements Kernel {
      * @see net.jcores.kernel.Kernel#register(java.util.Collection)
      */
     @Override
-    public Kernel register(Collection<Service> service) {
+    public Kernel register(Collection<? extends Service> service) {
         for (Service s : service) {
             register(s);
         }
@@ -119,7 +107,7 @@ public class DefaultKernel implements Kernel {
      * @see net.jcores.kernel.Kernel#deregister(java.util.Collection)
      */
     @Override
-    public Kernel deregister(Collection<Service> service) {
+    public Kernel deregister(Collection<? extends Service> service) {
         for (Service s : service) {
             deregister(s);
         }
@@ -149,4 +137,5 @@ public class DefaultKernel implements Kernel {
 
         return null;
     }
+
 }
