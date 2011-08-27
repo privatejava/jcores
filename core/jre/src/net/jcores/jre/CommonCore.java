@@ -38,14 +38,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
 import net.jcores.jre.cores.Core;
@@ -61,15 +55,16 @@ import net.jcores.jre.managers.Manager;
 import net.jcores.jre.managers.ManagerClass;
 import net.jcores.jre.managers.ManagerDebugGUI;
 import net.jcores.jre.managers.ManagerDeveloperFeedback;
+import net.jcores.jre.managers.ManagerExecution;
 import net.jcores.jre.managers.ManagerLogging;
 import net.jcores.jre.options.MessageType;
 import net.jcores.jre.utils.internal.Reporter;
 import net.jcores.jre.utils.internal.system.ProfileInformation;
 import net.jcores.jre.utils.map.ConcurrentMapUtil;
 import net.jcores.jre.utils.map.MapUtil;
-import net.jcores.kernel.DefaultKernel;
-import net.jcores.kernel.InternalService;
-import net.jcores.kernel.Kernel;
+import net.xeoh.nexus.DefaultNexus;
+import net.xeoh.nexus.InternalService;
+import net.xeoh.nexus.Nexus;
 
 /**
  * The common core is a singleton object shared by (thus common to) all created {@link Core} instances. It mainly
@@ -87,27 +82,23 @@ import net.jcores.kernel.Kernel;
  * @since 1.0
  */
 public class CommonCore {
-
-    /** Executes commands */
-    private final ExecutorService executor;
-
     /** Stores error reports */
     private final Reporter reporter = new Reporter();
 
     /** Stores our managers and possibly application services */
-    private final Kernel kernel = new DefaultKernel();
+    private final Nexus nexus = new DefaultNexus();
 
     /** Random variable */
     private final Random random = new Random();
 
     /** Keeps the profile information */
-    private final ProfileInformation profileInformation;
+    private ProfileInformation profileInformation;
+
+    /** Executes commands */
+    private ManagerExecution executionManager;
 
     /** Method to clone objects */
     private Method cloneMethod;
-
-    /** The number of free CPUs */
-    private AtomicInteger freeCPUs = new AtomicInteger();
 
     /** Common system utilities */
     public final CommonSys sys = new CommonSys(this);
@@ -125,86 +116,28 @@ public class CommonCore {
      * Constructs the common core.
      */
     protected CommonCore() {
-        // Create an executor that does not prevent us from quitting.
-        this.executor = Executors.newCachedThreadPool(new ThreadFactory() {
-            public Thread newThread(Runnable r) {
-                final Thread t = new Thread(r);
-                t.setDaemon(true);
-                return t;
-            }
-        });
-
         // Register managers we know
+        manager(ManagerExecution.class, new ManagerExecution());
         manager(ManagerClass.class, new ManagerClass());
         manager(ManagerDeveloperFeedback.class, new ManagerDeveloperFeedback());
         manager(ManagerDebugGUI.class, new ManagerDebugGUI());
         manager(ManagerLogging.class, new ManagerLogging());
-
+        
         try {
             this.cloneMethod = Object.class.getDeclaredMethod("clone");
             this.cloneMethod.setAccessible(true);
         } catch (Exception e) {
             report(MessageType.EXCEPTION, "Unable to get cloning method for objects. $.clone() will not work: " + e.getMessage());
         }
-
-        // Test how long it takes to execute a thread in the background
-        this.profileInformation = profile();
-        this.freeCPUs.set(this.profileInformation.numCPUs);
+    }
+    
+    
+    /** Updates the managers and their returned information in this core */
+    protected void updateManagerInformation() {
+        this.executionManager = manager(ManagerExecution.class);
+        this.profileInformation = this.executionManager.getProfile();
     }
 
-    /**
-     * Benchmark the VM. Dirty, but should give us some rough estimates
-     * 
-     * @return
-     */
-    private ProfileInformation profile() {
-        final ProfileInformation p = new ProfileInformation();
-        final int RUNS = 10;
-        final int N = 5;
-
-        // Measure how long it takes to fork a thread and to wait for it again. We
-        // test 10 times and take the average of the last 5 runs.
-        long times[] = new long[RUNS];
-        for (int i = 0; i < RUNS; i++) {
-            times[i] = measure(new F0() {
-                @Override
-                public void f() {
-                    final CyclicBarrier barrier = new CyclicBarrier(2);
-
-                    execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                barrier.await();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            } catch (BrokenBarrierException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }, 1);
-
-                    try {
-                        barrier.await();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (BrokenBarrierException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }
-
-        // Now take the average
-        for (int i = RUNS - N; i < times.length; i++) {
-            p.forkTime += times[i];
-        }
-
-        p.forkTime /= N;
-        p.numCPUs = Runtime.getRuntime().availableProcessors();
-
-        return p;
-    }
 
     /**
      * Wraps number of ints and returns an Integer array.
@@ -361,19 +294,19 @@ public class CommonCore {
      */
     public void execute(Runnable r, int count) {
         for (int i = 0; i < count; i++)
-            this.executor.execute(r);
+            this.executionManager.getExecutor().execute(r);
     }
-
+    
 
     /**
-     * Returns the default kernel for jCores.
+     * Returns the default nexus for jCores.
      *  
      * @since 1.0
-     * @return The default Kernel used by jCores (which might be used by your 
+     * @return The default {@link Nexus} used by jCores (which might be used by your 
      * application as well).  
      */
-    public Kernel kernel() {
-        return this.kernel;
+    public Nexus nexus() {
+        return this.nexus;
     }
 
     
@@ -391,9 +324,12 @@ public class CommonCore {
         final Collection<InternalService<T>> services = new ArrayList<InternalService<T>>();
         services.add(new InternalService<T>(manager));
         
-        // And add it 
-        this.kernel.register(services);
-        return this.kernel.get(clazz);
+        // And add it, and update the manager information
+        this.nexus.register(services);
+        updateManagerInformation();
+
+        // Eventually return the result.
+        return this.nexus.get(clazz);
     }
 
     /**
@@ -404,7 +340,7 @@ public class CommonCore {
      * @return Returns the currently set manager.
      */
     public <T extends Manager> T manager(Class<T> clazz) {
-        return this.kernel.get(clazz);
+        return this.nexus.get(clazz);
     }
 
     /**

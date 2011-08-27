@@ -1,7 +1,7 @@
 /*
- * AbstractProcessor.java
+ * SimpleSpeedTests.java
  * 
- * Copyright (c) 2011, Ralf Biedert, DFKI. All rights reserved.
+ * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,19 +25,45 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.kernel;
+package sandbox;
+
+import static net.jcores.jre.CoreKeeper.$;
+
+import java.io.IOException;
+import java.util.Random;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
+import net.jcores.jre.interfaces.functions.F1;
 
 /**
- * @author Ralf Biedert
- * @since 1.0
- * 
+ * @author rb
+ *
  */
-public abstract class AbstractProcessor implements Processor {
-    /*
-     * (non-Javadoc)
-     * 
-     * @see net.jcores.kernel.Processor#process(net.jcores.kernel.Service)
+public class SimpleFuture {
+
+    static Random rnd = new Random();
+
+    /**
+     * @param args
+     * @throws IOException 
      */
-    @Override
-    public abstract Processor process(Service service);
+    public static void main(String[] args) throws IOException {
+        Future<String> f1 = null;
+        Future<String> f2 = null;
+        Future<Integer> f3 = null;
+        
+
+        $(f1).await().get(0);
+        $(f1).finishedOne(new F1<String, Void>() {
+            @Override
+            public Void f(String x) {
+                return null;
+            }
+        });
+        $(f1).obtain(0, 10, TimeUnit.DAYS);
+        $(f1).obtain(0);
+
+    }
+
 }

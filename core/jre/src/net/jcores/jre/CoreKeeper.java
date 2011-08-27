@@ -36,6 +36,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.swing.JComponent;
@@ -45,6 +46,7 @@ import net.jcores.jre.cores.CoreBufferedImage;
 import net.jcores.jre.cores.CoreClass;
 import net.jcores.jre.cores.CoreComponent;
 import net.jcores.jre.cores.CoreFile;
+import net.jcores.jre.cores.CoreFuture;
 import net.jcores.jre.cores.CoreInputStream;
 import net.jcores.jre.cores.CoreJComponent;
 import net.jcores.jre.cores.CoreMap;
@@ -147,6 +149,30 @@ public class CoreKeeper {
     public static <T> CoreClass<T> $(Class<T>... clsses) {
         return new CoreClass<T>($, clsses);
     }
+    
+    
+    /**
+     * Wraps number of future objects and returns a new CoreFuture.
+     * 
+     * @param object The Futures to wrap.
+     * @return A CoreFuture wrapping the given Futures.
+     */
+    public static <T> CoreFuture<T> $(Future<T> ... object) {
+        return new CoreFuture<T>($, object);
+    }
+
+    
+    /**
+     * Wraps number of future objects and returns a new CoreFuture.
+     * 
+     * @param object The Futures to wrap.
+     * @return A CoreFuture wrapping the given Futures.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> CoreFuture<T> $(Future<T> object) {
+        return new CoreFuture<T>($, new Future[] { object });
+    }
+    
     
     /**
      * Wraps number of strings and returns a new CoreString.

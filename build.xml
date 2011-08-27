@@ -30,8 +30,22 @@
         <mkdir dir="${build.root}/jcores.script/"/>
 
         <!-- Make JRE core -->
-        <javac srcdir="core/jre/src" destdir="${build.root}/jcores.jre" source="1.6" target="1.6" />
-        <javac srcdir="extensions/script/src" destdir="${build.root}/jcores.script" source="1.6" target="1.6" classpath="${build.root}/jcores.jre"/>
+        <javac srcdir="core/jre/src" destdir="${build.root}/jcores.jre" source="1.6" target="1.6">
+            <classpath>
+                <fileset dir="core/jre/dependencies/">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </javac>
+
+        <javac srcdir="extensions/script/src" destdir="${build.root}/jcores.script" source="1.6" target="1.6">
+        	<classpath>
+        		<path path="${build.root}/jcores.jre"></path>
+                <fileset dir="core/jre/dependencies/">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </javac>
     </target>
 
 	
@@ -46,6 +60,7 @@
         <replace file="${build.root}/jcores.jre/net/jcores/jre/jcores.version" token="@@@BUILDSTAMP@@@" value="${DSTAMP}${TSTAMP}"/>     
         
         <!-- Rejar everything -->
+        <unjar dest="${build.root}/jcores.jre" src="core/jre/dependencies/nexus-1.0.0.jar"/>    	
         <jar destfile="${distribution.root}/${prefix}-${version}.jar" basedir="${build.root}/jcores.jre"/>
         <jar destfile="${distribution.root}/${prefix}.script-${version}.jar" basedir="${build.root}/jcores.script"/>
 
