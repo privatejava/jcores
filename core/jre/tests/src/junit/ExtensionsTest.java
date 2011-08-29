@@ -83,7 +83,6 @@ public class ExtensionsTest {
     @Test
     public void testSingleton() {
         final String random = $(S.class).random();
-        
         Assert.assertEquals(random, $(S.class).random());
     }
 
