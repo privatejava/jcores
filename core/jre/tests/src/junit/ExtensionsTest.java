@@ -1,7 +1,7 @@
 /*
- * AbstractSingletonExtension.java
+ * CoreMapTest.java
  * 
- * Copyright (c) 2011, Ralf Biedert, DFKI. All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,39 +25,66 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.jre.extensions;
+package junit;
 
+import static net.jcores.jre.CoreKeeper.$;
+import junit.framework.Assert;
 import net.jcores.jre.CommonCore;
-import net.jcores.jre.cores.CoreObject;
+import net.jcores.jre.cores.CoreString;
 import net.jcores.jre.cores.adapter.AbstractAdapter;
-import net.jcores.jre.cores.adapter.EmptyAdapter;
+import net.jcores.jre.extensions.SingletonExtension;
+import net.jcores.jre.extensions.WrappingExtension;
+import net.jcores.jre.interfaces.functions.F1;
+
+import org.junit.Test;
 
 /**
- * The base class you should extend when creating a wrapping extension (i.e., one
- * that is called as <code>$(objects).as(MyExtension.class).f()</code>.
- * 
  * @author Ralf Biedert
- * @param <T> The type of the object to wrap.
- * @since 1.0
  */
-public abstract class AbstractWrappingExtension<T> extends CoreObject<T> {
+public class ExtensionsTest {
+    /** Test extension for wrapping */
+    public static class E extends WrappingExtension<String> {
+        private static final long serialVersionUID = 5660493453611259815L;
+
+        public E(CommonCore commonCore, AbstractAdapter<String> adapter) {
+            super(commonCore, adapter);
+        }
+
+        public CoreString lower() {
+            return map(new F1<String, String>() {
+
+                @Override
+                public String f(String x) {
+                    return x.toLowerCase();
+                }
+
+            }).as(CoreString.class);
+        }
+    }
+    
+    
+    /** Test extension for wrapping */
+    public static class S extends SingletonExtension {
+        String uniqueID = $.sys.uniqueID();
+        
+        public String random() {
+            return this.uniqueID;
+        }
+    }
+   
+
     /** */
-    private static final long serialVersionUID = 3624295339294079716L;
+    @Test
+    public void testWrapping() {
+        Assert.assertEquals("abc", $("A", "B", "C").as(E.class).lower().join());
+    }
     
-    
-    /** Must not be called. */
-    private AbstractWrappingExtension() {
-        super(null, new EmptyAdapter<T>());
-        throw new IllegalStateException();
+    /** */
+    @Test
+    public void testSingleton() {
+        final String random = $(S.class).random();
+        
+        Assert.assertEquals(random, $(S.class).random());
     }
 
-    /**
-     * Constructor that should be invoked by your class.
-     * 
-     * @param commonCore The commonCore passed to your object.
-     * @param adapter The adapter containing the wrapped objects.
-     */
-    public AbstractWrappingExtension(CommonCore commonCore, AbstractAdapter<T> adapter) {
-        super(commonCore, adapter);
-    }
 }

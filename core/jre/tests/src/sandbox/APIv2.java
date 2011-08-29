@@ -32,9 +32,6 @@ import static net.jcores.jre.CoreKeeper.$;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import net.jcores.jre.interfaces.functions.F0;
-import sandbox.dummys.F0Impl;
-
 /**
  * @author rb
  */
@@ -70,9 +67,11 @@ public class APIv2 {
 
         String x = $("asd").get("QWeq").substring(0);
 
+        /*
         $(F0.class).implementor(F0Impl.class);
         $(F0.class).spawn();
         $(APIv2.class).spawn();
+        */
         /*$(APIv2.class).spawned().filter(new F1<APIv2, Boolean>() {
             @Override
             public Boolean f(APIv2 xx) {

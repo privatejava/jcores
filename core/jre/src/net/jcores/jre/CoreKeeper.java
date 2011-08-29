@@ -56,13 +56,16 @@ import net.jcores.jre.cores.CoreString;
 import net.jcores.jre.cores.CoreURI;
 import net.jcores.jre.cores.adapter.AbstractAdapter;
 import net.jcores.jre.cores.adapter.MapAdapter;
-import net.jcores.jre.extensions.AbstractSingletonExtension;
+import net.jcores.jre.extensions.SingletonExtension;
 import net.jcores.jre.interfaces.functions.F1;
 import net.jcores.jre.options.Option;
 import net.jcores.jre.options.OptionMapType;
 import net.jcores.jre.utils.internal.Wrapper;
 import net.jcores.jre.utils.internal.io.URIUtils;
 import net.jcores.jre.utils.map.MapEntry;
+import net.xeoh.nexus.InternalService;
+import net.xeoh.nexus.Nexus;
+import net.xeoh.nexus.Service;
 
 /**
  * Keeps the common core and contains all <code>$</code>-operators for all our cores. This
@@ -128,27 +131,35 @@ public class CoreKeeper {
 
     
     /**
-     * Wraps a single class and returns a new ClassCore. 
+     * Returns an extension for the given type. 
      * 
      * @param <T> Parameter of the classes' type.
      * @param clsses The classes to wrap.
      * @return A CoreClass wrapping the given classes.
      */
-    @SuppressWarnings("unchecked")
-    public static <T> CoreClass<T> $(Class<T> clsses) {
-        return new CoreClass<T>($, new Class[] { clsses });
-    }
-    
-    /**
-     * Returns an extension. 
-     * 
-     * @param <T> Parameter of the classes' type.
-     * @param clsses The classes to wrap.
-     * @return A CoreClass wrapping the given classes.
-     */
-    @SuppressWarnings("unchecked")
-    public static <T extends AbstractSingletonExtension> CoreClass<T> $(Class<T> clsses) {
-        return new CoreClass<T>($, new Class[] { clsses });
+    public static <T extends SingletonExtension> T $(Class<T> clsses) {
+        final Nexus nexus = $.nexus();
+        final T t = nexus.get(clsses);
+        
+        // In case we have the extension everything is fine.
+        if (t != null) return t;
+        
+        // FIXME: If accessed by two threads this might produce two extensions ...
+        try {
+            final T newT = clsses.newInstance();
+            final Collection<? extends Service> service = InternalService.wrap(newT);
+            
+            newT.init($);
+            nexus.register(service);
+            
+            return newT;
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        
+        return null;
     }
 
 

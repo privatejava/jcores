@@ -95,6 +95,7 @@ public class APIv3 {
         //$(f).as(CoreSerializer.class).store("test.xml");
         //System.out.println($("test.xml").as(CoreSerializer.class).load().size());
 
+        /*
         $(F0.class).implementor(F0Impl.class);
         for (int i = 0; i < 100000; i++) {
            // F0 spawn = $(F0.class).spawn();
@@ -102,7 +103,7 @@ public class APIv3 {
                 //size = $(F0.class).spawned().size();
                 //System.out.println(size);
             }
-        }
+        }*/
 
         CoreString c1 = $($(f).list()).as(CoreString.class);
         CoreString c2 = $($("hello", "world").list()).as(CoreString.class);

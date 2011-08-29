@@ -40,6 +40,7 @@ import org.junit.Test;
 public class CoreClassTest {
 
     /** */
+    @SuppressWarnings("unchecked")
     @Test
     public void testSpawn() {
         Assert.assertNotNull($(Robot.class).spawn().get(0));

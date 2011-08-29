@@ -31,14 +31,18 @@ import static net.jcores.jre.CoreKeeper.$;
 
 import java.io.IOException;
 
+import net.jcores.jre.extensions.SingletonExtension;
+
 /**
  * @author rb
  *
  */
 public class SimpleExtensions {
+    public static class MyExt extends SingletonExtension {
+        public void socket() {}
+    }
+    
     public static void main(String[] args) throws IOException {
-        $.ext(MyExtension.class).socket();
-        $(MyExtension.class).socket();
-        
+        $(MyExt.class, null);
     }
 }

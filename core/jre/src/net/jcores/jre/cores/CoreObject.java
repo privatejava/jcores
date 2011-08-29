@@ -50,7 +50,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.jcores.jre.CommonCore;
-import net.jcores.jre.CoreKeeper;
 import net.jcores.jre.cores.adapter.AbstractAdapter;
 import net.jcores.jre.cores.adapter.ArrayAdapter;
 import net.jcores.jre.cores.adapter.CollectionAdapter;
@@ -521,7 +520,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * <code>null</code>.
      */
     public <W> CoreObject<W> wrap(final Class<W> wrapper) {
-        final CoreClass<W> w = CoreKeeper.$(wrapper);
+        @SuppressWarnings("unchecked")
+        final CoreClass<W> w = new CoreClass<W>(this.commonCore, wrapper);
 
         return forEach(new F1<T, W>() {
             @SuppressWarnings("unchecked")
