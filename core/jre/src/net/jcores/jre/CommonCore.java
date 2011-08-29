@@ -51,6 +51,7 @@ import net.jcores.jre.cores.commons.CommonNet;
 import net.jcores.jre.cores.commons.CommonSys;
 import net.jcores.jre.cores.commons.CommonUI;
 import net.jcores.jre.interfaces.functions.F0;
+import net.jcores.jre.interfaces.functions.F0R;
 import net.jcores.jre.managers.Manager;
 import net.jcores.jre.managers.ManagerClass;
 import net.jcores.jre.managers.ManagerDebugGUI;
@@ -58,6 +59,7 @@ import net.jcores.jre.managers.ManagerDeveloperFeedback;
 import net.jcores.jre.managers.ManagerExecution;
 import net.jcores.jre.managers.ManagerLogging;
 import net.jcores.jre.options.MessageType;
+import net.jcores.jre.utils.Async;
 import net.jcores.jre.utils.internal.Reporter;
 import net.jcores.jre.utils.internal.system.ProfileInformation;
 import net.jcores.jre.utils.map.ConcurrentMapUtil;
@@ -136,6 +138,31 @@ public class CommonCore {
     protected void updateManagerInformation() {
         this.executionManager = manager(ManagerExecution.class);
         this.profileInformation = this.executionManager.getProfile();
+    }
+
+    
+    
+    /**
+     * Performs an asynchronous map operation on this core. The order in which 
+     * the objects are being mapped is not defined.<br/>
+     * <br/>
+     * 
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(names).async(lookup)</code> - Performs an asynchronous lookup 
+     * for the set of names.</li>
+     * </ul>
+     * 
+     * Single-threaded. <br/>
+     * <br/>
+     * 
+     * @param f The function to execute asynchronously on the enclosed objects. 
+     * @param <R> Return type for the {@link Async} object.
+     * @return An {@link Async} object that will hold the results (in an arbitrary order).
+     */
+    public <R> Async<R> async(F0R<R> f) {
+        return null;
     }
 
 

@@ -1,5 +1,5 @@
 /*
- * PerformanceMonitor.aj
+ * SimpleExtensions.java
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
@@ -25,36 +25,20 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.aspects;
+package sandbox;
 
-import org.aspectj.lang.Signature;
+import static net.jcores.jre.CoreKeeper.$;
+
+import java.io.IOException;
 
 /**
- * NAAAH. Doesn't work. Apparently there is no way to add a single assert() statement
- * without dynamic overhead ... 
- * 
- * Watches the performance of the plugin....
+ * @author rb
+ *
  */
-@Deprecated
-public aspect PerformanceMonitor {
-    pointcut corecalls() : execution(* net.jcores.cores.*.*(..) );
-    
-    public boolean enter(Signature signature) {
-        System.out.println(signature.getName());
+public class SimpleExtensions {
+    public static void main(String[] args) throws IOException {
+        $.ext(MyExtension.class).socket();
+        $(MyExtension.class).socket();
         
-        return true;
-    }
-    
-    before(): corecalls() {
-        //CoreKeeper.$.manager(ManagerStatistics.class);
-        //SourceLocation sl = thisJoinPointStaticPart.getSourceLocation();
-
-        assert enter(thisJoinPoint.getSignature());
-        
-        // assert statistics.enter() 
-    }
-    
-    after(): corecalls() {
-        // assert statistics.exit()
     }
 }

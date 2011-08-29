@@ -1,7 +1,7 @@
 /*
- * SimpleScript.java
+ * Async.java
  * 
- * Copyright (c) 2010, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert, DFKI. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,66 +25,15 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package sandbox;
-
-import static net.jcores.jre.CoreKeeper.$;
-
-import java.io.IOException;
-import java.util.List;
-
-import net.jcores.script.JCoresScript;
+package net.jcores.jre.utils;
 
 /**
- * @author rb
- *
+ * Reflects the results of an asynchronous core operation <code>async().</code>.
+ * 
+ * @author Ralf Biedert
+ * @param <T> The type this async object wraps.
+ * @since 1.0
  */
-public class SimpleScript {
+public class Async<T> {
 
-    /**
-     * @param args
-     * @throws IOException 
-     */
-    public static void main(String[] args) throws IOException {
-        
-        
-        String name = "";
-        Object dataset = "";
-        
-        
-        JCoresScript.SCRIPT("MyScript", args).console().pack();
-        
-        
-        
-        
-        $(dataset).unique().sort().get(0.5);
-        
-        
-        
-        $(".").file().dir().print();
-        
-        
-
-        
-        name = $(name).get("Unknown User");
-        
-        
-        
-        
-        
-        $.range(1, 50).random(6).print();
-        
-        
-        
-        
-        
-        $.sys.sleep(1000);
-        
-        @SuppressWarnings("unused")
-        
-        
-        
-        List<String> strings = $.list();
-        
-        
-    }
 }

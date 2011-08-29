@@ -56,6 +56,7 @@ import net.jcores.jre.cores.CoreString;
 import net.jcores.jre.cores.CoreURI;
 import net.jcores.jre.cores.adapter.AbstractAdapter;
 import net.jcores.jre.cores.adapter.MapAdapter;
+import net.jcores.jre.extensions.AbstractSingletonExtension;
 import net.jcores.jre.interfaces.functions.F1;
 import net.jcores.jre.options.Option;
 import net.jcores.jre.options.OptionMapType;
@@ -137,6 +138,19 @@ public class CoreKeeper {
     public static <T> CoreClass<T> $(Class<T> clsses) {
         return new CoreClass<T>($, new Class[] { clsses });
     }
+    
+    /**
+     * Returns an extension. 
+     * 
+     * @param <T> Parameter of the classes' type.
+     * @param clsses The classes to wrap.
+     * @return A CoreClass wrapping the given classes.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends AbstractSingletonExtension> CoreClass<T> $(Class<T> clsses) {
+        return new CoreClass<T>($, new Class[] { clsses });
+    }
+
 
     /**
      * Wraps number of classes and returns a new ClassCore. In most cases

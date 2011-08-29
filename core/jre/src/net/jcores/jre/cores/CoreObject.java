@@ -67,6 +67,7 @@ import net.jcores.jre.managers.ManagerDeveloperFeedback;
 import net.jcores.jre.options.MessageType;
 import net.jcores.jre.options.Option;
 import net.jcores.jre.options.OptionMapType;
+import net.jcores.jre.utils.Async;
 import net.jcores.jre.utils.internal.Folder;
 import net.jcores.jre.utils.internal.Mapper;
 import net.jcores.jre.utils.internal.Wrapper;
@@ -338,7 +339,32 @@ public class CoreObject<T> extends Core implements Iterable<T> {
 
         return null;
     }
+    
+    
+    /**
+     * Performs an asynchronous map operation on this core. The order in which 
+     * the objects are being mapped is not defined.<br/>
+     * <br/>
+     * 
+     * 
+     * Examples:
+     * <ul>
+     * <li><code>$(names).async(lookup)</code> - Performs an asynchronous lookup 
+     * for the set of names.</li>
+     * </ul>
+     * 
+     * Single-threaded. <br/>
+     * <br/>
+     * 
+     * @param f The function to execute asynchronously on the enclosed objects. 
+     * @param <R> Return type for the {@link Async} object.
+     * @return An {@link Async} object that will hold the results (in an arbitrary order).
+     */
+    public <R> Async<R> async(F1<T, R> f) {
+        return null;
+    }
 
+    
     /**
      * Casts all elements to the given type or sets them null if they are not castable.<br/>
      * <br/>

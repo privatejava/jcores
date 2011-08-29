@@ -53,9 +53,9 @@ public class SimpleFuture {
         Future<String> f2 = null;
         Future<Integer> f3 = null;
         
-
+        // Playing with futures 
         $(f1).await().get(0);
-        $(f1).finishedOne(new F1<String, Void>() {
+        $(f1).oneFinished(new F1<String, Void>() {
             @Override
             public Void f(String x) {
                 return null;
@@ -64,6 +64,22 @@ public class SimpleFuture {
         $(f1).obtain(0, 10, TimeUnit.DAYS);
         $(f1).obtain(0);
 
+        
+        // How can we become async?
+        String heavy[] = {};
+        $(heavy).map(new F1<String, Void>() {   // This is sync
+            @Override
+            public Void f(String x) {
+                return null;
+            }
+        });
+        
+        
+        $(heavy).async(null).getClass();
+        /*$.async(null).queue();
+        $.async(null).finished();
+        $.async(null).oneFinished(f);
+        */
     }
 
 }

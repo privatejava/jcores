@@ -1,5 +1,5 @@
 /*
- * SimpleScript.java
+ * F0R.java
  * 
  * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
@@ -25,66 +25,21 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package sandbox;
-
-import static net.jcores.jre.CoreKeeper.$;
-
-import java.io.IOException;
-import java.util.List;
-
-import net.jcores.script.JCoresScript;
+package net.jcores.jre.interfaces.functions;
 
 /**
- * @author rb
- *
+ * An empty function, does not accept parameters, but does return 
+ * a value.
+ * 
+ * @since 1.0
+ * @author Ralf Biedert
+ * @param <R> The type of the return value.
  */
-public class SimpleScript {
-
+public interface F0R<R> {
     /**
-     * @param args
-     * @throws IOException 
+     * Override this method.
+     * 
+     * @return The object to return. 
      */
-    public static void main(String[] args) throws IOException {
-        
-        
-        String name = "";
-        Object dataset = "";
-        
-        
-        JCoresScript.SCRIPT("MyScript", args).console().pack();
-        
-        
-        
-        
-        $(dataset).unique().sort().get(0.5);
-        
-        
-        
-        $(".").file().dir().print();
-        
-        
-
-        
-        name = $(name).get("Unknown User");
-        
-        
-        
-        
-        
-        $.range(1, 50).random(6).print();
-        
-        
-        
-        
-        
-        $.sys.sleep(1000);
-        
-        @SuppressWarnings("unused")
-        
-        
-        
-        List<String> strings = $.list();
-        
-        
-    }
+    public R f();
 }

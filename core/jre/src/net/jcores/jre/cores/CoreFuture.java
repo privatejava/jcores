@@ -80,7 +80,7 @@ public class CoreFuture<T> extends CoreObject<Future<T>> {
      * @param listener The listener that is being called when one finished. 
      * @return This core again.
      */
-    public CoreFuture<T> finishedOne(final F1<T, Void> listener) {
+    public CoreFuture<T> oneFinished(final F1<T, Void> listener) {
         // For each future ...
         for (final Future<T> future : this) {
             // ... execute a thread which waits for the future to finish
