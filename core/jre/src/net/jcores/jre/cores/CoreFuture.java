@@ -33,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import net.jcores.jre.CommonCore;
+import net.jcores.jre.annotations.Beta;
 import net.jcores.jre.interfaces.functions.F1;
 import net.jcores.jre.options.MessageType;
 
@@ -48,6 +49,7 @@ import net.jcores.jre.options.MessageType;
  * @param <T> The type of future to wait for.
  * @since 1.0
  */
+@Beta
 public class CoreFuture<T> extends CoreObject<Future<T>> {
 
     /** Used for serialization */

@@ -50,6 +50,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.jcores.jre.CommonCore;
+import net.jcores.jre.annotations.Beta;
 import net.jcores.jre.cores.adapter.AbstractAdapter;
 import net.jcores.jre.cores.adapter.ArrayAdapter;
 import net.jcores.jre.cores.adapter.CollectionAdapter;
@@ -359,6 +360,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * @param <R> Return type for the {@link Async} object.
      * @return An {@link Async} object that will hold the results (in an arbitrary order).
      */
+    @Beta
     public <R> Async<R> async(F1<T, R> f) {
         return null;
     }
