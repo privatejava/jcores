@@ -30,8 +30,8 @@ package net.jcores.jre.extensions;
 import net.jcores.jre.CommonCore;
 
 /**
- * Base class for a singleton extension (i.e., one which can be obtained 
- * as <code>$(MyExtension).f()</code>).
+ * Base class for a singleton extension, i.e., one which can be obtained 
+ * as <code>$(MyExtension).f()</code>.
  * 
  * @author Ralf Biedert
  * @since 1.0
