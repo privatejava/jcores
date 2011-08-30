@@ -36,9 +36,13 @@ import java.net.URL;
 
 import net.jcores.jre.CommonCore;
 import net.jcores.jre.CoreKeeper;
+import net.jcores.jre.annotations.SupportsOption;
 import net.jcores.jre.cores.adapter.AbstractAdapter;
 import net.jcores.jre.interfaces.functions.F1;
 import net.jcores.jre.options.MessageType;
+import net.jcores.jre.options.OnFailure;
+import net.jcores.jre.options.Option;
+import net.jcores.jre.utils.internal.Options;
 import net.jcores.jre.utils.internal.Streams;
 
 /**
@@ -88,10 +92,14 @@ public class CoreURI extends CoreObject<URI> {
      * 
      * Multi-threaded.<br/>
      * <br/>
+     * @param options Optional arguments, especially {@link OnFailure}.
      * 
      * @return A CoreInputStream object enclosing the opened input streams.
      */
-    public CoreInputStream input() {
+    @SupportsOption(options = {OnFailure.class})
+    public CoreInputStream input(Option ... options) {
+        final Options options$ = Options.$(options);
+
         return new CoreInputStream(this.commonCore, map(new F1<URI, InputStream>() {
             public InputStream f(URI x) {
                 try {
@@ -99,8 +107,10 @@ public class CoreURI extends CoreObject<URI> {
                     final InputStream openStream = url.openStream();
                     return openStream;
                 } catch (MalformedURLException e) {
+                    options$.failure(x, e, "input/uri", "Malformed URI");
                     CoreURI.this.commonCore.report(MessageType.EXCEPTION, "URI " + x + " could not be transformed into an URL.");
                 } catch (IOException e) {
+                    options$.failure(x, e, "input/io", "Error opening the URI");
                     CoreURI.this.commonCore.report(MessageType.EXCEPTION, "URI " + x + " could not be opened for reading.");
                 }
 

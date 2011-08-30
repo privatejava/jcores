@@ -31,6 +31,10 @@ import static net.jcores.jre.CoreKeeper.$;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import net.jcores.jre.cores.CoreNumber;
+import net.jcores.jre.interfaces.functions.F1V;
+import net.jcores.jre.utils.Async;
+
 /**
  * Manages and keeps internal trouble records. You do not need this.
  * 
@@ -54,5 +58,41 @@ public class Reporter {
         for (String r : this.allRecords) {
             System.out.println(">>> " + r);
         }
+        
+        // Check if we are current or not
+        final Async<String> async = $.net.get("http://api.jcores.net/versioncheck/", null);
+        async.onNext(new F1V<String>() {
+            @Override
+            public void fV(String x) {
+                String revisionOnline = $(x).split("-").trim().get(-1, "UNDEFINED");
+                String revisionOffline = $($.version()).split("-").get(-1, "UNDEFINED");
+
+                if(revisionOffline.contains("@")) {
+                    System.out.println(">>> You are probably running a source build. Cannot determine your exact version.");
+                    return;
+                }
+                
+                if(revisionOnline.contains("UNDEFINED")) {
+                    System.out.println(">>> Latest online version unknown. Probably you are not on the internet.");
+                    return;
+                }
+
+                final CoreNumber n = $(revisionOffline, revisionOnline).number(Long.class);
+                final long diff = n.get(0).longValue() - n.get(1).longValue();
+                
+                if(diff == 0) {
+                    System.out.println(">>> Your version is up to date.");
+                }
+                
+                if(diff > 0) {
+                    System.out.println(">>> Your version is newer than the online version. Early bird ;-)");
+                }
+                
+                if(diff < 0) {
+                    System.out.println(">>> Your version is outdated. Get the latest version at http://jcores.net");
+                } 
+                
+            }
+        });
     }
 }

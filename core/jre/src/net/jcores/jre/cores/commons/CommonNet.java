@@ -41,7 +41,6 @@ import net.jcores.jre.options.KillSwitch;
 import net.jcores.jre.options.OnFailure;
 import net.jcores.jre.options.Option;
 import net.jcores.jre.utils.Async;
-import net.jcores.jre.utils.internal.Options;
 import net.jcores.jre.utils.map.MapEntry;
 
 /**
@@ -128,8 +127,7 @@ public class CommonNet extends CommonNamespace {
      * @return An {@link Async} object which will contain the result (content) the server gave.  
      */
     @SupportsOption(options = { KillSwitch.class, OnFailure.class })
-    public Async<String> get(final String url, final Map<String, String> data, Option... options) {
-        final Options options$ = Options.$(options);
+    public Async<String> get(final String url, final Map<String, String> data, final Option... options) {
         
         return this.commonCore.async(new F0R<String>() {
             @Override
@@ -141,7 +139,7 @@ public class CommonNet extends CommonNamespace {
                     }
                 }).string().join("&");
                 
-                return $(url + "?" + param).uri().input().text().get(0);
+                return $(url + "?" + param).uri().input(options).text().get(0);
             }
         }, options);
     }

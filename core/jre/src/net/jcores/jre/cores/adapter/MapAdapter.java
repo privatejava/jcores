@@ -27,6 +27,7 @@
  */
 package net.jcores.jre.cores.adapter;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import net.jcores.jre.utils.map.MapEntry;
@@ -52,8 +53,7 @@ public final class MapAdapter<K, V> extends CollectionAdapter<K, MapEntry<K, V>>
     Map<K, V> map;
 
     public MapAdapter(Map<K, V> map) {
-        super(map.keySet());
-
+        super(map != null ? map.keySet() : new ArrayList<K>());
         this.map = map;
     }
 
