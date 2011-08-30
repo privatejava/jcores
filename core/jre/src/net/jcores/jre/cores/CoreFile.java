@@ -58,9 +58,9 @@ import net.jcores.jre.interfaces.functions.F1Object2Bool;
 import net.jcores.jre.options.ListDirectories;
 import net.jcores.jre.options.MessageType;
 import net.jcores.jre.options.Option;
-import net.jcores.jre.utils.internal.io.FileUtils;
-import net.jcores.jre.utils.internal.io.StreamUtils;
-import net.jcores.jre.utils.internal.sound.SoundUtils;
+import net.jcores.jre.utils.internal.Files;
+import net.jcores.jre.utils.internal.Sound;
+import net.jcores.jre.utils.internal.Streams;
 
 /**
  * Wraps a number of files and exposes some convenience functions. For example,
@@ -185,7 +185,7 @@ public class CoreFile extends CoreObject<File> {
         return new CoreAudioInputStream(this.commonCore, map(new F1<File, AudioInputStream>() {
             @Override
             public AudioInputStream f(File x) {
-                return SoundUtils.getStream(x);
+                return Sound.getStream(x);
             }
         }).array(AudioInputStream.class));
     }
@@ -227,7 +227,7 @@ public class CoreFile extends CoreObject<File> {
         return new CoreFile(this.commonCore, map(new F1<File, File[]>() {
             @Override
             public File[] f(File x) {
-                return FileUtils.copy(cc, x, dest);
+                return Files.copy(cc, x, dest);
             }
         }).expand(File.class).array(File.class));
     }
@@ -349,7 +349,7 @@ public class CoreFile extends CoreObject<File> {
 
         // Try to restore the core, and don't forget to set the commonCore
         try {
-            final CoreObject<T> core = StreamUtils.deserializeCore(type, new FileInputStream(get(0)), this.commonCore);
+            final CoreObject<T> core = Streams.deserializeCore(type, new FileInputStream(get(0)), this.commonCore);
             if (core != null) return core;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -387,7 +387,7 @@ public class CoreFile extends CoreObject<File> {
         return map(new F1<File, File[]>() {
             @Override
             public File[] f(File x) {
-                return FileUtils.dir(x, listDirs);
+                return Files.dir(x, listDirs);
             }
         }).expand(File.class).unique().as(CoreFile.class);
     }
@@ -520,7 +520,7 @@ public class CoreFile extends CoreObject<File> {
      * @return This Core again.
      */
     public CoreFile jar(String target, Manifest manifest, Option... options) {
-        FileUtils.jarFiles(new File(target), manifest, this.unsafeadapter().array());
+        Files.jarFiles(new File(target), manifest, this.unsafeadapter().array());
         return this;
     }
 
@@ -569,7 +569,7 @@ public class CoreFile extends CoreObject<File> {
         final CommonCore cc = this.commonCore;
         return new CoreString(this.commonCore, map(new F1<File, String>() {
             public String f(final File x) {
-                return FileUtils.readText(cc, x);
+                return Files.readText(cc, x);
             }
         }).array(String.class));
     }
@@ -616,7 +616,7 @@ public class CoreFile extends CoreObject<File> {
      * @return This Core again.
      */
     public CoreFile zip(String target, Option... options) {
-        FileUtils.zipFiles(new File(target), this.adapter.array());
+        Files.zipFiles(new File(target), this.adapter.array());
         return this;
     }
 }

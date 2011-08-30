@@ -35,7 +35,7 @@ import net.jcores.jre.CommonCore;
 import net.jcores.jre.interfaces.functions.F1;
 import net.jcores.jre.options.Hash;
 import net.jcores.jre.options.Option;
-import net.jcores.jre.utils.internal.io.DataUtils;
+import net.jcores.jre.utils.internal.Bytes;
 
 /**
  * Wraps a number of ByteBuffers and exposes some convenience functions. For example, 
@@ -85,7 +85,7 @@ public class CoreByteBuffer extends CoreObject<ByteBuffer> {
 
         return new CoreString(this.commonCore, map(new F1<ByteBuffer, String>() {
             public String f(final ByteBuffer x) {
-                return DataUtils.generateHash(x, method);
+                return Bytes.generateHash(x, method);
             }
         }).array(String.class));
 

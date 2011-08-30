@@ -36,8 +36,8 @@ import net.jcores.jre.CommonCore;
 import net.jcores.jre.cores.adapter.AbstractAdapter;
 import net.jcores.jre.interfaces.functions.F1;
 import net.jcores.jre.options.MessageType;
-import net.jcores.jre.utils.internal.io.InputStreamWrapper;
-import net.jcores.jre.utils.internal.io.StreamUtils;
+import net.jcores.jre.utils.internal.Streams;
+import net.jcores.jre.utils.internal.wrapper.InputStreamWrapper;
 
 /**
  * Wraps a number of ZipInputStreams and exposes some convenience functions. For example, 
@@ -101,7 +101,7 @@ public class CoreZipInputStream extends CoreObject<ZipInputStream> {
             @Override
             public Void f(ZipInputStream x) {
                 try {
-                    StreamUtils.doUnzip(x, destination);
+                    Streams.doUnzip(x, destination);
                     x.close();
                 } catch (IOException e) {
                     CoreZipInputStream.this.commonCore.report(MessageType.EXCEPTION, "IO error processing " + e + ".");
@@ -133,7 +133,7 @@ public class CoreZipInputStream extends CoreObject<ZipInputStream> {
             @Override
             public List<String> f(ZipInputStream x) {
                 try {
-                    final List<String> list = StreamUtils.list(x);
+                    final List<String> list = Streams.list(x);
                     x.close();
                     return list;
                 } catch (IOException e) {
@@ -183,7 +183,7 @@ public class CoreZipInputStream extends CoreObject<ZipInputStream> {
         if (zipInputStream == null) return null;
 
         try {
-            final InputStream inputStream = StreamUtils.getInputStream(zipInputStream, path);
+            final InputStream inputStream = Streams.getInputStream(zipInputStream, path);
 
             // We CAN NOT close the parent stream right away, because then we would
             // invalidate

@@ -37,7 +37,7 @@ import net.jcores.jre.CommonCore;
 import net.jcores.jre.interfaces.functions.F1;
 import net.jcores.jre.managers.ManagerClass;
 import net.jcores.jre.options.MessageType;
-import net.jcores.jre.utils.internal.io.StreamUtils;
+import net.jcores.jre.utils.internal.Streams;
 
 /**
  * Wraps class objects, usually only one, and exposes some convenience functions
@@ -101,7 +101,7 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
                     return null;
                 }
 
-                return StreamUtils.getByteData(classloader.getResourceAsStream(classname));
+                return Streams.getByteData(classloader.getResourceAsStream(classname));
             }
         }).array(ByteBuffer.class));
     }

@@ -51,8 +51,8 @@ import net.jcores.jre.options.MessageType;
 import net.jcores.jre.options.Option;
 import net.jcores.jre.options.RegEx;
 import net.jcores.jre.utils.CSVLine;
-import net.jcores.jre.utils.internal.io.StreamUtils;
-import net.jcores.jre.utils.internal.lang.StringUtils;
+import net.jcores.jre.utils.internal.Streams;
+import net.jcores.jre.utils.internal.Strings;
 import net.jcores.jre.utils.map.Compound;
 
 /**
@@ -351,11 +351,11 @@ public class CoreString extends CoreObject<String> {
         return new CoreString(this.commonCore, map(new F1<String, String>() {
             public String f(String x) {
                 final ProcessBuilder builder = new ProcessBuilder();
-                builder.command(StringUtils.parseExec(x));
+                builder.command(Strings.parseExec(x));
                 try {
                     final Process start = builder.start();
                     start.waitFor();
-                    return StreamUtils.readText(CoreString.this.commonCore, start.getInputStream());
+                    return Streams.readText(CoreString.this.commonCore, start.getInputStream());
                 } catch (IOException e) {
                     CoreString.this.commonCore.report(MessageType.EXCEPTION, "Error invoking " + x);
                 } catch (InterruptedException e) {
@@ -401,11 +401,11 @@ public class CoreString extends CoreObject<String> {
             public String f(String x) {
                 final ProcessBuilder builder = new ProcessBuilder();
                 final String cmd = x.replaceAll("^(.*)$", command);
-                builder.command(StringUtils.parseExec(cmd)); 
+                builder.command(Strings.parseExec(cmd)); 
                 try {
                     final Process start = builder.start();
                     start.waitFor();
-                    return StreamUtils.readText(CoreString.this.commonCore, start.getInputStream());
+                    return Streams.readText(CoreString.this.commonCore, start.getInputStream());
                 } catch (IOException e) {
                     CoreString.this.commonCore.report(MessageType.EXCEPTION, "Error invoking " + x);
                 } catch (InterruptedException e) {

@@ -25,7 +25,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.jre.utils.internal.io;
+package net.jcores.jre.utils.internal;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -57,7 +57,7 @@ import net.jcores.jre.options.MessageType;
 /**
  * @author Ralf Biedert
  */
-public class StreamUtils {
+public class Streams {
     /**
      * Unzips the given stream.
      * 

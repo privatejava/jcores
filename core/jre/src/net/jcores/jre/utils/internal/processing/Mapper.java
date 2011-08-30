@@ -25,7 +25,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.jre.utils.internal;
+package net.jcores.jre.utils.internal.processing;
 
 import java.lang.reflect.Array;
 

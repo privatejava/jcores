@@ -25,7 +25,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.jre.utils.internal.sound;
+package net.jcores.jre.utils.internal;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -44,7 +44,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 /**
  * @author Ralf Biedert
  */
-public class SoundUtils {
+public class Sound {
 
     private final static int EXTERNAL_BUFFER_SIZE = 524288; // 128Kb
     

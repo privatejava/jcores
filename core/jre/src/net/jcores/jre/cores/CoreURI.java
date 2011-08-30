@@ -39,7 +39,7 @@ import net.jcores.jre.CoreKeeper;
 import net.jcores.jre.cores.adapter.AbstractAdapter;
 import net.jcores.jre.interfaces.functions.F1;
 import net.jcores.jre.options.MessageType;
-import net.jcores.jre.utils.internal.io.StreamUtils;
+import net.jcores.jre.utils.internal.Streams;
 
 /**
  * Wraps a number of URIs and exposes some convenience functions. For example, 
@@ -134,7 +134,7 @@ public class CoreURI extends CoreObject<URI> {
                     final InputStream openStream = url.openStream();
                     final File file = File.createTempFile("jcores.download.", ".tmp");
 
-                    StreamUtils.saveTo(openStream, file);
+                    Streams.saveTo(openStream, file);
 
                     openStream.close();
 
@@ -180,7 +180,7 @@ public class CoreURI extends CoreObject<URI> {
                     final InputStream openStream = url.openStream();
                     final File file = new File(path + "/" + filepath);
 
-                    StreamUtils.saveTo(openStream, file);
+                    Streams.saveTo(openStream, file);
 
                     openStream.close();
 

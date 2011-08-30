@@ -25,7 +25,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.jre.utils.internal.lang;
+package net.jcores.jre.utils.internal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * @author Ralf Biedert
  */
-public class StringUtils {
+public class Strings {
 
     /**
      * @param line

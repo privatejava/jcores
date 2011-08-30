@@ -1,5 +1,5 @@
 /*
- * URIUtils.java
+ * ProfileInformation.java
  * 
  * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
@@ -25,25 +25,17 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.jre.utils.internal.io;
+package net.jcores.jre.utils.internal.structures;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-
-public class URIUtils {
-    public static URI[] URIs(URL url[]) {
-        if (url == null) return new URI[0];
-
-        final URI[] rval = new URI[url.length];
-        for (int i = 0; i < rval.length; i++) {
-            if (url[i] == null) continue;
-            try {
-                rval[i] = url[i].toURI();
-            } catch (URISyntaxException e) {}
-        }
-
-        return rval;
-    }
-
+/**
+ * Stores information from the profile run.
+ * 
+ * @author Ralf Biedert
+ */
+public class ProfileInformation {
+    /** The time it takes to <i>fork</i> a thread and wait for it to return. */
+    public long forkTime;
+    
+    /** How many CPUs we use when we can */
+    public int numCPUs;
 }

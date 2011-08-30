@@ -25,7 +25,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.jre.utils.internal.io;
+package net.jcores.jre.utils.internal;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -50,7 +50,7 @@ import net.jcores.jre.options.MessageType;
 /**
  * @author Ralf Biedert
  */
-public class FileUtils {
+public class Files {
     /**
      * Reads the content of file as text.
      * 

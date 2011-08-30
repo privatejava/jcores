@@ -64,7 +64,7 @@ import net.jcores.jre.options.MessageType;
 import net.jcores.jre.options.Option;
 import net.jcores.jre.utils.Async;
 import net.jcores.jre.utils.internal.Reporter;
-import net.jcores.jre.utils.internal.system.ProfileInformation;
+import net.jcores.jre.utils.internal.structures.ProfileInformation;
 import net.jcores.jre.utils.map.ConcurrentMapUtil;
 import net.jcores.jre.utils.map.MapUtil;
 import net.xeoh.nexus.DefaultNexus;

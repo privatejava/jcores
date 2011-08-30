@@ -1,4 +1,4 @@
-package net.jcores.jre.utils.internal.ui;
+package net.jcores.jre.utils.internal.structures;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;

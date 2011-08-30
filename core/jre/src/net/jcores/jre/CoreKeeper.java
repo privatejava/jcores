@@ -60,8 +60,8 @@ import net.jcores.jre.extensions.SingletonExtension;
 import net.jcores.jre.interfaces.functions.F1;
 import net.jcores.jre.options.Option;
 import net.jcores.jre.options.MapType;
-import net.jcores.jre.utils.internal.Wrapper;
-import net.jcores.jre.utils.internal.io.URIUtils;
+import net.jcores.jre.utils.internal.URIs;
+import net.jcores.jre.utils.internal.wrapper.Wrapper;
 import net.jcores.jre.utils.map.MapEntry;
 import net.xeoh.nexus.InternalService;
 import net.xeoh.nexus.Nexus;
@@ -226,7 +226,7 @@ public class CoreKeeper {
      * @return A CoreString wrapping the given URLs.
      */
     public static CoreURI $(URL... object) {
-        return new CoreURI($, URIUtils.URIs(object));
+        return new CoreURI($, URIs.toURIs(object));
     }
 
     /**

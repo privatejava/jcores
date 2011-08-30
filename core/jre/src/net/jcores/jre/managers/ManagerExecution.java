@@ -34,7 +34,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 import net.jcores.jre.interfaces.functions.F0;
-import net.jcores.jre.utils.internal.system.ProfileInformation;
+import net.jcores.jre.utils.internal.structures.ProfileInformation;
 
 /**
  * Manages the execution of threads.

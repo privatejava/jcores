@@ -25,7 +25,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.jre.utils.internal.io;
+package net.jcores.jre.utils.internal;
 
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
@@ -36,7 +36,7 @@ import java.security.NoSuchAlgorithmException;
  * 
  * @author Ralf Biedert
  */
-public class DataUtils {
+public class Bytes {
     /**
      * Hashes the given data.
      * 

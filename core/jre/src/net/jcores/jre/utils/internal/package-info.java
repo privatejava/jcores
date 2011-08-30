@@ -1,5 +1,5 @@
 /**
- * Internally used helper functions and classes. 
+ * Internally used helper functions. 
  *
  * @since 1.0
  */

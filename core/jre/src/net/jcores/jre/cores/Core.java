@@ -35,9 +35,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import net.jcores.jre.CommonCore;
 import net.jcores.jre.options.Option;
-import net.jcores.jre.utils.internal.Folder;
-import net.jcores.jre.utils.internal.Mapper;
-import net.jcores.jre.utils.internal.system.ProfileInformation;
+import net.jcores.jre.utils.internal.processing.Folder;
+import net.jcores.jre.utils.internal.processing.Mapper;
+import net.jcores.jre.utils.internal.structures.ProfileInformation;
 
 /**
  * The abstract base class of all cores. Contains commonly used methods and variables. In

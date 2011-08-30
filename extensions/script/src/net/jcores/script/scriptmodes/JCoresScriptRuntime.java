@@ -39,7 +39,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import net.jcores.jre.interfaces.functions.F0;
-import net.jcores.jre.utils.internal.system.ProfileInformation;
+import net.jcores.jre.utils.internal.structures.ProfileInformation;
 import net.jcores.script.JCoresScript;
 import net.jcores.script.util.console.JCoresConsole;
 

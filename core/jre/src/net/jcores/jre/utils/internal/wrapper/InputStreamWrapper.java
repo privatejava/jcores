@@ -25,7 +25,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.jre.utils.internal.io;
+package net.jcores.jre.utils.internal.wrapper;
 
 import java.io.IOException;
 import java.io.InputStream;

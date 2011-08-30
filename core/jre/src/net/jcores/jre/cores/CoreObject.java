@@ -69,11 +69,11 @@ import net.jcores.jre.options.MapType;
 import net.jcores.jre.options.MessageType;
 import net.jcores.jre.options.Option;
 import net.jcores.jre.utils.Async;
-import net.jcores.jre.utils.internal.Folder;
-import net.jcores.jre.utils.internal.Mapper;
-import net.jcores.jre.utils.internal.Wrapper;
-import net.jcores.jre.utils.internal.io.StreamUtils;
-import net.jcores.jre.utils.internal.lang.ObjectUtils;
+import net.jcores.jre.utils.internal.Objects;
+import net.jcores.jre.utils.internal.Streams;
+import net.jcores.jre.utils.internal.processing.Folder;
+import net.jcores.jre.utils.internal.processing.Mapper;
+import net.jcores.jre.utils.internal.wrapper.Wrapper;
 import net.jcores.jre.utils.map.Compound;
 
 /**
@@ -500,7 +500,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      */
     public CoreObject<T> serialize(final String path, Option... options) {
         try {
-            StreamUtils.serializeCore(this, new FileOutputStream(new File(path)));
+            Streams.serializeCore(this, new FileOutputStream(new File(path)));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -813,7 +813,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         final CoreObject<X> filtered = cast(c);
 
         // Provide an invocation handler
-        return (X) ObjectUtils.getProxy(new InvocationHandler() {
+        return (X) Objects.getProxy(new InvocationHandler() {
             public Object invoke(Object proxy, final Method method, final Object[] args)
                                                                                         throws Throwable {
                 filtered.map(new F1<X, Object>() {

@@ -27,7 +27,7 @@
  */
 package junit.internal;
 
-import net.jcores.jre.utils.internal.lang.StringUtils;
+import net.jcores.jre.utils.internal.Strings;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -37,26 +37,26 @@ public class StringUtilsTest {
     public void parseExecTest() {
         String[] r;
         
-        r = StringUtils.parseExec("ls -la /");
+        r = Strings.parseExec("ls -la /");
         Assert.assertEquals("ls", r[0]);
         Assert.assertEquals("-la", r[1]);
         Assert.assertEquals("/", r[2]);
 
-        r = StringUtils.parseExec("'/My Dir/x' -s 'Hello World' -v  3");
+        r = Strings.parseExec("'/My Dir/x' -s 'Hello World' -v  3");
         Assert.assertEquals("/My Dir/x", r[0]);
         Assert.assertEquals("-s", r[1]);
         Assert.assertEquals("Hello World", r[2]);
         Assert.assertEquals("-v", r[3]);
         Assert.assertEquals("3", r[4]);
 
-        r = StringUtils.parseExec("say 'He\\'s joking!'");
+        r = Strings.parseExec("say 'He\\'s joking!'");
         Assert.assertEquals("say", r[0]);
         Assert.assertEquals("He's joking!", r[1]);
         
-        r = StringUtils.parseExec(" hello ");
+        r = Strings.parseExec(" hello ");
         Assert.assertEquals("hello", r[0]);
 
-        r = StringUtils.parseExec(" 'hello \\'' probably is'' m 'ean ' \" ");
+        r = Strings.parseExec(" 'hello \\'' probably is'' m 'ean ' \" ");
         Assert.assertEquals("hello '", r[0]);
         Assert.assertEquals("probably", r[1]);
         Assert.assertEquals("is", r[2]);
@@ -65,7 +65,7 @@ public class StringUtilsTest {
         Assert.assertEquals("ean ", r[5]);
         Assert.assertEquals("\"", r[6]);
         
-        r = StringUtils.parseExec(" x'");
+        r = Strings.parseExec(" x'");
         Assert.assertEquals("x", r[0]);
     }
 }

@@ -43,8 +43,8 @@ import net.jcores.jre.interfaces.functions.F1;
 import net.jcores.jre.options.Hash;
 import net.jcores.jre.options.MessageType;
 import net.jcores.jre.options.Option;
-import net.jcores.jre.utils.internal.io.StreamUtils;
-import net.jcores.jre.utils.internal.sound.SoundUtils;
+import net.jcores.jre.utils.internal.Sound;
+import net.jcores.jre.utils.internal.Streams;
 
 /**
  * Wraps an input stream and exposes some convenience functions. For example, 
@@ -130,7 +130,7 @@ public class CoreInputStream extends CoreObject<InputStream> {
     public CoreAudioInputStream audio() {
         return new CoreAudioInputStream(this.commonCore, map(new F1<InputStream, AudioInputStream>() {
             public AudioInputStream f(InputStream x) {
-                return SoundUtils.getStream(x);
+                return Sound.getStream(x);
             }
         }).array(AudioInputStream.class));
     }
@@ -184,7 +184,7 @@ public class CoreInputStream extends CoreObject<InputStream> {
             this.commonCore.report(MessageType.MISUSE, "deserialize() should not be used on cores with more than one class!");
 
         // Try to restore the core, and don't forget to set the commonCore
-        final CoreObject<T> core = StreamUtils.deserializeCore(type, get(0), this.commonCore);
+        final CoreObject<T> core = Streams.deserializeCore(type, get(0), this.commonCore);
         if (core != null) return core;
 
         return new CoreObject<T>(this.commonCore, new EmptyAdapter<T>());
@@ -211,7 +211,7 @@ public class CoreInputStream extends CoreObject<InputStream> {
             @Override
             public Void f(InputStream x) {
                 try {
-                    StreamUtils.doUnzip(x, destination);
+                    Streams.doUnzip(x, destination);
                     x.close();
                 } catch (IOException e) {
                     CoreInputStream.this.commonCore.report(MessageType.EXCEPTION, "IO error processing " + x + ".");
@@ -294,7 +294,7 @@ public class CoreInputStream extends CoreObject<InputStream> {
     public CoreString text() {
         return new CoreString(this.commonCore, map(new F1<InputStream, String>() {
             public String f(final InputStream x) {
-                String readText = StreamUtils.readText(CoreInputStream.this.commonCore, x);
+                String readText = Streams.readText(CoreInputStream.this.commonCore, x);
 
                 try {
                     x.close();
@@ -327,7 +327,7 @@ public class CoreInputStream extends CoreObject<InputStream> {
 
         return new CoreString(this.commonCore, map(new F1<InputStream, String>() {
             public String f(final InputStream x) {
-                String generateHash = StreamUtils.generateHash(x, method);
+                String generateHash = Streams.generateHash(x, method);
 
                 try {
                     x.close();
@@ -357,7 +357,7 @@ public class CoreInputStream extends CoreObject<InputStream> {
     public CoreByteBuffer data() {
         return new CoreByteBuffer(this.commonCore, map(new F1<InputStream, ByteBuffer>() {
             public ByteBuffer f(InputStream x) {
-                ByteBuffer byteData = StreamUtils.getByteData(x);
+                ByteBuffer byteData = Streams.getByteData(x);
 
                 try {
                     x.close();

@@ -31,7 +31,7 @@ import javax.sound.sampled.AudioInputStream;
 
 import net.jcores.jre.CommonCore;
 import net.jcores.jre.interfaces.functions.F1;
-import net.jcores.jre.utils.internal.sound.SoundUtils;
+import net.jcores.jre.utils.internal.Sound;
 
 /**
  * Wraps a number of AudioInputStream and exposes some convenience functions. For example, 
@@ -78,7 +78,7 @@ public class CoreAudioInputStream extends CoreObject<AudioInputStream> {
         map(new F1<AudioInputStream, Void>() {
             @Override
             public Void f(AudioInputStream x) {
-                SoundUtils.playSound(x);
+                Sound.playSound(x);
                 return null;
             }
         });
