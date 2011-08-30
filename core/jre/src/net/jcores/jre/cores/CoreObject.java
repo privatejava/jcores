@@ -985,7 +985,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * $(myobjects).featurerequest(".compress() -- Should compress the given objects.");
      */
     public void featurerequest(String functionName) {
-        this.commonCore.manager(ManagerDeveloperFeedback.class).featurerequest(functionName, fingerprint(true));
+        this.commonCore.manager(ManagerDeveloperFeedback.class).featurerequest(functionName, getClass(), fingerprint(true));
     }
 
     /**

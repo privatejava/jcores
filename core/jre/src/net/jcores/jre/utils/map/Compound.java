@@ -77,4 +77,16 @@ public class Compound extends MapUtil<String, Object> {
 
         return rval;
     }
+    
+    /**
+     * Treats the compound as a map of the type Map<String, T>.
+     * 
+     * @since 1.0
+     * @param clazz The target type.
+     * @return The mapped result.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> MapUtil<String, T> as(Class<T> clazz) {
+        return (MapUtil<String, T>) this;
+    }
 }

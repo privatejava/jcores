@@ -1,7 +1,7 @@
 /*
- * SimpleFeatureRequest.java
+ * OptionDummy.java
  * 
- * Copyright (c) 2011, Ralf Biedert All rights reserved.
+ * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,23 +25,36 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package sandbox;
-
-import static net.jcores.jre.CoreKeeper.$;
+package net.jcores.jre.options;
 
 
 /**
+ * The type of ID requested.
  * 
- * <img src="http://jcores.net/img/logo.png"/>
  * @author Ralf Biedert
- * 
  */
-public class SimpleFeatureRequest {
-    public static void main(String[] args) {
-        $("test").featurerequest(".reverse() -- The string core should support reversing.");
-        $("test").featurerequest(".reverse() -- The string core should support reversing.");
-        $.sys.sleep(1000);
-        $.report();
-        //$.feedback().checkupdate();
+public class ID extends Option {
+    public static final class Unique extends ID {
+        protected Unique() {}
     }
+    
+    public static final class System extends ID  {
+        protected System() {}
+    }
+    
+    public static final class User extends ID  {
+        protected User() {}
+    }
+    
+    /** A unique ID */
+    public final static ID UNIQUE = new Unique();
+
+    /** A system wide ID */
+    public final static ID SYSTEM = new System();
+
+    /** A user wide ID */
+    public final static ID USER = new User();
+
+    /** There must only be one instance */
+    protected ID() {}
 }

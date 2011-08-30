@@ -33,6 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import junit.framework.Assert;
 import net.jcores.jre.interfaces.functions.F0;
+import net.jcores.jre.options.ID;
 import net.jcores.jre.options.KillSwitch;
 
 import org.junit.Test;
@@ -71,5 +72,25 @@ public class CommonSysTest {
         Assert.assertTrue(i > 40);
         $.sys.sleep(500);
         Assert.assertEquals(i, counter.get());
+    }
+    
+    /** */
+    @Test
+    public void testID() {
+        String u1 = $.sys.uniqueID();
+        String u2 = $.sys.uniqueID();
+        String s1 = $.sys.uniqueID(ID.USER);
+        String s2 = $.sys.uniqueID(ID.USER);
+        // String w1 = $.sys.uniqueID(ID.SYSTEM);
+        // String w2 = $.sys.uniqueID(ID.SYSTEM);
+        
+        Assert.assertNotSame(u1, u2);
+        Assert.assertFalse(u1.equals(u2));
+        Assert.assertEquals(s1, s2);
+        Assert.assertFalse("UNAVAILABLE".equals(s1));
+        // Assert.assertEquals(w1, w2);// Fails on Lion ...
+        // Assert.assertFalse("UNAVAILABLE".equals(w1)); 
+        
+        System.out.println(s1);
     }
 }

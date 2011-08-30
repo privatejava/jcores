@@ -30,6 +30,7 @@ package net.jcores.jre.utils.internal;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import net.jcores.jre.options.ID;
 import net.jcores.jre.options.InvertSelection;
 import net.jcores.jre.options.KillSwitch;
 import net.jcores.jre.options.OnFailure;
@@ -57,6 +58,9 @@ public class Options {
     
     /** If inverted was given */
     boolean invert = false;
+    
+    /** The specified ID */
+    ID id = null;
 
     /**
      * Constructs a new options object.
@@ -83,6 +87,10 @@ public class Options {
                 
                 if (option instanceof KillSwitch) {
                     this.killswitch = (KillSwitch) option;
+                }
+                
+                if (option instanceof ID) {
+                    this.id = (ID) option;
                 }
             }
         }
@@ -121,5 +129,15 @@ public class Options {
      */
     public KillSwitch killswitch() {
         return this.killswitch;
+    }
+
+    /**
+     * Returns the ID that was encoded in the options.
+     * 
+     * @since 1.0
+     * @return The ID type.
+     */
+    public ID ID() {
+        return this.id;
     }
 }

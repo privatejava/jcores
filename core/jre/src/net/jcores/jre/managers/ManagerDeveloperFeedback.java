@@ -27,11 +27,11 @@
  */
 package net.jcores.jre.managers;
 
-import java.awt.Desktop;
-import java.net.URI;
-
-import net.jcores.jre.CoreKeeper;
+import static net.jcores.jre.CoreKeeper.$;
 import net.jcores.jre.cores.CoreObject;
+import net.jcores.jre.interfaces.functions.F1V;
+import net.jcores.jre.options.ID;
+import net.jcores.jre.utils.Async;
 
 /**
  * Manager for developer feedback and statistics.
@@ -47,18 +47,28 @@ public class ManagerDeveloperFeedback extends Manager {
      * Handles a feature request from a {@link CoreObject}.
      * 
      * @param request The given request.
+     * @param origin The origin from which this request originated. 
      * @param fingerprint The fingerprint of the core.
      */
-    public void featurerequest(String request, String fingerprint) {
+    public void featurerequest(String request, Class<?> origin, String fingerprint) {
         if(!checkOutbound()) return;
         
-        String r = CoreKeeper.$(fingerprint).encode().get(0);
+        final String id = $.sys.uniqueID(ID.USER);
+        final String url = "http://api.jcores.net/featurerequest/";
+        final String version = $.version();
+        final String format = "plain/1";
+        final String module = origin.getCanonicalName();
         
-        try {
-            Desktop.getDesktop().mail(URI.create("mailto:info@jcores.net?SUBJECT=Feature%20Request&BODY="+ r.replaceAll("\\+", "%20")));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
+        // Now perform the actual request
+        final Async<String> async = $.net.get(url, $("id", id, "version", version, "format", format, "module", module, "content", request + "\n\n" + fingerprint).compound().as(String.class));
+        async.onNext(new F1V<String>() {
+            @Override
+            public void fV(String x) {
+                System.out.println(x);
+            }
+        });
+        
 
         updateOutbound();
     }
@@ -78,7 +88,7 @@ public class ManagerDeveloperFeedback extends Manager {
      */
     private boolean checkOutbound() {
         if(this.lastoutbound + 2000 > System.currentTimeMillis()) {
-            System.err.println("You are not allowed to send outgoing messages at this rate. Try again in a few seconds.");
+            System.err.println("You should not send outgoing messages at this rate. Please try again in a few seconds.");
             return false;
         }
         

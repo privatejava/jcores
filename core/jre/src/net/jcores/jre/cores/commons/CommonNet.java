@@ -36,9 +36,13 @@ import java.util.Map;
 import net.jcores.jre.CommonCore;
 import net.jcores.jre.annotations.SupportsOption;
 import net.jcores.jre.interfaces.functions.F0R;
+import net.jcores.jre.interfaces.functions.F1;
 import net.jcores.jre.options.KillSwitch;
+import net.jcores.jre.options.OnFailure;
 import net.jcores.jre.options.Option;
 import net.jcores.jre.utils.Async;
+import net.jcores.jre.utils.internal.Options;
+import net.jcores.jre.utils.map.MapEntry;
 
 /**
  * Contains common system utilities.
@@ -120,15 +124,24 @@ public class CommonNet extends CommonNamespace {
      * @since 1.0
      * @param url The URL to contact.
      * @param data The parameters to send (can be null).
-     * @param options Optional arguments, especially {@link KillSwitch}.
+     * @param options Optional arguments, especially {@link KillSwitch} and {@link OnFailure}.
      * @return An {@link Async} object which will contain the result (content) the server gave.  
      */
-    @SupportsOption(options = { KillSwitch.class })
-    public Async<String> get(String url, Map<String, String> data, Option... options) {
+    @SupportsOption(options = { KillSwitch.class, OnFailure.class })
+    public Async<String> get(final String url, final Map<String, String> data, Option... options) {
+        final Options options$ = Options.$(options);
+        
         return this.commonCore.async(new F0R<String>() {
             @Override
             public String f() {
-                return null;
+                final String param = $(data).map(new F1<MapEntry<String,String>, String>() {
+                    @Override
+                    public String f(MapEntry<String, String> x) {
+                        return x.key() + "=" + $(x.value()).encode().get(0);
+                    }
+                }).string().join("&");
+                
+                return $(url + "?" + param).uri().input().text().get(0);
             }
         }, options);
     }
