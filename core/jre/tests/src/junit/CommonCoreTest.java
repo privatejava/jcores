@@ -95,7 +95,7 @@ public class CommonCoreTest {
         $.sys.sleep(150);
         Assert.assertEquals(null, ref.get());
        */
-        
+
         ref.set(null);
         $.async(f).onNext(new F1V<String>() {
             @Override

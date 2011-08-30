@@ -33,6 +33,7 @@ import java.util.UUID;
 import java.util.concurrent.Future;
 
 import net.jcores.jre.CommonCore;
+import net.jcores.jre.annotations.SupportsOption;
 import net.jcores.jre.interfaces.functions.F0;
 import net.jcores.jre.options.KillSwitch;
 import net.jcores.jre.options.MessageType;
@@ -93,6 +94,7 @@ public class CommonSys extends CommonNamespace {
      * @param delay The delay at which the function will be executed.
      * @param options May accept a {@link KillSwitch}.
      */
+    @SupportsOption(options = { KillSwitch.class })
     public void manyTimes(final F0 f0, final long delay, Option... options) {
         final Options options$ = Options.$(options);
         final KillSwitch killswitch = options$.killswitch();
@@ -125,6 +127,7 @@ public class CommonSys extends CommonNamespace {
      * @param delay The delay after which the function will be executed.
      * @param options May accept a {@link KillSwitch}.
      */
+    @SupportsOption(options = { KillSwitch.class })    
     public void oneTime(final F0 f0, final long delay, Option... options) {
         final Options options$ = Options.$(options);
         final KillSwitch killswitch = options$.killswitch();

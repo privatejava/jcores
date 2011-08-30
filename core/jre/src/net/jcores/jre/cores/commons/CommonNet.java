@@ -34,7 +34,9 @@ import java.net.ServerSocket;
 import java.util.Map;
 
 import net.jcores.jre.CommonCore;
+import net.jcores.jre.annotations.SupportsOption;
 import net.jcores.jre.interfaces.functions.F0R;
+import net.jcores.jre.options.KillSwitch;
 import net.jcores.jre.options.Option;
 import net.jcores.jre.utils.Async;
 
@@ -117,16 +119,17 @@ public class CommonNet extends CommonNamespace {
      * 
      * @since 1.0
      * @param url The URL to contact.
-     * @param data 
-     * @param options
+     * @param data The parameters to send (can be null).
+     * @param options Optional arguments, especially {@link KillSwitch}.
      * @return An {@link Async} object which will contain the result (content) the server gave.  
      */
+    @SupportsOption(options = { KillSwitch.class })
     public Async<String> get(String url, Map<String, String> data, Option... options) {
         return this.commonCore.async(new F0R<String>() {
             @Override
             public String f() {
                 return null;
             }
-        });
+        }, options);
     }
 }

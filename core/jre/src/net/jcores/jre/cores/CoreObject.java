@@ -51,6 +51,7 @@ import java.util.regex.Pattern;
 
 import net.jcores.jre.CommonCore;
 import net.jcores.jre.annotations.Beta;
+import net.jcores.jre.annotations.SupportsOption;
 import net.jcores.jre.cores.adapter.AbstractAdapter;
 import net.jcores.jre.cores.adapter.ArrayAdapter;
 import net.jcores.jre.cores.adapter.CollectionAdapter;
@@ -144,7 +145,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      */
     public CoreObject(CommonCore supercore, List<T> objects) {
         super(supercore);
-        
+
         if (objects instanceof ArrayList) {
             this.adapter = new ListAdapter<T>(objects);
         } else {
@@ -341,24 +342,22 @@ public class CoreObject<T> extends Core implements Iterable<T> {
 
         return null;
     }
-    
-    
+
     /**
-     * Performs an asynchronous map operation on this core. The order in which 
+     * Performs an asynchronous map operation on this core. The order in which
      * the objects are being mapped is not defined.<br/>
      * <br/>
      * 
      * 
      * Examples:
      * <ul>
-     * <li><code>$(names).async(lookup)</code> - Performs an asynchronous lookup 
-     * for the set of names.</li>
+     * <li><code>$(names).async(lookup)</code> - Performs an asynchronous lookup for the set of names.</li>
      * </ul>
      * 
      * Single-threaded. <br/>
      * <br/>
      * 
-     * @param f The function to execute asynchronously on the enclosed objects. 
+     * @param f The function to execute asynchronously on the enclosed objects.
      * @param <R> Return type for the {@link Async} object.
      * @return An {@link Async} object that will hold the results (in an arbitrary order).
      */
@@ -367,7 +366,6 @@ public class CoreObject<T> extends Core implements Iterable<T> {
         return null;
     }
 
-    
     /**
      * Casts all elements to the given type or sets them null if they are not castable.<br/>
      * <br/>
@@ -396,7 +394,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
             }
         }, MapType.TYPE(target));
     }
-    
+
     /**
      * Performs a generic call on each element of this core (for
      * example <code>core.call("toString()")</code>), or returns a field (for
@@ -499,6 +497,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * @param options Currently not used.
      * @return This core.
      */
+    @SupportsOption(options = {})
     public CoreObject<T> serialize(final String path, Option... options) {
         try {
             Streams.serializeCore(this, new FileOutputStream(new File(path)));
@@ -733,11 +732,12 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * @param delta The delta function, taking two elements and return a result.
      * @param <R> Type of the result.
-     * @param options Relevant options: <code>OptionMapType</code>.
+     * @param options Relevant options, especiall {@link MapType}.
      * 
      * @return A core of size n - 1 containing all deltas.
      */
     @SuppressWarnings("unchecked")
+    @SupportsOption(options = { MapType.class })
     public <R> CoreObject<R> delta(final F2DeltaObjects<T, R> delta, Option... options) {
         // Create mapper
         final int size = size();
@@ -1037,6 +1037,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * @return A new CoreObject of our type, containing only kept elements.
      */
+    @SupportsOption(options = { InvertSelection.class })
     public CoreObject<T> filter(final F1Object2Bool<T> f, Option... options) {
         final boolean invert = Options.$(options).invert();
         final CoreObject<T> rval = map(new F1<T, T>() {
@@ -1182,10 +1183,11 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * <br/>
      * 
      * @param f The reduce function. Takes two elements, returns one.
-     * @param options Relevant options: <code>OptionMapType</code>.
+     * @param options Supports {@link MapType}.
      * @return A CoreObject, containing at most a single element.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SupportsOption(options = { MapType.class })
     public CoreObject<T> fold(final F2ReduceObjects<T> f, Option... options) {
 
         // In case we only have zero or one elements, don't do anything
@@ -1512,8 +1514,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * @return True if all elements are not null, false if a single element was null.
      */
     public boolean hasAll() {
-        if(size() == 0) return false;
-        
+        if (size() == 0) return false;
+
         for (T t : this) {
             if (t == null) return false;
         }
@@ -1528,7 +1530,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * Examples:
      * <ul>
      * <li><code>$(null, "b").hasAny()</code> - Returns <code>true</code>.</li>
-     * <li><code>$().hasAny()</code> - Returns <code>false</code>.</li> 
+     * <li><code>$().hasAny()</code> - Returns <code>false</code>.</li>
      * </ul>
      * 
      * Single-threaded. <br/>
@@ -1594,12 +1596,11 @@ public class CoreObject<T> extends Core implements Iterable<T> {
                 final int j = iterator.nextIndex();
                 final T next = iterator.next();
 
-                
                 if (obj != null && obj.equals(next)) {
                     indices[i] = j;
                     break;
                 }
-                
+
                 if (obj == null && next == null) {
                     indices[i] = j;
                     break;
@@ -1733,11 +1734,12 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * 
      * @param <R> Return type.
      * @param f Mapper function, must be thread-safe.
-     * @param _options Relevant options: <code>OptionMapType</code>.
+     * @param _options Relevant options: {@link MapType}.
      * 
      * @return A CoreObject containing the mapped elements in a stable order.
      */
     @SuppressWarnings("unchecked")
+    @SupportsOption(options = { MapType.class })
     public <R> CoreObject<R> map(final F1<T, R> f, Option... _options) {
 
         // Map what we got
@@ -1903,10 +1905,11 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * <br/>
      * 
      * @param f The reduce function. Takes two elements, returns one.
-     * @param options Relevant options: <code>OptionMapType</code>.
+     * @param options Relevant options: {@link MapType}.
      * @return A CoreObject, containing at most a single element.
      */
     @SuppressWarnings("unchecked")
+    @SupportsOption(options = { MapType.class })
     public CoreObject<T> reduce(final F2ReduceObjects<T> f, Option... options) {
         T stack = null;
 
@@ -2024,10 +2027,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
 
         // Check if the result of the slice is actually an adapter, in that case, we use it directly.
         final List<T> slice = this.adapter.slice(i, i + l);
-        if(slice instanceof AbstractAdapter) {
-            return new CoreObject<T>(this.commonCore, (AbstractAdapter) slice);            
-        }
-        
+        if (slice instanceof AbstractAdapter) { return new CoreObject<T>(this.commonCore, (AbstractAdapter) slice); }
+
         // Return a new core with the given result list.
         return new CoreObject<T>(this.commonCore, slice);
     }
@@ -2109,7 +2110,6 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     public CoreObject<T> sort() {
         if (size() == 0) return this;
 
-        
         // TODO: Can't we be faster if we do the sort on our own?
         final T[] copyOf = this.adapter.array();
 

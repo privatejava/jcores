@@ -43,6 +43,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 
 import net.jcores.jre.annotations.Beta;
+import net.jcores.jre.annotations.SupportsOption;
 import net.jcores.jre.cores.Core;
 import net.jcores.jre.cores.CoreNumber;
 import net.jcores.jre.cores.CoreObject;
@@ -129,7 +130,7 @@ public class CommonCore {
         manager(ManagerDeveloperFeedback.class, new ManagerDeveloperFeedback());
         manager(ManagerDebugGUI.class, new ManagerDebugGUI());
         manager(ManagerLogging.class, new ManagerLogging());
-        
+
         try {
             this.cloneMethod = Object.class.getDeclaredMethod("clone");
             this.cloneMethod.setAccessible(true);
@@ -137,40 +138,38 @@ public class CommonCore {
             report(MessageType.EXCEPTION, "Unable to get cloning method for objects. $.clone() will not work: " + e.getMessage());
         }
     }
-    
-    
+
     /** Updates the managers and their returned information in this core */
     protected void updateManagerInformation() {
         this.executionManager = manager(ManagerExecution.class);
         this.profileInformation = this.executionManager.getProfile();
     }
 
-    
-    
     /**
-     * Performs an asynchronous map operation on this core. The order in which 
+     * Performs an asynchronous map operation on this core. The order in which
      * the objects are being mapped is not defined.<br/>
      * <br/>
      * 
      * Examples:
      * <ul>
-     * <li><code>$(names).async(lookup)</code> - Performs an asynchronous lookup 
-     * for the set of names.</li>
+     * <li><code>$(names).async(lookup)</code> - Performs an asynchronous lookup for the set of names.</li>
      * </ul>
      * 
      * Single-threaded. <br/>
      * <br/>
      * 
-     * @param f The function to execute asynchronously on the enclosed objects. 
-     * @param options Supports all options {@link CommonSys}.<code>oneTime()</code> understands (esp. {@link KillSwitch}).
+     * @param f The function to execute asynchronously on the enclosed objects.
+     * @param options Supports all options {@link CommonSys}.<code>oneTime()</code> understands (esp. {@link KillSwitch}
+     * ).
      * @param <R> Return type for the {@link Async} object.
      * @return An {@link Async} object that will hold the results (in an arbitrary order).
      */
-    public <R> Async<R> async(final F0R<R> f, Option ... options) {
+    @SupportsOption(options = { KillSwitch.class })
+    public <R> Async<R> async(final F0R<R> f, Option... options) {
         final Queue<R> queue = Async.Queue();
         final Async<R> async = new Async<R>(queue);
         final Options options$ = Options.$(options);
-        
+
         // Maybe use the executor right away?
         this.sys.oneTime(new F0() {
             @Override
@@ -178,7 +177,7 @@ public class CommonCore {
                 try {
                     queue.add(Async.QEntry(f.f()));
                     queue.close();
-                } catch(Exception e) {
+                } catch (Exception e) {
                     options$.failure(f, e, "async:exception", "General exception invoking async function.");
                     report(MessageType.EXCEPTION, "Error invoking async() ... " + e.getMessage());
                     e.printStackTrace();
@@ -186,10 +185,9 @@ public class CommonCore {
                 }
             }
         }, 0, options);
-        
+
         return async;
     }
-
 
     /**
      * Wraps number of ints and returns an Integer array.
@@ -336,43 +334,39 @@ public class CommonCore {
         return copyOf;
     }
 
-   
     /**
      * Returns our default jCores executor.
      * 
      * @since 1.0
-     * @return The default executor service. 
+     * @return The default executor service.
      */
     public ManagerExecution executor() {
         return this.executionManager;
     }
-   
 
     /**
-     * Call this function if you want to give the jCores team runtime feedback of your 
-     * application. The library will then, at certain points, upload profiling and 
+     * Call this function if you want to give the jCores team runtime feedback of your
+     * application. The library will then, at certain points, upload profiling and
      * execution results to improve the performance and usability. Everything stays anonymous!
      * 
      * @since 1.0
      */
     @Beta
     public void feedback() {
-        // 
+        //
     }
-    
 
     /**
      * Returns the default nexus for jCores.
-     *  
+     * 
      * @since 1.0
-     * @return The default {@link Nexus} used by jCores (which might be used by your 
-     * application as well).  
+     * @return The default {@link Nexus} used by jCores (which might be used by your
+     * application as well).
      */
     public Nexus nexus() {
         return this.nexus;
     }
 
-    
     /**
      * Sets a manager of a given type, only needed for core developers.
      * 
@@ -386,7 +380,7 @@ public class CommonCore {
         // Perpare adding the manager to the kernel
         final Collection<InternalService<T>> services = new ArrayList<InternalService<T>>();
         services.add(new InternalService<T>(manager));
-        
+
         // And add it, and update the manager information
         this.nexus.register(services);
         updateManagerInformation();

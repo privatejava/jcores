@@ -1,7 +1,7 @@
 /*
- * SimpleExtensions.java
+ * SupportsOption.java
  * 
- * Copyright (c) 2010, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert, DFKI. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,31 +25,28 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package sandbox;
+package net.jcores.jre.annotations;
 
-import java.io.IOException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import net.jcores.jre.extensions.SingletonExtension;
+import net.jcores.jre.options.Option;
 
 /**
- * @author rb
- *
+ * 
+ * @author Ralf Biedert
+ * @since 1.0
  */
-public class SimpleExtensions {
-    public static class MyExt extends SingletonExtension {
-        public void socket() {}
-    }
-    
-    public static void main(String[] args) throws IOException {
-        // $(MyExt.class, null);
-        
-        //$ = $.ext(MyExt.class)
-        /*
-        $.socket();
-        $(MyExt.class).socket();
+@Retention(RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.METHOD })
+public @interface SupportsOption {
 
-        $.ext(MyExt.class).socket()
-        $(String.class).get(0);
-*/
-    }
+    /**
+     * All the non-standard options that are supported.
+     * 
+     * @return Number of classes that the plugin explicitly depends on.
+     */
+    Class<? extends Option>[] options() default {};
 }
