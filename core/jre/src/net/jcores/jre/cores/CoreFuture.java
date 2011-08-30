@@ -73,7 +73,7 @@ public class CoreFuture<T> extends CoreObject<Future<T>> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$(future).finishedOne(f)</code> - Calls <code>f</code> when <code>future</code> finished.</li>
+     * <li><code>$(future).onNext(f)</code> - Calls <code>f</code> when <code>future</code> finished.</li>
      * </ul>
      * 
      * Multi-threaded.<br/>
@@ -82,11 +82,11 @@ public class CoreFuture<T> extends CoreObject<Future<T>> {
      * @param listener The listener that is being called when one finished. 
      * @return This core again.
      */
-    public CoreFuture<T> oneFinished(final F1<T, Void> listener) {
+    public CoreFuture<T> onNext(final F1<T, Void> listener) {
         // For each future ...
         for (final Future<T> future : this) {
             // ... execute a thread which waits for the future to finish
-            this.commonCore.execute(new Runnable() {
+            this.commonCore.executor().getExecutor().execute(new Runnable() {
                 @Override
                 public void run() {
                     try {
@@ -100,7 +100,7 @@ public class CoreFuture<T> extends CoreObject<Future<T>> {
                         e.printStackTrace();
                     }
                 }
-            }, 1);
+            });
         }
 
         return this;

@@ -27,14 +27,11 @@
  */
 package sandbox;
 
-import static net.jcores.jre.CoreKeeper.$;
-
 import java.io.IOException;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
-import net.jcores.jre.interfaces.functions.F1;
 
 /**
  * @author rb
@@ -49,13 +46,36 @@ public class SimpleFuture {
      * @throws IOException 
      */
     public static void main(String[] args) throws IOException {
+        
+        ExecutorService pool = Executors.newCachedThreadPool();
+        Future<?> future = pool.submit(new Runnable() {
+            
+            @Override
+            public void run() {
+                System.out.println("entry");
+                while(true) {
+                    try {
+                        Thread.sleep(0);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        System.out.println("a");
+        future.cancel(true);
+        System.out.println("b");
+        pool.shutdownNow();
+        
+        /*
         Future<String> f1 = null;
         Future<String> f2 = null;
         Future<Integer> f3 = null;
         
         // Playing with futures 
         $(f1).await().get(0);
-        $(f1).oneFinished(new F1<String, Void>() {
+        $(f1).onNext(new F1<String, Void>() {
             @Override
             public Void f(String x) {
                 return null;

@@ -31,9 +31,12 @@ import static net.jcores.jre.CoreKeeper.$;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
-import net.jcores.jre.interfaces.functions.F0;
+import net.jcores.jre.interfaces.functions.F0R;
+import net.jcores.jre.interfaces.functions.F1V;
+import net.jcores.jre.options.KillSwitch;
+import net.jcores.jre.utils.Async;
 import net.jcores.jre.utils.map.MapUtil;
 import net.jcores.jre.utils.map.generators.NewUnsafeInstance;
 
@@ -45,43 +48,6 @@ import org.junit.Test;
  */
 public class CommonCoreTest {
 
-    /** */
-    @Test
-    public void testTimer() {
-        final AtomicInteger i = new AtomicInteger(333);
-
-        $.sys.oneTime(new F0() {
-            public void f() {
-                i.set(666);
-            }
-        }, 250);
-
-        $.sys.sleep(400);
-
-        Assert.assertEquals(666, i.get());
-
-        $.sys.oneTime(new F0() {
-            public void f() {
-                i.set(667);
-            }
-        }, 400);
-
-        $.sys.sleep(200);
-
-        Assert.assertEquals(666, i.get());
-    }
-
-    /** */
-    @Test
-    public void testPermute() {
-        final String x[] = $("a", "b", "c", "d", "e").array(String.class);
-
-        int i = 0;
-        while ($.alg.permute(x))
-            i++;
-
-        Assert.assertEquals(120 - 1, i);
-    }
 
     /** */
     @SuppressWarnings("boxing")
@@ -92,6 +58,60 @@ public class CommonCoreTest {
 
         m1.get("a").add(1);
         Assert.assertEquals(m1.get("a").get(0), Integer.valueOf(1));
+    }
+    
+    
+    /** */
+    @Test
+    public void testAsync() {
+        final AtomicReference<String> ref = new AtomicReference<String>();
+        final F0R<String> f = new F0R<String>() {
+            @Override
+            public String f() {
+                $.sys.sleep(100);
+                return "Hello World";
+            }
+        };
+        
+        
+        $.async(f).onNext(new F1V<String>() {
+            @Override
+            public void fV(String x) {
+                ref.set(x);
+            }
+        });
+        $.sys.sleep(150);
+        Assert.assertEquals("Hello World", ref.get());
+
+        
+        /*// Not a valid test case since we, by design, sleep for 100ms and don't care if we wake up early.
+        ref.set(null);
+        $.async(f, KillSwitch.TIMED(50)).onNext(new F1V<String>() {
+            @Override
+            public void fV(String x) {
+                ref.set(x);
+            }
+        });
+        $.sys.sleep(150);
+        Assert.assertEquals(null, ref.get());
+       */
+        
+        ref.set(null);
+        $.async(f).onNext(new F1V<String>() {
+            @Override
+            public void fV(String x) {
+                ref.set(x);
+            }
+        }, KillSwitch.TIMED(50));
+        $.sys.sleep(150);
+        Assert.assertEquals(null, ref.get());
+        
+        
+        Async<String> async = $.async(f);
+        Assert.assertEquals(0, async.available().size());
+        $.sys.sleep(150);
+        Assert.assertEquals(1, async.available().size());
+        Assert.assertEquals(0, async.available().size());
     }
 
 }

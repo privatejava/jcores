@@ -194,7 +194,10 @@ public abstract class Core implements Serializable {
             }
         };
 
-        cc.execute(runner, NUM_THREADS);
+        // Execute all our runnables.
+        for(int i=0; i<NUM_THREADS; i++) {
+            cc.executor().getExecutor().execute(runner);
+        }
 
         // Wait for all threads to finish ...
         try {
@@ -394,7 +397,10 @@ public abstract class Core implements Serializable {
             }
         };
 
-        this.commonCore.execute(runner, NUM_THREADS);
+        // Execute all our runnables.
+        for(int i=0; i<NUM_THREADS; i++) {
+            this.commonCore.executor().getExecutor().execute(runner);
+        }
 
         // Wait for all threads to finish ...
         try {

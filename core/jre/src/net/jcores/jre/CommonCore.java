@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 
@@ -60,9 +59,11 @@ import net.jcores.jre.managers.ManagerDebugGUI;
 import net.jcores.jre.managers.ManagerDeveloperFeedback;
 import net.jcores.jre.managers.ManagerExecution;
 import net.jcores.jre.managers.ManagerLogging;
+import net.jcores.jre.options.KillSwitch;
 import net.jcores.jre.options.MessageType;
 import net.jcores.jre.options.Option;
 import net.jcores.jre.utils.Async;
+import net.jcores.jre.utils.Async.Queue;
 import net.jcores.jre.utils.internal.Options;
 import net.jcores.jre.utils.internal.Reporter;
 import net.jcores.jre.utils.internal.structures.ProfileInformation;
@@ -161,13 +162,13 @@ public class CommonCore {
      * <br/>
      * 
      * @param f The function to execute asynchronously on the enclosed objects. 
-     * @param options The options to add.
+     * @param options Supports all options {@link CommonSys}.<code>oneTime()</code> understands (esp. {@link KillSwitch}).
      * @param <R> Return type for the {@link Async} object.
      * @return An {@link Async} object that will hold the results (in an arbitrary order).
      */
     public <R> Async<R> async(final F0R<R> f, Option ... options) {
-        final ConcurrentLinkedQueue<R> queue = new ConcurrentLinkedQueue<R>();
-        final Async<R> async = new Async<R>(queue, 1);
+        final Queue<R> queue = Async.Queue();
+        final Async<R> async = new Async<R>(queue);
         final Options options$ = Options.$(options);
         
         // Maybe use the executor right away?
@@ -175,14 +176,16 @@ public class CommonCore {
             @Override
             public void f() {
                 try {
-                    queue.add(f.f());
+                    queue.add(Async.QEntry(f.f()));
+                    queue.close();
                 } catch(Exception e) {
                     options$.failure(f, e, "async:exception", "General exception invoking async function.");
                     report(MessageType.EXCEPTION, "Error invoking async() ... " + e.getMessage());
                     e.printStackTrace();
+                    queue.close();
                 }
             }
-        }, 0);
+        }, 0, options);
         
         return async;
     }
@@ -333,20 +336,17 @@ public class CommonCore {
         return copyOf;
     }
 
+   
     /**
-     * Executes the given runnable count times. Call this method with your
-     * given workers and a number of threads (usually number of CPUs).
+     * Returns our default jCores executor.
      * 
      * @since 1.0
-     * @param r The runnable to execute.
-     * @param count Number of threads to spawn.
+     * @return The default executor service. 
      */
-    public void execute(Runnable r, int count) {
-        for (int i = 0; i < count; i++)
-            this.executionManager.getExecutor().execute(r);
+    public ManagerExecution executor() {
+        return this.executionManager;
     }
    
-    
 
     /**
      * Call this function if you want to give the jCores team runtime feedback of your 

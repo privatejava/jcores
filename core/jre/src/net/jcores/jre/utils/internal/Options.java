@@ -31,6 +31,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import net.jcores.jre.options.InvertSelection;
+import net.jcores.jre.options.KillSwitch;
 import net.jcores.jre.options.OnFailure;
 import net.jcores.jre.options.Option;
 
@@ -50,6 +51,9 @@ public class Options {
 
     /** Handlers for onFailre options */
     Collection<OnFailure> onFailures;
+    
+    /** Killswitch */
+    KillSwitch killswitch;
     
     /** If inverted was given */
     boolean invert = false;
@@ -75,6 +79,10 @@ public class Options {
                 
                 if (option instanceof InvertSelection) {
                     this.invert = !this.invert;
+                }
+                
+                if (option instanceof KillSwitch) {
+                    this.killswitch = (KillSwitch) option;
                 }
             }
         }
@@ -105,4 +113,13 @@ public class Options {
         return this.invert;
     }
 
+    /**
+     * Returns the killswitch if there was any.
+     * 
+     * @since 1.0
+     * @return The killswitch.
+     */
+    public KillSwitch killswitch() {
+        return this.killswitch;
+    }
 }
