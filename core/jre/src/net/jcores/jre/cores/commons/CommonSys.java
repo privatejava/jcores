@@ -121,16 +121,19 @@ public class CommonSys extends CommonNamespace {
      * Puts the current thread to sleep for some time, without the need for any try/catch block.
      * 
      * @param time The time to sleep.
-     * @return <code>true</code> if the sleep was interrupted, <code>false</code> if not.
+     * @return A value of <code>0</code> if the sleep was successful, or else the amount 
+     * of milliseconds which we woke up too early. 
      */
-    public boolean sleep(long time) {
+    public long sleep(long time) {
+        final long start = System.currentTimeMillis();
         try {
             Thread.sleep(time);
         } catch (InterruptedException e) {
-            return true;
+            this.commonCore.report(MessageType.EXCEPTION, "Sleep interrupted");
+            return time - (System.currentTimeMillis() - start);
         }
     
-        return false;
+        return 0;
     }
     
     

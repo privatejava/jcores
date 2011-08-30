@@ -76,6 +76,6 @@ public class BenchmarkResults {
     }
 
     public long median(int i) {
-        return $($.box(this.results)).slice(i, -1).get(0.5).longValue();
+        return $($.box(this.results)).slice(-i, -1).get(0.5).longValue();
     }
 }

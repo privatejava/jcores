@@ -28,11 +28,11 @@
 package net.jcores.jre.interfaces.functions;
 
 /**
- * Abstract class to sort when an exception can be thrown.
+ * Abstract class to process elements when an exception can be thrown.
  * 
  * @author Ralf Biedert
- * @param <X>
- * @param <Y>
+ * @param <X> The input type.
+ * @param <Y> The output type.
  */
 public abstract class F1E<X, Y> implements F1<X, Y> {
 

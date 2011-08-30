@@ -1,7 +1,7 @@
 /*
- * SimpleScript.java
+ * F1EV.java.java
  * 
- * Copyright (c) 2010, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,63 +25,31 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package sandbox;
-
-import static net.jcores.jre.CoreKeeper.$;
-
-import java.io.IOException;
-
-import net.jcores.jre.interfaces.functions.F1;
-import net.jcores.jre.interfaces.functions.F2ReduceObjects;
+package net.jcores.jre.interfaces.functions;
 
 /**
- * @author rb
+ * Abstract class to process elements when an exception can be thorwn.
  * 
+ * @author Ralf Biedert
+ * @param <X> The input type.
  */
-public class SimpleKernel {
+public abstract class F1EV<X> extends F1E<X, Void> {
 
-    /**
-     * @param args
-     * @throws IOException
+    /* (non-Javadoc)
+     * @see net.jcores.jre.interfaces.functions.F1E#fE(java.lang.Object)
      */
-    @SuppressWarnings("unchecked")
-    public static void main(String[] args) throws IOException {
-        /*
-        
-        // Standalone mode
-        final DefaultKernel kernel = new DefaultKernel();
-        final Locator locator = new InternalLocator();
-
-        final Processor processor = new AnnotationProcessor(kernel);
-        final Collection<Service> locate = locator.locate();
-        processor.process(locate);
-        kernel.register(locate);
-
-        
-        
-        // Usage mode
-        Processor p = kernel.get(Processor.class);
-
-        
-        
-        // jCores Mode (standalone facilities like locator and processors can and should
-        // be created a 2nd time).
-        $.kernel().get(AnnotationProcessor.class);
-        $.kernel().get(AnnotationProcessor.class, Kernel.Get.ALL);
-        $.kernel().get(AnnotationProcessor.class, Kernel.Get.TAGS("a", "b", "c"));
-
-        final Locator myLocator = new JARLocator();
-
-
-         */
-        
-        Object objects = new Object();
-        F1 f = null;
-        F2ReduceObjects g = null;
-        
-        
-        
-        $(objects).map(f).reduce(g).get(0);
-        
+    @Override
+    public Void fE(X x) throws Exception {
+        fEV(x);
+        return null;
     }
+    
+    /**
+     * Override this method if you have nothing to return.
+     * 
+     * @since 1.0
+     * @param x
+     * @throws Exception
+     */
+    public abstract void fEV(X x) throws Exception;
 }
