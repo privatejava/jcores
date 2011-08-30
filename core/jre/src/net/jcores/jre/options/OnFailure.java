@@ -27,6 +27,7 @@
  */
 package net.jcores.jre.options;
 
+
 /**
  * Can be passed to various functions to register a callback when something
  * went wrong.
@@ -55,13 +56,25 @@ public class OnFailure extends Option {
         return new OnFailure(listener);
     }
 
+    /** The listener */
+    private Listener listener;
+
     /**
      * Registers an onFailure listener.
      * 
      * @param listener The listener to register.
      */
     private OnFailure(Listener listener) {
-
+        this.listener = listener;
+    }
+    
+    /**
+     * Returns the failure listener.
+     * 
+     * @return The Failure listener.
+     */ 
+    public Listener getListener() {
+        return this.listener;
     }
 
     /**

@@ -63,6 +63,7 @@ import net.jcores.jre.managers.ManagerLogging;
 import net.jcores.jre.options.MessageType;
 import net.jcores.jre.options.Option;
 import net.jcores.jre.utils.Async;
+import net.jcores.jre.utils.internal.Options;
 import net.jcores.jre.utils.internal.Reporter;
 import net.jcores.jre.utils.internal.structures.ProfileInformation;
 import net.jcores.jre.utils.map.ConcurrentMapUtil;
@@ -167,6 +168,7 @@ public class CommonCore {
     public <R> Async<R> async(final F0R<R> f, Option ... options) {
         final ConcurrentLinkedQueue<R> queue = new ConcurrentLinkedQueue<R>();
         final Async<R> async = new Async<R>(queue, 1);
+        final Options options$ = Options.$(options);
         
         // Maybe use the executor right away?
         this.sys.oneTime(new F0() {
@@ -175,6 +177,7 @@ public class CommonCore {
                 try {
                     queue.add(f.f());
                 } catch(Exception e) {
+                    options$.failure(f, e, "async:exception", "General exception invoking async function.");
                     report(MessageType.EXCEPTION, "Error invoking async() ... " + e.getMessage());
                     e.printStackTrace();
                 }

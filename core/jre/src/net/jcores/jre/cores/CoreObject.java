@@ -70,6 +70,7 @@ import net.jcores.jre.options.MessageType;
 import net.jcores.jre.options.Option;
 import net.jcores.jre.utils.Async;
 import net.jcores.jre.utils.internal.Objects;
+import net.jcores.jre.utils.internal.Options;
 import net.jcores.jre.utils.internal.Streams;
 import net.jcores.jre.utils.internal.processing.Folder;
 import net.jcores.jre.utils.internal.processing.Mapper;
@@ -1037,7 +1038,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * @return A new CoreObject of our type, containing only kept elements.
      */
     public CoreObject<T> filter(final F1Object2Bool<T> f, Option... options) {
-        final boolean invert = new CoreObject<Option>(this.commonCore, options).contains(InvertSelection.DO);
+        final boolean invert = Options.$(options).invert();
         final CoreObject<T> rval = map(new F1<T, T>() {
             public T f(T x) {
                 final boolean result = f.f(x);
