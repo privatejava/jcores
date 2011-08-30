@@ -34,8 +34,15 @@ package net.jcores.jre.options;
  * @author Ralf Biedert
  */
 public class Hash extends Option {
+    
+    private static class MD5 extends Hash {
+        protected MD5() {
+            super("MD5");
+        }
+    }
+    
     /** Hash method to use (MD5) */
-    public final static HashMD5 MD5 = new HashMD5();
+    public final static Hash MD5 = new MD5();
 
 
     /** */

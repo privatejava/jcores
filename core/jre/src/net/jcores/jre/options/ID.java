@@ -34,15 +34,15 @@ package net.jcores.jre.options;
  * @author Ralf Biedert
  */
 public class ID extends Option {
-    public static final class Unique extends ID {
+    private static final class Unique extends ID {
         protected Unique() {}
     }
     
-    public static final class System extends ID  {
+    private  static final class System extends ID  {
         protected System() {}
     }
     
-    public static final class User extends ID  {
+    private  static final class User extends ID  {
         protected User() {}
     }
     

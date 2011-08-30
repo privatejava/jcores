@@ -29,7 +29,8 @@ package net.jcores.jre.options;
 
 
 /**
- * Specifies <code>map()</code> should map to a specific type.
+ * Specifies <code>map()</code>, <code>reduce()</code> and similar functions should map 
+ * their results to a specific type.
  * 
  * @author Ralf Biedert
  * @since 1.0

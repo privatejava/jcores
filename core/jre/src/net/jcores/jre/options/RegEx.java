@@ -28,7 +28,7 @@
 package net.jcores.jre.options;
 
 /**
- * Specifies the regex options to use.
+ * Pass the given options to regex.
  * 
  * @author Ralf Biedert
  */

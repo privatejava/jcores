@@ -28,7 +28,7 @@
 package net.jcores.jre.options;
 
 /**
- * Channel for messages.
+ * Channel for messages in <code>$.report()</code>.
  * 
  * @author Ralf Biedert
  *

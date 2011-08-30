@@ -31,12 +31,16 @@ import java.io.File;
 
 
 /**
- * If we should print debug information for the given operation.
+ * The drop type for widgets.
  * 
  * @author Ralf Biedert
  * @param <T> 
  */
 public class DropType<T> extends Option {
+    private static class Files extends DropType<File> {
+        protected  Files() { }
+    }
+    
     /** Drop Type (File) */
-    public final static DropType<File> FILES = new DropTypeFiles();
+    public final static DropType<File> FILES = new Files();
 }

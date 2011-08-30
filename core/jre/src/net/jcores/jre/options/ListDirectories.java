@@ -29,7 +29,7 @@ package net.jcores.jre.options;
 
 
 /**
- * Specifies directories should be returned as well.
+ * File entries pointing to directories should be returned as well.
  * 
  * @author Ralf Biedert
  */

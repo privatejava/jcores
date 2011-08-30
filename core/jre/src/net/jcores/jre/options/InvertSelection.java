@@ -29,7 +29,7 @@ package net.jcores.jre.options;
 
 
 /**
- * Denotes selection criterias should be inverted.
+ * The filtering and selction criterias should be inverted.
  * 
  * @author Ralf Biedert
  */

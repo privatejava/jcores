@@ -38,8 +38,8 @@ import net.jcores.jre.interfaces.functions.F0;
 
 
 /**
- * Can be provided to asynchronous operations. When invoked the operation will be 
- * cancelled.
+ * When the kill switch is activated the asynchronous operation to which
+ * it is passed will be terminated. 
  * 
  * @author Ralf Biedert
  */

@@ -5,7 +5,7 @@
     
     <!-- Define different global variables -->
     <property name="prefix" value="jcores"/>
-    <property name="version" value="0.9.0"/>
+    <property name="version" value="0.9.1"/>
     
     <tstamp/>
 
@@ -118,7 +118,7 @@
 	
     <!-- Documentation -->
     <target name="documentation">
-        <javadoc access="public" author="true" destdir="documentation/api" doctitle="jCores API" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="net.jcores.jre.utils.map,net.jcores.jre.cores.adapter,net.jcores.jre.utils.throwables,net.jcores.jre.cores.commons,net.jcores.jre.cores,net.jcores.jre.utils,net.jcores.jre.extensions,net.jcores.jre.interfaces.functions,net.jcores.jre.managers,net.jcores.jre.options,net.jcores.jre.interfaces.java,net.jcores.jre.annotations,net.jcores.jre.utils.map.generators,net.jcores.jre" source="1.6" sourcepath="extensions/script/src:core/jre/src:extensions/serialization.core/src:core/jre/tests/src" splitindex="true" use="true" version="true"/>
+        <javadoc access="public" author="true" destdir="documentation/api" doctitle="jCores API" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="net.jcores.jre.utils.map,net.jcores.jre.cores.adapter,net.jcores.jre.utils.throwables,net.jcores.jre.cores.commons,net.jcores.jre.utils,net.jcores.jre.cores,net.jcores.jre.extensions,net.jcores.jre.interfaces.functions,net.jcores.jre.managers,net.jcores.jre.options,net.jcores.jre.interfaces.java,net.jcores.jre.annotations,net.jcores.jre.utils.map.generators,net.jcores.jre" source="1.6" sourcepath="extensions/script/src:core/jre/src:extensions/serialization.core/src:core/jre/tests/src" splitindex="true" use="true" version="true"/>
     </target>
     
 	
