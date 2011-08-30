@@ -77,7 +77,7 @@ public class Reporter {
                     return;
                 }
 
-                final CoreNumber n = $(revisionOffline, revisionOnline).number(Long.class);
+                final CoreNumber n = $(revisionOffline, revisionOnline).number(Long.class).as(CoreNumber.class);
                 final long diff = n.get(0).longValue() - n.get(1).longValue();
                 
                 if(diff == 0) {

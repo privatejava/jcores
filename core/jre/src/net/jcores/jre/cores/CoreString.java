@@ -837,6 +837,8 @@ public class CoreString extends CoreObject<String> {
                         return Integer.valueOf(x);
                     if(Double.class.equals(type))
                         return Double.valueOf(x);
+                    if(Long.class.equals(type))
+                        return Long.valueOf(x);
                 } catch (Exception e) {
                 }
                 return null;
