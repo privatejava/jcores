@@ -59,7 +59,7 @@ import net.jcores.jre.cores.adapter.MapAdapter;
 import net.jcores.jre.extensions.SingletonExtension;
 import net.jcores.jre.interfaces.functions.F1;
 import net.jcores.jre.options.Option;
-import net.jcores.jre.options.OptionMapType;
+import net.jcores.jre.options.MapType;
 import net.jcores.jre.utils.internal.Wrapper;
 import net.jcores.jre.utils.internal.io.URIUtils;
 import net.jcores.jre.utils.map.MapEntry;
@@ -355,8 +355,8 @@ public class CoreKeeper {
 
         // Check options if we have a map type.
         for (Option option : options) {
-            if (option instanceof OptionMapType) {
-                mapType = ((OptionMapType) option).getType();
+            if (option instanceof MapType) {
+                mapType = ((MapType) option).getType();
             }
         }
 

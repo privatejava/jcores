@@ -29,28 +29,14 @@ package net.jcores.jre.options;
 
 
 /**
- * Specifies the hash-method to use.
+ * Specifies directories should be returned as well.
  * 
  * @author Ralf Biedert
  */
-public class OptionHash extends Option {
-
-    /** */
-    private final String method;
-
-    /**
-     * @param string
-     */
-    public OptionHash(String string) {
-        this.method = string;
-    }
-
-    /**
-     * Returns the hash method.
-     * 
-     * @return the method
-     */
-    public String getMethod() {
-        return this.method;
-    }
+public class ListDirectories extends Option {
+    /** Invert the selection */
+    public final static ListDirectories DO = new ListDirectories();
+    
+    /** There must only be one instance */
+    protected ListDirectories() {}
 }

@@ -27,64 +27,14 @@
  */
 package net.jcores.jre.options;
 
-import java.io.File;
 
 /**
- * Contains all available options.
+ * Base class for all options.
  * 
  * @since 1.0
  * @author Ralf Biedert
  */
 public class Option {
-
-    /** We don't allow for user-created options S */
-    protected Option() { /* */
-    }
-
-    /** If CoreFile.dir() should list directory entries as well */
-    public final static OptionListDirectories LIST_DIRECTORIES = new OptionListDirectories();
-
-    /** If a selection should be inverted. */
-    public final static OptionInvertSelection INVERT_SELECTION = new OptionInvertSelection();
-
-    /** Hash method to use (MD5) */
-    public final static OptionHashMD5 HASH_MD5 = new OptionHashMD5();
-
-    /** Print debugging information */
-    public final static OptionDebug DEBUG = new OptionDebug();
-
-    /** Drop Type (File) */
-    public final static OptionDropType<File> DROPTYPE_FILES = new OptionDropTypeFiles();
-
-    /**
-     * Specifies that the map result should be of type. Useful if map returns various
-     * types.
-     * 
-     * @param type Class to use.
-     * @return An option of the given type.
-     */
-    public final static OptionMapType MAP_TYPE(Class<?> type) {
-        return new OptionMapType(type);
-    }
-
-    /**
-     * Specifies that the regular expression options to use.
-     * 
-     * @param options Options to use.
-     * @return An option of the given type.
-     */
-    public final static OptionRegEx REGEX(int options) {
-        return new OptionRegEx(options);
-    }
-
-    /**
-     * Can be passed to <code>forEach()</code> / <code>map()</code> to
-     * retrieve the current loop index.
-     * 
-     * @return An OptionIndexer.
-     */
-    public final static OptionIndexer INDEXER() {
-        return new OptionIndexer();
-    }
-
+    /** We don't allow for user-created options at the moment. */
+    protected Option() { /* */ }
 }

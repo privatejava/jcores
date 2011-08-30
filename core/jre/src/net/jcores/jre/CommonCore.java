@@ -39,9 +39,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 
+import net.jcores.jre.annotations.Beta;
 import net.jcores.jre.cores.Core;
 import net.jcores.jre.cores.CoreNumber;
 import net.jcores.jre.cores.CoreObject;
@@ -59,6 +61,7 @@ import net.jcores.jre.managers.ManagerDeveloperFeedback;
 import net.jcores.jre.managers.ManagerExecution;
 import net.jcores.jre.managers.ManagerLogging;
 import net.jcores.jre.options.MessageType;
+import net.jcores.jre.options.Option;
 import net.jcores.jre.utils.Async;
 import net.jcores.jre.utils.internal.Reporter;
 import net.jcores.jre.utils.internal.system.ProfileInformation;
@@ -147,7 +150,6 @@ public class CommonCore {
      * the objects are being mapped is not defined.<br/>
      * <br/>
      * 
-     * 
      * Examples:
      * <ul>
      * <li><code>$(names).async(lookup)</code> - Performs an asynchronous lookup 
@@ -158,11 +160,28 @@ public class CommonCore {
      * <br/>
      * 
      * @param f The function to execute asynchronously on the enclosed objects. 
+     * @param options The options to add.
      * @param <R> Return type for the {@link Async} object.
      * @return An {@link Async} object that will hold the results (in an arbitrary order).
      */
-    public <R> Async<R> async(F0R<R> f) {
-        return null;
+    public <R> Async<R> async(final F0R<R> f, Option ... options) {
+        final ConcurrentLinkedQueue<R> queue = new ConcurrentLinkedQueue<R>();
+        final Async<R> async = new Async<R>(queue, 1);
+        
+        // Maybe use the executor right away?
+        this.sys.oneTime(new F0() {
+            @Override
+            public void f() {
+                try {
+                    queue.add(f.f());
+                } catch(Exception e) {
+                    report(MessageType.EXCEPTION, "Error invoking async() ... " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        }, 0);
+        
+        return async;
     }
 
 
@@ -322,6 +341,20 @@ public class CommonCore {
     public void execute(Runnable r, int count) {
         for (int i = 0; i < count; i++)
             this.executionManager.getExecutor().execute(r);
+    }
+   
+    
+
+    /**
+     * Call this function if you want to give the jCores team runtime feedback of your 
+     * application. The library will then, at certain points, upload profiling and 
+     * execution results to improve the performance and usability. Everything stays anonymous!
+     * 
+     * @since 1.0
+     */
+    @Beta
+    public void feedback() {
+        // 
     }
     
 

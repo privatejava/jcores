@@ -31,9 +31,9 @@ import java.lang.reflect.Array;
 
 import net.jcores.jre.cores.CoreObject;
 import net.jcores.jre.options.Option;
-import net.jcores.jre.options.OptionDebug;
-import net.jcores.jre.options.OptionIndexer;
-import net.jcores.jre.options.OptionMapType;
+import net.jcores.jre.options.Debug;
+import net.jcores.jre.options.Indexer;
+import net.jcores.jre.options.MapType;
 
 /**
  * Used by the cores when calling the inner core's mapping function. You do not need this.
@@ -56,26 +56,26 @@ public abstract class Mapper<I, O> extends Handler<I, O> {
         public final Class<?> type;
 
         /** The used indexer */
-        public final OptionIndexer indexer;
+        public final Indexer indexer;
 
         public MapOptions(Option... options) {
             // Variables to set after we processed the options
             boolean _debug = false;
             Class<?> _type = null;
-            OptionIndexer _indexer = null;
+            Indexer _indexer = null;
 
             // Check options if we have
             for (Option option : options) {
-                if (option instanceof OptionMapType) {
-                    _type = ((OptionMapType) option).getType();
+                if (option instanceof MapType) {
+                    _type = ((MapType) option).getType();
                 }
-                if (option instanceof OptionDebug) {
+                if (option instanceof Debug) {
                     _debug = true;
                 }
 
                 // In case we have a map type, get it directly
-                if (option instanceof OptionIndexer) {
-                    _indexer = (OptionIndexer) option;
+                if (option instanceof Indexer) {
+                    _indexer = (Indexer) option;
                 }
             }
 

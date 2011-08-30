@@ -1,7 +1,7 @@
 /*
- * OptionDummy.java
+ * OptionDropType.java
  * 
- * Copyright (c) 2010, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -27,30 +27,16 @@
  */
 package net.jcores.jre.options;
 
+import java.io.File;
+
 
 /**
- * Specifies the regex options to use.
+ * If we should print debug information for the given operation.
  * 
  * @author Ralf Biedert
+ * @param <T> 
  */
-public class OptionRegEx extends Option {
-
-    /** Regular expression options */
-    private final int options;
-
-    /**
-     * @param options
-     */
-    public OptionRegEx(int options) {
-        this.options = options;
-    }
-
-    /**
-     * Returns the hash method.
-     * 
-     * @return the method
-     */
-    public int getOptions() {
-        return this.options;
-    }
+public class DropType<T> extends Option {
+    /** Drop Type (File) */
+    public final static DropType<File> FILES = new DropTypeFiles();
 }

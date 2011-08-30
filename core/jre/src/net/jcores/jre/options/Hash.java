@@ -29,10 +29,31 @@ package net.jcores.jre.options;
 
 
 /**
- * Specifies directories should be returned as well.
+ * Specifies the hash-method to use.
  * 
  * @author Ralf Biedert
  */
-public class OptionListDirectories extends Option {
-    //
+public class Hash extends Option {
+    /** Hash method to use (MD5) */
+    public final static HashMD5 MD5 = new HashMD5();
+
+
+    /** */
+    private final String method;
+
+    /**
+     * @param string
+     */
+    public Hash(String string) {
+        this.method = string;
+    }
+
+    /**
+     * Returns the hash method.
+     * 
+     * @return the method
+     */
+    public String getMethod() {
+        return this.method;
+    }
 }

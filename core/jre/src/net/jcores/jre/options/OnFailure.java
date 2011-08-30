@@ -1,7 +1,7 @@
 /*
- * OptionDummy.java
+ * OnFailure.java
  * 
- * Copyright (c) 2010, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert, DFKI. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -27,26 +27,59 @@
  */
 package net.jcores.jre.options;
 
-
 /**
- * Specifies a specific type was requested.
+ * Can be passed to various functions to register a callback when something
+ * went wrong.
  * 
  * @author Ralf Biedert
+ * @since 1.0
  */
-public class OptionMapType extends Option {
-    private final Class<?> type;
+public class OnFailure extends Option {
+    /** Print something to the console when a failure occured. */
+    public static OnFailure PRINT = new OnFailure(new OnFailure.Listener() {
+        @Override
+        public void onFailure(Object object, Exception cause, String code, String details) {
+            System.err.println(details);
+        }
+    });
 
+    
     /**
-     * @param type
+     * Call the listener when a failure occured.
+     * 
+     * @since 1.0
+     * @param listener The listener to call.
+     * @return The OnFailure object.
      */
-    public OptionMapType(Class<?> type) {
-        this.type = type;
+    public static OnFailure DO(Listener listener) {
+        return new OnFailure(listener);
     }
 
     /**
-     * @return the type
+     * Registers an onFailure listener.
+     * 
+     * @param listener The listener to register.
      */
-    public Class<?> getType() {
-        return this.type;
+    private OnFailure(Listener listener) {
+
+    }
+
+    /**
+     * The failure listener interface.
+     * 
+     * @author Ralf Biedert
+     * @since 1.0
+     */
+    public interface Listener {
+        /**
+         * Called when an exception was raised for the given object.
+         * 
+         * @since 1.0
+         * @param object The object for which the failure occured.
+         * @param cause The exception that was thrown (may be null).
+         * @param code The code of the failue.
+         * @param details A human readable debug string.
+         */
+        public void onFailure(Object object, Exception cause, String code, String details);
     }
 }

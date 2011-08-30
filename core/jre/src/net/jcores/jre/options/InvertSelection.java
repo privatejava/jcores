@@ -1,7 +1,7 @@
 /*
- * Async.java
+ * OptionDummy.java
  * 
- * Copyright (c) 2011, Ralf Biedert, DFKI. All rights reserved.
+ * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,26 +25,18 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.jre.utils;
+package net.jcores.jre.options;
 
-import java.util.Queue;
 
 /**
- * Reflects the results of an asynchronous core operation <code>async().</code>.
+ * Denotes selection criterias should be inverted.
  * 
  * @author Ralf Biedert
- * @param <T> The type this async object wraps.
- * @since 1.0
  */
-public class Async<T> {
-    /**
-     * Creates an async object which receives its data through the given queue. It 
-     * will expect <code>targetSize</code> elements. 
-     *  
-     * @param queue
-     * @param targetSize
-     */
-    public Async(Queue<T> queue, int targetSize) {
-        
-    }
+public class InvertSelection extends Option {
+    /** Invert the selection */
+    public final static InvertSelection DO = new InvertSelection();
+    
+    /** There must only be one instance */
+    private InvertSelection() {}
 }

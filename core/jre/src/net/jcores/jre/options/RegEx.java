@@ -27,17 +27,40 @@
  */
 package net.jcores.jre.options;
 
-
 /**
- * Specifies hash() should generate a MD5
+ * Specifies the regex options to use.
  * 
  * @author Ralf Biedert
  */
-public class OptionHashMD5 extends OptionHash {
+public class RegEx extends Option {
     /**
-     * Creates a new hash option.
+     * Specifies that the regular expression options to use.
+     * 
+     * @param options Options to use.
+     * @return An option of the given type.
      */
-    protected OptionHashMD5() {
-        super("MD5");
+    public final static RegEx OPTIONS(int options) {
+        return new RegEx(options);
+    }
+
+    /** Regular expression options */
+    private final int options;
+
+    /**
+     * Private constructor for the objects.
+     * 
+     * @param options
+     */
+    private RegEx(int options) {
+        this.options = options;
+    }
+
+    /**
+     * Returns the hash method.
+     * 
+     * @return the method
+     */
+    public int getOptions() {
+        return this.options;
     }
 }

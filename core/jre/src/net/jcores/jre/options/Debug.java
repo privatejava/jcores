@@ -1,7 +1,7 @@
 /*
- * OptionDummy.java
+ * OptionDebug.java
  * 
- * Copyright (c) 2010, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -29,10 +29,13 @@ package net.jcores.jre.options;
 
 
 /**
- * Denotes selection criterias should be inverted.
+ * If we should print debug information for the given operation.
  * 
  * @author Ralf Biedert
  */
-public class OptionInvertSelection extends Option {
-    //
+public class Debug extends Option {
+    public static final Debug DO = new Debug();
+
+    /** There must only be one instance */
+    private Debug() {}
 }

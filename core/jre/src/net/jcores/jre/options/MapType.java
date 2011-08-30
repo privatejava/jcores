@@ -1,7 +1,7 @@
 /*
- * OptionDebug.java
+ * OptionDummy.java
  * 
- * Copyright (c) 2011, Ralf Biedert All rights reserved.
+ * Copyright (c) 2010, Ralf Biedert All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -29,10 +29,41 @@ package net.jcores.jre.options;
 
 
 /**
- * If we should print debug information for the given operation.
+ * Specifies <code>map()</code> should map to a specific type.
  * 
  * @author Ralf Biedert
+ * @since 1.0
  */
-public class OptionDebug extends Option {
-    //
+public class MapType extends Option {
+    /**
+     * Specifies that the map result should be of type. Useful if map returns various
+     * types.
+     * 
+     * @param type Class to use.
+     * @return An option of the given type.
+     */
+    public final static MapType TYPE(Class<?> type) {
+        return new MapType(type);
+    }
+    
+    /** The type to which we should map */
+    private final Class<?> type;
+
+    /**
+     * Creates a new MapType.
+     * 
+     * @param type The parameter to wrap to.
+     */
+    private MapType(Class<?> type) {
+        this.type = type;
+    }
+
+    /**
+     * Returns the target type.
+     * 
+     * @return the type The target type.
+     */
+    public Class<?> getType() {
+        return this.type;
+    }
 }

@@ -49,7 +49,7 @@ import net.jcores.jre.interfaces.functions.F1;
 import net.jcores.jre.interfaces.functions.F1Object2Bool;
 import net.jcores.jre.options.MessageType;
 import net.jcores.jre.options.Option;
-import net.jcores.jre.options.OptionRegEx;
+import net.jcores.jre.options.RegEx;
 import net.jcores.jre.utils.CSVLine;
 import net.jcores.jre.utils.internal.io.StreamUtils;
 import net.jcores.jre.utils.internal.lang.StringUtils;
@@ -859,12 +859,12 @@ public class CoreString extends CoreObject<String> {
      * 
      * @param pattern The pattern to search for.
      * @param with The replacement.
-     * @param options Relevant options: {@link OptionRegEx}.
+     * @param options Accepts {@link RegEx} for the regular expression options.
      * 
      * @return A CoreString with all patterns replaced.
      */
     public CoreString replace(final String pattern, final String with, Option... options) {
-        final int regexOptions = CoreKeeper.$(options).cast(OptionRegEx.class).get(0, new OptionRegEx(0)).getOptions();
+        final int regexOptions = CoreKeeper.$(options).cast(RegEx.class).get(0, RegEx.OPTIONS(0)).getOptions();
         final Pattern p = Pattern.compile(pattern, regexOptions);
 
         return new CoreString(this.commonCore, map(new F1<String, String>() {

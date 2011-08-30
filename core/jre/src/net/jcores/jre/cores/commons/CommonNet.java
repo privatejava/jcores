@@ -31,8 +31,12 @@ import static net.jcores.jre.CoreKeeper.$;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.Map;
 
 import net.jcores.jre.CommonCore;
+import net.jcores.jre.interfaces.functions.F0R;
+import net.jcores.jre.options.Option;
+import net.jcores.jre.utils.Async;
 
 /**
  * Contains common system utilities.
@@ -104,5 +108,25 @@ public class CommonNet extends CommonNamespace {
         }
 
         return false;
+    }
+    
+    
+    /**
+     * Performs a HTTP GET operation on the given URL and passes the 
+     * specified data. 
+     * 
+     * @since 1.0
+     * @param url The URL to contact.
+     * @param data 
+     * @param options
+     * @return An {@link Async} object which will contain the result (content) the server gave.  
+     */
+    public Async<String> get(String url, Map<String, String> data, Option... options) {
+        return this.commonCore.async(new F0R<String>() {
+            @Override
+            public String f() {
+                return null;
+            }
+        });
     }
 }

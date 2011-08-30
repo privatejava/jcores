@@ -64,9 +64,10 @@ import net.jcores.jre.interfaces.functions.F2ReduceObjects;
 import net.jcores.jre.interfaces.functions.Fn;
 import net.jcores.jre.managers.ManagerDebugGUI;
 import net.jcores.jre.managers.ManagerDeveloperFeedback;
+import net.jcores.jre.options.InvertSelection;
+import net.jcores.jre.options.MapType;
 import net.jcores.jre.options.MessageType;
 import net.jcores.jre.options.Option;
-import net.jcores.jre.options.OptionMapType;
 import net.jcores.jre.utils.Async;
 import net.jcores.jre.utils.internal.Folder;
 import net.jcores.jre.utils.internal.Mapper;
@@ -392,7 +393,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
                 if (target.isAssignableFrom(x.getClass())) return (N) x;
                 return null;
             }
-        }, new OptionMapType(target));
+        }, MapType.TYPE(target));
     }
     
     /**
@@ -1031,13 +1032,12 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * <br/>
      * 
      * @param f If f returns true the object is kept.
-     * @param options Supports INVERT_SELECTION if the filter logic should be inverted
-     * (options that match will not be considered).
+     * @param options Supports {@link InvertSelection} if the filter logic should be inverted.
      * 
      * @return A new CoreObject of our type, containing only kept elements.
      */
     public CoreObject<T> filter(final F1Object2Bool<T> f, Option... options) {
-        final boolean invert = new CoreObject<Option>(this.commonCore, options).contains(Option.INVERT_SELECTION);
+        final boolean invert = new CoreObject<Option>(this.commonCore, options).contains(InvertSelection.DO);
         final CoreObject<T> rval = map(new F1<T, T>() {
             public T f(T x) {
                 final boolean result = f.f(x);

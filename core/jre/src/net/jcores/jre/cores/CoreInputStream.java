@@ -40,9 +40,9 @@ import net.jcores.jre.CommonCore;
 import net.jcores.jre.CoreKeeper;
 import net.jcores.jre.cores.adapter.EmptyAdapter;
 import net.jcores.jre.interfaces.functions.F1;
+import net.jcores.jre.options.Hash;
 import net.jcores.jre.options.MessageType;
 import net.jcores.jre.options.Option;
-import net.jcores.jre.options.OptionHash;
 import net.jcores.jre.utils.internal.io.StreamUtils;
 import net.jcores.jre.utils.internal.sound.SoundUtils;
 
@@ -319,12 +319,11 @@ public class CoreInputStream extends CoreObject<InputStream> {
      * Multi-threaded. Consuming.<br/>
      * <br/>
      * 
-     * @param options Relevant options: <code>OptionHashMD5</code>.
-     * 
+     * @param options Accepts a {@link Hash} method.
      * @return A CoreString containing the generated hashes.
      */
     public CoreString hash(Option... options) {
-        final String method = CoreKeeper.$(options).get(OptionHash.class, Option.HASH_MD5).getMethod();
+        final String method = CoreKeeper.$(options).get(Hash.class, Hash.MD5).getMethod();
 
         return new CoreString(this.commonCore, map(new F1<InputStream, String>() {
             public String f(final InputStream x) {

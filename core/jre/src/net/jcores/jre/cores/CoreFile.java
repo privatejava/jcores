@@ -55,6 +55,7 @@ import net.jcores.jre.CoreKeeper;
 import net.jcores.jre.cores.adapter.AbstractAdapter;
 import net.jcores.jre.interfaces.functions.F1;
 import net.jcores.jre.interfaces.functions.F1Object2Bool;
+import net.jcores.jre.options.ListDirectories;
 import net.jcores.jre.options.MessageType;
 import net.jcores.jre.options.Option;
 import net.jcores.jre.utils.internal.io.FileUtils;
@@ -296,7 +297,7 @@ public class CoreFile extends CoreObject<File> {
         map(new F1<File, Void>() {
             public Void f(File x) {
                 int lastSize = Integer.MAX_VALUE;
-                List<File> list = CoreKeeper.$(x).dir(Option.LIST_DIRECTORIES).list();
+                List<File> list = CoreKeeper.$(x).dir(ListDirectories.DO).list();
 
                 while (list.size() < lastSize) {
                     lastSize = list.size();
@@ -305,7 +306,7 @@ public class CoreFile extends CoreObject<File> {
                         file.delete();
                     }
 
-                    list = CoreKeeper.$(x).dir(Option.LIST_DIRECTORIES).list();
+                    list = CoreKeeper.$(x).dir(ListDirectories.DO).list();
                 }
 
                 // Try to delete the entry
@@ -374,14 +375,14 @@ public class CoreFile extends CoreObject<File> {
      * Multi-threaded.<br/>
      * <br/>
      * 
-     * @param options Relevant options: <code>OptionListDirectories</code>.
+     * @param options Accepts {@link ListDirectories} in case sub directories should be considered as well.
      * 
      * @return A CoreFile with all found files (and, if selected, directories).
      */
     public CoreFile dir(Option... options) {
 
         // Check if we should emit diretories
-        final boolean listDirs = net.jcores.jre.CoreKeeper.$(options).contains(Option.LIST_DIRECTORIES);
+        final boolean listDirs = net.jcores.jre.CoreKeeper.$(options).contains(ListDirectories.DO);
 
         return map(new F1<File, File[]>() {
             @Override

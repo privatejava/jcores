@@ -34,6 +34,7 @@ import java.io.File;
  * 
  * @author Ralf Biedert
  */
-public class OptionDropTypeFiles extends OptionDropType<File> {
-    
+public class DropTypeFiles extends DropType<File> {
+    /** There must only be one instance */
+    protected DropTypeFiles() {}
 }

@@ -33,8 +33,8 @@ import java.nio.ByteBuffer;
 
 import net.jcores.jre.CommonCore;
 import net.jcores.jre.interfaces.functions.F1;
+import net.jcores.jre.options.Hash;
 import net.jcores.jre.options.Option;
-import net.jcores.jre.options.OptionHash;
 import net.jcores.jre.utils.internal.io.DataUtils;
 
 /**
@@ -69,19 +69,19 @@ public class CoreByteBuffer extends CoreObject<ByteBuffer> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$(d1, d2, d3).hash(Option.HASH_MD5).get(-1)</code> - Creates a hash for each of the passed data objects 
+     * <li><code>$(d1, d2, d3).hash(Hash.MD5).get(-1)</code> - Creates a hash for each of the passed data objects 
      * and returns the hash value for the last one.</li>
      * </ul>
      * 
      * Multi-threaded.<br/>
      * <br/>
      * 
-     * @param options Relevant options: <code>OptionHashMD5</code>.
-     * 
+     * @param options Accepts a {@link Hash} options for the method to use.
+     * @since 1.0
      * @return A CoreString containing the generated hashes.
      */
     public CoreString hash(Option... options) {
-        final String method = $(options).get(OptionHash.class, Option.HASH_MD5).getMethod();
+        final String method = $(options).get(Hash.class, Hash.MD5).getMethod();
 
         return new CoreString(this.commonCore, map(new F1<ByteBuffer, String>() {
             public String f(final ByteBuffer x) {

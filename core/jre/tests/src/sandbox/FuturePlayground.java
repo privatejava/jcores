@@ -1,7 +1,7 @@
 /*
- * OptionDropType.java
+ * FuturePlayground.java
  * 
- * Copyright (c) 2011, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert, DFKI. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,15 +25,24 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.jre.options;
-
+package sandbox;
 
 /**
- * If we should print debug information for the given operation.
- * 
  * @author Ralf Biedert
- * @param <T> 
+ * @since 1.0
+ * 
  */
-public class OptionDropType<T> extends Option {
-    
+public class FuturePlayground {
+    public static void main(String[] args) {
+        
+        /* How to get feedback from methods */
+        
+        // OnFailure ff = OnFailure.PRINT; // OnFailure extends options
+        // OnFailure ff = OnFailure.CALLBACK(listener);
+        // $(data).map(f, ff)
+
+        
+        
+        
+    }
 }

@@ -46,7 +46,20 @@ import net.jcores.jre.interfaces.functions.F1;
  * 
  * @author Ralf Biedert
  */
-public class OptionIndexer extends Option {
+public class Indexer extends Option {
+    /**
+     * Returns a new {@link Indexer}.
+     * 
+     * @since 1.0
+     * @return A new indexer.
+     */
+    public static final Indexer NEW() {
+        return new Indexer();
+    }
+    
+    /** There must only be one instance */
+    private Indexer() {}
+
 
     /** Stores all indices for each thread */
     ConcurrentHashMap<Thread, Integer> indices = new ConcurrentHashMap<Thread, Integer>();

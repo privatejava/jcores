@@ -41,8 +41,7 @@ import net.jcores.jre.interfaces.functions.F1;
 import net.jcores.jre.interfaces.functions.F2DeltaObjects;
 import net.jcores.jre.interfaces.functions.F2ReduceObjects;
 import net.jcores.jre.interfaces.functions.Fn;
-import net.jcores.jre.options.Option;
-import net.jcores.jre.options.OptionIndexer;
+import net.jcores.jre.options.Indexer;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -172,7 +171,7 @@ public class CoreObjectTest {
         
         c.set(0);
         final ConcurrentHashMap<Integer, Object> cc = new ConcurrentHashMap<Integer, Object>();
-        final OptionIndexer indexer = Option.INDEXER();
+        final Indexer indexer = Indexer.NEW();
         
         $(Data.sn).map(new F1<String, Void>() {
             @SuppressWarnings("boxing")
@@ -260,7 +259,7 @@ public class CoreObjectTest {
     /** */
     @Test
     public void testIndexer() {
-        final OptionIndexer indexer = Option.INDEXER();
+        final Indexer indexer = Indexer.NEW();
 
         $.range(100000).forEach(new F1<Number, Number>() {
             @SuppressWarnings("boxing")
