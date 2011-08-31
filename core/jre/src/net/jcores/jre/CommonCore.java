@@ -146,13 +146,13 @@ public class CommonCore {
     }
 
     /**
-     * Performs an asynchronous map operation on this core. The order in which
-     * the objects are being mapped is not defined.<br/>
+     * Executes the given function asynchronously and returns an {@link Async} object which 
+     * will hold the result.<br/>
      * <br/>
      * 
      * Examples:
      * <ul>
-     * <li><code>$(names).async(lookup)</code> - Performs an asynchronous lookup for the set of names.</li>
+     * <li><code>$.async(lookup)</code> - Performs some lookup task in the background.</li>
      * </ul>
      * 
      * Single-threaded. <br/>
