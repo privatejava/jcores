@@ -1,7 +1,7 @@
 /*
- * Thread.java
+ * Credits.java
  * 
- * Copyright (c) 2010, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert, DFKI. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -27,12 +27,27 @@
  */
 package net.jcores.jre.annotations;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
- * Methods annotated with @Beta are unstable or buggy and might 
- * change in the future.    
+ * License for your plugin.
  * 
  * @author Ralf Biedert
+ * @since 1.0
  */
-public @interface Beta {
-    //
+@Retention(RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.TYPE })
+public @interface License {
+    /**
+     * Short name of your license (e.g, "BSD-3-Clause", "LGPL-3.0", ...). 
+     * You should use the short name as specified in 
+     * <a href="http://www.opensource.org/licenses/alphabetical">
+     * http://www.opensource.org/licenses/alphabetical</a>. 
+     * 
+     * @return Name of your license.
+     */
+    String name();
 }

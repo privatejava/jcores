@@ -1,7 +1,7 @@
 /*
- * Thread.java
+ * Credits.java
  * 
- * Copyright (c) 2010, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert, DFKI. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -27,12 +27,25 @@
  */
 package net.jcores.jre.annotations;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
- * Methods annotated with @Beta are unstable or buggy and might 
- * change in the future.    
+ * Use this annotation for your credits.
  * 
  * @author Ralf Biedert
+ * @since 1.0
  */
-public @interface Beta {
-    //
+@Retention(RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.TYPE })
+public @interface Credits {
+    /**
+     * The projects, persons, ... to which you want to give credit for 
+     * an extension. 
+     * 
+     * @return List of entities.
+     */
+    String[] to() default {};
 }

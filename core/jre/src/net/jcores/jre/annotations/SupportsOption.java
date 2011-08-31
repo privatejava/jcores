@@ -35,6 +35,7 @@ import java.lang.annotation.Target;
 import net.jcores.jre.options.Option;
 
 /**
+ * Use this option on methods to indicate which options are supported.
  * 
  * @author Ralf Biedert
  * @since 1.0
@@ -42,7 +43,6 @@ import net.jcores.jre.options.Option;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.METHOD })
 public @interface SupportsOption {
-
     /**
      * All the non-standard options that are supported.
      * 
