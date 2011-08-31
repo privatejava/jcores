@@ -32,8 +32,8 @@ import junit.framework.Assert;
 import net.jcores.jre.CommonCore;
 import net.jcores.jre.cores.CoreString;
 import net.jcores.jre.cores.adapter.AbstractAdapter;
-import net.jcores.jre.extensions.SingletonExtension;
-import net.jcores.jre.extensions.WrappingExtension;
+import net.jcores.jre.extensions.GlobalExtension;
+import net.jcores.jre.extensions.LocalExtension;
 import net.jcores.jre.interfaces.functions.F1;
 
 import org.junit.Test;
@@ -43,7 +43,7 @@ import org.junit.Test;
  */
 public class ExtensionsTest {
     /** Test extension for wrapping */
-    public static class E extends WrappingExtension<String> {
+    public static class E extends LocalExtension<String> {
         private static final long serialVersionUID = 5660493453611259815L;
 
         public E(CommonCore commonCore, AbstractAdapter<String> adapter) {
@@ -64,7 +64,7 @@ public class ExtensionsTest {
     
     
     /** Test extension for wrapping */
-    public static class S extends SingletonExtension {
+    public static class S extends GlobalExtension {
         String uniqueID = $.sys.uniqueID();
         
         public String random() {

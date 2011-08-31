@@ -39,7 +39,7 @@ import net.jcores.jre.cores.adapter.EmptyAdapter;
  * 
  * <br/><br/>
  * Note that in 
- * contrast to the {@link SingletonExtension} you are not forced to extend this class
+ * contrast to the {@link GlobalExtension} you are not forced to extend this class
  * in order to create an extension (you could extend a more specific core like 
  * {@link CoreNumber} directly). In that case, make sure that you specify a constructor 
  * which accepts a {@link CommonCore} and an {@link AbstractAdapter} anyways.
@@ -48,13 +48,13 @@ import net.jcores.jre.cores.adapter.EmptyAdapter;
  * @param <T> The type of the object to wrap.
  * @since 1.0
  */
-public abstract class WrappingExtension<T> extends CoreObject<T> {
+public abstract class LocalExtension<T> extends CoreObject<T> {
     /** */
     private static final long serialVersionUID = 3624295339294079716L;
     
     
     /** Must not be called. */
-    private WrappingExtension() {
+    private LocalExtension() {
         super(null, new EmptyAdapter<T>());
         throw new IllegalStateException();
     }
@@ -65,7 +65,7 @@ public abstract class WrappingExtension<T> extends CoreObject<T> {
      * @param commonCore The commonCore passed to your object.
      * @param adapter The adapter containing the wrapped objects.
      */
-    public WrappingExtension(CommonCore commonCore, AbstractAdapter<T> adapter) {
+    public LocalExtension(CommonCore commonCore, AbstractAdapter<T> adapter) {
         super(commonCore, adapter);
     }
 }

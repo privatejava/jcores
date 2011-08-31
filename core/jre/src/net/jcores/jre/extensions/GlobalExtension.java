@@ -36,7 +36,7 @@ import net.jcores.jre.CommonCore;
  * @author Ralf Biedert
  * @since 1.0
  */
-public abstract class SingletonExtension {
+public abstract class GlobalExtension {
     /** The commoncore of this extension */
     protected CommonCore commonCore = null;
     

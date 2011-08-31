@@ -29,14 +29,14 @@ package sandbox;
 
 import java.io.IOException;
 
-import net.jcores.jre.extensions.SingletonExtension;
+import net.jcores.jre.extensions.GlobalExtension;
 
 /**
  * @author rb
  *
  */
 public class SimpleExtensions {
-    public static class MyExt extends SingletonExtension {
+    public static class MyExt extends GlobalExtension {
         public void socket() {}
     }
     

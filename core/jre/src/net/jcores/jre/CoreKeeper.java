@@ -56,7 +56,7 @@ import net.jcores.jre.cores.CoreString;
 import net.jcores.jre.cores.CoreURI;
 import net.jcores.jre.cores.adapter.AbstractAdapter;
 import net.jcores.jre.cores.adapter.MapAdapter;
-import net.jcores.jre.extensions.SingletonExtension;
+import net.jcores.jre.extensions.GlobalExtension;
 import net.jcores.jre.interfaces.functions.F1;
 import net.jcores.jre.options.Option;
 import net.jcores.jre.options.MapType;
@@ -137,7 +137,7 @@ public class CoreKeeper {
      * @param clsses The classes to wrap.
      * @return A CoreClass wrapping the given classes.
      */
-    public static <T extends SingletonExtension> T $(Class<T> clsses) {
+    public static <T extends GlobalExtension> T $(Class<T> clsses) {
         final Nexus nexus = $.nexus();
         final T t = nexus.get(clsses);
         
