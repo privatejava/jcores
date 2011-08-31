@@ -28,7 +28,8 @@
 package net.jcores.jre.interfaces.functions;
 
 /**
- * Abstract class to process elements when an exception can be thorwn.
+ * Abstract class to process elements when an exception can be thrown and no return type 
+ * is required.
  * 
  * @author Ralf Biedert
  * @param <X> The input type.
