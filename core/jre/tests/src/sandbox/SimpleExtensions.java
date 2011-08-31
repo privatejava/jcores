@@ -27,6 +27,8 @@
  */
 package sandbox;
 
+import static net.jcores.jre.CoreKeeper.$;
+
 import java.io.IOException;
 
 import net.jcores.jre.extensions.GlobalExtension;
@@ -41,7 +43,9 @@ public class SimpleExtensions {
     }
     
     public static void main(String[] args) throws IOException {
-        // $(MyExt.class, null);
+        $.report();
+        $(MyExt.class).socket();
+        $.report();
         
         //$ = $.ext(MyExt.class)
         /*

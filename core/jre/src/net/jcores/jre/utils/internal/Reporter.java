@@ -32,8 +32,9 @@ import static net.jcores.jre.CoreKeeper.$;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import net.jcores.jre.cores.CoreNumber;
+import net.jcores.jre.extensions.GlobalExtension;
 import net.jcores.jre.interfaces.functions.F1V;
-import net.jcores.jre.utils.Async;
+import net.xeoh.nexus.Service;
 
 /**
  * Manages and keeps internal trouble records. You do not need this.
@@ -54,21 +55,21 @@ public class Reporter {
      * Prints all records.
      */
     public void printRecords() {
+        // Print what went wrong
         System.out.println(">>> jCores trouble log (" + $.version() + ")");
         for (String r : this.allRecords) {
             System.out.println(">>> " + r);
         }
         
         // Check if we are current or not
-        final Async<String> async = $.net.get("http://api.jcores.net/versioncheck/", null);
-        async.onNext(new F1V<String>() {
+        $.net.get("http://api.jcores.net/versioncheck/", null).onNext(new F1V<String>() {
             @Override
             public void fV(String x) {
                 String revisionOnline = $(x).split("-").trim().get(-1, "UNDEFINED");
                 String revisionOffline = $($.version()).split("-").get(-1, "UNDEFINED");
 
                 if(revisionOffline.contains("@")) {
-                    System.out.println(">>> You are probably running a source build. Cannot determine your exact version.");
+                    System.out.println(">>> You are probably running from source. Cannot determine your exact version.");
                     return;
                 }
                 
@@ -94,5 +95,13 @@ public class Reporter {
                 
             }
         });
+        
+        // Check which extensions are loaded
+        for(Service service : $.nexus().list()) {
+            final Object object = service.getService();
+            if(object instanceof GlobalExtension) {
+                System.out.println(">>> Loaded global extension '" + object.getClass().getCanonicalName() + "'");
+            }
+        }
     }
 }
