@@ -45,10 +45,17 @@ public abstract class GlobalExtension {
      * exactly once when the extension is being requested for the first time. 
      * 
      * @since 1.0
-     * @param commonCore The common core.
      */
-    @SuppressWarnings("hiding")
-    public void init(CommonCore commonCore) {
-        this.commonCore = commonCore;
+    public void init() { }
+    
+    
+    /**
+     * Sets the {@link CommonCore} for this extension.
+     * 
+     * @since 1.0
+     * @param core The core to set.
+     */
+    public void commonCore(CommonCore core) {
+        this.commonCore = core;
     }
 }

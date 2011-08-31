@@ -58,8 +58,8 @@ import net.jcores.jre.cores.adapter.AbstractAdapter;
 import net.jcores.jre.cores.adapter.MapAdapter;
 import net.jcores.jre.extensions.GlobalExtension;
 import net.jcores.jre.interfaces.functions.F1;
-import net.jcores.jre.options.Option;
 import net.jcores.jre.options.MapType;
+import net.jcores.jre.options.Option;
 import net.jcores.jre.utils.internal.URIs;
 import net.jcores.jre.utils.internal.wrapper.Wrapper;
 import net.jcores.jre.utils.map.MapEntry;
@@ -149,7 +149,8 @@ public class CoreKeeper {
             final T newT = clsses.newInstance();
             final Collection<? extends Service> service = InternalService.wrap(newT);
             
-            newT.init($);
+            newT.commonCore($);
+            newT.init();
             nexus.register(service);
             
             return newT;
