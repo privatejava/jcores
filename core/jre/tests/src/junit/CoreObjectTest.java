@@ -42,6 +42,7 @@ import net.jcores.jre.interfaces.functions.F2DeltaObjects;
 import net.jcores.jre.interfaces.functions.F2ReduceObjects;
 import net.jcores.jre.interfaces.functions.Fn;
 import net.jcores.jre.options.Indexer;
+import net.jcores.jre.options.KillSwitch;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -51,6 +52,29 @@ import org.junit.Test;
  */
 public class CoreObjectTest {
 
+    
+
+    /** Tests if async() works. */
+    @Test
+    public void testAsync() {
+        final CoreString c = $("a", "b", "c", "d", "e");
+        final F1<String, String> f = new F1<String, String>() {
+            @Override
+            public String f(String x) {
+                $.sys.sleep(100);
+                return x + x;
+            }
+        };
+        
+        CoreObject<String> result = c.async(f).await();
+        Assert.assertEquals("aabbccddee", result.string().join());
+        
+        CoreObject<String> result2 = c.async(f, KillSwitch.TIMED(150)).await();
+        Assert.assertTrue(result2.contains("aa"));
+        Assert.assertFalse(result2.contains("cc"));
+    }
+
+    
     /** Tests if intersect() works. */
     @Test
     public void testIntersect() {

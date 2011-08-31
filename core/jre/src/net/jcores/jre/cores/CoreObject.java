@@ -50,7 +50,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.jcores.jre.CommonCore;
-import net.jcores.jre.annotations.Beta;
 import net.jcores.jre.annotations.SupportsOption;
 import net.jcores.jre.cores.adapter.AbstractAdapter;
 import net.jcores.jre.cores.adapter.ArrayAdapter;
@@ -66,10 +65,12 @@ import net.jcores.jre.interfaces.functions.Fn;
 import net.jcores.jre.managers.ManagerDebugGUI;
 import net.jcores.jre.managers.ManagerDeveloperFeedback;
 import net.jcores.jre.options.InvertSelection;
+import net.jcores.jre.options.KillSwitch;
 import net.jcores.jre.options.MapType;
 import net.jcores.jre.options.MessageType;
 import net.jcores.jre.options.Option;
 import net.jcores.jre.utils.Async;
+import net.jcores.jre.utils.Async.Queue;
 import net.jcores.jre.utils.internal.Objects;
 import net.jcores.jre.utils.internal.Options;
 import net.jcores.jre.utils.internal.Streams;
@@ -358,12 +359,43 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      * <br/>
      * 
      * @param f The function to execute asynchronously on the enclosed objects.
+     * @param options The supported options, esp. {@link KillSwitch}.
      * @param <R> Return type for the {@link Async} object.
      * @return An {@link Async} object that will hold the results (in an arbitrary order).
      */
-    @Beta
-    public <R> Async<R> async(F1<T, R> f) {
-        return null;
+    @SupportsOption(options = { KillSwitch.class })
+    public <R> Async<R> async(final F1<T, R> f, Option... options) {
+        final Queue<R> queue = Async.Queue();
+        final Async<R> async = new Async<R>(queue);
+        final Options options$ = Options.$(options);
+        final KillSwitch killswitch = options$.killswitch();
+
+        this.commonCore.sys.oneTime(new F0() {
+            @Override
+            public void f() {
+                try {
+                    // Now process all elements
+                    for (T t : CoreObject.this) {
+                        // Check if we should terminate.
+                        if(killswitch != null && killswitch.terminated())  return;
+                        
+                        // Otherwise process next element.
+                        try {
+                            queue.add(Async.QEntry(f.f(t)));
+                        } catch (Exception e) {
+                            CoreObject.this.commonCore.report(MessageType.EXCEPTION, "Exception when processing " + t + " ... " + e.getMessage());
+                            options$.failure(t, e, "for/f", "Unknown exception when processing element");
+                        }
+                    }
+                } finally {
+                    // When we're done, close the queue.
+                    queue.close();
+                }
+            }
+        }, 0, options);
+
+        return async;
+
     }
 
     /**

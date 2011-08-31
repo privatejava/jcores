@@ -149,6 +149,35 @@ public class Async<T> {
     public Async(Queue<T> queue) {
         this.queue = queue;
     }
+    
+    
+    /**
+     * Waits until the async has finished and returns all 
+     * remaining objects.
+     * 
+     * @since 1.0
+     * @return A {@link CoreObject} with the result.
+     */
+    public CoreObject<T> await() {
+        final Collection<T> result = $.list();
+        
+        while (true) {
+            try {
+                // Get the elements, and wait.
+                final QEntry<T> take = Async.this.queue.take();
+                if(take == EOQ) break;
+                
+                // And feed them to the listener
+                result.add(take.object);
+                
+            } catch (InterruptedException e) {
+                $.report(MessageType.EXCEPTION, "Unexpected Interrupt while waiting at Async.await(). Returning with what we have.");
+                break;
+            }
+        }
+        
+        return new CoreObject<T>($, result);
+    }
 
     /**
      * Checks if this async object is still active or not.
@@ -218,7 +247,7 @@ public class Async<T> {
      * already there.
      * 
      * @since 1.0
-     * @return
+     * @return A collection with all available elements.
      */
     protected Collection<T> collect() {
         if (this.closed) return new ArrayList<T>();
