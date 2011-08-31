@@ -34,12 +34,13 @@ import java.util.ListIterator;
 
 /**
  * The base class of all adapters. Each adapter should care to be as fast as 
- * possible, parameter should, in most cases, not be performed.
+ * possible, parameter checks should in most cases not be performed since jCores
+ * will already take care of that.
  * 
  * @author Ralf Biedert
  *
  * @since 1.0
- * @param <T>
+ * @param <T> The type of elements this adapter holds.
  */
 public abstract class AbstractAdapter<T> implements Iterable<T>, Serializable {
     
@@ -92,9 +93,10 @@ public abstract class AbstractAdapter<T> implements Iterable<T>, Serializable {
     
     
     /**
-     * Returns the clazz of the adapter.
+     * Returns the item class of the adapter (Collections should return the 
+     * actual base type of all elements).
      * 
-     * @return Clazz
+     * @return Clazz The class (e.g., String.class) of the collection type. 
      */
     public Class<?> clazz() {
         final ListIterator<T> it = iterator();
