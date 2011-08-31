@@ -186,7 +186,7 @@ public class CommonSys extends CommonNamespace {
         
         if(id == ID.SYSTEM || id == ID.USER) {
             try {
-                // System nodes apparently fail for Lion when syncing(): http://www.mailinglistarchive.com/html/java-dev@lists.apple.com/2011-08/msg00009.html
+                // System nodes apparently fail for Lion when syncing() (see Issue #15).
                 final Preferences node = id == ID.SYSTEM ? Preferences.systemNodeForPackage(getClass()) : Preferences.userNodeForPackage(getClass());
 
                 final String rval = node.get("system.id", "UNAVAILABLE");
