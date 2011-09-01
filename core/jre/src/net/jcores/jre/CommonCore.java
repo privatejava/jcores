@@ -75,9 +75,10 @@ import net.xeoh.nexus.InternalService;
 import net.xeoh.nexus.Nexus;
 
 /**
- * The common core is a singleton object shared by (thus common to) all created {@link Core} instances. It mainly
- * contains helper and utility methods and takes care of the {@link Manager} objects. For example, to but the
- * current thread to sleep (without the ugly try/catch), you would write:<br/>
+ * The common core is a singleton object shared by (thus common to) all created {@link Core} 
+ * instances of the current class loader. It is mainly a cache, contains helper and utility 
+ * methods and takes care of the {@link Manager} objects. For example, to but the current thread 
+ * to sleep (without the ugly try/catch), you would write:<br/>
  * <br/>
  * 
  * <code>$.sys.sleep(1000);</code> <br/>
@@ -357,16 +358,23 @@ public class CommonCore {
     }
 
     /**
-     * Returns the default nexus for jCores.
+     * Returns the default nexus for jCores. Do <i>not</i> use this instance 
+     * to manage <i>globals</i> or singletons for your application, since there might be 
+     * cases where two parts of your app won't see each other (e.g., different 
+     * classloaders). The {@link CommonCore} in jCores is merely a local <i>cache</i>, shared
+     * by the stataic {@link CoreKeeper} (with some added extras), that keeps track of non-essential, 
+     * sharable objects which are expensive to create (like profiling information).<br/>
+     * <br/>      
      * 
      * @since 1.0
      * @return The default {@link Nexus} used by jCores (which might be used by your
-     * application as well).
+     * application as well if you know what you are doing, but keep in mind the warning above).
      */
     public Nexus nexus() {
         return this.nexus;
     }
 
+    
     /**
      * Sets a manager of a given type, only needed for core developers.
      * 

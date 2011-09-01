@@ -43,7 +43,7 @@ public class SimpleExtensions {
     }
     
     public static void main(String[] args) throws IOException {
-        $.report();
+        // $.report();
         $(MyExt.class).socket();
         $.report();
         
