@@ -1,5 +1,5 @@
 /*
- * AbstractSingletonExtension.java
+ * AttentionWithClassloaders.java
  * 
  * Copyright (c) 2011, Ralf Biedert, DFKI. All rights reserved.
  * 
@@ -25,42 +25,26 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.jre.extensions;
+package net.jcores.jre.annotations;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 import net.jcores.jre.CommonCore;
 
 /**
- * Base class for a singleton extension, i.e., one which can be obtained as 
- * <code>$(MyExtension).f()</code>.<br/><br/>
- * 
- * Note that for bigger applications (ones which use more than one class loader 
- * like application servers) global extensions can not be used to share 
- * state between the parts of your code that are loaded by two different 
- * classloaders.  
+ * Methods marked with this annotation can be used normally, but you should pay attention 
+ * when you use them in very big applications (like application servers), since they may not 
+ * be used to share or pass state inbetween remote parts of code which have been loaded by
+ * different class loaders. See the {@link CommonCore} for more information.
  * 
  * @author Ralf Biedert
  * @since 1.0
  */
-public abstract class GlobalExtension {
-    /** The commoncore of this extension */
-    protected CommonCore commonCore = null;
-    
-    /**
-     * Called when this core is being initialized. This function will be called 
-     * exactly once when the extension is being requested for the first time. 
-     * 
-     * @since 1.0
-     */
-    public void init() { }
-    
-    
-    /**
-     * Sets the {@link CommonCore} for this extension.
-     * 
-     * @since 1.0
-     * @param core The core to set.
-     */
-    public void commonCore(CommonCore core) {
-        this.commonCore = core;
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.METHOD })
+public @interface AttentionWithClassloaders {
+   // 
 }

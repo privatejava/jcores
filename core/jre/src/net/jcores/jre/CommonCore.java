@@ -42,6 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 
+import net.jcores.jre.annotations.AttentionWithClassloaders;
 import net.jcores.jre.annotations.Beta;
 import net.jcores.jre.annotations.SupportsOption;
 import net.jcores.jre.cores.Core;
@@ -85,7 +86,14 @@ import net.xeoh.nexus.Nexus;
  * <br/>
  * 
  * Methods and object commonly required by the other cores. All methods in here are (and must be!)
- * thread safe.
+ * thread safe. While most methods (like <code>async()</code>, <code>box()</code>, 
+ * <code>clone()</code>, ...) are safe to use in any application, there are a few methods (like 
+ * <code>manager()</code>, <code>nexus()</code>, <code>log()</code>) which should be used with care in 
+ * multi-classloader-applications like application servers. While they will work in local parts of the 
+ * code they usually fail to share state between remote parts (e.g., one web application could not 
+ * register an object with <code>nexus()</code> another web application could see). Methods marked 
+ * with {@link AttentionWithClassloaders} are such candidates. You can still use them in big apps, 
+ * but you should know what you are doing.  
  * 
  * @author Ralf Biedert
  * @since 1.0
@@ -370,6 +378,7 @@ public class CommonCore {
      * @return The default {@link Nexus} used by jCores (which might be used by your
      * application as well if you know what you are doing, but keep in mind the warning above).
      */
+    @AttentionWithClassloaders    
     public Nexus nexus() {
         return this.nexus;
     }
@@ -384,6 +393,7 @@ public class CommonCore {
      * @return Return the manager that was already in the list, if there was one, or the current manager which was also
      * set.
      */
+    @AttentionWithClassloaders    
     public <T extends Manager> T manager(Class<T> clazz, T manager) {
         // Perpare adding the manager to the kernel
         final Collection<InternalService<T>> services = new ArrayList<InternalService<T>>();
@@ -404,6 +414,7 @@ public class CommonCore {
      * @param clazz Manager's class.
      * @return Returns the currently set manager.
      */
+    @AttentionWithClassloaders
     public <T extends Manager> T manager(Class<T> clazz) {
         return this.nexus.get(clazz);
     }
@@ -464,6 +475,7 @@ public class CommonCore {
      * @param string The string to log.
      * @param level Log level to use.
      */
+    @AttentionWithClassloaders
     public void log(String string, Level level) {
         this.manager(ManagerLogging.class).handler().log(string, level);
     }
