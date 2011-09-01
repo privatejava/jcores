@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 import net.jcores.jre.annotations.AttentionWithClassloaders;
@@ -568,6 +569,31 @@ public class CommonCore {
         return new CoreNumber(this, box(rval));
     }
 
+    /**
+     * Returns a new, empty {@link AtomicReference}.  
+     * 
+     * @since 1.0
+     * @param <T> The type of the reference.
+     * @return A new, empty reference.
+     */
+    public <T> AtomicReference<T> reference() {
+        return new AtomicReference<T>();
+    }
+
+
+    /**
+     * Returns a new, already set {@link AtomicReference}.  
+     * 
+     * @since 1.0
+     * @param object The initial value. 
+     * @param <T> The type of the reference.
+     * @return A new reference.
+     */
+    public <T> AtomicReference<T> reference(T object) {
+        return new AtomicReference<T>(object);
+    }
+    
+    
     /**
      * Reports the problem to our internal problem queue, only used by core developers. Use report() for all
      * internal error and problem reporting and use log() for user requested
