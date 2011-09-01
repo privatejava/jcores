@@ -31,6 +31,7 @@ import static net.jcores.jre.CoreKeeper.$;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import net.jcores.jre.CommonCore;
 import net.jcores.jre.cores.CoreNumber;
 import net.jcores.jre.extensions.GlobalExtension;
 import net.jcores.jre.interfaces.functions.F1V;
@@ -42,8 +43,16 @@ import net.xeoh.nexus.Service;
  * @author Ralf Biedert
  */
 public class Reporter {
+    /** All known records */
     ConcurrentLinkedQueue<String> allRecords = new ConcurrentLinkedQueue<String>();
+    
+    /** The common core */
+    CommonCore commonCore;
 
+    public Reporter(CommonCore common) {
+        this.commonCore = common;
+    }
+    
     /**
      * @param record
      */
@@ -56,13 +65,13 @@ public class Reporter {
      */
     public void printRecords() {
         // Print what went wrong
-        System.out.println(">>> jCores trouble log (" + $.version() + ")");
+        System.out.println(">>> jCores trouble log (" + this.commonCore.version() + ")");
         for (String r : this.allRecords) {
             System.out.println(">>> " + r);
         }
         
         // Check if we are current or not
-        $.net.get("http://api.jcores.net/versioncheck/", null).onNext(new F1V<String>() {
+        this.commonCore.net.get("http://api.jcores.net/versioncheck/", null).onNext(new F1V<String>() {
             @Override
             public void fV(String x) {
                 String revisionOnline = $(x).split("-").trim().get(-1, "UNDEFINED");
@@ -97,11 +106,36 @@ public class Reporter {
         });
         
         // Check which extensions are loaded
-        for(Service service : $.nexus().list()) {
+        for(Service service : this.commonCore.nexus().list()) {
             final Object object = service.getService();
             if(object instanceof GlobalExtension) {
                 System.out.println(">>> Loaded global extension '" + object.getClass().getCanonicalName() + "'");
             }
+        }
+        
+        // Check if we are in a multiple-classloader scenario and emit a warning if we are
+        try {
+            final String ourID = this.commonCore.coreID();
+            final String knownIDs = System.getProperty("jcores.net.knownIDs");
+            
+            if(knownIDs == null || knownIDs.equals(ourID)) {
+                // We shouldn't say something if there's no need to
+                // System.out.println(">>> Up to now only one jCores instance appears to be running, everything looks fine. But check again in the future.");
+                
+                // TODO: Not really thread safe ...
+                if(knownIDs == null) {
+                    System.setProperty("jcores.net.knownIDs", ourID);
+                }
+            } else {
+                System.out.println(">>> Multiple jCores instances detected. Be careful with methods that have a @AttentionWithClassloaders annotation!");
+                
+                // TODO: Not really thread safe ...
+                if(!knownIDs.contains(ourID)) {
+                    System.setProperty("jcores.net.knownIDs", knownIDs + ";" + ourID);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(">>> Unable to check if we are in a multiple-classloader scenario. Probably you should be a bit careful.");
         }
     }
 }

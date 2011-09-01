@@ -100,7 +100,7 @@ import net.xeoh.nexus.Nexus;
  */
 public class CommonCore {
     /** Stores error reports */
-    private final Reporter reporter = new Reporter();
+    private final Reporter reporter = new Reporter(this);
 
     /** Stores our managers and possibly application services */
     private final Nexus nexus = new DefaultNexus();
@@ -128,6 +128,9 @@ public class CommonCore {
 
     /** Common net utilities */
     public final CommonNet net = new CommonNet(this);
+    
+    /** The ID of this CommonCore */
+    protected final String id;
 
     /**
      * Constructs the common core.
@@ -146,6 +149,8 @@ public class CommonCore {
         } catch (Exception e) {
             report(MessageType.EXCEPTION, "Unable to get cloning method for objects. $.clone() will not work: " + e.getMessage());
         }
+        
+        this.id = this.sys.uniqueID();
     }
 
     /** Updates the managers and their returned information in this core */
@@ -321,6 +326,17 @@ public class CommonCore {
     public <T> Collection<T> clone(Collection<T> collection) {
         if (collection == null) return null;
         return new ArrayList<T>(collection);
+    }
+    
+
+    /**
+     * Returns the ID of this {@link CommonCore}. 
+     * 
+     * @since 1.0
+     * @return The unique ID of this {@link CommonCore}.
+     */
+    public String coreID() {
+        return this.id;
     }
 
     /**
