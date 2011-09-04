@@ -27,6 +27,9 @@
  */
 package net.jcores.jre.options;
 
+import net.jcores.jre.utils.errorhandling.Failure;
+import net.jcores.jre.utils.errorhandling.JCoresException;
+
 
 /**
  * Can be passed to various functions to register a callback when something
@@ -41,6 +44,19 @@ public class OnFailure extends Option {
         @Override
         public void onFailure(Object object, Exception cause, String code, String details) {
             System.err.println(details);
+        }
+    });
+
+    /** Throws a new {@link JCoresException} when something went wrong. */
+    public static OnFailure THROW = new OnFailure(new OnFailure.Listener() {
+        @Override
+        public void onFailure(Object object, Exception cause, String code, String details) {
+            final Failure failure = new Failure();
+            failure.object = object;
+            failure.cause = cause;
+            failure.code = code;
+            failure.details = details;
+            throw new JCoresException(failure);
         }
     });
 

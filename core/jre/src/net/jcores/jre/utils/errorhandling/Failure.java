@@ -25,10 +25,10 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.jre.utils.internal.structures;
+package net.jcores.jre.utils.errorhandling;
 
 /**
- * Represents the event that something went wrong (used internally) and could not be processed 
+ * Represents the event that something went wrong and could not be processed 
  * as the user would have expected it. 
  * 
  * @author Ralf Biedert

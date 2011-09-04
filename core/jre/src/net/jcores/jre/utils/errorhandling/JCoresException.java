@@ -1,7 +1,7 @@
 /*
- * VerificationError.java
+ * JCoresException.java
  * 
- * Copyright (c) 2011, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert, DFKI. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,16 +25,39 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.jre.utils.throwables;
+package net.jcores.jre.utils.errorhandling;
 
-public class VerificationError extends Error {
+
+/**
+ * An exception that can be thrown upon an error when the caller 
+ * requests it.
+ * 
+ * @author Ralf Biedert
+ * @since 1.0
+ */
+public class JCoresException extends RuntimeException {
     /** */
-    private static final long serialVersionUID = -4497153906647459050L;
+    private static final long serialVersionUID = 8306755748035816666L;
+    
+    /** The occured failure */
+    private Failure failure;
     
     /**
-     * @param message
+     * Constructs a new exception.
+     * 
+     * @param failure
      */
-    public VerificationError(String message) {
-        super(message);
+    public JCoresException(Failure failure) {
+        this.failure = failure;
+    }
+    
+    /**
+     * Returns the failure associated with this Exception.
+     * 
+     * @since 1.0
+     * @return The {@link Failure}.
+     */
+    public Failure getFailure() {
+        return this.failure;
     }
 }
