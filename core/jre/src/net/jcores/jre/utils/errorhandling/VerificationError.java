@@ -1,7 +1,7 @@
 /*
- * Option.java
+ * VerificationError.java
  * 
- * Copyright (c) 2010, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,29 +25,16 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.jre.options;
+package net.jcores.jre.utils.errorhandling;
 
-
-/**
- * Base class for all options. Many jCores methods accept optional arguments in the 
- * form: <br/><br/>
- * 
- * <code>$().f(arg1, <b>your_options_here</b>)</code> <br/><br/>
- * 
- * In this case <code>arg1</code> is a required parameter, while options are always 
- * varargs, which means you could write each: <br/><br/>
- * 
- * <ul>
- * <li><code>$().f(arg1)</code></li>
- * <li><code>$().f(arg1<b>, optionA</b>)</code></li>
- * <li><code>$().f(arg1<b>, optionA, optionB</b>)</code></li>
- * <li><code>$().f(arg1<b>, optionA, optionB, ...</b>)</code></li>
- * </ul>
- * 
- * @since 1.0
- * @author Ralf Biedert
- */
-public class Option {
-    /** We don't allow for user-created options at the moment. */
-    protected Option() { /* */ }
+public class VerificationError extends Error {
+    /** */
+    private static final long serialVersionUID = -4497153906647459050L;
+    
+    /**
+     * @param message
+     */
+    public VerificationError(String message) {
+        super(message);
+    }
 }

@@ -36,7 +36,7 @@ import net.jcores.jre.interfaces.functions.F1;
  * Can be passed to a {@link CoreObject}'s <code>forEach()</code> / <code>map()</code> to
  * retrieve the current loop index. A use case might look like this:<br/><br/>
  * 
- * <code>final OptionIndexer i = Option.INDEXER();</code><br/>
+ * <code>final OptionIndexer i = Indexer.NEW();</code><br/>
  * <code>$(objects).forEach(new F1<Object, Object>() { public Void f(Object x) {</code><br/>
  * <code>&nbsp;&nbsp;&nbsp;System.out.println("Current index: " + i.i());</code><br/>
  * <code>}}, i);</code><br/><br/>
