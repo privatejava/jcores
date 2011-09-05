@@ -104,7 +104,7 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
 
                 // For internal object this usually does not work
                 if (classloader == null) {
-                    final Options options$ = Options.$(CoreClass.this.commonCore, options);
+                    final Options options$ = Options.$(cc, options);
                     options$.failure(x, null, "bytecode:none", "Unable to find bytecode.");
                     return null;
                 }
