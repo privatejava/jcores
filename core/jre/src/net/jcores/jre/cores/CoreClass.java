@@ -36,12 +36,17 @@ import java.util.Map;
 import net.jcores.jre.CommonCore;
 import net.jcores.jre.interfaces.functions.F1;
 import net.jcores.jre.managers.ManagerClass;
+import net.jcores.jre.options.Args;
+import net.jcores.jre.options.DefaultOption;
 import net.jcores.jre.options.MessageType;
+import net.jcores.jre.options.Option;
+import net.jcores.jre.utils.internal.Options;
 import net.jcores.jre.utils.internal.Streams;
 
 /**
  * Wraps class objects, usually only one, and exposes some convenience functions
- * on them. For example, to dynamically spawn some class you could write:<br/><br/>
+ * on them. For example, to dynamically spawn some class you could write:<br/>
+ * <br/>
  * 
  * <code>Robot robot = $(Robot.class).spawn().get(0)</code>
  * 
@@ -54,7 +59,7 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
     /** Used for serialization */
     private static final long serialVersionUID = -5054890786513339808L;
 
-    /** Our class manager */  
+    /** Our class manager */
     protected final ManagerClass manager; // TODO: FindBugs report: what about deserialization?
 
     /** All known constructors. */
@@ -78,15 +83,17 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$(SomeClass.class).bytecode()</code> - Returns a core with the bytecode for the given class file as a {@link CoreByteBuffer}.</li>
+     * <li><code>$(SomeClass.class).bytecode()</code> - Returns a core with the bytecode for the given class file as a
+     * {@link CoreByteBuffer}.</li>
      * </ul>
      * 
      * Multi-threaded. Heavyweight. <br/>
      * <br/>
      * 
+     * @param options Zero or more {@link DefaultOption} objects.
      * @return A CoreByteBuffer wrapping the classes' bytecode
      */
-    public CoreByteBuffer bytecode() {
+    public CoreByteBuffer bytecode(final Option... options) {
         final CommonCore cc = this.commonCore;
 
         return new CoreByteBuffer(this.commonCore, map(new F1<Class<T>, ByteBuffer>() {
@@ -97,7 +104,8 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
 
                 // For internal object this usually does not work
                 if (classloader == null) {
-                    cc.report(MessageType.EXCEPTION, "Could not get classloader for " + x);
+                    final Options options$ = Options.$(CoreClass.this.commonCore, options);
+                    options$.failure(x, null, "bytecode:none", "Unable to find bytecode.");
                     return null;
                 }
 
@@ -105,7 +113,6 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
             }
         }).array(ByteBuffer.class));
     }
-    
 
     /**
      * Spawns the cored classes with the given objects as args. If a wrapped class is an interface,
@@ -116,17 +123,20 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
      * 
      * Examples:
      * <ul>
-     * <li><code>$(SomeInterface.class).spawn()</code> - Spawns a object implementing SomeInterface that has been registered before with <code>implementor()</code>.</li>
+     * <li><code>$(SomeInterface.class).spawn()</code> - Spawns a object implementing SomeInterface that has been
+     * registered before with <code>implementor()</code>.</li>
      * </ul>
      * 
-     * @param args Arguments to pass to the constructor.
+     * @param options The options we support, especially {@link Args}.
      * 
      * @return The core containing the spawned objects.
      */
     @SuppressWarnings("unchecked")
-    public CoreObject<T> spawn(final Object... args) {
+    public CoreObject<T> spawn(final Option... options) {
         // Process each element we might have enclosed.
         final CommonCore cc = this.commonCore;
+        final Options options$ = Options.$(this.commonCore, options);
+        final Object[] args = options$.args();
 
         return map(new F1<Class<T>, T>() {
             @Override
@@ -145,9 +155,9 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
                     try {
                         toSpawn.newInstance();
                     } catch (InstantiationException e) {
-                        cc.report(MessageType.EXCEPTION, "Error instantiating type " + x);
+                        options$.failure(x, e, "spawn:instanceexception", "Unable to create a new instance.");
                     } catch (IllegalAccessException e) {
-                        cc.report(MessageType.EXCEPTION, "Error accessing type " + x);
+                        options$.failure(x, e, "spawn:illegalaccess", "Unable to access type.");
                     }
                 }
 
@@ -170,31 +180,33 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
                             try {
                                 constructor = toSpawn.getDeclaredConstructor(types);
                             } catch (NoSuchMethodException e) {
-                                // We catch this exception in here, as sometimes we fail to obtain the 
+                                // We catch this exception in here, as sometimes we fail to obtain the
                                 // proper constructor with the method above. In that case, we try to get
                                 // the closest match
                                 Constructor<?>[] declaredConstructors = toSpawn.getDeclaredConstructors();
                                 for (Constructor<?> ccc : declaredConstructors) {
                                     // Check if the constructor matches
                                     Class<?>[] parameterTypes = ccc.getParameterTypes();
-                                    if(parameterTypes.length != types.length) continue;
-                                    
+                                    if (parameterTypes.length != types.length) continue;
+
                                     boolean mismatch = false;
-                                    
+
                                     // Check if each parameter is assignable
-                                    for(int i=0; i<types.length; i++) {
-                                        if(!parameterTypes[i].isAssignableFrom(types[i])) mismatch = true;
+                                    for (int i = 0; i < types.length; i++) {
+                                        if (!parameterTypes[i].isAssignableFrom(types[i]))
+                                            mismatch = true;
                                     }
-                                    
+
                                     // In case any parameter mismatched, we can't use this constructor
-                                    if(mismatch) continue;
-                                    
+                                    if (mismatch) continue;
+
                                     constructor = (Constructor<T>) ccc;
                                 }
                             }
-                            // If we don't have any constructor at this point, we are in trouble 
-                            if(constructor == null) throw new NoSuchMethodException("No constructor found."); 
-                                
+                            // If we don't have any constructor at this point, we are in trouble
+                            if (constructor == null)
+                                throw new NoSuchMethodException("No constructor found.");
+
                             CoreClass.this.constructors.put(types, constructor);
                         }
                     }
@@ -204,17 +216,17 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
                     // NOTE: We do not swallow all execptions silently, becasue spawn() is a bit
                     // special and we cannot return anything that would still be usable.
                 } catch (SecurityException e) {
-                    cc.report(MessageType.EXCEPTION, "SecurityException spawning " + x);
+                    options$.failure(x, e, "spawn:security", "Security exception when trying to spawn.");
                 } catch (NoSuchMethodException e) {
-                    cc.report(MessageType.EXCEPTION, "NoSuchMethodException spawning " + x);
+                    options$.failure(x, e, "spawn:nomethod", "Method not found.");
                 } catch (IllegalArgumentException e) {
-                    cc.report(MessageType.EXCEPTION, "IllegalArgumentException spawning " + x);
+                    options$.failure(x, e, "spawn:illegalargs", "Illegal passed arguments.");
                 } catch (InstantiationException e) {
-                    cc.report(MessageType.EXCEPTION, "InstantiationException spawning " + x);
+                    options$.failure(x, e, "spawn:instanceexception:2", "Cannot instantiate.");
                 } catch (IllegalAccessException e) {
-                    cc.report(MessageType.EXCEPTION, "IllegalAccessException spawning " + x);
+                    options$.failure(x, e, "spawn:illegalaccess:2", "Unable to access type (2).");
                 } catch (InvocationTargetException e) {
-                    cc.report(MessageType.EXCEPTION, "InvocationTargetException spawning " + x);
+                    options$.failure(x, e, "spawn:invocation", "Unable to invoke target.");
                 }
 
                 // TODO Make sure to only use weak references, so that we don't run out of memory
@@ -228,10 +240,11 @@ public class CoreClass<T> extends CoreObject<Class<T>> {
     /**
      * Registers an implementor for the currently wrapped interface.<br>
      * <br/>
-     *  
+     * 
      * Examples:
      * <ul>
-     * <li><code>$(SomeInterface.class).implementor(SomeInterfaceImpl.class)</code> - Registers the implementor for the given interface. Can be spawned with <code>spawn()</code>.</li>
+     * <li><code>$(SomeInterface.class).implementor(SomeInterfaceImpl.class)</code> - Registers the implementor for the
+     * given interface. Can be spawned with <code>spawn()</code>.</li>
      * </ul>
      * 
      * Single-threaded, size-of-one.<br/>

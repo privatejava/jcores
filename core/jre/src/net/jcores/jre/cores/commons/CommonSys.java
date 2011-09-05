@@ -38,7 +38,6 @@ import net.jcores.jre.annotations.SupportsOption;
 import net.jcores.jre.interfaces.functions.F0;
 import net.jcores.jre.options.ID;
 import net.jcores.jre.options.KillSwitch;
-import net.jcores.jre.options.MessageType;
 import net.jcores.jre.options.Option;
 import net.jcores.jre.utils.internal.Options;
 
@@ -63,13 +62,15 @@ public class CommonSys extends CommonNamespace {
     /**
      * Returns a temporary file.
      * 
+     * @param options The default options supported. 
      * @return A File object for a temporary file.
      */
-    public File tempfile() {
+    public File tempfile(Option... options) {
         try {
             return File.createTempFile("jcores.", ".tmp");
         } catch (IOException e) {
-            //
+            final Options options$ = Options.$(this.commonCore, options);
+            options$.failure(null, e, "tempfile:create", "Unable to create temp file.");
         }
 
         return new File("/tmp/jcores.failedtmp." + System.nanoTime() + ".tmp");
@@ -78,13 +79,18 @@ public class CommonSys extends CommonNamespace {
     /**
      * Returns a temporary directory.
      * 
+     * @param options The default options supported. 
      * @return A File object for a temporary directory.
      */
-    public File tempdir() {
-        final File ffile = new File(tempfile().getAbsoluteFile() + ".dir/");
+    public File tempdir(Option... options) {
+        final File ffile = new File(tempfile(options).getAbsoluteFile() + ".dir/");
+        
+        // Report if we failed
         if (!ffile.mkdirs()) {
-            this.commonCore.report(MessageType.EXCEPTION, "Unable to create directory " + ffile);
+            final Options options$ = Options.$(this.commonCore, options);
+            options$.failure(null, null, "tempdir:create", "Unable to create temp dir.");
         }
+        
         return ffile;
     }
 
@@ -97,8 +103,8 @@ public class CommonSys extends CommonNamespace {
      * @param options May accept a {@link KillSwitch}.
      */
     @SupportsOption(options = { KillSwitch.class })
-    public void manyTimes(final F0 f0, final long delay, Option... options) {
-        final Options options$ = Options.$(options);
+    public void manyTimes(final F0 f0, final long delay, final Option... options) {
+        final Options options$ = Options.$(this.commonCore, options);
         final KillSwitch killswitch = options$.killswitch();
         final Future<?> submit = this.commonCore.executor().getExecutor().submit(new Runnable() {
             @Override
@@ -106,9 +112,9 @@ public class CommonSys extends CommonNamespace {
                 while (true) {
                     try {
                         f0.f();
-                        sleep(delay);
+                        sleep(delay, options);
                     } catch (Exception e) {
-                        CommonSys.this.commonCore.report(MessageType.EXCEPTION, "Exception while executing " + f0 + ": " + e.getMessage());
+                        options$.failure(f0, e, "manytimes:run", "Exception while executing f().");
                     }
 
                     // Check if we should terminate
@@ -130,21 +136,21 @@ public class CommonSys extends CommonNamespace {
      * @param options May accept a {@link KillSwitch}.
      */
     @SupportsOption(options = { KillSwitch.class })
-    public void oneTime(final F0 f0, final long delay, Option... options) {
-        final Options options$ = Options.$(options);
+    public void oneTime(final F0 f0, final long delay, final Option... options) {
+        final Options options$ = Options.$(this.commonCore, options);
         final KillSwitch killswitch = options$.killswitch();
         final Future<?> submit = this.commonCore.executor().getExecutor().submit(new Runnable() {
             @Override
             public void run() {
                 try {
-                    sleep(delay);
+                    sleep(delay, options);
 
                     // Check if we should terminate
                     if (killswitch != null && killswitch.terminated()) return;
 
                     f0.f();
                 } catch (Exception e) {
-                    CommonSys.this.commonCore.report(MessageType.EXCEPTION, "Exception while executing " + f0 + ": " + e.getMessage());
+                    options$.failure(f0, e, "onetime:run", "Exception while executing f().");
                 }
             }
         });
@@ -157,15 +163,16 @@ public class CommonSys extends CommonNamespace {
      * Puts the current thread to sleep for some time, without the need for any try/catch block.
      * 
      * @param time The time to sleep.
+     * @param options The default options supported.
      * @return A value of <code>0</code> if the sleep was successful, or else the amount
      * of milliseconds which we woke up too early.
      */
-    public long sleep(long time) {
+    public long sleep(long time, Option... options) {
         final long start = System.currentTimeMillis();
         try {
             Thread.sleep(time);
         } catch (InterruptedException e) {
-            this.commonCore.report(MessageType.EXCEPTION, "Sleep interrupted");
+            Options.$(this.commonCore, options).failure(null, e, "sleep:interrupt", "Sleep interrupted");
             return time - (System.currentTimeMillis() - start);
         }
 
@@ -181,7 +188,7 @@ public class CommonSys extends CommonNamespace {
      */
     @SupportsOption(options = { ID.class })
     public String uniqueID(Option... options) {
-        final ID id = Options.$(options).ID();
+        final ID id = Options.$(this.commonCore, options).ID();
         
         
         if(id == ID.SYSTEM || id == ID.USER) {
@@ -198,12 +205,10 @@ public class CommonSys extends CommonNamespace {
                 }
                 return rval;
             } catch(Exception e) {
-                this.commonCore.report(MessageType.EXCEPTION, "Error getting the ID " + id.getClass() + " (on Lion this might be a bug): " + e.getMessage());
+                Options.$(this.commonCore, options).failure(null, e, "uniqueid:create", "Error getting the ID " + id.getClass() + " (on Lion this might be a bug).");
                 return "UNAVAILABLE";
             }
         }
-        
-        
         
         return UUID.randomUUID().toString();
     }

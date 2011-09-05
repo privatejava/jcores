@@ -55,10 +55,12 @@ import net.jcores.jre.CoreKeeper;
 import net.jcores.jre.cores.adapter.AbstractAdapter;
 import net.jcores.jre.interfaces.functions.F1;
 import net.jcores.jre.interfaces.functions.F1Object2Bool;
+import net.jcores.jre.options.DefaultOption;
 import net.jcores.jre.options.ListDirectories;
 import net.jcores.jre.options.MessageType;
 import net.jcores.jre.options.Option;
 import net.jcores.jre.utils.internal.Files;
+import net.jcores.jre.utils.internal.Options;
 import net.jcores.jre.utils.internal.Sound;
 import net.jcores.jre.utils.internal.Streams;
 
@@ -115,10 +117,11 @@ public class CoreFile extends CoreObject<File> {
      * <br/>
      * 
      * @param object The object to write to all enclosed files.
+     * @param options The {@link DefaultOption} objects we support.
      * 
      * @return The same core file object (<code>this</code>).
      */
-    public CoreFile append(Object object) {
+    public CoreFile append(Object object, final Option... options) {
         if (object == null) return this;
 
         final CommonCore cc = this.commonCore;
@@ -132,9 +135,9 @@ public class CoreFile extends CoreObject<File> {
                     printWriter.flush();
                     printWriter.close();
                 } catch (FileNotFoundException e) {
-                    cc.report(MessageType.EXCEPTION, e.getLocalizedMessage());
+                    Options.$(cc, options).failure(x, e, "append:filenotfound", "File could not be found.");
                 } catch (UnsupportedEncodingException e) {
-                    cc.report(MessageType.EXCEPTION, e.getLocalizedMessage());
+                    Options.$(cc, options).failure(x, e, "append:badencoding", "Encoding not supported.");
                 }
                 return null;
             }
@@ -158,12 +161,13 @@ public class CoreFile extends CoreObject<File> {
      * <br/>
      * 
      * @param object The object to write to all enclosed files.
+     * @param options The {@link DefaultOption} objects we support.
      * 
      * @return The same core file object (<code>this</code>).
      */
-    public CoreFile appendln(Object object) {
+    public CoreFile appendln(Object object, final Option... options) {
         if (object == null) return this;
-        return append(object.toString() + "\n");
+        return append(object.toString() + "\n", options);
     }
 
     

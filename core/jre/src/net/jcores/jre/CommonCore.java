@@ -180,10 +180,9 @@ public class CommonCore {
      * @return An {@link Async} object that will hold the results (in an arbitrary order).
      */
     @SupportsOption(options = { KillSwitch.class })
-    public <R> Async<R> async(final F0R<R> f, Option... options) {
+    public <R> Async<R> async(final F0R<R> f, final Option... options) {
         final Queue<R> queue = Async.Queue();
-        final Async<R> async = new Async<R>(queue);
-        final Options options$ = Options.$(options);
+        final Async<R> async = new Async<R>(this, queue);
 
         // Maybe use the executor right away?
         this.sys.oneTime(new F0() {
@@ -193,9 +192,8 @@ public class CommonCore {
                     queue.add(Async.QEntry(f.f()));
                     queue.close();
                 } catch (Exception e) {
+                    final Options options$ = Options.$(CommonCore.this, options);
                     options$.failure(f, e, "async:exception", "General exception invoking async function.");
-                    report(MessageType.EXCEPTION, "Error invoking async() ... " + e.getMessage());
-                    e.printStackTrace();
                     queue.close();
                 }
             }
@@ -244,16 +242,17 @@ public class CommonCore {
      * @since 1.0
      * @param <T>
      * @param object The object to clone
+     * @param options The supported default options.
      * @return A clone of the object, or null if the object could not be cloned.
      */
     @SuppressWarnings("unchecked")
-    public <T> T clone(T object) {
+    public <T> T clone(T object, Option... options) {
         if (!(object instanceof Cloneable)) return null;
 
         try {
             return (T) this.cloneMethod.invoke(object);
         } catch (Exception e) {
-            report(MessageType.EXCEPTION, "Unable to execute clone() on " + object);
+            Options.$(this, options).failure(object, e, "clone:unknown", "Unable to clone object.");
         }
 
         return null;

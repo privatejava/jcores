@@ -64,6 +64,7 @@ import net.jcores.jre.interfaces.functions.F2ReduceObjects;
 import net.jcores.jre.interfaces.functions.Fn;
 import net.jcores.jre.managers.ManagerDebugGUI;
 import net.jcores.jre.managers.ManagerDeveloperFeedback;
+import net.jcores.jre.options.Args;
 import net.jcores.jre.options.InvertSelection;
 import net.jcores.jre.options.KillSwitch;
 import net.jcores.jre.options.MapType;
@@ -366,8 +367,8 @@ public class CoreObject<T> extends Core implements Iterable<T> {
     @SupportsOption(options = { KillSwitch.class })
     public <R> Async<R> async(final F1<T, R> f, Option... options) {
         final Queue<R> queue = Async.Queue();
-        final Async<R> async = new Async<R>(queue);
-        final Options options$ = Options.$(options);
+        final Async<R> async = new Async<R>(this.commonCore, queue);
+        final Options options$ = Options.$(this.commonCore, options);
         final KillSwitch killswitch = options$.killswitch();
 
         this.commonCore.sys.oneTime(new F0() {
@@ -565,7 +566,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
                 // Check if the object is already assignable
                 if (wrapper.isAssignableFrom(x.getClass())) return (W) x;
 
-                return w.spawn(x).get(0);
+                return w.spawn(Args.WRAP(x)).get(0);
             }
         });
     }
@@ -1071,7 +1072,7 @@ public class CoreObject<T> extends Core implements Iterable<T> {
      */
     @SupportsOption(options = { InvertSelection.class })
     public CoreObject<T> filter(final F1Object2Bool<T> f, Option... options) {
-        final boolean invert = Options.$(options).invert();
+        final boolean invert = Options.$(this.commonCore, options).invert();
         final CoreObject<T> rval = map(new F1<T, T>() {
             public T f(T x) {
                 final boolean result = f.f(x);

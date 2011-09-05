@@ -132,6 +132,7 @@ public class CommonNet extends CommonNamespace {
         return this.commonCore.async(new F0R<String>() {
             @Override
             public String f() {
+                // Assemble call (encode & join parameters)
                 final String param = $(data).map(new F1<MapEntry<String,String>, String>() {
                     @Override
                     public String f(MapEntry<String, String> x) {
@@ -139,6 +140,7 @@ public class CommonNet extends CommonNamespace {
                     }
                 }).string().join("&");
                 
+                // Perform call.
                 return $(url + "?" + param).uri().input(options).text().get(0);
             }
         }, options);

@@ -41,7 +41,7 @@ public class Failure {
     /** The (optional) exception that was raised during processing */
     public Exception cause;
     
-    /** The internally used error code */
+    /** The internally used error code (e.g., <code>write:ioerror</code>) */
     public String code;
     
     /** Human readable summary of the problem */

@@ -1,7 +1,7 @@
 /*
- * OptionDebug.java
+ * DefaultOption.java
  * 
- * Copyright (c) 2011, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert, DFKI. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -27,21 +27,13 @@
  */
 package net.jcores.jre.options;
 
-import net.jcores.jre.annotations.Beta;
-
-
 /**
- * If we should print debug information for the given 
- * operation. The specific debug details are up to the
- * method. 
+ * Every option we provide that can be passed to any method is marked as 
+ * a {@link DefaultOption}. 
  * 
  * @author Ralf Biedert
  * @since 1.0
  */
-@Beta
-public class Debug extends DefaultOption {
-    public static final Debug DO = new Debug();
+public class DefaultOption extends Option {
 
-    /** There must only be one instance */
-    private Debug() {}
 }

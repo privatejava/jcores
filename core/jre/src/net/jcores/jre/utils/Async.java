@@ -40,6 +40,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import net.jcores.jre.CommonCore;
 import net.jcores.jre.cores.CoreObject;
 import net.jcores.jre.cores.commons.CommonSys;
 import net.jcores.jre.interfaces.functions.F0;
@@ -140,13 +141,18 @@ public class Async<T> {
     /** If we already received a EOQ event */
     boolean closed = false;
 
+    /** Our common core */
+    private CommonCore commonCore;
+
     /**
      * Creates an async object which receives its data through the given queue. It will
      * expect more events to arrive until the queue has been closed.
      * 
+     * @param commonCore The common core. 
      * @param queue
      */
-    public Async(Queue<T> queue) {
+    public Async(CommonCore commonCore, Queue<T> queue) {
+        this.commonCore = commonCore;
         this.queue = queue;
     }
     
@@ -211,7 +217,7 @@ public class Async<T> {
      * @return This async object.
      */
     public Async<T> onNext(final F1<T, Void> f, Option... options) {
-        final Options options$ = Options.$(options);
+        final Options options$ = Options.$(this.commonCore, options);
         final KillSwitch killswitch = options$.killswitch();
 
         $.sys.oneTime(new F0() {

@@ -42,10 +42,11 @@ public class Bytes {
      * 
      * @param data Data to use.
      * @param method Method to use.
+     * @param options$ 
      * @return A string with the hash.
      */
     @SuppressWarnings("boxing")
-    public static String generateHash(ByteBuffer data, String method) {
+    public static String generateHash(ByteBuffer data, String method, Options options$) {
         // Try to generate hash
         try {
             final MessageDigest digest = java.security.MessageDigest.getInstance(method);
@@ -63,10 +64,11 @@ public class Bytes {
             final String hashValue = sb.toString().substring(0, sb.toString().length());
             return hashValue;
         } catch (final NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            options$.failure(null, e, "hash:nsa", "The NSA does not permit this operation.");
         } finally {
             //
         }
+        
         return null;
     }
 }

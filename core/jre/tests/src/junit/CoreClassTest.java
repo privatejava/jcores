@@ -31,6 +31,8 @@ import static net.jcores.jre.CoreKeeper.$;
 
 import java.awt.Robot;
 
+import net.jcores.jre.options.Args;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -44,6 +46,6 @@ public class CoreClassTest {
     @Test
     public void testSpawn() {
         Assert.assertNotNull($(Robot.class).spawn().get(0));
-        Assert.assertNull($(Robot.class).spawn(new Object()).get(0));
+        Assert.assertNull($(Robot.class).spawn(Args.WRAP(new Object())).get(0));
     }
 }

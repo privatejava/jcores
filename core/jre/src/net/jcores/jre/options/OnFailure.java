@@ -32,13 +32,14 @@ import net.jcores.jre.utils.errorhandling.JCoresException;
 
 
 /**
- * Can be passed to various functions to register a callback when something
- * went wrong.
+ * Can be passed to various functions to register a callback when 
+ * something went wrong and specifies how the function should react.
+ * By default only an internal report is filed.
  * 
  * @author Ralf Biedert
  * @since 1.0
  */
-public class OnFailure extends Option {
+public class OnFailure extends DefaultOption {
     /** Print something to the console when a failure occured. */
     public static OnFailure PRINT = new OnFailure(new OnFailure.Listener() {
         @Override

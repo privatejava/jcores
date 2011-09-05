@@ -1,5 +1,5 @@
 /*
- * OptionDebug.java
+ * Args.java
  * 
  * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
@@ -27,21 +27,44 @@
  */
 package net.jcores.jre.options;
 
-import net.jcores.jre.annotations.Beta;
 
 
 /**
- * If we should print debug information for the given 
- * operation. The specific debug details are up to the
- * method. 
+ * If we support an arbitrary number of parameters.
  * 
  * @author Ralf Biedert
  * @since 1.0
  */
-@Beta
-public class Debug extends DefaultOption {
-    public static final Debug DO = new Debug();
+public class Args extends Option {
+    /**
+     * Creates a new Args object with the given arguments.
+     * 
+     * @since 1.0
+     * @param objects The arguments to wrap.
+     * @return A new Args object.
+     */
+    public static final Args WRAP(Object ... objects) {
+        return new Args(objects);
+    }
 
-    /** There must only be one instance */
-    private Debug() {}
+    /** Our args */
+    private Object[] args;
+
+    /**
+     * Creates a new Args object.
+     * 
+     * @param args The paramters.
+     */
+    private Args(Object ... args) {
+        this.args = args;
+    }
+    
+    /**
+     * Returns the wrapped args.
+     * 
+     * @return The wrapped args.
+     */
+    public Object[] getArgs() {
+        return this.args;
+    }
 }

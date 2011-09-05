@@ -40,6 +40,8 @@ import javax.imageio.ImageIO;
 import net.jcores.jre.CommonCore;
 import net.jcores.jre.interfaces.functions.F1;
 import net.jcores.jre.options.MessageType;
+import net.jcores.jre.options.Option;
+import net.jcores.jre.utils.internal.Options;
 
 /**
  * Wraps a number of BufferedImages and exposes some convenience functions. For example, 
@@ -193,9 +195,10 @@ public class CoreBufferedImage extends CoreObject<BufferedImage> {
      * <br/>
      * 
      * @param file The file to write the image get(0) to.
+     * @param options The default options.
      * @return This CoreBufferedImage object.
      */
-    public CoreBufferedImage write(String file) {
+    public CoreBufferedImage write(String file, final Option... options) {
         if (file == null) return this;
 
         if (size() != 1) {
@@ -212,10 +215,9 @@ public class CoreBufferedImage extends CoreObject<BufferedImage> {
         try {
             ImageIO.write(get(0), type, new File(file));
         } catch (IOException e) {
-            this.commonCore.report(MessageType.EXCEPTION, "Error writing image to file " + file);
+            Options.$(this.commonCore, options).failure(file, e, "write:ioerror", "Unable to write the image to the given file.");
         }
 
         return this;
     }
-
 }

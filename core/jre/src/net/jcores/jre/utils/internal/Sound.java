@@ -52,9 +52,9 @@ public class Sound {
      * Plays the given audio input stream.
      * 
      * @param audioInputStream
+     * @param o Options object for failure reporting. 
      */
-    public static void playSound(AudioInputStream audioInputStream) {
-
+    public static void playSound(AudioInputStream audioInputStream, Options o) {
         final AudioFormat format = audioInputStream.getFormat();
         SourceDataLine auline = null;
         final DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
@@ -63,10 +63,10 @@ public class Sound {
             auline = (SourceDataLine) AudioSystem.getLine(info);
             auline.open(format);
         } catch (final LineUnavailableException e) {
-            e.printStackTrace();
+            o.failure(null, e, "playsound:noline", "Error opening output line.");
             return;
         } catch (final Exception e) {
-            e.printStackTrace();
+            o.failure(null, e, "playsound:unknown", "General error opening output line.");
             return;
         }
 
@@ -83,7 +83,7 @@ public class Sound {
                 }
             }
         } catch (final IOException e) {
-            e.printStackTrace();
+            o.failure(audioInputStream, e, "playsound:read", "Error getting sound data.");
             return;
         } finally {
             auline.drain();

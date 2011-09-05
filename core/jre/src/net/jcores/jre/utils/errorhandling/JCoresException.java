@@ -30,7 +30,13 @@ package net.jcores.jre.utils.errorhandling;
 
 /**
  * An exception that can be thrown upon an error when the caller 
- * requests it.
+ * requests it. <br/><br/> 
+ * 
+ * <b>Internal note:</b> A {@link JCoresException} should never be caught 
+ * internally (i.e., within jCores) but should reach the user's 
+ * code. Thus if jCores (or an extension) internally calls jCores and 
+ * catches an exception since it tries to deal with errors on its own, 
+ * this exception should be re-trown nonetheless.  
  * 
  * @author Ralf Biedert
  * @since 1.0

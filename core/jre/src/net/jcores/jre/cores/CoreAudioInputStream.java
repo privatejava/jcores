@@ -31,6 +31,8 @@ import javax.sound.sampled.AudioInputStream;
 
 import net.jcores.jre.CommonCore;
 import net.jcores.jre.interfaces.functions.F1;
+import net.jcores.jre.options.Option;
+import net.jcores.jre.utils.internal.Options;
 import net.jcores.jre.utils.internal.Sound;
 
 /**
@@ -69,19 +71,22 @@ public class CoreAudioInputStream extends CoreObject<AudioInputStream> {
      * <li><code>$("sound.wav").file().audio().play()</code> - Plays the file <code>sound.wav</code>.</li>
      * </ul>
      * 
-     * Multi-threaded. Consuming.<br/>
+     * Single-threaded. Consuming.<br/>
      * <br/>
      * 
+     * @param options The default options supported. 
      * @return Return <code>this</code>.
      */
-    public CoreAudioInputStream play() {
-        map(new F1<AudioInputStream, Void>() {
+    public CoreAudioInputStream play(final Option... options) {
+        final Options $ = Options.$(this.commonCore, options);
+        
+        forEach(new F1<AudioInputStream, Void>() {
             @Override
             public Void f(AudioInputStream x) {
-                Sound.playSound(x);
+                Sound.playSound(x, $);
                 return null;
             }
-        });
+        }, options);
 
         return this;
     }

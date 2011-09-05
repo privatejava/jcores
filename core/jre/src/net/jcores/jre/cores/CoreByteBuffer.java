@@ -36,6 +36,7 @@ import net.jcores.jre.interfaces.functions.F1;
 import net.jcores.jre.options.Hash;
 import net.jcores.jre.options.Option;
 import net.jcores.jre.utils.internal.Bytes;
+import net.jcores.jre.utils.internal.Options;
 
 /**
  * Wraps a number of ByteBuffers and exposes some convenience functions. For example, 
@@ -81,14 +82,13 @@ public class CoreByteBuffer extends CoreObject<ByteBuffer> {
      * @return A CoreString containing the generated hashes.
      */
     public CoreString hash(Option... options) {
+        final Options options$ = Options.$(this.commonCore, options);
         final String method = $(options).get(Hash.class, Hash.MD5).getMethod();
 
         return new CoreString(this.commonCore, map(new F1<ByteBuffer, String>() {
             public String f(final ByteBuffer x) {
-                return Bytes.generateHash(x, method);
+                return Bytes.generateHash(x, method, options$);
             }
         }).array(String.class));
-
     }
-
 }

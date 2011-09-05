@@ -98,7 +98,7 @@ public class CoreURI extends CoreObject<URI> {
      */
     @SupportsOption(options = {OnFailure.class})
     public CoreInputStream input(Option ... options) {
-        final Options options$ = Options.$(options);
+        final Options options$ = Options.$(this.commonCore, options);
 
         return new CoreInputStream(this.commonCore, map(new F1<URI, InputStream>() {
             public InputStream f(URI x) {
@@ -107,11 +107,9 @@ public class CoreURI extends CoreObject<URI> {
                     final InputStream openStream = url.openStream();
                     return openStream;
                 } catch (MalformedURLException e) {
-                    options$.failure(x, e, "input/uri", "Malformed URI");
-                    CoreURI.this.commonCore.report(MessageType.EXCEPTION, "URI " + x + " could not be transformed into an URL.");
+                    options$.failure(x, e, "input:urimalformed", "Malformed URI.");
                 } catch (IOException e) {
-                    options$.failure(x, e, "input/io", "Error opening the URI");
-                    CoreURI.this.commonCore.report(MessageType.EXCEPTION, "URI " + x + " could not be opened for reading.");
+                    options$.failure(x, e, "input:ioerror", "Error opening the URI.");
                 }
 
                 return null;

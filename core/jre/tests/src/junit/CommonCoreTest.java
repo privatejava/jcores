@@ -61,6 +61,20 @@ public class CommonCoreTest {
     }
     
     
+
+    /** */
+    @Test
+    public void testClone() {
+        final Object o = new Object();
+        final Object o2 = $.clone(o);
+        
+        Assert.assertNull(o2);
+        
+        // final Number n = Integer.valueOf(123);
+        // Assert.assertEquals(n, $.clone(n));
+    }
+
+    
     /** */
     @Test
     public void testAsync() {
