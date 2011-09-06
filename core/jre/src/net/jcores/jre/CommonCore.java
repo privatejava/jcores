@@ -508,6 +508,26 @@ public class CommonCore {
         final long end = System.nanoTime();
         return end - start;
     }
+    
+    /**
+     * Measures how long the execution of the given function took <code>n</code> 
+     * times. A CoreNumber object will be returned with the results.
+     * 
+     * @param f The function to execute.
+     * @param n The number of times <code>f</code> should be executed.
+     * @return A {@link CoreNumber} object with the elapsed times in nanoseconds.
+     */
+    @SuppressWarnings("boxing")
+    public CoreNumber measure(F0 f, int n) {
+        final List<Long> results = $.list(n);
+        
+        for(int i = 0; i < n; i++) {
+            results.add(measure(f));
+        }
+        
+        return CoreKeeper.$(results).as(CoreNumber.class);
+    }
+    
 
     /**
      * Returns the profiling information gathered at startup. Only required internally.
