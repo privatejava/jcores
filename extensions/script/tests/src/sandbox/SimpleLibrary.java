@@ -1,7 +1,7 @@
 /*
- * InputFile.java
+ * SimpleLibrary.java
  * 
- * Copyright (c) 2011, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert, DFKI. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,22 +25,22 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.script.input;
+package sandbox;
 
-import java.io.File;
+import net.jcores.jre.options.Debug;
+import net.jcores.script.Blacklist;
+import net.jcores.script.Checklist;
+import net.jcores.script.JCoresLibrary;
 
 /**
- * Input type reflecting a single file.
- * 
  * @author Ralf Biedert
+ * @since 1.0
+ *
  */
-public class InputFile extends InputFiles {
-
-    /**
-     * @return .
-     */
-    public File get() {
-        // get
-        return null;
+public class SimpleLibrary {
+    public static void main(String[] args) {
+        final Checklist blacklist = new Blacklist();
+        blacklist.file("junit.jar");
+        JCoresLibrary.LIBRARY("MyLib").blacklist(blacklist).pack(Debug.DO);
     }
 }

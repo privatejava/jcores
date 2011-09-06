@@ -1,7 +1,7 @@
 /*
- * InputFile.java
+ * JCoresLibraryDevtime.java
  * 
- * Copyright (c) 2011, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert, DFKI. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,22 +25,43 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.script.input;
+package net.jcores.script;
 
-import java.io.File;
+import net.jcores.jre.options.Option;
 
 /**
- * Input type reflecting a single file.
+ * The library object we work with at development time.
  * 
  * @author Ralf Biedert
+ * @since 1.0
  */
-public class InputFile extends InputFiles {
-
+public class JCoresLibraryDevtime extends JCoresLibrary {
     /**
-     * @return .
+     * @param name
      */
-    public File get() {
-        // get
-        return null;
+    protected JCoresLibraryDevtime(String name) {
+        super(name);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see net.jcores.script.ScriptingCommons#blacklist(net.jcores.script.Blacklist)
+     */
+    @SuppressWarnings("hiding")
+    @Override
+    public JCoresLibraryDevtime blacklist(Checklist blacklist) {
+        super.blacklist(blacklist);
+        return this;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see net.jcores.script.ScriptingCommons#pack()
+     */
+    @Override
+    public void pack(Option... options) {
+        super.pack(null, options);
     }
 }

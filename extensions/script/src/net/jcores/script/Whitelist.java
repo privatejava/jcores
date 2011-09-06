@@ -1,7 +1,7 @@
 /*
- * InputFile.java
+ * Blacklist.java
  * 
- * Copyright (c) 2011, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert, DFKI. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,22 +25,36 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.script.input;
-
-import java.io.File;
+package net.jcores.script;
 
 /**
- * Input type reflecting a single file.
+ * Specifies what we want to have in the application / library. If both a blacklist and whitelist 
+ * are given, first only the elements of the whitelist are considered, afterwards everything on 
+ * the blacklist is removed.  
  * 
  * @author Ralf Biedert
+ * @since 1.0
+ * 
  */
-public class InputFile extends InputFiles {
-
-    /**
-     * @return .
+public class Whitelist extends Checklist {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see net.jcores.script.Checklist#file(java.lang.String)
      */
-    public File get() {
-        // get
-        return null;
+    @Override
+    public Whitelist file(String file) {
+        super.file(file);
+        return this;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see net.jcores.script.Checklist#clazz(java.lang.String)
+     */
+    @Override
+    public Whitelist clazz(String file) {
+        throw new IllegalStateException("Whitelisting classes is currently not supported, see Issue #16.");
     }
 }

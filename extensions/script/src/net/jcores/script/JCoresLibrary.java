@@ -1,7 +1,7 @@
 /*
- * InputFile.java
+ * JCoresLib.java
  * 
- * Copyright (c) 2011, Ralf Biedert All rights reserved.
+ * Copyright (c) 2011, Ralf Biedert, DFKI. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without modification, are
  * permitted provided that the following conditions are met:
@@ -25,22 +25,50 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.script.input;
+package net.jcores.script;
 
-import java.io.File;
+
 
 /**
- * Input type reflecting a single file.
+ * JCoresLib allows you to quickly create a fully self contained Java library for your 
+ * project. To create a library, put these lines at the very beginning
+ * of some main:<br/>
+ * <br/>
+ * 
+ * <code>JCoresLibrary.LIBRARY("MyApp").pack()</code><br/>
+ * <br/>
+ * 
+ * This will produce a file <code>MyApp.jar</code>, that is fully self contained and can be
+ * started with <code>java -jar MyApp.jar</code>.<br/><br/>
+ * 
+ * <b>NOTE:</b> Scripting does NOT work properly with dynamic class loading. If you application
+ * does any sort of classpath tweaks, or loads code on demand, packing the script will probably 
+ * succeed, but running it will fail. 
  * 
  * @author Ralf Biedert
+ * @since 1.0
  */
-public class InputFile extends InputFiles {
 
+public class JCoresLibrary extends ScriptingCommons {
     /**
-     * @return .
+     * Creates a new {@link JCoresLibrary} object.
+     * 
+     * @param name The object to create.
      */
-    public File get() {
-        // get
-        return null;
+    protected JCoresLibrary(String name) {
+        super(name);
     }
+
+    
+    /**
+     * Creates a library object for the current application. Call at the very first 
+     * position of your <code>main()</code> (see the example above).
+     * 
+     * @param name The name of your library.
+     * @return A {@link JCoresLibrary} object.
+     */
+    public static JCoresLibrary LIBRARY(String name) {
+        return new JCoresLibraryDevtime(name);
+    }
+
 }

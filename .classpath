@@ -3,6 +3,7 @@
 	<classpathentry kind="src" path="core/jre/src"/>
 	<classpathentry kind="src" path="core/jre/tests/src"/>
 	<classpathentry kind="src" path="extensions/script/src"/>
+	<classpathentry kind="src" path="extensions/script/tests/src"/>
 	<classpathentry kind="src" path="extensions/serialization.core/src"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/JSPF - Java Simple Plugin Framework (Nexus)"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>

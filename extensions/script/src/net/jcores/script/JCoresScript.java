@@ -27,11 +27,8 @@
  */
 package net.jcores.script;
 
-import net.jcores.jre.annotations.Beta;
 import net.jcores.script.input.Input;
 import net.jcores.script.output.Output;
-import net.jcores.script.scriptmodes.JCoresScriptDevtime;
-import net.jcores.script.scriptmodes.JCoresScriptRuntime;
 
 /**
  * JCores scripting allows you to quickly hack a small (script-like) Java / jCores application
@@ -53,13 +50,7 @@ import net.jcores.script.scriptmodes.JCoresScriptRuntime;
  * @author Ralf Biedert
  * @since 1.0
  */
-public abstract class JCoresScript {
-    /** The name of this script */
-    protected final String name;
-
-    /** The args the application received at start */
-    protected final String[] args;
-
+public abstract class JCoresScript extends ScriptingCommons {
     /** If set to true, a console will always be shown */
 	protected boolean console = false;
 	
@@ -71,6 +62,9 @@ public abstract class JCoresScript {
 
     /** If set to true, this script is assumed to be transferable */
     protected boolean transferable = false;
+    
+    /** The args the application received at start */
+    protected final String[] args;
 
     /**
      * Store parameters.
@@ -79,7 +73,8 @@ public abstract class JCoresScript {
      * @param args
      */
     protected JCoresScript(String name, String[] args) {
-        this.name = name;
+        super(name);
+        
         this.args = args;
     }
 
@@ -159,30 +154,5 @@ public abstract class JCoresScript {
     public JCoresScript transferable() {
         this.transferable = true;
         return this;
-    }
-    
-
-    /**
-     * Packs the current script into a single file ready for deployment. Check the console 
-     * for any output. The application will terminate after this function has been executed 
-     * However, at your script's runtime this command will be ignored.<br/><br/>
-     * 
-     * If you want to pack your application, <code>pack()</code> must be <b>the last</b> of all 
-     * scripting functions executed, i.e., no other function of this object may be executed 
-     * afterwards (which is a direct result of the remark above).
-     */
-    public abstract void pack();
-
-
-    /**
-     * TODO
-     * 
-     * @param string
-     * @return
-     */
-    @Beta
-    protected JCoresScript src(String string) {
-        // TODO Auto-generated method stub
-        return null;
     }
 }

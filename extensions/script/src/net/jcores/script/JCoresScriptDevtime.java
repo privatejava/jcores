@@ -1,5 +1,5 @@
 /*
- * InputFile.java
+ * JCoresScriptDevTime.java
  * 
  * Copyright (c) 2011, Ralf Biedert All rights reserved.
  * 
@@ -25,22 +25,32 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
-package net.jcores.script.input;
+package net.jcores.script;
 
-import java.io.File;
 
 /**
- * Input type reflecting a single file.
+ * Development time scripting environment.
  * 
  * @author Ralf Biedert
+ * @since 1.0
  */
-public class InputFile extends InputFiles {
-
-    /**
-     * @return .
+public class JCoresScriptDevtime extends JCoresScript {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see net.jcores.shared.script.JCoresScript#pack()
      */
-    public File get() {
-        // get
-        return null;
+    protected JCoresScriptDevtime(String name, String[] args) {
+        super(name, args);
+    }
+    
+    /* (non-Javadoc)
+     * @see net.jcores.script.ScriptingCommons#blacklist(net.jcores.script.Blacklist)
+     */
+    @SuppressWarnings("hiding")
+    @Override
+    public ScriptingCommons blacklist(Checklist blacklist) {
+        super.blacklist(blacklist);
+        return this;
     }
 }

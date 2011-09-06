@@ -265,7 +265,7 @@ public class Files {
 	        try {
 	            // Open output zip file
 	        	FileOutputStream fos = new FileOutputStream(target);
-	            JarOutputStream out = new JarOutputStream(fos, manifest);
+	            JarOutputStream out = manifest == null ? new JarOutputStream(fos) : new JarOutputStream(fos, manifest);
 	            out.setLevel(9);
 
 	            // Process all given files

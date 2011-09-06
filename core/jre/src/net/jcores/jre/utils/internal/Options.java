@@ -33,6 +33,7 @@ import java.util.LinkedList;
 import net.jcores.jre.CommonCore;
 import net.jcores.jre.CoreKeeper;
 import net.jcores.jre.options.Args;
+import net.jcores.jre.options.Debug;
 import net.jcores.jre.options.ID;
 import net.jcores.jre.options.InvertSelection;
 import net.jcores.jre.options.KillSwitch;
@@ -75,6 +76,9 @@ public class Options {
 
     /** Arguments we got */
     Object[] args;
+    
+    /** If we should debug */
+    private boolean debug = false;
 
     /**
      * Constructs a new options object.
@@ -110,6 +114,10 @@ public class Options {
                 
                 if (option instanceof Args) {
                     this.args = ((Args) option).getArgs();
+                }
+                
+                if (option instanceof Debug) {
+                    this.debug = true;
                 }
             }
         }
@@ -171,5 +179,15 @@ public class Options {
      */
     public Object[] args() {
         return this.args;
+    }
+
+    /**
+     * If we should debug.
+     * 
+     * @since 1.0
+     * @return If we should debug.
+     */
+    public boolean debug() {
+        return this.debug;
     }
 }
