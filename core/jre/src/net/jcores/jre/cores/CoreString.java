@@ -56,7 +56,7 @@ import net.jcores.jre.utils.internal.Strings;
 import net.jcores.jre.utils.map.Compound;
 
 /**
- * Wraps a number of String and exposes some convenience functions. For example, 
+ * Helper functions for {@link String} objects (like <code>file()</code>). For example, 
  * to parse the content of a file as a set of key-value pairs:<br/><br/>
  * 
  * <code>$("file.properties").file().text().split("\n").hashmap()</code>

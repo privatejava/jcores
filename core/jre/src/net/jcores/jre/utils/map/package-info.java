@@ -1,5 +1,5 @@
 /**
- * Various helper functions and classes related to maps. 
+ * Helper functions and classes related to maps. 
  *
  * @since 1.0
  */

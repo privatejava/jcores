@@ -47,7 +47,7 @@ import net.jcores.jre.utils.internal.Sound;
 import net.jcores.jre.utils.internal.Streams;
 
 /**
- * Wraps an input stream and exposes some convenience functions. For example, 
+ * Wraps {@link InputStream} objects and exposes some convenience functions. For example, 
  * to read the text of a given stream, or return an empty string if there was no
  * text, write:<br/><br/>
  * 

@@ -40,7 +40,7 @@ import net.jcores.jre.utils.internal.Streams;
 import net.jcores.jre.utils.internal.wrapper.InputStreamWrapper;
 
 /**
- * Wraps a number of ZipInputStreams and exposes some convenience functions. For example, 
+ * Utility functions working on {@link ZipInputStream} objects. For example, 
  * to unzip all files in a given zipstream to the directory <code>target</code>, write:<br/><br/>
  * 
  * <code>$(zipstream).unzip("target")</code><br/>

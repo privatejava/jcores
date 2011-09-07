@@ -33,7 +33,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Use this annotation for your credits.
+ * With this annotation you can give cretits (e.g., printed on <code>$.report()</code>).
  * 
  * @author Ralf Biedert
  * @since 1.0

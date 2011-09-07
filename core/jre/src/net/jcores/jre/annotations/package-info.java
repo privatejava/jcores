@@ -1,5 +1,5 @@
 /**
- * Annotations that may be relevant in the future.
+ * Annotations used and understood by the framework.
  *
  * @since 1.0
  */

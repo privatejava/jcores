@@ -38,7 +38,7 @@ import net.jcores.jre.interfaces.functions.F1;
 import net.jcores.jre.options.MessageType;
 
 /**
- * Wraps a number of {@link Future} objects and exposes some convenience functions. For example,
+ * Functions related to {@link Future} objects. For example,
  * to execute a callback when a future has some result, write:<br/>
  * <br/>
  * 

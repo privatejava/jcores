@@ -44,7 +44,7 @@ import net.jcores.jre.utils.Async;
 import net.jcores.jre.utils.map.MapEntry;
 
 /**
- * Contains common system utilities.
+ * Networking functions, e.g., HTTP-GET requests or finding free ports.
  * 
  * @author Ralf Biedert
  * @since 1.0

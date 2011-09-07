@@ -42,7 +42,7 @@ import net.jcores.jre.options.Option;
 import net.jcores.jre.utils.internal.Options;
 
 /**
- * Contains common system utilities.
+ * System functions like background timers, tempdirs or unique IDs.
  * 
  * @author Ralf Biedert
  * @since 1.0

@@ -30,7 +30,7 @@ package net.jcores.jre.cores.commons;
 import net.jcores.jre.CommonCore;
 
 /**
- * The common namespace is the base class for all name spaces in the common core.  
+ * Base class for all name spaces in the common core.  
  *  
  * @author Ralf Biedert
  * @since 1.0

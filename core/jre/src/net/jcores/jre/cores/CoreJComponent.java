@@ -40,7 +40,7 @@ import net.jcores.jre.utils.internal.structures.SimpleTransferHandler;
 import net.jcores.jre.utils.internal.wrapper.Wrapper;
 
 /**
- * Wraps a number of JComponents and exposes some convenience functions. For example, 
+ * Extension of the {@link CoreComponent} to provide helpers for Swing, like <code>onDrop()</code>. For example, 
  * to add a file-drop-listener to some panel, write:<br/><br/>
  * 
  * <code>$(panel).onDrop(handler, Option.DROPTYPE_FILES)</code>

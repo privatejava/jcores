@@ -46,7 +46,7 @@ import net.jcores.jre.utils.internal.Options;
 import net.jcores.jre.utils.internal.Streams;
 
 /**
- * Wraps a number of URIs and exposes some convenience functions. For example, 
+ * {@link URI} and {@link URL} helper functions. For example, 
  * to download a file to some the <code>downloads</code> directory:<br/><br/>
  * 
  * <code>$(uri).download("downloads")</code>

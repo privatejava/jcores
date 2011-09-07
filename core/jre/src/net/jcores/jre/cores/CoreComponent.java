@@ -36,7 +36,7 @@ import net.jcores.jre.CommonCore;
 import net.jcores.jre.interfaces.java.KeyStroke;
 
 /**
- * Wraps a number of Component and exposes some convenience functions. For example, 
+ * Base class for {@link Component} related operations (Swing & AWT). For example, 
  * to assign a key listener to some component, write:<br/><br/>
  * 
  * <code>$(panel).keypress(KeyEvent.VK_ESCAPE, handler).</code>

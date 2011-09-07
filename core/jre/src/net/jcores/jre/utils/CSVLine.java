@@ -30,9 +30,10 @@ package net.jcores.jre.utils;
 import java.util.Arrays;
 
 import net.jcores.jre.CoreKeeper;
+import net.jcores.jre.cores.CoreCSV;
 
 /**
- * A line of a CSV file.  
+ * A line of a CSV file, as used by the {@link CoreCSV}. 
  * 
  * @author Ralf Biedert
  * @since 1.0

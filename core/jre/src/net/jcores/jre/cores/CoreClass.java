@@ -44,8 +44,8 @@ import net.jcores.jre.utils.internal.Options;
 import net.jcores.jre.utils.internal.Streams;
 
 /**
- * Wraps class objects, usually only one, and exposes some convenience functions
- * on them. For example, to dynamically spawn some class you could write:<br/>
+ * Helper functions when dealing with {@link Class} objects. For example, 
+ * to dynamically spawn some class you could write:<br/>
  * <br/>
  * 
  * <code>Robot robot = $(Robot.class).spawn().get(0)</code>

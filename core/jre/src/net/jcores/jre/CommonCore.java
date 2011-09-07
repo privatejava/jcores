@@ -77,7 +77,7 @@ import net.xeoh.nexus.InternalService;
 import net.xeoh.nexus.Nexus;
 
 /**
- * The common core is a singleton object shared by (thus common to) all created {@link Core} 
+ * The common core is a notso-singleton object shared by all created {@link Core} 
  * instances of the current class loader. It is mainly a cache, contains helper and utility 
  * methods and takes care of the {@link Manager} objects. For example, to but the current thread 
  * to sleep (without the ugly try/catch), you would write:<br/>

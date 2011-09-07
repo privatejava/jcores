@@ -1,5 +1,5 @@
 /**
- * Various helper functions and classes related to map generators. 
+ * Map generators provide default values for Guava style maps. 
  *
  * @since 1.0
  */

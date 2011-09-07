@@ -33,7 +33,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * License for your plugin.
+ * Specifies the license for your plugin.
  * 
  * @author Ralf Biedert
  * @since 1.0

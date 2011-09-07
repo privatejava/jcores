@@ -65,7 +65,7 @@ import net.jcores.jre.utils.internal.Sound;
 import net.jcores.jre.utils.internal.Streams;
 
 /**
- * Wraps a number of files and exposes some convenience functions. For example,
+ * Convenience functions for {@link File} objects, e.g. <code>text()</code>. For example,
  * to list all files in a given path (denoted by a file-object),
  * write:<br/>
  * <br/>

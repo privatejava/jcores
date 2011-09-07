@@ -38,7 +38,7 @@ import net.jcores.jre.CommonCore;
 import net.jcores.jre.interfaces.functions.F0;
 
 /**
- * Contains common ui utilities.
+ * UI helper functions, e.g., EDT or Color related things. 
  * 
  * @author Ralf Biedert
  * @since 1.0

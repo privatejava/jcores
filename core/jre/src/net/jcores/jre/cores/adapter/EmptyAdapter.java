@@ -34,7 +34,7 @@ import java.util.ListIterator;
 
 
 /**
- * Wraps nothing.
+ * Wraps nothing, used for empty cores.
  * 
  * @author Ralf Biedert
  * @since 1.0

@@ -29,7 +29,7 @@ package net.jcores.jre.interfaces.functions;
 
 /**
  * Abstract class to process elements when an exception can be thrown and no return type 
- * is required.
+ * is required, can be used everywhere {@link F1} is required.
  * 
  * @author Ralf Biedert
  * @param <X> The input type.

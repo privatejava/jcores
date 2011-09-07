@@ -28,7 +28,7 @@
 package net.jcores.jre.interfaces.functions;
 
 /**
- * Abstract class to sort when an exception can be thrown. 
+ * Abstract class when an exception can be thrown, can be used everywhere {@link F0} is required. 
  * 
  * @author Ralf Biedert
  */

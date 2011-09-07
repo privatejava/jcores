@@ -36,7 +36,7 @@ import net.jcores.jre.interfaces.functions.F2ReduceObjects;
 import net.jcores.jre.options.Option;
 
 /**
- * Wraps a number of Numbers and exposes some convenience functions. For example,
+ * A core holding {@link Number} objects (like {@link Integer}, {@link Double}, ...). For example,
  * to calulate the variance of a number of numbers, write:<br/>
  * <br/>
  * 

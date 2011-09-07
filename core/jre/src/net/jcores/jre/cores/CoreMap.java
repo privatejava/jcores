@@ -29,6 +29,7 @@ package net.jcores.jre.cores;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.jcores.jre.CommonCore;
 import net.jcores.jre.cores.adapter.AbstractAdapter;
@@ -37,7 +38,8 @@ import net.jcores.jre.utils.map.MapEntry;
 import net.jcores.jre.utils.map.MapUtil;
 
 /**
- * Wraps a single Map. This core is currently experimental. <br/>
+ * Wraps a single {@link Map} and provides {@link MapEntry} objects along 
+ * with helper functions.<br/>
  * <br/>
  * 
  * @author Ralf Biedert

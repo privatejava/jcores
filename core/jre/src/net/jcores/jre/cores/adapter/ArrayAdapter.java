@@ -34,7 +34,7 @@ import java.util.ListIterator;
 
 
 /**
- * Adapts arrays. 
+ * Adapts object arrays. 
  * 
  * @author Ralf Biedert
  *

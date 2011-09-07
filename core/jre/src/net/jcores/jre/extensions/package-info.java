@@ -1,5 +1,5 @@
 /**
- * Classes related to extension development go here.
+ * Things related to extension development goes here.
  * 
  * @since 1.0
  */

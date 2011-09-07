@@ -1,5 +1,5 @@
 /**
- * Various general helper functions and classes. 
+ * Common helper classes and jCores return types.  
  *
  * @since 1.0
  */

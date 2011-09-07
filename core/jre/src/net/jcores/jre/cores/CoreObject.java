@@ -81,8 +81,8 @@ import net.jcores.jre.utils.internal.wrapper.Wrapper;
 import net.jcores.jre.utils.map.Compound;
 
 /**
- * The standard core that wraps a number of objects and exposes a number of methods to
- * act on them, some of them in parallel. For example,
+ * <i>The</i> base class for all other cores that provides basic functions 
+ * like <code>map()</code>, <code>slice()</code>, and many more; give it a look. For example,
  * to get the last three elements of an array of Strings, write:<br/>
  * <br/>
  * 

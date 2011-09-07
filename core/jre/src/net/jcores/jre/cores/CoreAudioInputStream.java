@@ -36,7 +36,7 @@ import net.jcores.jre.utils.internal.Options;
 import net.jcores.jre.utils.internal.Sound;
 
 /**
- * Wraps a number of AudioInputStream and exposes some convenience functions. For example, 
+ * Provides functionality like <code>play()</code> to {@link AudioInputStream} objects. For example, 
  * to play an audio file, write:<br/><br/>
  * 
  * <code>$("sound.wav").file().audio().play()</code><br/>

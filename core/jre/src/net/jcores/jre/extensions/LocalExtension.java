@@ -34,7 +34,7 @@ import net.jcores.jre.cores.adapter.AbstractAdapter;
 import net.jcores.jre.cores.adapter.EmptyAdapter;
 
 /**
- * The base class you should extend when creating a wrapping extension, i.e., one
+ * Base class when creating a wrapping extension, i.e., one
  * that is called as <code>$(objects).as(MyExtension.class).f()</code>. 
  * 
  * <br/><br/>

@@ -1,5 +1,5 @@
 /**
- * Facades for Java interfaces.
+ * Facades for Java interfaces (experimental).
  *
  * @since 1.0
  */

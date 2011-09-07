@@ -30,7 +30,7 @@ package net.jcores.jre.cores.commons;
 import net.jcores.jre.CommonCore;
 
 /**
- * Contains common algorithmic utilities. 
+ * Algorithmic utilities like permutations. 
  * 
  * @author Ralf Biedert
  * @since 1.0

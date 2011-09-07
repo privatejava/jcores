@@ -33,7 +33,8 @@ import net.jcores.jre.utils.CSVLine;
 
 
 /**
- * Wraps a number of {@link CSVLine} objects and exposes some convenience functions.<br/><br/>
+ * Wraps {@link CSVLine} objects (as returned by a {@link CoreString}) and provides additional 
+ * functions.<br/><br/>
  * 
  * @author Ralf Biedert
  * 

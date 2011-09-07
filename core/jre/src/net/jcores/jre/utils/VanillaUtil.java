@@ -28,7 +28,7 @@
 package net.jcores.jre.utils;
 
 /**
- * Vanilla util (aka decorator).
+ * Vanilla util (aka decorator). 
  * 
  * @author Ralf Biedert
  * @param <T> The type of the object to decorate.

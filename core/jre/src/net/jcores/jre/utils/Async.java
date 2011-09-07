@@ -51,7 +51,7 @@ import net.jcores.jre.options.Option;
 import net.jcores.jre.utils.internal.Options;
 
 /**
- * Reflects the results of an asynchronous core operation <code>$.async()</code>. 
+ * Reflects the results of an asynchronous core operations <code>$.async()</code> and <code>$(objects).async()</code>. 
  * 
  * @author Ralf Biedert
  * @param <T> The type this async object wraps.
@@ -59,7 +59,7 @@ import net.jcores.jre.utils.internal.Options;
  */
 public class Async<T> {
     /**
-     * Represents a Queue entry for the queue filling the async object.
+     * An entry for the queue feeding the {@link Async} object.
      * 
      * @author Ralf Biedert
      * @param <T> the type of object.
@@ -89,7 +89,7 @@ public class Async<T> {
     protected final static EOQ EOQ = new EOQ();
 
     /**
-     * Represents the queue we need to
+     * The queue feeding the {@link Async} object.
      * 
      * @author Ralf Biedert
      * @param <T> the type of object.

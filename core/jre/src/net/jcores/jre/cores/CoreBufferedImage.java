@@ -44,8 +44,8 @@ import net.jcores.jre.options.Option;
 import net.jcores.jre.utils.internal.Options;
 
 /**
- * Wraps a number of BufferedImages and exposes some convenience functions. For example, 
- * to copy a buffered image you would write:<br/><br/>
+ * Helper functions like <code>scale()</code> or <code>copy()</code> for 
+ * {@link BufferedImage} objects. For example, to copy a buffered image you would write:<br/><br/>
  * 
  * <code>BufferedImage bi = $(image).copy().get(0)</code>
  * 

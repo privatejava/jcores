@@ -28,7 +28,8 @@
 package net.jcores.jre.interfaces.functions;
 
 /**
- * Abstract class to process elements when no return type is required.
+ * Abstract class to process elements when no return type is required, can be used everywhere {@link F1}
+ * is required.
  * 
  * @author Ralf Biedert
  * @param <X> The input type.

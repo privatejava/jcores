@@ -33,11 +33,7 @@ import java.util.Map;
 import net.jcores.jre.utils.map.MapEntry;
 
 /**
- * Wraps arbitrary collections.
- * 
- * TODO: Add logic that an array is created on demand which is being used for get() operations
- * up to a value until elements have already been extracted by an iterator (or by previous get()
- * operataions starting from 0).
+ * Wraps maps and provides {@link MapEntry} objects on demand.
  * 
  * @author Ralf Biedert
  * 

@@ -39,7 +39,7 @@ import net.jcores.jre.utils.internal.Bytes;
 import net.jcores.jre.utils.internal.Options;
 
 /**
- * Wraps a number of ByteBuffers and exposes some convenience functions. For example, 
+ * Adds <code>hash()</code> and others to {@link ByteBuffer} objects. For example, 
  * to hash some binary data with MD5 you would write:<br/><br/>
  * 
  * <code>String hash = $(data).hash(Option.HASH_MD5).get(0)</code>
