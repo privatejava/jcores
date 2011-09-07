@@ -27,21 +27,24 @@
  */
 package net.jcores.jre.annotations;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import net.jcores.jre.options.DefaultOption;
 import net.jcores.jre.options.Option;
 
 /**
- * Use this option on methods to indicate which options are supported.
+ * Use this annotation on methods to indicate which {@link Option} objects are supported besides the {@link DefaultOption} objects.
  * 
  * @author Ralf Biedert
  * @since 1.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.METHOD })
+@Documented
 public @interface SupportsOption {
     /**
      * All the non-standard options that are supported.

@@ -27,6 +27,7 @@
  */
 package net.jcores.jre.annotations;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -40,6 +41,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.TYPE })
+@Documented
 public @interface Credits {
     /**
      * The projects, persons, ... to which you want to give credit for 

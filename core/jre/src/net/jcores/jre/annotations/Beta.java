@@ -27,12 +27,15 @@
  */
 package net.jcores.jre.annotations;
 
+import java.lang.annotation.Documented;
+
 /**
  * Methods annotated with @Beta are unstable or buggy and might 
  * change in the future.    
  * 
  * @author Ralf Biedert
  */
+@Documented
 public @interface Beta {
     //
 }

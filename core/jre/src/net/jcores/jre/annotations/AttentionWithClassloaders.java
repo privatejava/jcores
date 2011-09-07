@@ -27,6 +27,7 @@
  */
 package net.jcores.jre.annotations;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -43,6 +44,7 @@ import net.jcores.jre.CommonCore;
  * @author Ralf Biedert
  * @since 1.0
  */
+@Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.METHOD })
 public @interface AttentionWithClassloaders {
