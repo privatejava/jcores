@@ -220,6 +220,24 @@ public class CommonCore {
     }
 
     /**
+     * Wraps number of doubles and returns a Double array.
+     * 
+     * @since 1.0
+     * @param object The numbers to wrap.
+     * @return An Double array.
+     */
+    public Double[] box(double... object) {
+        int i = 0;
+
+        final Double[] myIntegers = new Double[object.length];
+        for (double val : object)
+            myIntegers[i++] = Double.valueOf(val);
+
+        return myIntegers;
+    }
+
+    
+    /**
      * Wraps number of longs and returns an Long array.
      * 
      * @since 1.0

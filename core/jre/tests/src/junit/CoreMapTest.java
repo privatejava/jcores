@@ -32,6 +32,8 @@ import static net.jcores.jre.CoreKeeper.$;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.jcores.jre.utils.map.MapEntry;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -51,5 +53,19 @@ public class CoreMapTest {
         Assert.assertEquals("y", $(m).value("b"));
         Assert.assertEquals("a", $(m).key("x"));
         Assert.assertEquals("b", $(m).key("y"));
+    }
+    
+    /** */
+    @Test
+    public void testMapUtil() {
+        MapEntry<String, String> e1 = new MapEntry<String, String>("He" + "llo", "World");
+        MapEntry<String, String> e2 = new MapEntry<String, String>("Hello", "Wo" + "rld");
+        Assert.assertEquals(e1, e2);
+        
+        
+        final Map<String, String> m = new HashMap<String, String>();
+        m.put("a", "x");
+        m.put("b", "y");
+        Assert.assertEquals($(m), $(m));
     }
 }

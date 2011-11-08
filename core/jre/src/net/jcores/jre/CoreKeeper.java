@@ -129,6 +129,16 @@ public class CoreKeeper {
         return new CoreNumber($, $.box(object));
     }
 
+    /**
+     * Wraps number of numbers and returns a new CoreNumber.
+     * 
+     * @param object The numbers to wrap.
+     * @return A CoreNumber wrapping the given compounds.
+     */
+    public static CoreNumber $(double[] object) {
+        return new CoreNumber($, $.box(object));
+    }
+
     
     /**
      * Returns an extension for the given type. 
