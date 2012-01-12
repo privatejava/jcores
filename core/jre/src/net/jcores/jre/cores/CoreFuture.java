@@ -34,6 +34,7 @@ import java.util.concurrent.TimeoutException;
 
 import net.jcores.jre.CommonCore;
 import net.jcores.jre.annotations.Beta;
+import net.jcores.jre.cores.adapter.EmptyAdapter;
 import net.jcores.jre.interfaces.functions.F1;
 import net.jcores.jre.options.MessageType;
 
@@ -65,8 +66,6 @@ public class CoreFuture<T> extends CoreObject<Future<T>> {
         super(supercore, objects);
     }
 
-    
-
     /**
      * Registers a listener that is being called when one of the futures finished.<br/>
      * <br/>
@@ -79,7 +78,7 @@ public class CoreFuture<T> extends CoreObject<Future<T>> {
      * Multi-threaded.<br/>
      * <br/>
      * 
-     * @param listener The listener that is being called when one finished. 
+     * @param listener The listener that is being called when one finished.
      * @return This core again.
      */
     public CoreFuture<T> onNext(final F1<T, Void> listener) {
@@ -106,7 +105,6 @@ public class CoreFuture<T> extends CoreObject<Future<T>> {
         return this;
     }
 
-    
     /**
      * Waits until all futures finish and returns a {@link CoreObject} with the results.<br/>
      * <br/>
@@ -125,18 +123,15 @@ public class CoreFuture<T> extends CoreObject<Future<T>> {
         return await(Long.MAX_VALUE, TimeUnit.DAYS);
     }
 
-    
-    
     /**
-     * Waits for some time until all futures finish and returns a {@link CoreObject} with 
+     * Waits for some time until all futures finish and returns a {@link CoreObject} with
      * the results of the future objects that returned in time.<br/>
      * <br/>
      * 
      * Examples:
      * <ul>
-     * <li><code>$(future).await(3, TimeUnit.SECONDS).get(0)</code> - Retrieves the result 
-     * of <code>future</code> once it finished, or an empty CoreObject if no result was available
-     * in three seconds.</li>
+     * <li><code>$(future).await(3, TimeUnit.SECONDS).get(0)</code> - Retrieves the result of <code>future</code> once
+     * it finished, or an empty CoreObject if no result was available in three seconds.</li>
      * </ul>
      * 
      * Single-threaded.<br/>
@@ -148,54 +143,60 @@ public class CoreFuture<T> extends CoreObject<Future<T>> {
      * @return This core with all results.
      */
     public CoreObject<T> await(long wait, TimeUnit unit) {
-        throw new IllegalStateException("Not implemented yet");
+        if (size() > 1) throw new IllegalStateException("Not implemented yet");
+
+        try {
+            return new CoreObject<T>(this.commonCore, get(0).get(wait, unit));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (TimeoutException e) {
+            e.printStackTrace();
+        }
+
+        return new CoreObject<T>(this.commonCore, new EmptyAdapter<T>());
     }
 
-    
-    
     /**
-     * Tries to retrieve the result of a {@link Future} object, or null, if 
+     * Tries to retrieve the result of a {@link Future} object, or null, if
      * it was not available yet.<br/>
      * <br/>
      * 
      * Examples:
      * <ul>
-     * <li><code>$(future).obtain(0)</code> - Retrieves the result 
-     * of <code>future</code> or return <code>null</code> it is hasn't 
-     * finished yet.</li>
+     * <li><code>$(future).obtain(0)</code> - Retrieves the result of <code>future</code> or return <code>null</code> it
+     * is hasn't finished yet.</li>
      * </ul>
      * 
      * Single-threaded.<br/>
      * <br/>
      * 
-     * @param i The index to retrieve. 
+     * @param i The index to retrieve.
      * @return The result or <code>null</code> if the future has not finished yet.
      */
     public T obtain(int i) {
         return obtain(i, 1, TimeUnit.NANOSECONDS);
     }
 
-    
-    
     /**
-     * Tries to retrieve the result of a {@link Future} object, or null, if 
+     * Tries to retrieve the result of a {@link Future} object, or null, if
      * it is not available after a certain time.<br/>
      * <br/>
      * 
      * Examples:
      * <ul>
-     * <li><code>$(future).obtain(0, 3, TimeUnit.MINUTES)</code> - Retrieves the result 
-     * of <code>future</code> or return <code>null</code> it is hasn't 
-     * finished after 3 minutes.</li>
+     * <li><code>$(future).obtain(0, 3, TimeUnit.MINUTES)</code> - Retrieves the result of <code>future</code> or return
+     * <code>null</code> it is hasn't finished after 3 minutes.</li>
      * </ul>
      * 
      * Single-threaded.<br/>
      * <br/>
      * 
-     * @param i The index to retrieve. 
+     * @param i The index to retrieve.
      * @param wait The amount of {@link TimeUnit} to wait.
      * @param unit The actual unit of time to wait.
-     * @return The result or <code>null</code> if the future has not finished after 
+     * @return The result or <code>null</code> if the future has not finished after
      * the given time.
      */
     public T obtain(int i, long wait, TimeUnit unit) {
