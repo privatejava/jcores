@@ -27,32 +27,36 @@
  */
 package net.jcores.jre.cores.commons;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 import net.jcores.jre.CommonCore;
 
 /**
- * Algorithmic utilities like permutations. 
+ * Algorithmic utilities like permutations.
  * 
  * @author Ralf Biedert
  * @since 1.0
- *
+ * 
  */
 public class CommonAlgorithmic extends CommonNamespace {
+    /** Counter to deliver the next atomic long */
+    final AtomicLong nextLong = new AtomicLong();
 
-    /** 
+    /**
      * Creates a common file object.
      * 
-     * @param commonCore 
+     * @param commonCore
      */
     public CommonAlgorithmic(CommonCore commonCore) {
         super(commonCore);
     }
 
     /**
-     * Ensures the value <code>x</code> is between a and b, so that
-     * <code>a <= x <= b</code>. If x is larger or smaller, it will be 
-     * limited to the given  bounds.
-     *  
-     * @param a The lower bound. 
+     * Ensures the value <code>x</code> is between a and b, so that <code>a <= x <= b</code>. If x is larger or smaller,
+     * it will be
+     * limited to the given bounds.
+     * 
+     * @param a The lower bound.
      * @param x The value.
      * @param b The upper bound.
      * 
@@ -60,17 +64,17 @@ public class CommonAlgorithmic extends CommonNamespace {
      * @return The new list.
      */
     public double limit(double a, double x, double b) {
-        if(x < a) return a;
-        if(x > b) return b;
+        if (x < a) return a;
+        if (x > b) return b;
         return x;
     }
 
     /**
-     * Ensures the value <code>x</code> is between a and b, so that
-     * <code>a <= x <= b</code>. If x is larger or smaller, it will be 
-     * limited to the given  bounds.
-     *  
-     * @param a The lower bound. 
+     * Ensures the value <code>x</code> is between a and b, so that <code>a <= x <= b</code>. If x is larger or smaller,
+     * it will be
+     * limited to the given bounds.
+     * 
+     * @param a The lower bound.
      * @param x The value.
      * @param b The upper bound.
      * 
@@ -78,9 +82,21 @@ public class CommonAlgorithmic extends CommonNamespace {
      * @return The new list.
      */
     public int limit(int a, int x, int b) {
-        if(x < a) return a;
-        if(x > b) return b;
+        if (x < a) return a;
+        if (x > b) return b;
         return x;
+    }
+
+    /**
+     * With each call the next available long is returned. Since many functions
+     * might call this method you cannot assume you will receive the direct
+     * successor to your previous call.
+     * 
+     * @since 1.0
+     * @return The next long.
+     */
+    public long nextLong() {
+        return this.nextLong.getAndIncrement();
     }
 
     /**
@@ -105,37 +121,35 @@ public class CommonAlgorithmic extends CommonNamespace {
             if (objects[k].compareTo(objects[k + 1]) < 0) kk = k;
         }
         if (kk < 0) return false;
-    
+
         // Find the largest index l such that a[k] < a[l]. Since k + 1 is such an index, l is well defined and satisfies
         // k < l.
         for (int l = 0; l < n; l++) {
             if (objects[kk].compareTo(objects[l]) < 0) ll = l;
         }
-    
+
         // Swap a[k] with a[l].
         swap(objects, kk, ll);
-    
+
         // Reverse the sequence from a[k + 1] up to and including the final element a[n].
         int c = 1;
         for (int i = kk + 1; i < n; i++) {
             if (i >= n - c) break;
             swap(objects, i, n - c++);
         }
-    
+
         return true;
     }
-    
-    
 
     /**
-     * Returns the relative value of x with respect to the bounds of a and b. If <code>a == x</code> 
-     * then <code>0</code> is being returned, if <code>b == x</code>  then <code>1</code> is being 
+     * Returns the relative value of x with respect to the bounds of a and b. If <code>a == x</code> then <code>0</code>
+     * is being returned, if <code>b == x</code> then <code>1</code> is being
      * returned, if it is in between, the relative amount will be returned. If <code>x</code> lies
      * outside the bounds, values outside the range <code>0 ... 1</code> will be returned.
      * 
      * @since 1.0
-     *  
-     * @param a The lower bound. 
+     * 
+     * @param a The lower bound.
      * @param x The value.
      * @param b The upper bound.
      * @return The relative value.
@@ -143,7 +157,6 @@ public class CommonAlgorithmic extends CommonNamespace {
     public double relative(double a, double x, double b) {
         return (x - a) / (b - a);
     }
-
 
     /**
      * Swaps two elements in an array.
@@ -161,6 +174,4 @@ public class CommonAlgorithmic extends CommonNamespace {
         objects[j] = (T) tmp;
     }
 
-    
-    
 }
