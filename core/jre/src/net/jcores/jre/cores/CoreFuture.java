@@ -37,6 +37,8 @@ import net.jcores.jre.annotations.Beta;
 import net.jcores.jre.cores.adapter.EmptyAdapter;
 import net.jcores.jre.interfaces.functions.F1;
 import net.jcores.jre.options.MessageType;
+import net.jcores.jre.options.Option;
+import net.jcores.jre.utils.internal.Options;
 
 /**
  * Functions related to {@link Future} objects. For example,
@@ -139,20 +141,25 @@ public class CoreFuture<T> extends CoreObject<Future<T>> {
      * 
      * @param wait The amount of {@link TimeUnit} to wait.
      * @param unit The actual unit of time to wait.
+     * @param options Optional arguments.
      * 
      * @return This core with all results.
      */
-    public CoreObject<T> await(long wait, TimeUnit unit) {
+    @SuppressWarnings("unchecked")
+    public CoreObject<T> await(long wait, TimeUnit unit, Option... options) {
         if (size() > 1) throw new IllegalStateException("Not implemented yet");
 
+        final Future<T> future = get(0);
+
         try {
-            return new CoreObject<T>(this.commonCore, get(0).get(wait, unit));
+            return new CoreObject<T>(this.commonCore, future.get(wait, unit));
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Options.$(this.commonCore, options).failure(this.commonCore, e, "await:get", "Interrupted while waiting.");
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            Options.$(this.commonCore, options).failure(this.commonCore, e, "await:get", "Execution problem.");
         } catch (TimeoutException e) {
-            e.printStackTrace();
+            // Options.$(this.commonCore, options).failure(this.commonCore, e, "await:get",
+            // "Interrupted while waiting.");
         }
 
         return new CoreObject<T>(this.commonCore, new EmptyAdapter<T>());
@@ -196,10 +203,11 @@ public class CoreFuture<T> extends CoreObject<Future<T>> {
      * @param i The index to retrieve.
      * @param wait The amount of {@link TimeUnit} to wait.
      * @param unit The actual unit of time to wait.
+     * @param options Optional options ...
      * @return The result or <code>null</code> if the future has not finished after
      * the given time.
      */
-    public T obtain(int i, long wait, TimeUnit unit) {
+    public T obtain(int i, long wait, TimeUnit unit, Option... options) {
         // Get the proper future object
         final Future<T> future = get(i);
         if (future == null) return null;
@@ -207,7 +215,13 @@ public class CoreFuture<T> extends CoreObject<Future<T>> {
         // Try to get the results ...
         try {
             return future.get(wait, unit);
-        } catch (InterruptedException e) {} catch (ExecutionException e) {} catch (TimeoutException e) {}
+        } catch (InterruptedException e) {
+            Options.$(this.commonCore, options).failure(future, e, "obtain:get", "Interrupted while waiting.");
+        } catch (ExecutionException e) {
+            Options.$(this.commonCore, options).failure(future, e, "obtain:get", "Execution problem.");
+        } catch (TimeoutException e) {
+            // Options.$(this.commonCore, options).failure(future, e, "obtain:get", "Timed out without result.");
+        }
 
         // ... or return null if nothing was there.
         return null;
