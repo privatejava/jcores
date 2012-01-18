@@ -96,7 +96,14 @@ public class CommonAlgorithmic extends CommonNamespace {
      * @return The next long.
      */
     public long nextLong() {
-        return this.nextLong.getAndIncrement();
+        // TODO: See Issue #17 … apparently getAndIncrement() can hang 
+        // on some machines, as we have seen on Lion 10.7, Java 6.something 
+        // when running the Text 2.0 tracking server with the Jython APIv3 hack.  
+        
+        // Let's try this ugly workaround …
+        synchronized (this.nextLong) {
+            return this.nextLong.getAndIncrement();
+        }
     }
 
     /**
