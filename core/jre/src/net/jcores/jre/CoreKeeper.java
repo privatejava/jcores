@@ -82,9 +82,8 @@ import net.xeoh.nexus.Service;
  */
 public class CoreKeeper {
     /** The common core shared by all other cores. */
-    public final static CommonCore $ = new CommonCore(); 
+    public final static CommonCore $ = new CommonCore();
 
-    
     /**
      * Wraps the given object(s) and returns a parameterized CoreObject. This
      * is also the default method being used when wrapping <i>unknown</i> objects for
@@ -98,7 +97,6 @@ public class CoreKeeper {
         return new CoreObject<T>($, object);
     }
 
-
     /**
      * Wraps the given AudioInputStreams and returns a CoreAudioInputStream.
      * 
@@ -108,7 +106,7 @@ public class CoreKeeper {
     public static CoreAudioInputStream $(AudioInputStream... object) {
         return new CoreAudioInputStream($, object);
     }
-    
+
     /**
      * Wraps number of numbers and returns a new CoreNumber.
      * 
@@ -139,9 +137,18 @@ public class CoreKeeper {
         return new CoreNumber($, $.box(object));
     }
 
-    
     /**
-     * Returns an extension for the given type. 
+     * Wraps number of numbers and returns a new CoreNumber.
+     * 
+     * @param object The numbers to wrap.
+     * @return A CoreNumber wrapping the given compounds.
+     */
+    public static CoreNumber $(float[] object) {
+        return new CoreNumber($, $.box(object));
+    }
+
+    /**
+     * Returns an extension for the given type.
      * 
      * @param <T> Parameter of the classes' type.
      * @param clsses The classes to wrap.
@@ -150,29 +157,28 @@ public class CoreKeeper {
     public static <T extends GlobalExtension> T $(Class<T> clsses) {
         final Nexus nexus = $.nexus();
         final T t = nexus.get(clsses);
-        
+
         // In case we have the extension everything is fine.
         if (t != null) return t;
-        
+
         // FIXME: If accessed by two threads this might produce two extensions ...
         try {
             final T newT = clsses.newInstance();
             final Collection<? extends Service> service = InternalService.wrap(newT);
-            
+
             newT.commonCore($);
             newT.init();
             nexus.register(service);
-            
+
             return newT;
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-        
+
         return null;
     }
-
 
     /**
      * Wraps number of classes and returns a new ClassCore. In most cases
@@ -185,19 +191,17 @@ public class CoreKeeper {
     public static <T> CoreClass<T> $(Class<T>... clsses) {
         return new CoreClass<T>($, clsses);
     }
-    
-    
+
     /**
      * Wraps number of future objects and returns a new CoreFuture.
      * 
      * @param object The Futures to wrap.
      * @return A CoreFuture wrapping the given Futures.
      */
-    public static <T> CoreFuture<T> $(Future<T> ... object) {
+    public static <T> CoreFuture<T> $(Future<T>... object) {
         return new CoreFuture<T>($, object);
     }
 
-    
     /**
      * Wraps number of future objects and returns a new CoreFuture.
      * 
@@ -208,8 +212,7 @@ public class CoreKeeper {
     public static <T> CoreFuture<T> $(Future<T> object) {
         return new CoreFuture<T>($, new Future[] { object });
     }
-    
-    
+
     /**
      * Wraps number of strings and returns a new CoreString.
      * 
@@ -229,7 +232,7 @@ public class CoreKeeper {
     public static CoreURI $(URI... object) {
         return new CoreURI($, object);
     }
-    
+
     /**
      * Wraps number of URLs and returns a new CoreURI.
      * 
@@ -279,7 +282,7 @@ public class CoreKeeper {
     public static CoreComponent $(Component... object) {
         return new CoreComponent($, object);
     }
-    
+
     /**
      * Wraps number of JComponents and returns a new CoreJComponent.
      * 
@@ -290,13 +293,11 @@ public class CoreKeeper {
         return new CoreJComponent($, object);
     }
 
-
     /**
      * Wraps a generic Collection objects. Please note that the Collection is
      * transformed into an array, so for performance reasons usage of this
      * wrapper should be minimized. Also note that this function always returns
-     * a parameterized, but vanilla CoreObject, which has to be cast using
-     * <code>.as()</code> again.
+     * a parameterized, but vanilla CoreObject, which has to be cast using <code>.as()</code> again.
      * 
      * @param collection The collection to transform and wrap.
      * @param <T> Type of the collection.
@@ -308,14 +309,12 @@ public class CoreKeeper {
     public static <T> CoreObject<T> $(Collection<T> collection) {
         return new CoreObject<T>($, (T[]) Wrapper.convert(collection, Object.class));
     }
-    
 
     /**
      * Wraps a generic Collection objects. Please note that the Collection is
      * transformed into an array, so for performance reasons usage of this
      * wrapper should be minimized. Also note that this function always returns
-     * a parameterized, but vanilla CoreObject, which has to be cast using
-     * <code>.as()</code> again.
+     * a parameterized, but vanilla CoreObject, which has to be cast using <code>.as()</code> again.
      * 
      * @param collection The collection to transform and wrap.
      * @param <T> Type of the collection.
@@ -327,7 +326,6 @@ public class CoreKeeper {
         return new CoreObject<T>($, collection);
     }
 
-    
     /**
      * Wraps a map.
      * 
@@ -341,7 +339,6 @@ public class CoreKeeper {
     public static <K, V> CoreMap<K, V> $(Map<K, V> map) {
         return new CoreMap<K, V>($, (AbstractAdapter<MapEntry<K, V>>) new MapAdapter<K, V>(map));
     }
-    
 
     /**
      * Converts and wraps the given collection. Except that this method first converts

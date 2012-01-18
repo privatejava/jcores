@@ -77,9 +77,9 @@ import net.xeoh.nexus.InternalService;
 import net.xeoh.nexus.Nexus;
 
 /**
- * The common core is a notso-singleton object shared by all created {@link Core} 
- * instances of the current class loader. It is mainly a cache, contains helper and utility 
- * methods and takes care of the {@link Manager} objects. For example, to but the current thread 
+ * The common core is a notso-singleton object shared by all created {@link Core} instances of the current class loader.
+ * It is mainly a cache, contains helper and utility
+ * methods and takes care of the {@link Manager} objects. For example, to but the current thread
  * to sleep (without the ugly try/catch), you would write:<br/>
  * <br/>
  * 
@@ -87,14 +87,14 @@ import net.xeoh.nexus.Nexus;
  * <br/>
  * 
  * Methods and object commonly required by the other cores. All methods in here are (and must be!)
- * thread safe. While most methods (like <code>async()</code>, <code>box()</code>, 
- * <code>clone()</code>, ...) are safe to use in any application, there are a few methods (like 
- * <code>manager()</code>, <code>nexus()</code>, <code>log()</code>) which should be used with care in 
- * multi-classloader-applications like application servers. While they will work in local parts of the 
- * code they usually fail to share state between remote parts (e.g., one web application could not 
- * register an object with <code>nexus()</code> another web application could see). Methods marked 
- * with {@link AttentionWithClassloaders} are such candidates. You can still use them in big apps, 
- * but you should know what you are doing.  
+ * thread safe. While most methods (like <code>async()</code>, <code>box()</code>, <code>clone()</code>, ...) are safe
+ * to use in any application, there are a few methods (like <code>manager()</code>, <code>nexus()</code>,
+ * <code>log()</code>) which should be used with care in
+ * multi-classloader-applications like application servers. While they will work in local parts of the
+ * code they usually fail to share state between remote parts (e.g., one web application could not
+ * register an object with <code>nexus()</code> another web application could see). Methods marked
+ * with {@link AttentionWithClassloaders} are such candidates. You can still use them in big apps,
+ * but you should know what you are doing.
  * 
  * @author Ralf Biedert
  * @since 1.0
@@ -129,7 +129,7 @@ public class CommonCore {
 
     /** Common net utilities */
     public final CommonNet net = new CommonNet(this);
-    
+
     /** The ID of this CommonCore */
     protected final String id;
 
@@ -150,7 +150,7 @@ public class CommonCore {
         } catch (Exception e) {
             report(MessageType.EXCEPTION, "Unable to get cloning method for objects. $.clone() will not work: " + e.getMessage());
         }
-        
+
         this.id = this.sys.uniqueID();
     }
 
@@ -161,7 +161,7 @@ public class CommonCore {
     }
 
     /**
-     * Executes the given function asynchronously and returns an {@link Async} object which 
+     * Executes the given function asynchronously and returns an {@link Async} object which
      * will hold the result.<br/>
      * <br/>
      * 
@@ -236,7 +236,22 @@ public class CommonCore {
         return myIntegers;
     }
 
-    
+    /**
+     * Wraps number of floats and returns a new Float array.
+     * 
+     * @param object The numbers to wrap.
+     * @return A CoreNumber wrapping the given compounds.
+     */
+    public Float[] box(float... object) {
+        int i = 0;
+
+        final Float[] myIntegers = new Float[object.length];
+        for (float val : object)
+            myIntegers[i++] = Float.valueOf(val);
+
+        return myIntegers;
+    }
+
     /**
      * Wraps number of longs and returns an Long array.
      * 
@@ -345,10 +360,9 @@ public class CommonCore {
         if (collection == null) return null;
         return new ArrayList<T>(collection);
     }
-    
 
     /**
-     * Returns the ID of this {@link CommonCore}. 
+     * Returns the ID of this {@link CommonCore}.
      * 
      * @since 1.0
      * @return The unique ID of this {@link CommonCore}.
@@ -400,24 +414,23 @@ public class CommonCore {
     }
 
     /**
-     * Returns the default nexus for jCores. Do <i>not</i> use this instance 
-     * to manage <i>globals</i> or singletons for your application, since there might be 
-     * cases where two parts of your app won't see each other (e.g., different 
+     * Returns the default nexus for jCores. Do <i>not</i> use this instance
+     * to manage <i>globals</i> or singletons for your application, since there might be
+     * cases where two parts of your app won't see each other (e.g., different
      * classloaders). The {@link CommonCore} in jCores is merely a local <i>cache</i>, shared
-     * by the stataic {@link CoreKeeper} (with some added extras), that keeps track of non-essential, 
+     * by the stataic {@link CoreKeeper} (with some added extras), that keeps track of non-essential,
      * sharable objects which are expensive to create (like profiling information).<br/>
-     * <br/>      
+     * <br/>
      * 
      * @since 1.0
      * @return The default {@link Nexus} used by jCores (which might be used by your
      * application as well if you know what you are doing, but keep in mind the warning above).
      */
-    @AttentionWithClassloaders    
+    @AttentionWithClassloaders
     public Nexus nexus() {
         return this.nexus;
     }
 
-    
     /**
      * Sets a manager of a given type, only needed for core developers.
      * 
@@ -427,7 +440,7 @@ public class CommonCore {
      * @return Return the manager that was already in the list, if there was one, or the current manager which was also
      * set.
      */
-    @AttentionWithClassloaders    
+    @AttentionWithClassloaders
     public <T extends Manager> T manager(Class<T> clazz, T manager) {
         // Perpare adding the manager to the kernel
         final Collection<InternalService<T>> services = new ArrayList<InternalService<T>>();
@@ -526,10 +539,10 @@ public class CommonCore {
         final long end = System.nanoTime();
         return end - start;
     }
-    
+
     /**
-     * Measures how long the execution of the given function took <code>n</code> 
-     * times. A CoreNumber object will be returned with the results.
+     * Measures how long the execution of the given function took <code>n</code> times. A CoreNumber object will be
+     * returned with the results.
      * 
      * @param f The function to execute.
      * @param n The number of times <code>f</code> should be executed.
@@ -538,14 +551,13 @@ public class CommonCore {
     @SuppressWarnings("boxing")
     public CoreNumber measure(F0 f, int n) {
         final List<Long> results = $.list(n);
-        
-        for(int i = 0; i < n; i++) {
+
+        for (int i = 0; i < n; i++) {
             results.add(measure(f));
         }
-        
+
         return CoreKeeper.$(results).as(CoreNumber.class);
     }
-    
 
     /**
      * Returns the profiling information gathered at startup. Only required internally.
@@ -607,7 +619,7 @@ public class CommonCore {
     }
 
     /**
-     * Returns a new, empty {@link AtomicReference}.  
+     * Returns a new, empty {@link AtomicReference}.
      * 
      * @since 1.0
      * @param <T> The type of the reference.
@@ -617,20 +629,18 @@ public class CommonCore {
         return new AtomicReference<T>();
     }
 
-
     /**
-     * Returns a new, already set {@link AtomicReference}.  
+     * Returns a new, already set {@link AtomicReference}.
      * 
      * @since 1.0
-     * @param object The initial value. 
+     * @param object The initial value.
      * @param <T> The type of the reference.
      * @return A new reference.
      */
     public <T> AtomicReference<T> reference(T object) {
         return new AtomicReference<T>(object);
     }
-    
-    
+
     /**
      * Reports the problem to our internal problem queue, only used by core developers. Use report() for all
      * internal error and problem reporting and use log() for user requested
@@ -744,5 +754,4 @@ public class CommonCore {
          * }
          */
     }
-
 }
