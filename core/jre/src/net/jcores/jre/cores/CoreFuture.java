@@ -119,10 +119,12 @@ public class CoreFuture<T> extends CoreObject<Future<T>> {
      * Single-threaded.<br/>
      * <br/>
      * 
+     * @param options Optional arguments. 
+     * 
      * @return This core with all results.
      */
-    public CoreObject<T> await() {
-        return await(Long.MAX_VALUE, TimeUnit.DAYS);
+    public CoreObject<T> await(Option ... options) {
+        return await(Long.MAX_VALUE, TimeUnit.DAYS, options);
     }
 
     /**

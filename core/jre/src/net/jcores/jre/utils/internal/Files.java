@@ -158,8 +158,8 @@ public class Files {
         // If its a dir, create the dir, if its a file, create its parent
         if (todir) to.mkdirs();
         else {
-        	if(!to.getParentFile().mkdirs())
-        		cc.report(MessageType.EXCEPTION, "Unable to create directory " + to.getParentFile());
+            if (!to.getParentFile().mkdirs())
+                cc.report(MessageType.EXCEPTION, "Unable to create directory " + to.getParentFile());
         }
 
         final File realTo = todir ? new File(to.getAbsoluteFile() + "/" + from.getName()) : to;
@@ -204,7 +204,7 @@ public class Files {
 
         try {
             // Open output zip file
-        	FileOutputStream fos = new FileOutputStream(target);
+            FileOutputStream fos = new FileOutputStream(target);
             ZipOutputStream out = new ZipOutputStream(fos);
             out.setLevel(9);
 
@@ -234,7 +234,7 @@ public class Files {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    
+
                     out.closeEntry();
                 }
             }
@@ -252,61 +252,66 @@ public class Files {
 
     /**
      * JARs a number of files into the target. Why does Java have to be so shitty
-     * that on some VMs a JAR created as ZIP won't be recognized anymore?!    
+     * that on some VMs a JAR created as ZIP won't be recognized anymore?!
      * 
      * @param target
-     * @param manifest 
+     * @param manifest
      * @param t
      */
     public static void jarFiles(File target, Manifest manifest, File[] t) {
-		 final byte[] buffer = new byte[32 * 1024]; // Create a buffer for copying
-	        int bytesRead;
+        final byte[] buffer = new byte[32 * 1024]; // Create a buffer for copying
+        int bytesRead;
 
-	        try {
-	            // Open output zip file
-	        	FileOutputStream fos = new FileOutputStream(target);
-	            JarOutputStream out = manifest == null ? new JarOutputStream(fos) : new JarOutputStream(fos, manifest);
-	            out.setLevel(9);
+        try {
+            // Open output zip file
+            FileOutputStream fos = new FileOutputStream(target);
+            JarOutputStream out = manifest == null ? new JarOutputStream(fos) : new JarOutputStream(fos, manifest);
+            out.setLevel(9);
 
-	            // Process all given files
-	            for (File file : t) {
-	                // If it is a file, store it directly, otherwise store subfiles
-	                final File toStore[] = file.isDirectory() ? CoreKeeper.$(file).dir().array(File.class) : CoreKeeper.$(file).array(File.class);
-	                final String absolute = file.getAbsolutePath();
+            // Process all given files
+            for (File file : t) {
+                // If it is a file, store it directly, otherwise store subfiles
+                final File toStore[] = file.isDirectory() ? CoreKeeper.$(file).dir().array(File.class) : CoreKeeper.$(file).array(File.class);
+                final String absolute = file.getAbsolutePath();
 
-	                for (File file2 : toStore) {
-	                    // Now check for each item. If this item was added because the original entry denoted
-	                    // a file, then add this entry by its name only. Otherwise add the entry as something
-	                    // starting relative to its path
-	                    String entryname = file.isDirectory() ? file2.getAbsolutePath().substring(absolute.length() + 1) : file2.getName();
-	                    entryname = entryname.replaceAll("\\\\", "/");
-	                    entryname = file2.isDirectory() ? entryname + "/" : entryname;
-	                    
-	                    try {
-	                        final FileInputStream in = new FileInputStream(file2);
-	                        final JarEntry entry = new JarEntry(entryname);
-	                        out.putNextEntry(entry);
-	                        while ((bytesRead = in.read(buffer)) != -1)
-	                            out.write(buffer, 0, bytesRead);
-	                        in.close();
-	                    } catch (FileNotFoundException e) {
-	                        e.printStackTrace();
-	                    } catch (IOException e) {
-	                        e.printStackTrace();
-	                    }
-	                    
-	                    out.closeEntry();
-	                }
-	            }
+                for (File file2 : toStore) {
+                    // Now check for each item. If this item was added because the original entry denoted
+                    // a file, then add this entry by its name only. Otherwise add the entry as something
+                    // starting relative to its path
+                    String entryname = file.isDirectory() ? file2.getAbsolutePath().substring(absolute.length() + 1) : file2.getName();
+                    entryname = entryname.replaceAll("\\\\", "/");
+                    entryname = file2.isDirectory() ? entryname + "/" : entryname;
 
-	            // Close our result
-	            out.close();
-	            fos.flush();
-	            fos.close();
-	        } catch (FileNotFoundException e) {
-	            e.printStackTrace();
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }		
-	}
+                    // There are some items we should skip by default
+                    final String lc = entryname.toLowerCase();
+                    if (lc.endsWith("meta-inf/eclipsef.rsa")) continue;
+                    if (lc.endsWith("meta-inf/eclipsef.sf")) continue;
+
+                    try {
+                        final FileInputStream in = new FileInputStream(file2);
+                        final JarEntry entry = new JarEntry(entryname);
+                        out.putNextEntry(entry);
+                        while ((bytesRead = in.read(buffer)) != -1)
+                            out.write(buffer, 0, bytesRead);
+                        in.close();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    out.closeEntry();
+                }
+            }
+
+            // Close our result
+            out.close();
+            fos.flush();
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
